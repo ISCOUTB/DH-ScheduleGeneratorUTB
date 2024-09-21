@@ -1,0 +1,22 @@
+name: try_2_schedule
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.2 # o la última versión
+  html: ^0.15.4 # o la última versión
+
+dev_dependencies:
+  flutter_lints: ^2.0.0 
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
