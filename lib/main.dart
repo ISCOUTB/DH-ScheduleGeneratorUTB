@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as html_parser;
 
 void main() {
   runApp(const MyApp());
@@ -33,38 +31,54 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int selectedIndex = 0; // Para rastrear el índice seleccionado en el riel
-  String searchResult = ''; // Para almacenar el resultado de búsqueda
+  String searchResult = ''; // Para mostrar el resultado de la búsqueda
+  int usedCredits = 0; // Créditos usados
+  final int creditLimit = 20; // Límite de créditos
 
-  final TextEditingController careerController = TextEditingController();
+  // Lista de materias dummy con horarios
+  List<Map<String, String>> subjects = [
+    {'name': 'Matemáticas', 'schedule': '8:00 AM - 10:00 AM'},
+    {'name': 'Física', 'schedule': '10:00 AM - 12:00 PM'},
+    {'name': 'Química', 'schedule': '1:00 PM - 3:00 PM'},
+    {'name': 'Programación', 'schedule': '3:00 PM - 5:00 PM'},
+    {'name': 'Historia', 'schedule': '5:00 PM - 7:00 PM'},
+  ];
+
   final TextEditingController subjectController = TextEditingController();
-  final TextEditingController nrcController = TextEditingController();
 
-  Future<void> searchSubject(String subject) async {
-    const url =
-        'https://bannerssbregistro.utb.edu.co:8443/StudentRegistrationSsb/ssb/courseSearch/courseSearch';
+  void searchSubject(String subject) {
+    // Buscar si el nombre ingresado coincide con alguna materia en la lista
+    var foundSubject = subjects.firstWhere(
+        (element) => element['name']!.toLowerCase() == subject.toLowerCase(),
+        orElse: () => {});
 
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        // Parsear el HTML
-        var document = html_parser.parse(response.body);
-        var courseElements = document.querySelectorAll('.course-class-name');
-        bool exists =
-            courseElements.any((element) => element.text.contains(subject));
-
-        setState(() {
-          searchResult = exists ? 'Materia existe' : 'Materia no existe';
-        });
+    setState(() {
+      if (foundSubject.isNotEmpty) {
+        // Si se encuentra la materia, mostrar su nombre y horario
+        searchResult =
+            'Nombre de la materia: ${foundSubject['name']}\nHorario: ${foundSubject['schedule']}';
       } else {
-        setState(() {
-          searchResult = 'Error al acceder a la información.';
-        });
+        // Si no se encuentra la materia, mostrar que no se encontró
+        searchResult = 'Materia no encontrada';
       }
-    } catch (e) {
-      setState(() {
-        searchResult = 'Error: $e';
-      });
-    }
+    });
+  }
+
+  void addCredits() {
+    // Sumar 3 créditos cada vez que el usuario agrega una materia
+    setState(() {
+      if (usedCredits + 3 <= creditLimit) {
+        usedCredits += 3;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Materia agregada. Créditos usados: $usedCredits')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Límite de créditos alcanzado')),
+        );
+      }
+    });
   }
 
   @override
@@ -123,45 +137,47 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Column(
                         children: [
                           TextField(
-                            controller: careerController,
-                            decoration: const InputDecoration(
-                              labelText: 'Por carrera...',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          TextField(
                             controller: subjectController,
                             decoration: const InputDecoration(
                               labelText: 'Por materia...',
                               border: OutlineInputBorder(),
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          TextField(
-                            controller: nrcController,
-                            decoration: const InputDecoration(
-                              labelText: 'Por NRC...',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
                           const SizedBox(height: 20),
                           ElevatedButton(
                             onPressed: () {
-                              searchSubject(subjectController.text);
+                              searchSubject(subjectController
+                                  .text); // Buscar la materia ingresada
                             },
                             child: const Text('Buscar'),
                           ),
                           const SizedBox(height: 20),
-                          Text(
-                            searchResult.isNotEmpty
-                                ? searchResult
-                                : 'Resultados de búsqueda aparecerán aquí.',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
+                          if (searchResult.isNotEmpty) ...[
+                            TextButton(
+                              onPressed: () {
+                                addCredits(); // Sumar créditos al agregar la materia
+                              },
+                              child: Text(
+                                '$searchResult\n(pulse para agregar)',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 16,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ] else
+                            Text(
+                              'Resultados de búsqueda aparecerán aquí.',
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
                           const SizedBox(height: 20),
-                          const Text('Créditos utilizados: 0'), // Añadido
-                          const Text('Límite de créditos: 20'), // Añadido
+                          // Mostrar créditos usados y el límite de créditos
+                          Text(
+                            'Créditos usados: $usedCredits. Límite de créditos: $creditLimit.',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
                         ],
                       ),
                     ),
@@ -169,9 +185,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          const Text('No hay horarios generados.'),
+                        children: const [
+                          SizedBox(height: 20),
+                          Text('No hay horarios generados.'),
                         ],
                       ),
                     ),
@@ -184,3 +200,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
