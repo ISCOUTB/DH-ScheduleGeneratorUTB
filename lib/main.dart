@@ -101,6 +101,21 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void generateSchedule() {
+    if (addedSubjects.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'Seleccione materias antes de generar')), //Identifica si se puede generar horarios o no
+      );
+    } else {
+      // Aquí puedes agregar la lógica para generar horarios
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Generando horarios...')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ? 'Inicio'
                           : selectedIndex == 1
                               ? 'Materias seleccionadas'
-                              : "Horarios",
+                              : 'Horarios',
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
@@ -211,6 +226,33 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
                         children: [
+                          const SizedBox(height: 20),
+                          if (addedSubjects.isEmpty)
+                            const Text('No hay materias agregadas.')
+                          else
+                            Column(
+                              children: addedSubjects.map((subject) {
+                                return ListTile(
+                                  title: Text(subject['name']!),
+                                  subtitle: Text(subject['schedule']!),
+                                );
+                              }).toList(),
+                            ),
+                        ],
+                      ),
+                    ),
+                  if (selectedIndex ==
+                      2) // Mostrar el botón en la sección "Horarios"
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed:
+                                generateSchedule, // Acción para generar horarios
+                            child: const Text('Generar Horarios'),
+                          ),
                           const SizedBox(height: 20),
                           if (addedSubjects.isEmpty)
                             const Text('No hay materias agregadas.')
