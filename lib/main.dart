@@ -31,47 +31,67 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int selectedIndex = 0; // Para rastrear el índice seleccionado en el riel
-  String searchResult = ''; // Para mostrar el resultado de la búsqueda
+  List<Map<String, String>> searchResults = []; // Resultados de búsqueda
   int usedCredits = 0; // Créditos usados
   final int creditLimit = 20; // Límite de créditos
+  List<Map<String, String>> addedSubjects = []; // Lista de materias agregadas
 
-  // Lista de materias dummy con horarios
+  // Lista de materias dummy con horarios, incluyendo duplicados con diferentes horarios
   List<Map<String, String>> subjects = [
     {'name': 'Matemáticas', 'schedule': '8:00 AM - 10:00 AM'},
+    {'name': 'Matemáticas', 'schedule': '3:00 PM - 5:00 PM'}, // Duplicado
+    {'name': 'Matemáticas', 'schedule': '10:00 AM - 12:00 PM'}, // Duplicado
     {'name': 'Física', 'schedule': '10:00 AM - 12:00 PM'},
+    {'name': 'Física', 'schedule': '2:00 PM - 4:00 PM'}, // Duplicado
     {'name': 'Química', 'schedule': '1:00 PM - 3:00 PM'},
+    {'name': 'Química', 'schedule': '4:00 PM - 6:00 PM'}, // Duplicado
     {'name': 'Programación', 'schedule': '3:00 PM - 5:00 PM'},
+    {'name': 'Programación', 'schedule': '6:00 PM - 8:00 PM'}, // Duplicado
     {'name': 'Historia', 'schedule': '5:00 PM - 7:00 PM'},
+    {'name': 'Historia', 'schedule': '7:00 PM - 9:00 PM'}, // Duplicado
+    {'name': 'Estadística y Probabilidad', 'schedule': '9:00 AM - 11:00 AM'},
+    {
+      'name': 'Estadística y Probabilidad',
+      'schedule': '1:00 PM - 3:00 PM'
+    }, // Duplicado
+    {'name': 'Champeta', 'schedule': '2:00 PM - 4:00 PM'},
+    {'name': 'Champeta', 'schedule': '4:00 PM - 6:00 PM'}, // Duplicado
   ];
 
   final TextEditingController subjectController = TextEditingController();
 
   void searchSubject(String subject) {
-    // Buscar si el nombre ingresado coincide con alguna materia en la lista
-    var foundSubject = subjects.firstWhere(
-        (element) => element['name']!.toLowerCase() == subject.toLowerCase(),
-        orElse: () => {});
+    // Convertir a minúsculas para la búsqueda
+    String lowerCaseSubject = subject.toLowerCase();
 
+    // Buscar si el nombre ingresado coincide con alguna materia en la lista
     setState(() {
-      if (foundSubject.isNotEmpty) {
-        // Si se encuentra la materia, mostrar su nombre y horario
-        searchResult =
-            'Nombre de la materia: ${foundSubject['name']}\nHorario: ${foundSubject['schedule']}';
-      } else {
-        // Si no se encuentra la materia, mostrar que no se encontró
-        searchResult = 'Materia no encontrada';
-      }
+      searchResults = subjects
+          .where((element) =>
+              element['name']!.toLowerCase().contains(lowerCaseSubject))
+          .toList();
     });
   }
 
-  void addCredits() {
+  void addCredits(String subjectName, String schedule) {
+    // Verificar si la materia ya está en la lista de materias agregadas
+    bool alreadyAdded =
+        addedSubjects.any((subject) => subject['name'] == subjectName);
+
+    if (alreadyAdded) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Esta materia ya está en tu horario')),
+      );
+      return;
+    }
+
     // Sumar 3 créditos cada vez que el usuario agrega una materia
     setState(() {
       if (usedCredits + 3 <= creditLimit) {
         usedCredits += 3;
+        addedSubjects.add({'name': subjectName, 'schedule': schedule});
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Materia agregada. Créditos usados: $usedCredits')),
+          SnackBar(content: Text('Materia agregada: $subjectName')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -95,23 +115,23 @@ class _MyHomePageState extends State<MyHomePage> {
             destinations: const [
               NavigationRailDestination(
                 icon: Icon(Icons.home),
-                label: Text('Inicio'),
+                label: Text('Menú'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.schedule),
-                label: Text('Horarios'),
+                label: Text('Lista de materias'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.menu),
-                label: Text('Menú'),
+                label: Text('Horarios'),
               ),
             ],
             selectedIndex: selectedIndex,
             onDestinationSelected: (int index) {
               setState(() {
                 selectedIndex = index;
-                searchResult =
-                    ''; // Resetear el resultado al cambiar de sección
+                searchResults =
+                    []; // Resetear los resultados al cambiar de sección
               });
             },
           ),
@@ -124,7 +144,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Text(
-                      selectedIndex == 0 ? 'Inicio' : 'Horarios',
+                      selectedIndex == 0
+                          ? 'Inicio'
+                          : selectedIndex == 1
+                              ? 'Materias seleccionadas'
+                              : "Horarios",
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
@@ -152,20 +176,20 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: const Text('Buscar'),
                           ),
                           const SizedBox(height: 20),
-                          if (searchResult.isNotEmpty) ...[
-                            TextButton(
-                              onPressed: () {
-                                addCredits(); // Sumar créditos al agregar la materia
-                              },
-                              child: Text(
-                                '$searchResult\n(pulse para agregar)',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 16,
-                                  decoration: TextDecoration.underline,
-                                ),
-                              ),
+                          if (searchResults.isNotEmpty) ...[
+                            Column(
+                              children: searchResults.map((subject) {
+                                return ElevatedButton(
+                                  onPressed: () {
+                                    addCredits(
+                                        subject['name']!, subject['schedule']!);
+                                  },
+                                  child: Text(
+                                    'Nombre de la materia: ${subject['name']}\nHorario: ${subject['schedule']}\n(pulse para agregar)',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                );
+                              }).toList(),
                             ),
                           ] else
                             Text(
@@ -181,13 +205,24 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                     ),
-                  if (selectedIndex == 1) // Mostrar un mensaje en "Horarios"
+                  if (selectedIndex ==
+                      1) // Mostrar las materias agregadas en "Horarios"
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
-                        children: const [
-                          SizedBox(height: 20),
-                          Text('No hay horarios generados.'),
+                        children: [
+                          const SizedBox(height: 20),
+                          if (addedSubjects.isEmpty)
+                            const Text('No hay materias agregadas.')
+                          else
+                            Column(
+                              children: addedSubjects.map((subject) {
+                                return ListTile(
+                                  title: Text(subject['name']!),
+                                  subtitle: Text(subject['schedule']!),
+                                );
+                              }).toList(),
+                            ),
                         ],
                       ),
                     ),
