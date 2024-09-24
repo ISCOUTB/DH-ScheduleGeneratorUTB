@@ -140,6 +140,26 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  // Función para verificar conflictos de horarios
+  bool hasScheduleConflict(List<Map<String, String>> newSchedule) {
+    for (var newClass in newSchedule) {
+      String newDay = newClass['day']!;
+      String newTime = newClass['time']!;
+
+      for (var existingSubject in addedSubjects) {
+        List<Map<String, String>> existingSchedule =
+            existingSubject['schedule'];
+        for (var existingClass in existingSchedule) {
+          if (existingClass['day'] == newDay &&
+              existingClass['time'] == newTime) {
+            return true; // Hay un conflicto
+          }
+        }
+      }
+    }
+    return false; // No hay conflictos
+  }
+
   void addCredits(
       String subjectName, List<Map<String, String>> schedule, int credits) {
     bool alreadyAdded =
@@ -148,6 +168,13 @@ class _MyHomePageState extends State<MyHomePage> {
     if (alreadyAdded) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Esta materia ya está en tu horario')),
+      );
+      return;
+    }
+
+    if (hasScheduleConflict(schedule)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Conflicto de horarios con otra materia')),
       );
       return;
     }
