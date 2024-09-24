@@ -63,8 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
     'Sábado'
   ];
 
-//Dummy Horas:
-// Función para generar una hora aleatoria en formato de 24 horas.
+  // Mapa para almacenar créditos por nombre de materia
+  final Map<String, int> subjectCredits = {};
+
+  // Función para generar una hora aleatoria en formato de 24 horas.
   String getRandomTime() {
     Random random = Random();
     int hour = random.nextInt(12) + 8; // Horas entre 8:00 y 20:00
@@ -75,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return '${hour.toString().padLeft(2, '0')}:${minuteStart.toString().padLeft(2, '0')} - ${endHour.toString().padLeft(2, '0')}:${minuteEnd.toString().padLeft(2, '0')}';
   }
 
-  // Función para generar una lista de materias aleatorias
+  // Función para generar una lista de materias aleatorias con créditos
   List<Map<String, dynamic>> generateRandomSubjects(int count) {
     Random random = Random();
     List<Map<String, dynamic>> generatedSubjects = [];
@@ -84,6 +86,16 @@ class _MyHomePageState extends State<MyHomePage> {
       // Seleccionar un nombre de materia al azar
       String subjectName =
           possibleSubjects[random.nextInt(possibleSubjects.length)];
+
+      // Verificar si la materia ya tiene créditos asignados
+      int credits;
+      if (subjectCredits.containsKey(subjectName)) {
+        credits = subjectCredits[subjectName]!; // Obtener créditos existentes
+      } else {
+        // Generar un número aleatorio de créditos entre 2 y 4
+        credits = random.nextInt(3) + 2;
+        subjectCredits[subjectName] = credits; // Asignar créditos al mapa
+      }
 
       // Generar un número aleatorio de días para la materia (2 o 3)
       int numDays = random.nextInt(2) + 2;
@@ -98,10 +110,11 @@ class _MyHomePageState extends State<MyHomePage> {
         schedule.add({'day': day, 'time': time});
       }
 
-      // Agregar la materia con su horario a la lista generada
+      // Agregar la materia con su horario y créditos a la lista generada
       generatedSubjects.add({
         'name': subjectName,
         'schedule': schedule,
+        'credits': credits, // Agregar créditos a la materia
       });
     }
 
@@ -117,10 +130,18 @@ class _MyHomePageState extends State<MyHomePage> {
           .where((element) =>
               element['name']!.toLowerCase().contains(lowerCaseSubject))
           .toList();
+
+      if (searchResults.isEmpty) {
+        // Mostrar mensaje si no se encontró la materia
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se encontró la materia')),
+        );
+      }
     });
   }
 
-  void addCredits(String subjectName, List<Map<String, String>> schedule) {
+  void addCredits(
+      String subjectName, List<Map<String, String>> schedule, int credits) {
     bool alreadyAdded =
         addedSubjects.any((subject) => subject['name'] == subjectName);
 
@@ -132,9 +153,10 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     setState(() {
-      if (usedCredits + 3 <= creditLimit) {
-        usedCredits += 3;
-        addedSubjects.add({'name': subjectName, 'schedule': schedule});
+      if (usedCredits + credits <= creditLimit) {
+        usedCredits += credits; // Sumar créditos de la materia agregada
+        addedSubjects.add(
+            {'name': subjectName, 'schedule': schedule, 'credits': credits});
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Materia agregada: $subjectName')),
         );
@@ -165,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    subjects = generateRandomSubjects(10); // Generar 10 materias aleatorias
+    subjects = generateRandomSubjects(20); // Generar 20 materias aleatorias
   }
 
   @override
@@ -249,18 +271,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: ListView.builder(
                                 itemCount: searchResults.length,
                                 itemBuilder: (context, index) {
-                                  final subject = searchResults[index];
-                                  return ElevatedButton(
-                                    onPressed: () {
-                                      addCredits(
-                                          subject['name']!,
-                                          List<Map<String, String>>.from(
-                                              subject['schedule']));
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: const Size(
-                                          150, 40), // Tamaño más pequeño
-                                    ),
+                                  var subject = searchResults[index];
+                                  return Card(
                                     child: Column(
                                       children: [
                                         Text(
@@ -275,6 +287,20 @@ class _MyHomePageState extends State<MyHomePage> {
                                             textAlign: TextAlign.center,
                                           );
                                         }).toList(),
+                                        Text(
+                                          'Créditos: ${subject['credits']}',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            addCredits(
+                                                subject['name'],
+                                                subject['schedule'],
+                                                subject['credits']);
+                                          },
+                                          child: const Text('Agregar'),
+                                        ),
                                       ],
                                     ),
                                   );
@@ -316,6 +342,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                             ))
                                         .toList(),
                                   ),
+                                  trailing:
+                                      Text('Créditos: ${subject['credits']}'),
                                 );
                               }).toList(),
                             ),
@@ -323,7 +351,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   if (selectedIndex ==
-                      2) // Mostrar el botón en la sección "Horarios"
+                      2) // Mostrar solo el botón en la sección "Horarios"
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
@@ -333,26 +361,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: generateSchedule,
                             child: const Text('Generar Horarios'),
                           ),
-                          const SizedBox(height: 20),
-                          if (addedSubjects.isEmpty)
-                            const Text('No hay materias agregadas.')
-                          else
-                            Column(
-                              children: addedSubjects.map((subject) {
-                                return ListTile(
-                                  title: Text(subject['name']!),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: subject['schedule']
-                                        .map<Widget>((schedule) => Text(
-                                              '${schedule['day']}: ${schedule['time']}',
-                                            ))
-                                        .toList(),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
                         ],
                       ),
                     ),
