@@ -146,14 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void addCredits(String subjectName, List<Map<String, String>> schedule, int credits) {
-    // Verificar si la materia ya está agregada
-    if (addedSubjects.any((subject) => subject['name'] == subjectName)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Materia ya agregada: $subjectName')),
-      );
-      return;
-    }
-
     // Verificar si hay un conflicto de horarios
     if (hasScheduleConflict(schedule)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -333,48 +325,102 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: const Text('Buscar'),
                     ),
                     const SizedBox(height: 20),
-                    // Mostrar resultados de búsqueda
+                    // Resultados de la búsqueda
                     if (searchResults.isNotEmpty)
-                      ...searchResults.map((subject) {
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: ListTile(
-                            title: Text(subject['name']),
-                            subtitle: Text('Créditos: ${subject['credits']}'),
-                            trailing: ElevatedButton(
-                              onPressed: () {
-                                addCredits(subject['name'], subject['schedule'], subject['credits']);
-                              },
-                              child: const Text('Agregar'),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Resultados de la búsqueda:',
+                              style: TextStyle(fontWeight: FontWeight.bold),
                             ),
-                          ),
-                        );
-                      }).toList(),
+                            const SizedBox(height: 10),
+                            ...searchResults.map((subject) {
+                              return Card(
+                                child: ListTile(
+                                  title: Text(subject['name']),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Horario:'),
+                                      ...subject['schedule']
+                                          .map<Widget>((s) => Text(
+                                              '${s['day']} - ${s['time']}'))
+                                          .toList(),
+                                      Text('Créditos: ${subject['credits']}'),
+                                    ],
+                                  ),
+                                  trailing: ElevatedButton(
+                                    onPressed: () {
+                                      addCredits(
+                                          subject['name'],
+                                          subject['schedule'],
+                                          subject['credits']);
+                                    },
+                                    child: const Text('Agregar'),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ),
                   ] else if (selectedIndex == 1) ...[
-                    // Mostrar materias agregadas
-                    if (addedSubjects.isEmpty)
-                      const Text('No se han agregado materias.')
-                    else
-                      ...addedSubjects.map((subject) {
-                        return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: ListTile(
-                            title: Text(subject['name']),
-                            subtitle: Text('Créditos: ${subject['credits']}'),
+                    // Mostrar las materias seleccionadas
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Materias seleccionadas:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                        );
-                      }).toList(),
+                          const SizedBox(height: 10),
+                          if (addedSubjects.isNotEmpty)
+                            ...addedSubjects.map((subject) {
+                              return Card(
+                                child: ListTile(
+                                  title: Text(subject['name']),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Horario:'),
+                                      ...subject['schedule']
+                                          .map<Widget>((s) => Text(
+                                              '${s['day']} - ${s['time']}'))
+                                          .toList(),
+                                      Text('Créditos: ${subject['credits']}'),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList()
+                          else
+                            const Text('No ha seleccionado materias aún.'),
+                        ],
+                      ),
+                    ),
                   ] else if (selectedIndex == 2) ...[
                     // Sección de horarios
-                    if (addedSubjects.isEmpty)
-                      const Text('No se han agregado materias.')
-                    else ...[
-                      ElevatedButton(
-                        onPressed: generateSchedule,
-                        child: const Text('Generar Horario'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: generateSchedule,
+                            child: const Text('Generar Horario'),
+                          ),
+                        ],
                       ),
-                    ],
-                  ],
+                    ),
+                  ]
                 ],
               ),
             ),
@@ -384,5 +430,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
 
 
