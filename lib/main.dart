@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -31,40 +32,86 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int selectedIndex = 0; // Para rastrear el índice seleccionado en el riel
-  List<Map<String, String>> searchResults = []; // Resultados de búsqueda
+  List<Map<String, dynamic>> searchResults = []; // Resultados de búsqueda
   int usedCredits = 0; // Créditos usados
   final int creditLimit = 20; // Límite de créditos
-  List<Map<String, String>> addedSubjects = []; // Lista de materias agregadas
-
-  // Lista de materias dummy con horarios, incluyendo duplicados con diferentes horarios
-  List<Map<String, String>> subjects = [
-    {'name': 'Matemáticas', 'schedule': '8:00 AM - 10:00 AM'},
-    {'name': 'Matemáticas', 'schedule': '3:00 PM - 5:00 PM'}, // Duplicado
-    {'name': 'Matemáticas', 'schedule': '10:00 AM - 12:00 PM'}, // Duplicado
-    {'name': 'Física', 'schedule': '10:00 AM - 12:00 PM'},
-    {'name': 'Física', 'schedule': '2:00 PM - 4:00 PM'}, // Duplicado
-    {'name': 'Química', 'schedule': '1:00 PM - 3:00 PM'},
-    {'name': 'Química', 'schedule': '4:00 PM - 6:00 PM'}, // Duplicado
-    {'name': 'Programación', 'schedule': '3:00 PM - 5:00 PM'},
-    {'name': 'Programación', 'schedule': '6:00 PM - 8:00 PM'}, // Duplicado
-    {'name': 'Historia', 'schedule': '5:00 PM - 7:00 PM'},
-    {'name': 'Historia', 'schedule': '7:00 PM - 9:00 PM'}, // Duplicado
-    {'name': 'Estadística y Probabilidad', 'schedule': '9:00 AM - 11:00 AM'},
-    {
-      'name': 'Estadística y Probabilidad',
-      'schedule': '1:00 PM - 3:00 PM'
-    }, // Duplicado
-    {'name': 'Champeta', 'schedule': '2:00 PM - 4:00 PM'},
-    {'name': 'Champeta', 'schedule': '4:00 PM - 6:00 PM'}, // Duplicado
-  ];
+  List<Map<String, dynamic>> addedSubjects = []; // Lista de materias agregadas
 
   final TextEditingController subjectController = TextEditingController();
 
+  // Lista de posibles nombres de materias
+  final List<String> possibleSubjects = [
+    'Matemáticas',
+    'Física',
+    'Química',
+    'Programación',
+    'Historia',
+    'Estadística',
+    'Biología',
+    'Literatura',
+    'Filosofía',
+    'Música'
+  ];
+
+  // Lista de posibles días
+  final List<String> possibleDays = [
+    'Lunes',
+    'Martes',
+    'Miércoles',
+    'Jueves',
+    'Viernes',
+    'Sábado'
+  ];
+
+//Dummy Horas:
+// Función para generar una hora aleatoria en formato de 24 horas.
+  String getRandomTime() {
+    Random random = Random();
+    int hour = random.nextInt(12) + 8; // Horas entre 8:00 y 20:00
+    int minuteStart = 0; // Minuto de inicio siempre es 00
+    int endHour = hour + 2; // Clases de 2 horas
+    int minuteEnd = 50; // Minuto final siempre es 50
+
+    return '${hour.toString().padLeft(2, '0')}:${minuteStart.toString().padLeft(2, '0')} - ${endHour.toString().padLeft(2, '0')}:${minuteEnd.toString().padLeft(2, '0')}';
+  }
+
+  // Función para generar una lista de materias aleatorias
+  List<Map<String, dynamic>> generateRandomSubjects(int count) {
+    Random random = Random();
+    List<Map<String, dynamic>> generatedSubjects = [];
+
+    for (int i = 0; i < count; i++) {
+      // Seleccionar un nombre de materia al azar
+      String subjectName =
+          possibleSubjects[random.nextInt(possibleSubjects.length)];
+
+      // Generar un número aleatorio de días para la materia (2 o 3)
+      int numDays = random.nextInt(2) + 2;
+      List<Map<String, String>> schedule = [];
+
+      // Seleccionar días aleatorios sin repetir
+      List<String> availableDays = List.from(possibleDays);
+      for (int j = 0; j < numDays; j++) {
+        String day =
+            availableDays.removeAt(random.nextInt(availableDays.length));
+        String time = getRandomTime();
+        schedule.add({'day': day, 'time': time});
+      }
+
+      // Agregar la materia con su horario a la lista generada
+      generatedSubjects.add({
+        'name': subjectName,
+        'schedule': schedule,
+      });
+    }
+
+    return generatedSubjects;
+  }
+
   void searchSubject(String subject) {
-    // Convertir a minúsculas para la búsqueda
     String lowerCaseSubject = subject.toLowerCase();
 
-    // Buscar si el nombre ingresado coincide con alguna materia en la lista
+    // Buscar si el nombre ingresado coincide con alguna materia en la lista generada
     setState(() {
       searchResults = subjects
           .where((element) =>
@@ -73,8 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void addCredits(String subjectName, String schedule) {
-    // Verificar si la materia ya está en la lista de materias agregadas
+  void addCredits(String subjectName, List<Map<String, String>> schedule) {
     bool alreadyAdded =
         addedSubjects.any((subject) => subject['name'] == subjectName);
 
@@ -85,7 +131,6 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    // Sumar 3 créditos cada vez que el usuario agrega una materia
     setState(() {
       if (usedCredits + 3 <= creditLimit) {
         usedCredits += 3;
@@ -104,9 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void generateSchedule() {
     if (addedSubjects.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text(
-                'Seleccione materias antes de generar')), //Identifica si se puede generar horarios o no
+        const SnackBar(content: Text('Seleccione materias antes de generar')),
       );
     } else {
       // Aquí puedes agregar la lógica para generar horarios
@@ -114,6 +157,15 @@ class _MyHomePageState extends State<MyHomePage> {
         const SnackBar(content: Text('Generando horarios...')),
       );
     }
+  }
+
+  // Generar materias aleatorias al iniciar
+  List<Map<String, dynamic>> subjects = [];
+
+  @override
+  void initState() {
+    super.initState();
+    subjects = generateRandomSubjects(10); // Generar 10 materias aleatorias
   }
 
   @override
@@ -151,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           Expanded(
-            child: Center(
+            child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -167,9 +219,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
                   ),
-                  const SizedBox(
-                      height:
-                          20), // Espacio entre el título y las barras de búsqueda
+                  const SizedBox(height: 20),
                   if (selectedIndex == 0) // Solo mostrar en "Inicio"
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -192,19 +242,44 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           const SizedBox(height: 20),
                           if (searchResults.isNotEmpty) ...[
-                            Column(
-                              children: searchResults.map((subject) {
-                                return ElevatedButton(
-                                  onPressed: () {
-                                    addCredits(
-                                        subject['name']!, subject['schedule']!);
-                                  },
-                                  child: Text(
-                                    'Nombre de la materia: ${subject['name']}\nHorario: ${subject['schedule']}\n(pulse para agregar)',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                );
-                              }).toList(),
+                            // Mostrar los resultados de búsqueda con días y horarios
+                            SizedBox(
+                              height:
+                                  300, // Altura ajustada para la lista de resultados
+                              child: ListView.builder(
+                                itemCount: searchResults.length,
+                                itemBuilder: (context, index) {
+                                  final subject = searchResults[index];
+                                  return ElevatedButton(
+                                    onPressed: () {
+                                      addCredits(
+                                          subject['name']!,
+                                          List<Map<String, String>>.from(
+                                              subject['schedule']));
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: const Size(
+                                          150, 40), // Tamaño más pequeño
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'Materia: ${subject['name']}',
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        ...subject['schedule']
+                                            .map<Widget>((schedule) {
+                                          return Text(
+                                            '${schedule['day']}: ${schedule['time']}',
+                                            textAlign: TextAlign.center,
+                                          );
+                                        }).toList(),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ] else
                             Text(
@@ -212,7 +287,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
                           const SizedBox(height: 20),
-                          // Mostrar créditos usados y el límite de créditos
                           Text(
                             'Créditos usados: $usedCredits. Límite de créditos: $creditLimit.',
                             style: Theme.of(context).textTheme.titleMedium,
@@ -220,8 +294,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ],
                       ),
                     ),
-                  if (selectedIndex ==
-                      1) // Mostrar las materias agregadas en "Horarios"
+                  if (selectedIndex == 1) // Mostrar las materias agregadas
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Column(
@@ -234,7 +307,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: addedSubjects.map((subject) {
                                 return ListTile(
                                   title: Text(subject['name']!),
-                                  subtitle: Text(subject['schedule']!),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: subject['schedule']
+                                        .map<Widget>((schedule) => Text(
+                                              '${schedule['day']}: ${schedule['time']}',
+                                            ))
+                                        .toList(),
+                                  ),
                                 );
                               }).toList(),
                             ),
@@ -249,8 +330,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: [
                           const SizedBox(height: 20),
                           ElevatedButton(
-                            onPressed:
-                                generateSchedule, // Acción para generar horarios
+                            onPressed: generateSchedule,
                             child: const Text('Generar Horarios'),
                           ),
                           const SizedBox(height: 20),
@@ -261,7 +341,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: addedSubjects.map((subject) {
                                 return ListTile(
                                   title: Text(subject['name']!),
-                                  subtitle: Text(subject['schedule']!),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: subject['schedule']
+                                        .map<Widget>((schedule) => Text(
+                                              '${schedule['day']}: ${schedule['time']}',
+                                            ))
+                                        .toList(),
+                                  ),
                                 );
                               }).toList(),
                             ),
