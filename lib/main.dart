@@ -13,7 +13,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Generador de horarios UTB',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 2, 10, 87)),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Generador de horarios UTB'),
@@ -160,7 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
           {
             'name': subjectName,
             'schedule': schedule,
-            'credits': credits, // Mantén los créditos originales
+            'credits': credits,
+            'nrc': generateNrc(), // Agregar NRC aquí
           },
         );
         ScaffoldMessenger.of(context).showSnackBar(
@@ -174,6 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'name': subjectName,
               'schedule': schedule,
               'credits': credits,
+              'nrc': generateNrc(), // Agregar NRC aquí
             },
           );
           ScaffoldMessenger.of(context).showSnackBar(
