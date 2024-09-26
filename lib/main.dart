@@ -246,14 +246,21 @@ class _MyHomePageState extends State<MyHomePage> {
               var subject = searchResults[index];
               String subjectName = subject['name'];
               int credits = subject['credits'];
+              List<Map<String, String>> schedule = subject['schedule'];
 
               return ListTile(
                 title: Text(subjectName),
-                subtitle: Text('Créditos: $credits'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Créditos: $credits'),
+                    ...schedule.map((s) => Text('${s['day']}: ${s['time']}')),
+                  ],
+                ),
                 trailing: IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: () {
-                    addCredits(subjectName, subject['schedule'], credits);
+                    addCredits(subjectName, schedule, credits);
                   },
                 ),
               );
@@ -410,6 +417,7 @@ class ScheduleGenerator {
     return allSchedules;
   }
 }
+
 
 
 
