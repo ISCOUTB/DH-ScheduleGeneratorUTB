@@ -1,5 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'utils/schedule_generator.dart';
+import 'widgets/added_subjects_widgets.dart';
+import 'widgets/schedule_widget.dart';
+import 'widgets/search_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -176,82 +180,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  // Nueva función para agrupar materias por nombre
-  Map<String, List<Map<String, dynamic>>> groupSubjectsByName() {
-    Map<String, List<Map<String, dynamic>>> groupedSubjects = {};
-
-    for (var subject in addedSubjects) {
-      String name = subject['name'];
-      if (groupedSubjects.containsKey(name)) {
-        groupedSubjects[name]!.add(subject);
-      } else {
-        groupedSubjects[name] = [subject];
-      }
-    }
-
-    return groupedSubjects;
-  }
-
-  // Función para generar combinaciones de horarios
-  List<List<Map<String, dynamic>>> generateScheduleCombinations(
-      Map<String, List<Map<String, dynamic>>> groupedSubjects) {
-    List<List<Map<String, dynamic>>> allCombinations = [];
-
-    // Recursión para combinar horarios
-    void generateCombination(List<Map<String, dynamic>> currentCombination,
-        List<List<Map<String, dynamic>>> remainingGroups) {
-      if (remainingGroups.isEmpty) {
-        allCombinations.add(List.from(currentCombination));
-        return;
-      }
-
-      var currentGroup = remainingGroups.first;
-      for (var subject in currentGroup) {
-        currentCombination.add(subject);
-        generateCombination(
-            currentCombination, remainingGroups.sublist(1)); // Recursión
-        currentCombination.removeLast();
-      }
-    }
-
-    generateCombination(
-      [],
-      groupedSubjects.values.toList(),
-    );
-
-    return allCombinations;
-  }
-
-  // Función actualizada para generar múltiples horarios
-  List<List<Map<String, List<String>>>> generateMultipleSchedules() {
-    Map<String, List<Map<String, dynamic>>> groupedSubjects =
-        groupSubjectsByName();
-    List<List<Map<String, dynamic>>> scheduleCombinations =
-        generateScheduleCombinations(groupedSubjects);
-
-    List<List<Map<String, List<String>>>> allSchedules = [];
-
-    for (var combination in scheduleCombinations) {
-      List<Map<String, List<String>>> weeklySchedule = [];
-
-      for (var day in possibleDays) {
-        List<String> subjectsForDay = [];
-        for (var subject in combination) {
-          for (var schedule in subject['schedule']) {
-            if (schedule['day'] == day) {
-              subjectsForDay.add('${subject['name']} (${schedule['time']})');
-            }
-          }
-        }
-        weeklySchedule.add({day: subjectsForDay});
-      }
-
-      allSchedules.add(weeklySchedule);
-    }
-
-    return allSchedules;
-  }
-
   void generateSchedule() {
     if (addedSubjects.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -259,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     } else {
       List<List<Map<String, List<String>>>> allSchedules =
-          generateMultipleSchedules();
+          generateMultipleSchedules(addedSubjects, possibleDays);
 
       // Muestra los múltiples horarios en un diálogo
       showDialog(
@@ -351,9 +279,20 @@ class _MyHomePageState extends State<MyHomePage> {
             child: IndexedStack(
               index: selectedIndex,
               children: [
-                buildSearchSubjects(),
-                buildAddedSubjects(),
-                buildScheduleGenerator(),
+                SearchSubjectsWidget(
+                  subjectController: subjectController,
+                  searchResults: searchResults,
+                  searchSubject: searchSubject,
+                  addCredits: addCredits,
+                ),
+                AddedSubjectsWidget(
+                  addedSubjects: addedSubjects,
+                  usedCredits: usedCredits,
+                  creditLimit: creditLimit,
+                ),
+                ScheduleGeneratorWidget(
+                  generateSchedule: generateSchedule,
+                ),
               ],
             ),
           ),
@@ -361,92 +300,4 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
-  Widget buildSearchSubjects() {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: TextField(
-            controller: subjectController,
-            decoration: InputDecoration(
-              labelText: 'Buscar Materia',
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                  searchSubject(subjectController.text);
-                },
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: searchResults.length,
-            itemBuilder: (context, index) {
-              var subject = searchResults[index];
-              String subjectName = subject['name'];
-              int credits = subject['credits'];
-
-              return ListTile(
-                title: Text(subjectName),
-                subtitle: Text('Créditos: $credits'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () {
-                    addCredits(subjectName, subject['schedule'], credits);
-                  },
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget buildAddedSubjects() {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView.builder(
-            itemCount: addedSubjects.length,
-            itemBuilder: (context, index) {
-              var subject = addedSubjects[index];
-              String subjectName = subject['name'];
-              int credits = subject['credits'];
-              List<Map<String, String>> schedule = subject['schedule'];
-
-              return ListTile(
-                title: Text(subjectName),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Créditos: $credits'),
-                    ...schedule.map((s) => Text('${s['day']}: ${s['time']}')),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('Créditos utilizados: $usedCredits / $creditLimit'),
-        ),
-      ],
-    );
-  }
-
-  Widget buildScheduleGenerator() {
-    return Center(
-      child: ElevatedButton(
-        onPressed: generateSchedule,
-        child: const Text('Generar Horario'),
-      ),
-    );
-  }
 }
-
-
-
