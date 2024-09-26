@@ -1,8 +1,7 @@
-name: try_2_schedule
-description: "A new Flutter project."
-# The following line prevents the package from being accidentally published to
-# pub.dev using `flutter pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+name: dh_schedule_generatorutb
+description: Generador de horarios para estudiantes de UTB
+
+version: 1.0.0+1
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -10,13 +9,20 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^1.2.2 # o la última versión
-  html: ^0.15.4 # o la última versión
+  cupertino_icons: ^1.0.2
+  # Otras dependencias que uses
 
 dev_dependencies:
-  flutter_lints: ^2.0.0 
   flutter_test:
     sdk: flutter
 
 flutter:
   uses-material-design: true
+
+  # assets:
+  #   - assets/ # Si tienes imágenes u otros recursos
+
+  # fonts:
+  #   - family: Roboto
+  #     fonts:
+  #       - asset: fonts/Roboto-Regular.ttf
