@@ -1,9 +1,13 @@
-import 'dart:math';
+// lib/main.dart
 import 'package:flutter/material.dart';
+import 'models/subject.dart';
+import 'models/subject_offer.dart';
+import 'utils/helpers.dart';
 import 'utils/schedule_generator.dart';
-import 'widgets/added_subjects_widgets.dart';
-import 'widgets/schedule_widget.dart';
 import 'widgets/search_widget.dart';
+import 'widgets/added_subjects_widgets.dart';
+import 'widgets/schedule_grid_widget.dart';
+import 'widgets/schedule_detail_widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,12 +19,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Generador de horarios UTB',
+      title: 'Generador de Horarios UTB',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        primarySwatch: Colors.deepPurple,
       ),
-      home: const MyHomePage(title: 'Generador de horarios UTB'),
+      home: const MyHomePage(title: 'Generador de Horarios UTB'),
     );
   }
 }
@@ -35,11 +38,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int selectedIndex = 0;
-  List<Map<String, dynamic>> searchResults = [];
+  List<SubjectOffer> searchResults = [];
   int usedCredits = 0;
   final int creditLimit = 20;
-  List<Map<String, dynamic>> addedSubjects = [];
+  List<SubjectOffer> addedSubjectOffers = []; // Almacenamos SubjectOffers
 
   final TextEditingController subjectController = TextEditingController();
 
@@ -65,61 +67,22 @@ class _MyHomePageState extends State<MyHomePage> {
     'Sábado'
   ];
 
-  final Map<String, int> subjectCredits = {};
+  List<SubjectOffer> subjectOffers = [];
+  List<List<Map<String, List<String>>>> allSchedules = [];
+  int? selectedScheduleIndex;
 
-  String getRandomTime() {
-    Random random = Random();
-    int hour = random.nextInt(12) + 8;
-    int minuteStart = 0;
-    int endHour = hour + 2;
-    int minuteEnd = 50;
-
-    return '${hour.toString().padLeft(2, '0')}:${minuteStart.toString().padLeft(2, '0')} - ${endHour.toString().padLeft(2, '0')}:${minuteEnd.toString().padLeft(2, '0')}';
-  }
-
-  List<Map<String, dynamic>> generateRandomSubjects(int count) {
-    Random random = Random();
-    List<Map<String, dynamic>> generatedSubjects = [];
-
-    for (int i = 0; i < count; i++) {
-      String subjectName =
-          possibleSubjects[random.nextInt(possibleSubjects.length)];
-      int credits;
-      if (subjectCredits.containsKey(subjectName)) {
-        credits = subjectCredits[subjectName]!;
-      } else {
-        credits = random.nextInt(3) + 2;
-        subjectCredits[subjectName] = credits;
-      }
-
-      int numDays = random.nextInt(2) + 2;
-      List<Map<String, String>> schedule = [];
-
-      List<String> availableDays = List.from(possibleDays);
-      for (int j = 0; j < numDays; j++) {
-        String day =
-            availableDays.removeAt(random.nextInt(availableDays.length));
-        String time = getRandomTime();
-        schedule.add({'day': day, 'time': time});
-      }
-
-      generatedSubjects.add({
-        'name': subjectName,
-        'schedule': schedule,
-        'credits': credits,
-      });
-    }
-
-    return generatedSubjects;
+  @override
+  void initState() {
+    super.initState();
+    subjectOffers = generateSubjectOffers(possibleSubjects, possibleDays);
   }
 
   void searchSubject(String subject) {
     String lowerCaseSubject = subject.toLowerCase();
 
     setState(() {
-      searchResults = subjects
-          .where((element) =>
-              element['name']!.toLowerCase().contains(lowerCaseSubject))
+      searchResults = subjectOffers
+          .where((offer) => offer.name.toLowerCase().contains(lowerCaseSubject))
           .toList();
 
       if (searchResults.isEmpty) {
@@ -130,172 +93,238 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  bool hasScheduleConflict(List<Map<String, String>> newSchedule) {
-    for (var newClass in newSchedule) {
-      String newDay = newClass['day']!;
-      String newTime = newClass['time']!;
-
-      for (var existingSubject in addedSubjects) {
-        List<Map<String, String>> existingSchedule =
-            existingSubject['schedule'];
-        for (var existingClass in existingSchedule) {
-          if (existingClass['day'] == newDay &&
-              existingClass['time'] == newTime) {
-            return true;
-          }
-        }
-      }
-    }
-    return false;
-  }
-
-  void addCredits(
-      String subjectName, List<Map<String, String>> schedule, int credits) {
-    // Verificar si hay un conflicto de horarios
-    if (hasScheduleConflict(schedule)) {
+  void addSubjectOffer(SubjectOffer offer) {
+    // Verificar si la materia ya fue agregada
+    if (addedSubjectOffers.any((s) => s.name == offer.name)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Conflicto de horarios con otra materia')),
+        const SnackBar(content: Text('La materia ya ha sido agregada')),
+      );
+      return;
+    }
+
+    int newTotalCredits = usedCredits + offer.credits;
+
+    // Verificar el límite de créditos
+    if (newTotalCredits > creditLimit) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Límite de créditos alcanzado')),
       );
       return;
     }
 
     setState(() {
-      if (usedCredits + credits <= creditLimit) {
-        usedCredits += credits;
-        addedSubjects.add(
-          {
-            'name': subjectName,
-            'schedule': schedule,
-            'credits': credits,
-          },
-        );
+      usedCredits = newTotalCredits;
+      addedSubjectOffers.add(offer);
+
+      if (usedCredits > 18) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Materia agregada: $subjectName')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Límite de créditos alcanzado')),
+          const SnackBar(content: Text('Advertencia: Ha excedido los 18 créditos')),
         );
       }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Materia agregada: ${offer.name}')),
+      );
     });
   }
 
   void generateSchedule() {
-    if (addedSubjects.isEmpty) {
+    if (addedSubjectOffers.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Seleccione materias antes de generar')),
       );
     } else {
-      List<List<Map<String, List<String>>>> allSchedules =
-          generateMultipleSchedules(addedSubjects, possibleDays);
+      allSchedules = generateMultipleSchedules(addedSubjectOffers, possibleDays);
 
-      // Muestra los múltiples horarios en un diálogo
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Horarios Generados'),
-            content: SingleChildScrollView(
-              child: Column(
-                children: allSchedules.map((weeklySchedule) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Column(
-                      children: weeklySchedule.map((daySchedule) {
-                        String day = daySchedule.keys.first;
-                        List<String> subjects = daySchedule[day]!;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(day,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold)),
-                            ...subjects
-                                .map((subject) => Text(subject))
-                                .toList(),
-                            const SizedBox(height: 10),
-                          ],
-                        );
-                      }).toList(),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cerrar'),
-              ),
-            ],
-          );
-        },
-      );
+      if (allSchedules.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('No se pudieron generar horarios sin conflictos')),
+        );
+        return;
+      }
+
+      setState(() {
+        selectedScheduleIndex = null; // Reseteamos la selección
+      });
     }
   }
 
-  List<Map<String, dynamic>> subjects = [];
-
-  @override
-  void initState() {
-    super.initState();
-    subjects = generateRandomSubjects(20);
-  }
+  // Controladores para manejar el estado de las ventanas emergentes
+  bool isSearchOpen = false;
+  bool isAddedSubjectsOpen = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: AppBar(
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.deepPurple, Colors.purpleAccent],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          title: Text(widget.title),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
       ),
-      body: Row(
-        children: <Widget>[
-          NavigationRail(
-            selectedIndex: selectedIndex,
-            onDestinationSelected: (int index) {
-              setState(() {
-                selectedIndex = index;
-              });
-            },
-            labelType: NavigationRailLabelType.all,
-            destinations: const <NavigationRailDestination>[
-              NavigationRailDestination(
-                icon: Icon(Icons.search),
-                label: Text('Buscar Materias'),
+      body: Stack(
+        children: [
+          Row(
+            children: [
+              // Menú lateral personalizado
+              Container(
+                width: 60,
+                color: Colors.deepPurple,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    // Botón de búsqueda
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isSearchOpen = true;
+                          });
+                        },
+                        child: const Tooltip(
+                          message: 'Buscar Materias',
+                          child: Icon(Icons.search, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Botón de materias seleccionadas
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isAddedSubjectsOpen = true;
+                          });
+                        },
+                        child: const Tooltip(
+                          message: 'Materias Seleccionadas',
+                          child: Icon(Icons.list, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    // Botón de generar horarios
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.amber,
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(16),
+                        ),
+                        onPressed: generateSchedule,
+                        child: const Icon(Icons.schedule, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              NavigationRailDestination(
-                icon: Icon(Icons.list),
-                label: Text('Materias Seleccionadas'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.schedule),
-                label: Text('Horarios'),
+              // Contenido principal
+              Expanded(
+                child: Center(
+                  child: allSchedules.isEmpty
+                      ? const Text(
+                          '¡Bienvenido al Generador de Horarios UTB!',
+                          style: TextStyle(fontSize: 24),
+                          textAlign: TextAlign.center,
+                        )
+                      : ScheduleGridWidget(
+                          allSchedules: allSchedules,
+                          onScheduleTap: (index) {
+                            setState(() {
+                              selectedScheduleIndex = index;
+                            });
+                          },
+                        ),
+                ),
               ),
             ],
           ),
-          const VerticalDivider(thickness: 1, width: 1),
-          Expanded(
-            child: IndexedStack(
-              index: selectedIndex,
-              children: [
-                SearchSubjectsWidget(
-                  subjectController: subjectController,
-                  searchResults: searchResults,
-                  searchSubject: searchSubject,
-                  addCredits: addCredits,
+          // Ventana emergente de búsqueda de materias
+          if (isSearchOpen)
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isSearchOpen = false;
+                });
+              },
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: SearchSubjectsWidget(
+                    subjectController: subjectController,
+                    searchResults: searchResults,
+                    searchSubject: searchSubject,
+                    addSubjectOffer: addSubjectOffer,
+                    closeWindow: () {
+                      setState(() {
+                        isSearchOpen = false;
+                      });
+                    },
+                  ),
                 ),
-                AddedSubjectsWidget(
-                  addedSubjects: addedSubjects,
-                  usedCredits: usedCredits,
-                  creditLimit: creditLimit,
-                ),
-                ScheduleGeneratorWidget(
-                  generateSchedule: generateSchedule,
-                ),
-              ],
+              ),
             ),
-          ),
+          // Ventana emergente de materias seleccionadas
+          if (isAddedSubjectsOpen)
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isAddedSubjectsOpen = false;
+                });
+              },
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: AddedSubjectsWidget(
+                    addedSubjectOffers: addedSubjectOffers,
+                    usedCredits: usedCredits,
+                    creditLimit: creditLimit,
+                    closeWindow: () {
+                      setState(() {
+                        isAddedSubjectsOpen = false;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+          // Mostrar horario seleccionado
+          if (selectedScheduleIndex != null)
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedScheduleIndex = null;
+                });
+              },
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: ScheduleDetailWidget(
+                    schedule: allSchedules[selectedScheduleIndex!],
+                    onClose: () {
+                      setState(() {
+                        selectedScheduleIndex = null;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
