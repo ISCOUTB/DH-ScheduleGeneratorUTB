@@ -63,16 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final Map<String, int> subjectCredits = {};
 
-  String getRandomTime() {
-    Random random = Random();
-    int hour = random.nextInt(12) + 8;
-    int minuteStart = 0;
-    int endHour = hour + 2;
-    int minuteEnd = 50;
-
-    return '${hour.toString().padLeft(2, '0')}:${minuteStart.toString().padLeft(2, '0')} - ${endHour.toString().padLeft(2, '0')}:${minuteEnd.toString().padLeft(2, '0')}';
-  }
-
   List<Map<String, dynamic>> generateRandomSubjects(int count) {
     Random random = Random();
     List<Map<String, dynamic>> generatedSubjects = [];
@@ -147,7 +137,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void addCredits(
       String subjectName, List<Map<String, String>> schedule, int credits) {
-    // Verificar si hay un conflicto de horarios
     if (hasScheduleConflict(schedule)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Conflicto de horarios con otra materia')),
@@ -174,136 +163,6 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       }
     });
-  }
-
-  // Nueva función para agrupar materias por nombre
-  Map<String, List<Map<String, dynamic>>> groupSubjectsByName() {
-    Map<String, List<Map<String, dynamic>>> groupedSubjects = {};
-
-    for (var subject in addedSubjects) {
-      String name = subject['name'];
-      if (groupedSubjects.containsKey(name)) {
-        groupedSubjects[name]!.add(subject);
-      } else {
-        groupedSubjects[name] = [subject];
-      }
-    }
-
-    return groupedSubjects;
-  }
-
-  // Función para generar combinaciones de horarios
-  List<List<Map<String, dynamic>>> generateScheduleCombinations(
-      Map<String, List<Map<String, dynamic>>> groupedSubjects) {
-    List<List<Map<String, dynamic>>> allCombinations = [];
-
-    // Recursión para combinar horarios
-    void generateCombination(List<Map<String, dynamic>> currentCombination,
-        List<List<Map<String, dynamic>>> remainingGroups) {
-      if (remainingGroups.isEmpty) {
-        allCombinations.add(List.from(currentCombination));
-        return;
-      }
-
-      var currentGroup = remainingGroups.first;
-      for (var subject in currentGroup) {
-        currentCombination.add(subject);
-        generateCombination(
-            currentCombination, remainingGroups.sublist(1)); // Recursión
-        currentCombination.removeLast();
-      }
-    }
-
-    generateCombination(
-      [],
-      groupedSubjects.values.toList(),
-    );
-
-    return allCombinations;
-  }
-
-  // Función actualizada para generar múltiples horarios
-  List<List<Map<String, List<String>>>> generateMultipleSchedules() {
-    Map<String, List<Map<String, dynamic>>> groupedSubjects =
-        groupSubjectsByName();
-    List<List<Map<String, dynamic>>> scheduleCombinations =
-        generateScheduleCombinations(groupedSubjects);
-
-    List<List<Map<String, List<String>>>> allSchedules = [];
-
-    for (var combination in scheduleCombinations) {
-      List<Map<String, List<String>>> weeklySchedule = [];
-
-      for (var day in possibleDays) {
-        List<String> subjectsForDay = [];
-        for (var subject in combination) {
-          for (var schedule in subject['schedule']) {
-            if (schedule['day'] == day) {
-              subjectsForDay.add('${subject['name']} (${schedule['time']})');
-            }
-          }
-        }
-        weeklySchedule.add({day: subjectsForDay});
-      }
-
-      allSchedules.add(weeklySchedule);
-    }
-
-    return allSchedules;
-  }
-
-  void generateSchedule() {
-    if (addedSubjects.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Seleccione materias antes de generar')),
-      );
-    } else {
-      List<List<Map<String, List<String>>>> allSchedules =
-          generateMultipleSchedules();
-
-      // Muestra los múltiples horarios en un diálogo
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('Horarios Generados'),
-            content: SingleChildScrollView(
-              child: Column(
-                children: allSchedules.map((weeklySchedule) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Column(
-                      children: weeklySchedule.map((daySchedule) {
-                        String day = daySchedule.keys.first;
-                        List<String> subjects = daySchedule[day]!;
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(day,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold)),
-                            ...subjects
-                                .map((subject) => Text(subject))
-                                .toList(),
-                            const SizedBox(height: 10),
-                          ],
-                        );
-                      }).toList(),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Cerrar'),
-              ),
-            ],
-          );
-        },
-      );
-    }
   }
 
   List<Map<String, dynamic>> subjects = [];
@@ -441,12 +300,117 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget buildScheduleGenerator() {
     return Center(
       child: ElevatedButton(
-        onPressed: generateSchedule,
+        onPressed: () {
+          ScheduleGenerator generator = ScheduleGenerator(addedSubjects);
+          List<List<Map<String, List<String>>>> allSchedules =
+              generator.generateMultipleSchedules();
+
+          // Muestra los múltiples horarios en un diálogo
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Horarios Generados'),
+                content: SingleChildScrollView(
+                  child: Column(
+                    children: allSchedules.map((weeklySchedule) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            children: weeklySchedule.map((daySchedule) {
+                              String day = daySchedule.keys.first;
+                              List<String> subjects = daySchedule[day]!;
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(day,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  ...subjects
+                                      .map((subject) => Text('• $subject'))
+                                      .toList(),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cerrar'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
         child: const Text('Generar Horario'),
       ),
     );
   }
+
+  String getRandomTime() {
+    Random random = Random();
+    int hour = random.nextInt(10) + 8;
+    int minute = random.nextBool() ? 0 : 30;
+    return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+  }
 }
+
+class ScheduleGenerator {
+  final List<Map<String, dynamic>> addedSubjects;
+
+  ScheduleGenerator(this.addedSubjects);
+
+  List<List<Map<String, List<String>>>> generateMultipleSchedules() {
+    Random random = Random();
+    int numSchedules = random.nextInt(3) + 2;
+
+    List<List<Map<String, List<String>>>> allSchedules = [];
+
+    for (int i = 0; i < numSchedules; i++) {
+      List<Map<String, List<String>>> weeklySchedule = [];
+
+      for (String day in [
+        'Lunes',
+        'Martes',
+        'Miércoles',
+        'Jueves',
+        'Viernes',
+        'Sábado'
+      ]) {
+        List<String> subjects = [];
+
+        for (var subject in addedSubjects) {
+          List<Map<String, String>> schedule = subject['schedule'];
+
+          for (var s in schedule) {
+            if (s['day'] == day) {
+              subjects.add('${subject['name']} - ${s['time']}');
+            }
+          }
+        }
+
+        weeklySchedule.add({day: subjects});
+      }
+
+      allSchedules.add(weeklySchedule);
+    }
+
+    return allSchedules;
+  }
+}
+
 
 
 
