@@ -145,22 +145,40 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     setState(() {
-      if (usedCredits + credits <= creditLimit) {
-        usedCredits += credits;
+      // Verifica si la materia ya ha sido añadida
+      bool alreadyAdded =
+          addedSubjects.any((subject) => subject['name'] == subjectName);
+
+      if (alreadyAdded) {
+        // Añade nuevamente la materia pero sin sumar créditos
         addedSubjects.add(
           {
             'name': subjectName,
             'schedule': schedule,
-            'credits': credits,
+            'credits': credits, // Mantén los créditos originales
           },
         );
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Materia agregada: $subjectName')),
+          SnackBar(content: Text('Materia añadida nuevamente: $subjectName')),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Límite de créditos alcanzado')),
-        );
+        if (usedCredits + credits <= creditLimit) {
+          usedCredits += credits;
+          addedSubjects.add(
+            {
+              'name': subjectName,
+              'schedule': schedule,
+              'credits': credits,
+            },
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Materia agregada: $subjectName')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Límite de créditos alcanzado')),
+          );
+        }
       }
     });
   }
@@ -368,9 +386,22 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String getRandomTime() {
     Random random = Random();
-    int hour = random.nextInt(10) + 8;
-    int minute = random.nextBool() ? 0 : 30;
-    return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+    int startHour =
+        random.nextInt(10) + 8; // Rango de horas entre 08:00 y 17:00
+    int duration = random.nextInt(3) + 1; // Duración entre 1 y 3 horas
+    int endHour = startHour + duration;
+
+    // Ajusta si el rango de tiempo excede las 18:00 horas
+    if (endHour > 18) {
+      endHour = 18;
+      startHour = endHour - duration;
+    }
+
+    // Formato de tiempo HH:MM con minutos fijos (00 para inicio y 50 para fin)
+    String startTime = '${startHour.toString().padLeft(2, '0')}:00';
+    String endTime = '${endHour.toString().padLeft(2, '0')}:50';
+
+    return '$startTime - $endTime';
   }
 }
 
