@@ -78,6 +78,9 @@ class _MyHomePageState extends State<MyHomePage> {
         subjectCredits[subjectName] = credits;
       }
 
+      // Generar código NRC único de 4 dígitos
+      String nrc = generateNrc();
+
       int numDays = random.nextInt(2) + 2;
       List<Map<String, String>> schedule = [];
 
@@ -91,12 +94,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
       generatedSubjects.add({
         'name': subjectName,
+        'nrc': nrc, // Agregar el código NRC
         'schedule': schedule,
         'credits': credits,
       });
     }
 
     return generatedSubjects;
+  }
+
+  String generateNrc() {
+    Random random = Random();
+    return random
+        .nextInt(9000)
+        .toString()
+        .padLeft(4, '0'); // Generar un número aleatorio de 4 dígitos
   }
 
   void searchSubject(String subject) {
@@ -256,6 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
             itemBuilder: (context, index) {
               var subject = searchResults[index];
               String subjectName = subject['name'];
+              String nrc = subject['nrc']; // Obtener el NRC
               int credits = subject['credits'];
               List<Map<String, String>> schedule = subject['schedule'];
 
@@ -264,6 +277,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text('NRC: $nrc'), // Mostrar el NRC
                     Text('Créditos: $credits'),
                     ...schedule.map((s) => Text('${s['day']}: ${s['time']}')),
                   ],
@@ -291,6 +305,7 @@ class _MyHomePageState extends State<MyHomePage> {
             itemBuilder: (context, index) {
               var subject = addedSubjects[index];
               String subjectName = subject['name'];
+              String nrc = subject['nrc'] ?? 'N/A'; // Obtener el NRC si existe
               int credits = subject['credits'];
               List<Map<String, String>> schedule = subject['schedule'];
 
@@ -299,8 +314,30 @@ class _MyHomePageState extends State<MyHomePage> {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text('NRC: $nrc'), // Mostrar el NRC
                     Text('Créditos: $credits'),
                     ...schedule.map((s) => Text('${s['day']}: ${s['time']}')),
+                  ],
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        setState(() {
+                          // Eliminar la materia de la lista
+                          addedSubjects.removeAt(index);
+                          usedCredits -=
+                              credits; // Restar los créditos utilizados
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content:
+                                  Text('$subjectName eliminado de horario')),
+                        );
+                      },
+                    ),
                   ],
                 ),
               );
@@ -427,7 +464,8 @@ class ScheduleGenerator {
 
           for (var s in schedule) {
             if (s['day'] == day) {
-              subjects.add('${subject['name']} - ${s['time']}');
+              subjects.add(
+                  '${subject['name']} - ${s['time']} (NRC: ${subject['nrc']})'); // Incluir NRC en el horario
             }
           }
         }
@@ -441,7 +479,3 @@ class ScheduleGenerator {
     return allSchedules;
   }
 }
-
-
-
-
