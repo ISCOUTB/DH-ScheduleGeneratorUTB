@@ -137,13 +137,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void addCredits(
       String subjectName, List<Map<String, String>> schedule, int credits) {
-    if (hasScheduleConflict(schedule)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Conflicto de horarios con otra materia')),
-      );
-      return;
-    }
-
     setState(() {
       // Verifica si la materia ya ha sido añadida
       bool alreadyAdded =
@@ -448,7 +441,6 @@ class ScheduleGenerator {
     return allSchedules;
   }
 }
-
 
 
 
