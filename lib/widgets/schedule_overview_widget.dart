@@ -2,13 +2,11 @@
 import 'package:flutter/material.dart';
 import '../models/class_option.dart';
 import 'package:excel/excel.dart';
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
+import 'dart:html' as html; // Import necesario para Flutter Web
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:collection/collection.dart';
-import 'package:flutter/services.dart' show rootBundle; // Importación necesaria
 
 class ScheduleOverviewWidget extends StatefulWidget {
   final List<ClassOption> schedule;
@@ -233,8 +231,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                               Text('Profesor: ${classOption.professor}'),
                               Text(
                                   'Horario completo: ${classOption.schedules.map((s) => s.day + ' ' + s.time).join(', ')}'),
-                              Text(
-                                  'Número de créditos: ${classOption.credits}'),
+                              Text('Número de créditos: ${classOption.credits}'),
                               // Agrega más información si es necesario
                             ],
                           ),
@@ -261,19 +258,22 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
   Future<void> downloadScheduleAsExcel() async {
     try {
-      var bytes = await compute(_generateExcel, {
+      var bytes = await _generateExcel({
         'schedule': widget.schedule,
         'timeSlots': timeSlots,
         'days': days,
       });
 
-      final directory = await getApplicationDocumentsDirectory();
-      String path = '${directory.path}/horario.xlsx';
-      File file = File(path);
-      await file.writeAsBytes(bytes);
+      // Crear un Blob y descargar el archivo
+      final blob = html.Blob([bytes], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute('download', 'horario.xlsx')
+        ..click();
+      html.Url.revokeObjectUrl(url);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Archivo Excel guardado en: $path')),
+        SnackBar(content: Text('Descargando archivo Excel')),
       );
     } catch (e) {
       print('Error al generar el Excel: $e');
@@ -292,12 +292,16 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         'days': days,
       });
 
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/horario.pdf');
-      await file.writeAsBytes(bytes);
+      // Crear un Blob y descargar el archivo
+      final blob = html.Blob([bytes], 'application/pdf');
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute('download', 'horario.pdf')
+        ..click();
+      html.Url.revokeObjectUrl(url);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Archivo PDF guardado en: ${file.path}')),
+        SnackBar(content: Text('Descargando archivo PDF')),
       );
     } catch (e) {
       print('Error al generar el PDF: $e');
@@ -308,7 +312,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   }
 
   // Funciones aisladas para generar los archivos
-  static List<int> _generateExcel(Map<String, dynamic> params) {
+  Future<Uint8List> _generateExcel(Map<String, dynamic> params) async {
     List<ClassOption> schedule = params['schedule'];
     List<String> timeSlots = params['timeSlots'];
     List<String> days = params['days'];
@@ -321,10 +325,15 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
     for (var timeSlot in timeSlots) {
       List<String?> row = [timeSlot];
+      TimeOfDay timeSlotTime = parseTimeOfDay(timeSlot);
       for (var day in days) {
         ClassOption? classOption = schedule.firstWhereOrNull(
           (co) => co.schedules.any(
-            (s) => s.day == day && s.time.contains(timeSlot),
+            (s) {
+              if (s.day != day) return false;
+              TimeOfDayRange range = parseTimeRange(s.time);
+              return isTimeWithinRange(timeSlotTime, range);
+            },
           ),
         );
         row.add(classOption?.subjectName ?? '');
@@ -332,10 +341,14 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       sheetObject.appendRow(row);
     }
 
-    return excel.encode()!;
+    // Codifica el archivo Excel en bytes
+    List<int>? excelBytes = excel.encode();
+
+    // Retorna los bytes como Uint8List
+    return Uint8List.fromList(excelBytes!);
   }
 
-  static Future<Uint8List> _generatePDF(Map<String, dynamic> params) async {
+  Future<Uint8List> _generatePDF(Map<String, dynamic> params) async {
     List<ClassOption> schedule = params['schedule'];
     List<String> timeSlots = params['timeSlots'];
     List<String> days = params['days'];
@@ -344,21 +357,26 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
     // Cargar la fuente personalizada
     final fontData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
-    final ttf = pw.Font.ttf(fontData);
+    final ttf = pw.Font.ttf(fontData.buffer.asByteData());
 
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
-          return pw.Table.fromTextArray(
+          return pw.TableHelper.fromTextArray(
             headers: ['Horario', ...days],
             data: [
               for (var timeSlot in timeSlots)
                 [
                   timeSlot,
                   ...days.map((day) {
+                    TimeOfDay timeSlotTime = parseTimeOfDay(timeSlot);
                     ClassOption? classOption = schedule.firstWhereOrNull(
                       (co) => co.schedules.any(
-                        (s) => s.day == day && s.time.contains(timeSlot),
+                        (s) {
+                          if (s.day != day) return false;
+                          TimeOfDayRange range = parseTimeRange(s.time);
+                          return isTimeWithinRange(timeSlotTime, range);
+                        },
                       ),
                     );
                     return classOption?.subjectName ?? '';
@@ -374,6 +392,15 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     );
 
     return await pdf.save();
+  }
+
+  // Añade la función isTimeWithinRange
+  bool isTimeWithinRange(TimeOfDay time, TimeOfDayRange range) {
+    final timeMinutes = time.hour * 60 + time.minute;
+    final startMinutes = range.start.hour * 60 + range.start.minute;
+    final endMinutes = range.end.hour * 60 + range.end.minute;
+
+    return timeMinutes >= startMinutes && timeMinutes < endMinutes;
   }
 
   // Funciones auxiliares para formatear y parsear los horarios
@@ -426,9 +453,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       TimeOfDay slotTime = parseTimeOfDay(timeSlots[i]);
       int slotMinutes = slotTime.hour * 60 + slotTime.minute;
 
-      if (timeMinutes < slotMinutes) {
-        return i > 0 ? i - 1 : 0;
-      } else if (timeMinutes == slotMinutes) {
+      if (timeMinutes <= slotMinutes) {
         return i;
       }
     }
