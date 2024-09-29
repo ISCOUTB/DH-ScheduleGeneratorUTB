@@ -1,25 +1,61 @@
-// lib/widgets/schedule_detail_widget.dart
+// lib/widgets/schedule_overview_widget.dart
 import 'package:flutter/material.dart';
 import '../models/class_option.dart';
+import 'package:excel/excel.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/services.dart' show rootBundle; // Importación necesaria
 
-class ScheduleDetailWidget extends StatefulWidget {
+class ScheduleOverviewWidget extends StatefulWidget {
   final List<ClassOption> schedule;
   final VoidCallback onClose;
 
-  const ScheduleDetailWidget({
+  const ScheduleOverviewWidget({
     Key? key,
     required this.schedule,
     required this.onClose,
   }) : super(key: key);
 
   @override
-  _ScheduleDetailWidgetState createState() => _ScheduleDetailWidgetState();
+  _ScheduleOverviewWidgetState createState() => _ScheduleOverviewWidgetState();
 }
 
-class _ScheduleDetailWidgetState extends State<ScheduleDetailWidget> {
+class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   // Controladores de scroll
   final ScrollController _horizontalScrollController = ScrollController();
   final ScrollController _verticalScrollController = ScrollController();
+
+  // Definir los horarios y días (en formato de 24 horas)
+  final List<String> timeSlots = [
+    '07:00',
+    '08:00',
+    '09:00',
+    '10:00',
+    '11:00',
+    '12:00',
+    '13:00',
+    '14:00',
+    '15:00',
+    '16:00',
+    '17:00',
+    '18:00',
+    '19:00',
+    '20:00',
+    '21:00',
+  ];
+
+  final List<String> days = [
+    'Lunes',
+    'Martes',
+    'Miércoles',
+    'Jueves',
+    'Viernes',
+    'Sábado',
+  ];
 
   @override
   void dispose() {
@@ -31,34 +67,6 @@ class _ScheduleDetailWidgetState extends State<ScheduleDetailWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Definir los horarios y días (en formato de 24 horas)
-    final List<String> timeSlots = [
-      '07:00',
-      '08:00',
-      '09:00',
-      '10:00',
-      '11:00',
-      '12:00',
-      '13:00',
-      '14:00',
-      '15:00',
-      '16:00',
-      '17:00',
-      '18:00',
-      '19:00',
-      '20:00',
-      '21:00',
-    ];
-
-    final List<String> days = [
-      'Lunes',
-      'Martes',
-      'Miércoles',
-      'Jueves',
-      'Viernes',
-      'Sábado',
-    ];
-
     // Crear la matriz del horario
     Map<String, Map<String, ClassOption?>> scheduleMatrix = {};
 
@@ -89,10 +97,13 @@ class _ScheduleDetailWidgetState extends State<ScheduleDetailWidget> {
       }
     }
 
+    // Obtener las materias únicas
+    final subjects = widget.schedule;
+
     return Dialog(
       child: Container(
         width: 1000,
-        height: 600,
+        height: 800,
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
@@ -107,12 +118,27 @@ class _ScheduleDetailWidgetState extends State<ScheduleDetailWidget> {
                 ),
               ],
             ),
-            // Mostrar el horario completo
+            // Botones para descargar Excel y PDF
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                ElevatedButton(
+                  onPressed: () => downloadScheduleAsExcel(),
+                  child: Text('Descargar Excel'),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () => downloadScheduleAsPDF(),
+                  child: Text('Descargar PDF'),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            // Widget del horario
             Expanded(
               child: Scrollbar(
                 controller: _horizontalScrollController,
-                thumbVisibility:
-                    true, // Muestra siempre la barra de desplazamiento
+                thumbVisibility: true,
                 child: SingleChildScrollView(
                   controller: _horizontalScrollController,
                   scrollDirection: Axis.horizontal,
@@ -120,8 +146,7 @@ class _ScheduleDetailWidgetState extends State<ScheduleDetailWidget> {
                     constraints: const BoxConstraints(minWidth: 1000),
                     child: Scrollbar(
                       controller: _verticalScrollController,
-                      thumbVisibility:
-                          true, // Muestra siempre la barra de desplazamiento
+                      thumbVisibility: true,
                       child: SingleChildScrollView(
                         controller: _verticalScrollController,
                         scrollDirection: Axis.vertical,
@@ -144,11 +169,9 @@ class _ScheduleDetailWidgetState extends State<ScheduleDetailWidget> {
                                   return DataCell(
                                     Center(
                                       child: Container(
-                                        margin: const EdgeInsets.all(
-                                            3), // Adds separation from cell borders
+                                        margin: const EdgeInsets.all(3),
                                         color: Colors.lightBlueAccent,
-                                        width:
-                                            90, // Adjust the width if necessary
+                                        width: 90,
                                         padding: const EdgeInsets.all(4),
                                         child: Column(
                                           mainAxisAlignment:
@@ -158,8 +181,7 @@ class _ScheduleDetailWidgetState extends State<ScheduleDetailWidget> {
                                               classOption.subjectName,
                                               textAlign: TextAlign.center,
                                               style: const TextStyle(
-                                                fontSize:
-                                                    8, // Adjust the font size
+                                                fontSize: 8,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.white,
                                               ),
@@ -168,8 +190,7 @@ class _ScheduleDetailWidgetState extends State<ScheduleDetailWidget> {
                                               '${classOption.type}\n${classOption.professor}',
                                               textAlign: TextAlign.center,
                                               style: const TextStyle(
-                                                fontSize:
-                                                    8, // Adjust the font size
+                                                fontSize: 8,
                                                 color: Colors.white,
                                               ),
                                             ),
@@ -191,10 +212,168 @@ class _ScheduleDetailWidgetState extends State<ScheduleDetailWidget> {
                 ),
               ),
             ),
+            SizedBox(height: 16),
+            // Botones de materias con ícono de información
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: subjects.map((classOption) {
+                return ElevatedButton.icon(
+                  onPressed: () {
+                    // Mostrar información de la materia
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(classOption.subjectName),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Profesor: ${classOption.professor}'),
+                              Text(
+                                  'Horario completo: ${classOption.schedules.map((s) => s.day + ' ' + s.time).join(', ')}'),
+                              Text(
+                                  'Número de créditos: ${classOption.credits}'),
+                              // Agrega más información si es necesario
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text('Cerrar'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(Icons.info),
+                  label: Text(classOption.subjectName),
+                );
+              }).toList(),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> downloadScheduleAsExcel() async {
+    try {
+      var bytes = await compute(_generateExcel, {
+        'schedule': widget.schedule,
+        'timeSlots': timeSlots,
+        'days': days,
+      });
+
+      final directory = await getApplicationDocumentsDirectory();
+      String path = '${directory.path}/horario.xlsx';
+      File file = File(path);
+      await file.writeAsBytes(bytes);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Archivo Excel guardado en: $path')),
+      );
+    } catch (e) {
+      print('Error al generar el Excel: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al generar el Excel')),
+      );
+    }
+  }
+
+  Future<void> downloadScheduleAsPDF() async {
+    try {
+      // Generar el PDF de forma asíncrona
+      final bytes = await _generatePDF({
+        'schedule': widget.schedule,
+        'timeSlots': timeSlots,
+        'days': days,
+      });
+
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/horario.pdf');
+      await file.writeAsBytes(bytes);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Archivo PDF guardado en: ${file.path}')),
+      );
+    } catch (e) {
+      print('Error al generar el PDF: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al generar el PDF')),
+      );
+    }
+  }
+
+  // Funciones aisladas para generar los archivos
+  static List<int> _generateExcel(Map<String, dynamic> params) {
+    List<ClassOption> schedule = params['schedule'];
+    List<String> timeSlots = params['timeSlots'];
+    List<String> days = params['days'];
+
+    var excel = Excel.createExcel();
+    Sheet sheetObject = excel['Horario'];
+
+    // Encabezados
+    sheetObject.appendRow(['Horario', ...days]);
+
+    for (var timeSlot in timeSlots) {
+      List<String?> row = [timeSlot];
+      for (var day in days) {
+        ClassOption? classOption = schedule.firstWhereOrNull(
+          (co) => co.schedules.any(
+            (s) => s.day == day && s.time.contains(timeSlot),
+          ),
+        );
+        row.add(classOption?.subjectName ?? '');
+      }
+      sheetObject.appendRow(row);
+    }
+
+    return excel.encode()!;
+  }
+
+  static Future<Uint8List> _generatePDF(Map<String, dynamic> params) async {
+    List<ClassOption> schedule = params['schedule'];
+    List<String> timeSlots = params['timeSlots'];
+    List<String> days = params['days'];
+
+    final pdf = pw.Document();
+
+    // Cargar la fuente personalizada
+    final fontData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
+    final ttf = pw.Font.ttf(fontData);
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Table.fromTextArray(
+            headers: ['Horario', ...days],
+            data: [
+              for (var timeSlot in timeSlots)
+                [
+                  timeSlot,
+                  ...days.map((day) {
+                    ClassOption? classOption = schedule.firstWhereOrNull(
+                      (co) => co.schedules.any(
+                        (s) => s.day == day && s.time.contains(timeSlot),
+                      ),
+                    );
+                    return classOption?.subjectName ?? '';
+                  }).toList(),
+                ]
+            ],
+            cellStyle: pw.TextStyle(font: ttf),
+            headerStyle:
+                pw.TextStyle(font: ttf, fontWeight: pw.FontWeight.bold),
+          );
+        },
+      ),
+    );
+
+    return await pdf.save();
   }
 
   // Funciones auxiliares para formatear y parsear los horarios

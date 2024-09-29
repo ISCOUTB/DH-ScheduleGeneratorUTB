@@ -1,140 +1,95 @@
-// lib/widgets/schedule_preview_widget.dart
+// lib/widgets/schedule_overview_widget.dart
 import 'package:flutter/material.dart';
+import '../models/class_option.dart';
+import 'schedule_detail_widget.dart';
 
-class SchedulePreviewWidget extends StatelessWidget {
-  final List<Map<String, List<String>>> schedule;
+class ScheduleOverviewWidget extends StatefulWidget {
+  final List<ClassOption> schedule;
+  final VoidCallback onClose;
 
-  const SchedulePreviewWidget({
+  const ScheduleOverviewWidget({
     Key? key,
     required this.schedule,
+    required this.onClose,
   }) : super(key: key);
 
   @override
+  _ScheduleOverviewWidgetState createState() => _ScheduleOverviewWidgetState();
+}
+
+class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
+  @override
   Widget build(BuildContext context) {
-    // Definir las horas de inicio y fin del horario
-    final List<String> timeSlots = [
-      '08:00 - 09:00',
-      '09:00 - 10:00',
-      '10:00 - 11:00',
-      '11:00 - 12:00',
-      '12:00 - 13:00',
-      '13:00 - 14:00',
-      '14:00 - 15:00',
-      '15:00 - 16:00',
-      '16:00 - 17:00',
-      '17:00 - 18:00',
-      '18:00 - 19:00',
-      '19:00 - 20:00',
-    ];
+    // Obtener las materias únicas
+    final subjects = widget.schedule;
 
-    // Ordenar días en orden específico
-    final List<String> days = [
-      'Lunes',
-      'Martes',
-      'Miércoles',
-      'Jueves',
-      'Viernes',
-      'Sábado'
-    ];
-
-    // Crear una matriz para representar el horario completo
-    Map<String, Map<String, String>> scheduleMatrix = {};
-
-    for (String time in timeSlots) {
-      scheduleMatrix[time] = {};
-      for (String day in days) {
-        scheduleMatrix[time]![day] = ''; // Inicialmente vacío
-      }
-    }
-
-    // Rellenar la matriz con las materias
-    for (var daySchedule in schedule) {
-      String day = daySchedule.keys.first;
-      List<String> subjects = daySchedule.values.first;
-
-      for (String subjectInfo in subjects) {
-        // Asumimos que el formato es "Materia (hora)"
-        if (subjectInfo.contains('(') && subjectInfo.contains(')')) {
-          String subjectName =
-              subjectInfo.substring(0, subjectInfo.indexOf('(')).trim();
-          String time = subjectInfo.substring(
-              subjectInfo.indexOf('(') + 1, subjectInfo.indexOf(')'));
-
-          // Limpiar espacios en blanco
-          time = time.trim();
-
-          // Ubicar la materia en la matriz
-          if (scheduleMatrix.containsKey(time)) {
-            scheduleMatrix[time]![day] = subjectName;
-          }
-        }
-      }
-    }
-
-    // Construir la tabla
-    return Column(
-      children: [
-        const Text(
-          'Horario',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 4),
-        Container(
-          height: 120, // Establece una altura fija adecuada
-          child: SingleChildScrollView(
-            child: Table(
-              border: TableBorder.all(color: Colors.grey),
-              defaultColumnWidth: const IntrinsicColumnWidth(),
+    return Dialog(
+      child: Container(
+        width: 1000,
+        height: 800,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // Botón de cierre
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // Fila de encabezados (días)
-                TableRow(
-                  children: [
-                    Container(), // Celda vacía en la esquina superior izquierda
-                    ...days.map((day) => Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Text(
-                            day.substring(0, 3), // Abreviatura del día
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 10),
-                          ),
-                        )),
-                  ],
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: widget.onClose,
+                  tooltip: 'Cerrar',
                 ),
-                // Filas de horas
-                ...timeSlots.map((time) {
-                  return TableRow(
-                    children: [
-                      // Columna de horas
-                      Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Text(
-                          time,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 10),
-                        ),
-                      ),
-                      // Celdas de materias
-                      ...days.map((day) {
-                        String subjectName = scheduleMatrix[time]![day] ?? '';
-                        return Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Text(
-                            subjectName,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 8),
-                          ),
-                        );
-                      }).toList(),
-                    ],
-                  );
-                }).toList(),
               ],
             ),
-          ),
+            // Botones de materias con ícono de información
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: subjects.map((classOption) {
+                return ElevatedButton.icon(
+                  onPressed: () {
+                    // Mostrar información de la materia
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(classOption.subjectName),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Profesor: ${classOption.professor}'),
+                              Text('Horario completo: ${classOption.schedules.map((s) => s.day + ' ' + s.time).join(', ')}'),
+                              Text('Número de créditos: ${classOption.credits}'),
+                              // Agrega más información si es necesario
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text('Cerrar'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(Icons.info),
+                  label: Text(classOption.subjectName),
+                );
+              }).toList(),
+            ),
+            SizedBox(height: 16),
+            // Widget del horario
+            Expanded(
+              child: ScheduleDetailWidget(
+                schedule: widget.schedule,
+                onClose: widget.onClose,
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

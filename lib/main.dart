@@ -1,16 +1,34 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
+import 'data/subjects_data.dart';
 import 'models/subject.dart';
-import 'models/subject_offer.dart';
-import 'utils/helpers.dart';
-import 'utils/schedule_generator.dart';
+import 'models/class_option.dart';
 import 'widgets/search_widget.dart';
 import 'widgets/added_subjects_widgets.dart';
 import 'widgets/schedule_grid_widget.dart';
-import 'widgets/schedule_detail_widget.dart';
+import 'models/schedule.dart';
+import 'widgets/schedule_overview_widget.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
+}
+
+// Definición de TimeOfDayRange fuera de cualquier clase
+class TimeOfDayRange {
+  final TimeOfDay start;
+  final TimeOfDay end;
+
+  TimeOfDayRange(this.start, this.end);
+
+  bool overlaps(TimeOfDayRange other) {
+    final startMinutes = start.hour * 60 + start.minute;
+    final endMinutes = end.hour * 60 + end.minute;
+    final otherStartMinutes = other.start.hour * 60 + other.start.minute;
+    final otherEndMinutes = other.end.hour * 60 + other.end.minute;
+
+    return (startMinutes < otherEndMinutes) && (endMinutes > otherStartMinutes);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -38,71 +56,190 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  List<SubjectOffer> searchResults = [];
+  List<Subject> addedSubjects = [];
   int usedCredits = 0;
   final int creditLimit = 20;
-  List<SubjectOffer> addedSubjectOffers = []; // Almacenamos SubjectOffers
 
   final TextEditingController subjectController = TextEditingController();
 
-  final List<String> possibleSubjects = [
-    'Matemáticas',
-    'Física',
-    'Química',
-    'Programación',
-    'Historia',
-    'Estadística',
-    'Biología',
-    'Literatura',
-    'Filosofía',
-    'Música'
-  ];
-
-  final List<String> possibleDays = [
-    'Lunes',
-    'Martes',
-    'Miércoles',
-    'Jueves',
-    'Viernes',
-    'Sábado'
-  ];
-
-  List<SubjectOffer> subjectOffers = [];
-  List<List<Map<String, List<String>>>> allSchedules = [];
+  List<List<ClassOption>> allSchedules = [];
   int? selectedScheduleIndex;
+
+  // Controladores para manejar el estado de las ventanas emergentes
+  bool isSearchOpen = false;
+  bool isAddedSubjectsOpen = false;
 
   @override
   void initState() {
     super.initState();
-    subjectOffers = generateSubjectOffers(possibleSubjects, possibleDays);
+    // Inicialmente no mostramos horarios
   }
 
-  void searchSubject(String subject) {
-    String lowerCaseSubject = subject.toLowerCase();
+  void defineManualSchedules() {
+    // Horario 1
+    List<ClassOption> schedule1 = [
+      // Física Mecánica
+      ClassOption(
+        type: 'Teórico',
+        subjectName: 'Física Mecánica',
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '15:00 - 16:50'),
+        ],
+        professor: 'Vilma',
+        nrc: '1001',
+        groupId: 1,
+      ),
+      ClassOption(
+        subjectName: 'Física Mecánica',
+        type: 'Laboratorio',
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+        ],
+        professor: 'Kevin Mendoza',
+        nrc: '1002',
+        groupId: 1,
+      ),
+      // Cálculo Integral
+      ClassOption(
+        type: 'Teórico',
+        subjectName: 'Cálculo Integral',
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+        ],
+        professor: 'Carlos Pérez',
+        nrc: '2001',
+        groupId: 1,
+      ),
+      // Programación
+      ClassOption(
+        type: 'Teórico',
+        subjectName: 'Programación',
+        schedules: [
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '08:00 - 09:50'),
+        ],
+        professor: 'Ana Martínez',
+        nrc: '3001',
+        groupId: 1,
+      ),
+      // Química General
+      ClassOption(
+        type: 'Teórico',
+        subjectName: 'Química General',
+        schedules: [
+          Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+        ],
+        professor: 'Pedro Gómez',
+        nrc: '4001',
+        groupId: 1,
+      ),
+      // Inglés
+      ClassOption(
+        type: 'Teórico',
+        subjectName: 'Inglés',
+        schedules: [
+          Schedule(day: 'Jueves', time: '11:00 - 12:50'),
+          Schedule(day: 'Viernes', time: '08:00 - 09:50'),
+        ],
+        professor: 'Laura Torres',
+        nrc: '5001',
+        groupId: 1,
+      ),
+    ];
 
+    // Horario 2
+    List<ClassOption> schedule2 = [
+      // Física Mecánica - otro grupo o profesor
+      ClassOption(
+        type: 'Teórico',
+        subjectName: 'Física Mecánica',
+        schedules: [
+          Schedule(day: 'Lunes', time: '09:00 - 10:50'),
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+        ],
+        professor: 'Yony Pastrana',
+        nrc: '1005',
+        groupId: 3,
+      ),
+      ClassOption(
+        subjectName: 'Física Mecánica',
+        type: 'Laboratorio',
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+        ],
+        professor: 'Kevin Mendoza',
+        nrc: '1006',
+        groupId: 3,
+      ),
+      // Cálculo Integral - otro grupo o profesor
+      ClassOption(
+        type: 'Teórico',
+        subjectName: 'Cálculo Integral',
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+        ],
+        professor: 'Carlos Payares',
+        nrc: '2007',
+        groupId: 2,
+      ),
+      // Programación - otro grupo o profesor
+      ClassOption(
+        type: 'Teórico',
+        subjectName: 'Programación',
+        schedules: [
+          Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
+          Schedule(day: 'Martes', time: '16:00 - 16:50'),
+        ],
+        professor: 'Carlos Botero',
+        nrc: '5004',
+        groupId: 4,
+      ),
+      // Álgebra Lineal
+      ClassOption(
+        type: 'Teórico',
+        subjectName: 'Álgebra Lineal',
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+          Schedule(day: 'Jueves', time: '16:00 - 16:50'),
+        ],
+        professor: 'Andy Domínguez',
+        nrc: '4006',
+        groupId: 6,
+      ),
+      // Inglés 1
+      ClassOption(
+        subjectName: 'Inglés 1',
+        type: 'Teórico',
+        schedules: [
+          Schedule(day: 'Viernes', time: '18:00 - 19:50'),
+          Schedule(day: 'Sábado', time: '08:00 - 09:50'),
+        ],
+        professor: 'Cindy Paola',
+        nrc: '3003',
+        groupId: 3,
+      ),
+    ];
+
+    // Asignamos los horarios a la lista de todos los horarios
     setState(() {
-      searchResults = subjectOffers
-          .where((offer) => offer.name.toLowerCase().contains(lowerCaseSubject))
-          .toList();
-
-      if (searchResults.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se encontró la materia')),
-        );
-      }
+      allSchedules = [schedule1, schedule2];
+      selectedScheduleIndex = null;
     });
   }
 
-  void addSubjectOffer(SubjectOffer offer) {
+  void addSubject(Subject subject) {
     // Verificar si la materia ya fue agregada
-    if (addedSubjectOffers.any((s) => s.name == offer.name)) {
+    if (addedSubjects.any((s) => s.code == subject.code)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('La materia ya ha sido agregada')),
       );
       return;
     }
 
-    int newTotalCredits = usedCredits + offer.credits;
+    int newTotalCredits = usedCredits + subject.credits;
 
     // Verificar el límite de créditos
     if (newTotalCredits > creditLimit) {
@@ -114,65 +251,46 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       usedCredits = newTotalCredits;
-      addedSubjectOffers.add(offer);
+      addedSubjects.add(subject);
 
       if (usedCredits > 18) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Advertencia: Ha excedido los 18 créditos')),
+          const SnackBar(
+              content: Text('Advertencia: Ha excedido los 18 créditos')),
         );
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Materia agregada: ${offer.name}')),
+        SnackBar(content: Text('Materia agregada: ${subject.name}')),
       );
     });
   }
 
   void generateSchedule() {
-    if (addedSubjectOffers.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Seleccione materias antes de generar')),
-      );
-    } else {
-      allSchedules = generateMultipleSchedules(addedSubjectOffers, possibleDays);
-
-      if (allSchedules.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('No se pudieron generar horarios sin conflictos')),
-        );
-        return;
-      }
-
-      setState(() {
-        selectedScheduleIndex = null; // Reseteamos la selección
-      });
-    }
+    // En lugar de generar horarios basados en las materias agregadas,
+    // utilizamos los horarios manuales predefinidos.
+    defineManualSchedules();
   }
 
-  // Controladores para manejar el estado de las ventanas emergentes
-  bool isSearchOpen = false;
-  bool isAddedSubjectsOpen = false;
+  // Puedes comentar o mantener las funciones auxiliares si lo deseas.
+  // Mantenerlas no afecta el funcionamiento actual y pueden ser útiles posteriormente.
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.deepPurple, Colors.purpleAccent],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+      appBar: AppBar(
+        title: Text(widget.title),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.deepPurple, Colors.purpleAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
-          title: Text(widget.title),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
         ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Stack(
         children: [
@@ -267,9 +385,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Center(
                   child: SearchSubjectsWidget(
                     subjectController: subjectController,
-                    searchResults: searchResults,
-                    searchSubject: searchSubject,
-                    addSubjectOffer: addSubjectOffer,
+                    allSubjects: subjects,
+                    onSubjectSelected: (subject) {
+                      addSubject(subject);
+                      setState(() {
+                        isSearchOpen = false;
+                        subjectController.clear();
+                      });
+                    },
                     closeWindow: () {
                       setState(() {
                         isSearchOpen = false;
@@ -291,7 +414,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.black54,
                 child: Center(
                   child: AddedSubjectsWidget(
-                    addedSubjectOffers: addedSubjectOffers,
+                    addedSubjects: addedSubjects,
                     usedCredits: usedCredits,
                     creditLimit: creditLimit,
                     closeWindow: () {
@@ -314,7 +437,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(
                 color: Colors.black54,
                 child: Center(
-                  child: ScheduleDetailWidget(
+                  child: ScheduleOverviewWidget(
                     schedule: allSchedules[selectedScheduleIndex!],
                     onClose: () {
                       setState(() {
