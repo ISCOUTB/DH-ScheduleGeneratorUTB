@@ -73,7 +73,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    // Inicialmente no mostramos horarios
+    // Inicialización de variables de estado
+    isSearchOpen = false;
+    isAddedSubjectsOpen = false;
   }
 
   void addSubject(Subject subject) {
@@ -101,13 +103,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
       if (usedCredits > 18) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Advertencia: Ha excedido los 18 créditos')),
+          const SnackBar(content: Text('Advertencia: Ha excedido los 18 créditos')),
         );
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Materia agregada: ${subject.name}')),
+      );
+    });
+  }
+
+  void removeSubject(Subject subject) {
+    setState(() {
+      addedSubjects.removeWhere((s) => s.code == subject.code);
+      usedCredits -= subject.credits;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Materia eliminada: ${subject.name}')),
       );
     });
   }
@@ -120,7 +132,6 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    // Generar horarios basados en las materias agregadas
     List<List<ClassOption>> horariosValidos = obtenerHorariosValidos(addedSubjects);
 
     if (horariosValidos.isEmpty) {
@@ -136,6 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Funciones para generar los horarios
+
   List<List<ClassOption>> obtenerHorariosValidos(List<Subject> asignaturas) {
     List<List<ClassOption>> todosLosHorarios = generarTodosLosHorariosPosibles(asignaturas);
     List<List<ClassOption>> horariosValidos = [];
@@ -161,8 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // Función recursiva para calcular el producto cartesiano
     List<List<ClassOption>> todosLosHorarios = [];
 
-    void productoCartesiano(
-        int profundidad, List<ClassOption> actual, List<List<ClassOption>> resultado) {
+    void productoCartesiano(int profundidad, List<ClassOption> actual, List<List<ClassOption>> resultado) {
       if (profundidad == combinacionesPorAsignatura.length) {
         resultado.add(List.from(actual));
         return;
@@ -440,6 +451,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       setState(() {
                         isAddedSubjectsOpen = false;
                       });
+                    },
+                    onRemoveSubject: (subject) {
+                      removeSubject(subject);
                     },
                   ),
                 ),
