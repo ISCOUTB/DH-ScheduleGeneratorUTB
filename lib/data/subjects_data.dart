@@ -121,7 +121,7 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 4,
         schedules: [
-          Schedule(day: 'Martes', time: '07:00 - 09:00'),
+          Schedule(day: 'Martes', time: '07:00 - 08:50'),
         ],
         professor: 'Eder Barrios',
         nrc: '2001',
