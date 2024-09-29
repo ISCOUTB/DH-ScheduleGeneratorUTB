@@ -8,7 +8,7 @@ class ClassOption {
   final String professor;
   final String nrc;
   final int groupId; // Nuevo atributo para agrupar clases
-  final int credits = 3; // Agregado: créditos de la materia
+  final int credits; // Agregado: créditos de la materia
  // Agregado: valor por defecto
 
   ClassOption({
@@ -18,5 +18,6 @@ class ClassOption {
     required this.professor,
     required this.nrc,
     required this.groupId,
+    required this.credits,
   });
 }
