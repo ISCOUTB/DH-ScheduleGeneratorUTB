@@ -7,6 +7,7 @@ class AddedSubjectsWidget extends StatelessWidget {
   final int usedCredits;
   final int creditLimit;
   final VoidCallback closeWindow;
+  final Function(Subject subject) onRemoveSubject; // Nueva función para manejar la eliminación
 
   const AddedSubjectsWidget({
     Key? key,
@@ -14,6 +15,7 @@ class AddedSubjectsWidget extends StatelessWidget {
     required this.usedCredits,
     required this.creditLimit,
     required this.closeWindow,
+    required this.onRemoveSubject, // Parámetro añadido
   }) : super(key: key);
 
   @override
@@ -42,6 +44,12 @@ class AddedSubjectsWidget extends StatelessWidget {
                   return ListTile(
                     title: Text(subjectName),
                     subtitle: Text('Código: $subjectCode\nCréditos: $credits'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.remove_circle, color: Colors.red),
+                      onPressed: () {
+                        onRemoveSubject(subject); // Llamar a la función para eliminar la materia
+                      },
+                    ),
                   );
                 },
               ),
