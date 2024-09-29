@@ -1,16 +1,16 @@
 // lib/widgets/added_subjects_widget.dart
 import 'package:flutter/material.dart';
-import '../models/subject_offer.dart';
+import '../models/subject.dart';
 
 class AddedSubjectsWidget extends StatelessWidget {
-  final List<SubjectOffer> addedSubjectOffers;
+  final List<Subject> addedSubjects;
   final int usedCredits;
   final int creditLimit;
   final VoidCallback closeWindow;
 
   const AddedSubjectsWidget({
     Key? key,
-    required this.addedSubjectOffers,
+    required this.addedSubjects,
     required this.usedCredits,
     required this.creditLimit,
     required this.closeWindow,
@@ -32,15 +32,16 @@ class AddedSubjectsWidget extends StatelessWidget {
             const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
-                itemCount: addedSubjectOffers.length,
+                itemCount: addedSubjects.length,
                 itemBuilder: (context, index) {
-                  var offer = addedSubjectOffers[index];
-                  String subjectName = offer.name;
-                  int credits = offer.credits;
+                  var subject = addedSubjects[index];
+                  String subjectName = subject.name;
+                  int credits = subject.credits;
+                  String subjectCode = subject.code;
 
                   return ListTile(
                     title: Text(subjectName),
-                    subtitle: Text('Créditos: $credits'),
+                    subtitle: Text('Código: $subjectCode\nCréditos: $credits'),
                   );
                 },
               ),

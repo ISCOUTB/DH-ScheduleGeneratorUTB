@@ -1,22 +1,37 @@
 // lib/widgets/search_widget.dart
 import 'package:flutter/material.dart';
-import '../models/subject_offer.dart';
+import '../models/subject.dart';
 
-class SearchSubjectsWidget extends StatelessWidget {
+class SearchSubjectsWidget extends StatefulWidget {
   final TextEditingController subjectController;
-  final List<SubjectOffer> searchResults;
-  final Function(String) searchSubject;
-  final Function(SubjectOffer) addSubjectOffer;
+  final List<Subject> allSubjects;
+  final Function(Subject) onSubjectSelected;
   final VoidCallback closeWindow;
 
   const SearchSubjectsWidget({
     Key? key,
     required this.subjectController,
-    required this.searchResults,
-    required this.searchSubject,
-    required this.addSubjectOffer,
+    required this.allSubjects,
+    required this.onSubjectSelected,
     required this.closeWindow,
   }) : super(key: key);
+
+  @override
+  _SearchSubjectsWidgetState createState() => _SearchSubjectsWidgetState();
+}
+
+class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
+  List<Subject> filteredSubjects = [];
+
+  void filterSubjects(String query) {
+    setState(() {
+      filteredSubjects = widget.allSubjects.where((subject) {
+        String lowerCaseQuery = query.toLowerCase();
+        return subject.name.toLowerCase().contains(lowerCaseQuery) ||
+            subject.code.toLowerCase().contains(lowerCaseQuery);
+      }).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,47 +42,41 @@ class SearchSubjectsWidget extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Barra de búsqueda
+            // Campo de búsqueda con autocompletado
             TextField(
-              controller: subjectController,
-              decoration: InputDecoration(
+              controller: widget.subjectController,
+              decoration: const InputDecoration(
                 labelText: 'Buscar Materia',
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    searchSubject(subjectController.text);
-                  },
-                ),
               ),
+              onChanged: filterSubjects,
             ),
             const SizedBox(height: 10),
-            // Lista de resultados
+            // Lista de sugerencias
             Expanded(
-              child: ListView.builder(
-                itemCount: searchResults.length,
-                itemBuilder: (context, index) {
-                  var offer = searchResults[index];
-                  String subjectName = offer.name;
-                  int credits = offer.credits;
-
-                  return ListTile(
-                    title: Text(subjectName),
-                    subtitle: Text('Créditos: $credits'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {
-                        addSubjectOffer(offer);
+              child: filteredSubjects.isEmpty
+                  ? const Center(child: Text('No hay resultados'))
+                  : ListView.builder(
+                      itemCount: filteredSubjects.length,
+                      itemBuilder: (context, index) {
+                        var subject = filteredSubjects[index];
+                        return ListTile(
+                          title: Text(subject.name),
+                          subtitle: Text(
+                            subject.code,
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                          onTap: () {
+                            widget.onSubjectSelected(subject);
+                          },
+                        );
                       },
                     ),
-                  );
-                },
-              ),
             ),
             // Botón de cerrar
             Align(
               alignment: Alignment.bottomRight,
               child: TextButton(
-                onPressed: closeWindow,
+                onPressed: widget.closeWindow,
                 child: const Text('Cerrar'),
               ),
             ),
