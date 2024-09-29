@@ -103,7 +103,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
       if (usedCredits > 18) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Advertencia: Ha excedido los 18 créditos')),
+          const SnackBar(
+              content: Text('Advertencia: Ha excedido los 18 créditos')),
         );
       }
 
@@ -132,7 +133,8 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    List<List<ClassOption>> horariosValidos = obtenerHorariosValidos(addedSubjects);
+    List<List<ClassOption>> horariosValidos =
+        obtenerHorariosValidos(addedSubjects);
 
     if (horariosValidos.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -149,7 +151,8 @@ class _MyHomePageState extends State<MyHomePage> {
   // Funciones para generar los horarios
 
   List<List<ClassOption>> obtenerHorariosValidos(List<Subject> asignaturas) {
-    List<List<ClassOption>> todosLosHorarios = generarTodosLosHorariosPosibles(asignaturas);
+    List<List<ClassOption>> todosLosHorarios =
+        generarTodosLosHorariosPosibles(asignaturas);
     List<List<ClassOption>> horariosValidos = [];
 
     for (var horario in todosLosHorarios) {
@@ -161,7 +164,8 @@ class _MyHomePageState extends State<MyHomePage> {
     return horariosValidos;
   }
 
-  List<List<ClassOption>> generarTodosLosHorariosPosibles(List<Subject> asignaturas) {
+  List<List<ClassOption>> generarTodosLosHorariosPosibles(
+      List<Subject> asignaturas) {
     // Obtener las combinaciones de opciones para cada asignatura
     List<List<List<ClassOption>>> combinacionesPorAsignatura = [];
 
@@ -173,7 +177,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // Función recursiva para calcular el producto cartesiano
     List<List<ClassOption>> todosLosHorarios = [];
 
-    void productoCartesiano(int profundidad, List<ClassOption> actual, List<List<ClassOption>> resultado) {
+    void productoCartesiano(int profundidad, List<ClassOption> actual,
+        List<List<ClassOption>> resultado) {
       if (profundidad == combinacionesPorAsignatura.length) {
         resultado.add(List.from(actual));
         return;
@@ -306,6 +311,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -413,21 +419,24 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(
                 color: Colors.black54,
                 child: Center(
-                  child: SearchSubjectsWidget(
-                    subjectController: subjectController,
-                    allSubjects: subjects,
-                    onSubjectSelected: (subject) {
-                      addSubject(subject);
-                      setState(() {
-                        isSearchOpen = false;
+                  child: GestureDetector(
+                    onTap:
+                        () {}, // Para evitar que se cierre cuando se toca dentro del widget
+                    child: SearchSubjectsWidget(
+                      subjectController: subjectController,
+                      allSubjects: subjects,
+                      onSubjectSelected: (subject) {
+                        addSubject(subject);
+                        // Aquí se elimina el código que cerraba el widget inmediatamente
                         subjectController.clear();
-                      });
-                    },
-                    closeWindow: () {
-                      setState(() {
-                        isSearchOpen = false;
-                      });
-                    },
+                        // Deja el widget abierto para permitir más selecciones
+                      },
+                      closeWindow: () {
+                        setState(() {
+                          isSearchOpen = false;
+                        });
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -443,18 +452,21 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(
                 color: Colors.black54,
                 child: Center(
-                  child: AddedSubjectsWidget(
-                    addedSubjects: addedSubjects,
-                    usedCredits: usedCredits,
-                    creditLimit: creditLimit,
-                    closeWindow: () {
-                      setState(() {
-                        isAddedSubjectsOpen = false;
-                      });
-                    },
-                    onRemoveSubject: (subject) {
-                      removeSubject(subject);
-                    },
+                  child: GestureDetector(
+                    onTap: () {}, // Evita que se cierre cuando se toca dentro
+                    child: AddedSubjectsWidget(
+                      addedSubjects: addedSubjects,
+                      usedCredits: usedCredits,
+                      creditLimit: creditLimit,
+                      closeWindow: () {
+                        setState(() {
+                          isAddedSubjectsOpen = false;
+                        });
+                      },
+                      onRemoveSubject: (subject) {
+                        removeSubject(subject);
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -470,13 +482,16 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(
                 color: Colors.black54,
                 child: Center(
-                  child: ScheduleOverviewWidget(
-                    schedule: allSchedules[selectedScheduleIndex!],
-                    onClose: () {
-                      setState(() {
-                        selectedScheduleIndex = null;
-                      });
-                    },
+                  child: GestureDetector(
+                    onTap: () {}, // Evita que se cierre cuando se toca dentro
+                    child: ScheduleOverviewWidget(
+                      schedule: allSchedules[selectedScheduleIndex!],
+                      onClose: () {
+                        setState(() {
+                          selectedScheduleIndex = null;
+                        });
+                      },
+                    ),
                   ),
                 ),
               ),
