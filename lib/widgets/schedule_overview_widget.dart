@@ -95,8 +95,16 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       }
     }
 
-    // Obtener las materias únicas
-    final subjects = widget.schedule;
+    // Agrupar las materias y sus opciones
+    Map<String, List<ClassOption>> groupedSubjects = {};
+
+    for (var classOption in widget.schedule) {
+      String subjectName = classOption.subjectName;
+      if (!groupedSubjects.containsKey(subjectName)) {
+        groupedSubjects[subjectName] = [];
+      }
+      groupedSubjects[subjectName]!.add(classOption);
+    }
 
     return Dialog(
       child: Container(
@@ -105,29 +113,29 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Botón de cierre
+            // Botón de cierre y botones de descarga
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                // Botones para descargar Excel y PDF
+                Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => downloadScheduleAsExcel(),
+                      child: Text('Descargar Excel'),
+                    ),
+                    SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () => downloadScheduleAsPDF(),
+                      child: Text('Descargar PDF'),
+                    ),
+                  ],
+                ),
+                // Botón de cierre
                 IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: widget.onClose,
                   tooltip: 'Cerrar',
-                ),
-              ],
-            ),
-            // Botones para descargar Excel y PDF
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                ElevatedButton(
-                  onPressed: () => downloadScheduleAsExcel(),
-                  child: Text('Descargar Excel'),
-                ),
-                SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => downloadScheduleAsPDF(),
-                  child: Text('Descargar PDF'),
                 ),
               ],
             ),
@@ -215,7 +223,10 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: subjects.map((classOption) {
+              children: groupedSubjects.entries.map((entry) {
+                String subjectName = entry.key;
+                List<ClassOption> classOptions = entry.value;
+
                 return ElevatedButton.icon(
                   onPressed: () {
                     // Mostrar información de la materia
@@ -223,17 +234,24 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: Text(classOption.subjectName),
+                          title: Text(subjectName),
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Profesor: ${classOption.professor}'),
-                              Text(
-                                  'Horario completo: ${classOption.schedules.map((s) => s.day + ' ' + s.time).join(', ')}'),
-                              Text('Número de créditos: ${classOption.credits}'),
-                              // Agrega más información si es necesario
-                            ],
+                            children: classOptions.map((classOption) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Tipo: ${classOption.type}'),
+                                  Text('Profesor: ${classOption.professor}'),
+                                  Text(
+                                    'Horario: ${classOption.schedules.map((s) => s.day + ' ' + s.time).join(', ')}',
+                                  ),
+                                  Text('Número de créditos: ${classOption.credits}'),
+                                  SizedBox(height: 8),
+                                ],
+                              );
+                            }).toList(),
                           ),
                           actions: [
                             TextButton(
@@ -246,7 +264,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                     );
                   },
                   icon: Icon(Icons.info),
-                  label: Text(classOption.subjectName),
+                  label: Text(subjectName),
                 );
               }).toList(),
             ),
@@ -265,7 +283,8 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       });
 
       // Crear un Blob y descargar el archivo
-      final blob = html.Blob([bytes], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      final blob = html.Blob([bytes],
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       final url = html.Url.createObjectUrlFromBlob(blob);
       final anchor = html.AnchorElement(href: url)
         ..setAttribute('download', 'horario.xlsx')
@@ -311,7 +330,8 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     }
   }
 
-  // Funciones aisladas para generar los archivos
+  // Funciones auxiliares para generar los archivos
+
   Future<Uint8List> _generateExcel(Map<String, dynamic> params) async {
     List<ClassOption> schedule = params['schedule'];
     List<String> timeSlots = params['timeSlots'];
@@ -355,14 +375,14 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
     final pdf = pw.Document();
 
-    // Cargar la fuente personalizada
-    final fontData = await rootBundle.load('assets/fonts/Roboto-Regular.ttf');
-    final ttf = pw.Font.ttf(fontData.buffer.asByteData());
+    // Cargar la fuente predeterminada
+    final font = await rootBundle.load("assets/fonts/Roboto-Regular.ttf");
+    final ttf = pw.Font.ttf(font);
 
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
-          return pw.TableHelper.fromTextArray(
+          return pw.Table.fromTextArray(
             headers: ['Horario', ...days],
             data: [
               for (var timeSlot in timeSlots)
@@ -394,6 +414,8 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     return await pdf.save();
   }
 
+  // Funciones auxiliares
+
   // Añade la función isTimeWithinRange
   bool isTimeWithinRange(TimeOfDay time, TimeOfDayRange range) {
     final timeMinutes = time.hour * 60 + time.minute;
@@ -403,7 +425,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     return timeMinutes >= startMinutes && timeMinutes < endMinutes;
   }
 
-  // Funciones auxiliares para formatear y parsear los horarios
+  // Funciones para parsear los horarios
 
   TimeOfDayRange parseTimeRange(String timeRange) {
     List<String> parts = timeRange.split(' - ');
@@ -437,12 +459,6 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     }
 
     return TimeOfDay(hour: hour, minute: minute);
-  }
-
-  String formatTimeOfDay(TimeOfDay time) {
-    final hour = time.hour.toString().padLeft(2, '0');
-    final minute = time.minute.toString().padLeft(2, '0');
-    return '$hour:$minute';
   }
 
   // Función para obtener el índice del timeSlot de inicio
