@@ -1,4 +1,4 @@
-// lib/widgets/schedule_overview_widget.dart
+// lib/widgets/schedule_overview_widget.dart (copia para pruebas en desuso)
 import 'package:flutter/material.dart';
 import '../models/class_option.dart';
 import 'package:excel/excel.dart';
