@@ -396,7 +396,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           padding: const EdgeInsets.all(16),
                         ),
                         onPressed: generateSchedule,
-                        child: const Icon(Icons.schedule, color: Colors.white),
+                        child: const Tooltip(
+                          message: 'Generar Horarios',
+                          child: const Icon(Icons.calendar_today,
+                              color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
@@ -499,7 +503,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       selectedScheduleIndex = selectedScheduleIndex! - 1;
                     });
                     return KeyEventResult.handled;
-                  } else if (event.logicalKey == LogicalKeyboardKey.arrowRight &&
+                  } else if (event.logicalKey ==
+                          LogicalKeyboardKey.arrowRight &&
                       selectedScheduleIndex! < allSchedules.length - 1) {
                     setState(() {
                       selectedScheduleIndex = selectedScheduleIndex! + 1;
@@ -521,7 +526,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Stack(
                       children: [
                         GestureDetector(
-                          onTap: () {}, // Evita que se cierre cuando se toca dentro
+                          onTap:
+                              () {}, // Evita que se cierre cuando se toca dentro
                           child: ScheduleOverviewWidget(
                             schedule: allSchedules[selectedScheduleIndex!],
                             onClose: () {
