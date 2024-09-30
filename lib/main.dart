@@ -8,7 +8,8 @@ import 'widgets/added_subjects_widgets.dart';
 import 'widgets/schedule_grid_widget.dart';
 import 'models/schedule.dart';
 import 'widgets/schedule_overview_widget.dart';
-import 'package:collection/collection.dart'; // Import necesario para firstWhereOrNull
+import 'package:collection/collection.dart'; //
+import 'package:flutter/services.dart'; // Import para manejar eventos de teclado
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,12 +71,27 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isSearchOpen = false;
   bool isAddedSubjectsOpen = false;
 
+  // FocusNode para capturar los eventos del teclado
+  late FocusNode _focusNode;
+
   @override
   void initState() {
     super.initState();
     // Inicialización de variables de estado
     isSearchOpen = false;
     isAddedSubjectsOpen = false;
+
+    // Inicializar el FocusNode
+    _focusNode = FocusNode();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 
   void addSubject(Subject subject) {
@@ -311,7 +327,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -471,26 +486,84 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-          // Mostrar horario seleccionado
+          // Mostrar horario seleccionado con navegación
           if (selectedScheduleIndex != null)
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedScheduleIndex = null;
-                });
+            Focus(
+              focusNode: _focusNode,
+              autofocus: true,
+              onKey: (FocusNode node, RawKeyEvent event) {
+                if (event is RawKeyDownEvent) {
+                  if (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
+                      selectedScheduleIndex! > 0) {
+                    setState(() {
+                      selectedScheduleIndex = selectedScheduleIndex! - 1;
+                    });
+                    return KeyEventResult.handled;
+                  } else if (event.logicalKey == LogicalKeyboardKey.arrowRight &&
+                      selectedScheduleIndex! < allSchedules.length - 1) {
+                    setState(() {
+                      selectedScheduleIndex = selectedScheduleIndex! + 1;
+                    });
+                    return KeyEventResult.handled;
+                  }
+                }
+                return KeyEventResult.ignored;
               },
-              child: Container(
-                color: Colors.black54,
-                child: Center(
-                  child: GestureDetector(
-                    onTap: () {}, // Evita que se cierre cuando se toca dentro
-                    child: ScheduleOverviewWidget(
-                      schedule: allSchedules[selectedScheduleIndex!],
-                      onClose: () {
-                        setState(() {
-                          selectedScheduleIndex = null;
-                        });
-                      },
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedScheduleIndex = null;
+                  });
+                },
+                child: Container(
+                  color: Colors.black54,
+                  child: Center(
+                    child: Stack(
+                      children: [
+                        GestureDetector(
+                          onTap: () {}, // Evita que se cierre cuando se toca dentro
+                          child: ScheduleOverviewWidget(
+                            schedule: allSchedules[selectedScheduleIndex!],
+                            onClose: () {
+                              setState(() {
+                                selectedScheduleIndex = null;
+                              });
+                            },
+                          ),
+                        ),
+                        // Flecha izquierda
+                        if (selectedScheduleIndex! > 0)
+                          Positioned(
+                            left: 10,
+                            top: MediaQuery.of(context).size.height / 2 - 30,
+                            child: IconButton(
+                              icon: Icon(Icons.arrow_left,
+                                  size: 50, color: Colors.white),
+                              onPressed: () {
+                                setState(() {
+                                  selectedScheduleIndex =
+                                      selectedScheduleIndex! - 1;
+                                });
+                              },
+                            ),
+                          ),
+                        // Flecha derecha
+                        if (selectedScheduleIndex! < allSchedules.length - 1)
+                          Positioned(
+                            right: 10,
+                            top: MediaQuery.of(context).size.height / 2 - 30,
+                            child: IconButton(
+                              icon: Icon(Icons.arrow_right,
+                                  size: 50, color: Colors.white),
+                              onPressed: () {
+                                setState(() {
+                                  selectedScheduleIndex =
+                                      selectedScheduleIndex! + 1;
+                                });
+                              },
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
