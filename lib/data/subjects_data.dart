@@ -1,427 +1,3794 @@
-// lib/data/subjects_data.dart
-import '../models/subject.dart';
-import '../models/class_option.dart';
-import '../models/schedule.dart';
-
+import '../../../models/class_option.dart';
+import '../../../models/schedule.dart';
+import '../../../models/subject.dart';
 List<Subject> subjects = [
-  // Física Mecánica
   Subject(
-    code: 'F01A',
-    name: 'Física Mecánica',
+    code: 'G01A',
+    name: 'Fundamentos de administracion',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Fundamentos de administracion',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Martha Patricia Castro Porto',
+        nrc: '1171',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '09:00 - 10:50'),
+          Schedule(day: 'Martes', time: '16:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G02A',
+    name: 'Seminario gerencial i',
+    credits: 1,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Seminario gerencial i',
+        type: 'Teórico',
+        credits: 1,
+        professor: 'Ricardo Andres Abreo Rodriguez',
+        nrc: '1725',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '16:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G03A',
+    name: 'Historia empresarial',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Historia empresarial',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Maria Teresa Ripoll De Lemaitre',
+        nrc: '1175',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+          Schedule(day: 'Jueves', time: '10:00 - 10:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Historia empresarial',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Maria Teresa Ripoll De Lemaitre',
+        nrc: '2471',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '09:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '11:00 - 12:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G04A',
+    name: 'Creatividad y emprendimiento',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Creatividad y emprendimiento',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Oriana Susana Martinez Palomino',
+        nrc: '1116',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 07:50'),
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Creatividad y emprendimiento',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Gabriel Roman Melendez',
+        nrc: '1629',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+          Schedule(day: 'Martes', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Creatividad y emprendimiento',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Lina Margarita Marrugo Salas',
+        nrc: '2021',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Jueves', time: '08:00 - 09:50'),
+          Schedule(day: 'Lunes', time: '14:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Creatividad y emprendimiento',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Lina Margarita Marrugo Salas',
+        nrc: '2154',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '09:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Creatividad y emprendimiento',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Lina Margarita Marrugo Salas',
+        nrc: '2155',
+        groupId: 5,
+        schedules: [
+          Schedule(day: 'Lunes', time: '08:00 - 09:50'),
+          Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G05A',
+    name: 'Organizaciones i',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Organizaciones i',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Rita Cecilia De La Hoz Del Villar',
+        nrc: '1834',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '13:00 - 13:50'),
+          Schedule(day: 'Jueves', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Organizaciones i',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Rita Cecilia De La Hoz Del Villar',
+        nrc: '1836',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '15:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '16:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G07A',
+    name: 'Direccion estrategica',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Direccion estrategica',
+        type: 'Clase virtual',
+        credits: 3,
+        professor: 'Martha Patricia Castro Porto',
+        nrc: '1847',
+        groupId: 1,
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G08A',
+    name: 'Seminario gerencial ii',
+    credits: 1,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Seminario gerencial ii',
+        type: 'Teórico',
+        credits: 1,
+        professor: 'Ricardo Andres Abreo Rodriguez',
+        nrc: '1849',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '18:00 - 18:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G10A',
+    name: 'Gestion del talento humano',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Gestion del talento humano',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Javier Marquez Orozco',
+        nrc: '1960',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '08:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '16:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G11A',
+    name: 'Innovacion',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Innovacion',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Oriana Susana Martinez Palomino',
+        nrc: '1916',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+          Schedule(day: 'Lunes', time: '15:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G12A',
+    name: 'Consultoria empresarial',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Consultoria empresarial',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Ricardo Andres Abreo Rodriguez',
+        nrc: '1963',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '17:00 - 18:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G13A',
+    name: 'Seminario gerencial iii',
+    credits: 1,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Seminario gerencial iii',
+        type: 'Teórico',
+        credits: 1,
+        professor: 'Ricardo Andres Abreo Rodriguez',
+        nrc: '1257',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '17:00 - 17:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G14A',
+    name: 'Juego gerencial',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Juego gerencial',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Ricardo Andres Abreo Rodriguez',
+        nrc: '1967',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '17:00 - 18:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'M02A',
+    name: 'Investigacion de mercados',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Investigacion de mercados',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Hernan Saulo Torres Cuello',
+        nrc: '1841',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '15:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '15:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'O06A',
+    name: 'Negocios inclusivos',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Negocios inclusivos',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Gabriel Roman Melendez',
+        nrc: '1250',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '09:00 - 10:50'),
+          Schedule(day: 'Jueves', time: '14:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'O07A',
+    name: 'Empresas sostenibles',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Empresas sostenibles',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Sammir Montemiranda Pajaro',
+        nrc: '1215',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '18:00 - 18:50'),
+          Schedule(day: 'Viernes', time: '18:00 - 19:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Empresas sostenibles',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Sammir Montemiranda Pajaro',
+        nrc: '1216',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Jueves', time: '18:00 - 19:50'),
+          Schedule(day: 'Miércoles', time: '19:00 - 19:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'O27A',
+    name: 'Skills for digital transformation 4.0',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Skills for digital transformation 4.0',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Oriana Susana Martinez Palomino',
+        nrc: '1226',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+          Schedule(day: 'Martes', time: '15:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'P01A',
+    name: 'Opcion de grado',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Opcion de grado',
+        type: 'Clase virtual',
+        credits: 2,
+        professor: 'Benjamin De Jesus Garcia Garcerant',
+        nrc: '1965',
+        groupId: 1,
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'P02A',
+    name: 'Seminario integrador fen',
+    credits: 0,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Seminario integrador fen',
+        type: 'Clase virtual',
+        credits: 0,
+        professor: 'Dayana Maria Sanchez Monterrosa',
+        nrc: '1969',
+        groupId: 1,
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'P03A',
+    name: 'Práctica profesional',
+    credits: 9,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Práctica profesional',
+        type: 'Laboratorio',
+        credits: 9,
+        professor: 'Javier Marquez Orozco',
+        nrc: '1962',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '08:00 - 12:50'),
+          Schedule(day: 'Martes', time: '08:00 - 12:50'),
+          Schedule(day: 'Miércoles', time: '08:00 - 12:50'),
+          Schedule(day: 'Jueves', time: '08:00 - 12:50'),
+          Schedule(day: 'Viernes', time: '08:00 - 12:50'),
+          Schedule(day: 'Lunes', time: '14:00 - 16:50'),
+          Schedule(day: 'Martes', time: '14:00 - 16:50'),
+          Schedule(day: 'Miércoles', time: '14:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '14:00 - 16:50'),
+          Schedule(day: 'Viernes', time: '14:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'R01A',
+    name: 'Calidad y operaciones',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Calidad y operaciones',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Carlos Alberto Diaz Wright',
+        nrc: '1837',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '17:00 - 18:50'),
+          Schedule(day: 'Miércoles', time: '17:00 - 17:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'R02A',
+    name: 'Gestion de procesos y tecnolog',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Gestion de procesos y tecnolog',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Carlos Alberto Diaz Wright',
+        nrc: '1853',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '18:00 - 19:50'),
+          Schedule(day: 'Martes', time: '19:00 - 19:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z11A',
+    name: 'Gestion de proyectos',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Gestion de proyectos',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Sammir Montemiranda Pajaro',
+        nrc: '1870',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '17:00 - 18:50'),
+          Schedule(day: 'Jueves', time: '17:00 - 17:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'D02A',
+    name: 'Taller de diseño ii',
+    credits: 6,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Taller de diseño ii',
+        type: 'Teorico-practico',
+        credits: 6,
+        professor: 'Maria Alejandra Sanchez Martinez',
+        nrc: '2146',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '08:00 - 11:50'),
+          Schedule(day: 'Lunes', time: '15:00 - 18:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'D03A',
+    name: 'Taller de diseño iii',
+    credits: 6,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Taller de diseño iii',
+        type: 'Teorico-practico',
+        credits: 6,
+        professor: 'Ausberto Coneo Caicedo',
+        nrc: '2321',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 16:50'),
+          Schedule(day: 'Miércoles', time: '13:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'D04A',
+    name: 'Taller de diseño iv',
+    credits: 6,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Taller de diseño iv',
+        type: 'Teorico-practico',
+        credits: 6,
+        professor: 'Alexander Niebles Villarreal',
+        nrc: '2381',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '08:00 - 11:50'),
+          Schedule(day: 'Lunes', time: '13:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Taller de diseño iv',
+        type: 'Teorico-practico',
+        credits: 6,
+        professor: 'Hernando Rafael Muñoz Mendoza',
+        nrc: '2390',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 16:50'),
+          Schedule(day: 'Miércoles', time: '13:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'D06A',
+    name: 'Taller de diseño vi',
+    credits: 6,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Taller de diseño vi',
+        type: 'Teorico-practico',
+        credits: 6,
+        professor: 'Antonio Rafael Nieves Gonzalez',
+        nrc: '2353',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '08:00 - 11:50'),
+          Schedule(day: 'Martes', time: '13:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'D07A',
+    name: 'Taller de diseño vii (manga-ternera)',
+    credits: 6,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Taller de diseño vii (manga-ternera)',
+        type: 'Teorico-practico',
+        credits: 6,
+        professor: 'Ramon Raul Perez Yepez',
+        nrc: '1821',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'D08A',
+    name: 'Taller de diseño viii',
+    credits: 6,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Taller de diseño viii',
+        type: 'Teorico-practico',
+        credits: 6,
+        professor: 'Luis Eduardo Garcia Pacheco',
+        nrc: '2142',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '09:00 - 12:50'),
+          Schedule(day: 'Lunes', time: '13:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E03A',
+    name: 'Expresión grafica iii',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Expresión grafica iii',
+        type: 'Laboratorio',
+        credits: 2,
+        professor: 'Javier Alonso Perez Ortiz',
+        nrc: '2404',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '18:00 - 19:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Expresión grafica iii',
+        type: 'Laboratorio',
+        credits: 2,
+        professor: 'Javier Alonso Perez Ortiz',
+        nrc: '2403',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E04A',
+    name: 'Expresión gráfica iv',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Expresión gráfica iv',
+        type: 'Laboratorio',
+        credits: 2,
+        professor: 'Raul Ernesto Lopez Gomez',
+        nrc: '2328',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '12:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E05A',
+    name: 'Expresión gráfica v',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Expresión gráfica v',
+        type: 'Laboratorio',
+        credits: 2,
+        professor: 'Virginia Milena Escamilla Angulo',
+        nrc: '1018',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '16:00 - 17:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E07A',
+    name: 'Photoshop para arquitectos',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Photoshop para arquitectos',
+        type: 'Teorico-practico',
+        credits: 3,
+        professor: 'Antonio Rafael Nieves Gonzalez',
+        nrc: '2591',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+          Schedule(day: 'Viernes', time: '14:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'H01A',
+    name: 'Teoria e historia i',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Teoria e historia i',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Cesar Anibal Duran Ruge',
+        nrc: '1077',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Sábado', time: '11:00 - 12:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'H02A',
+    name: 'Teoria e historia ii',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Teoria e historia ii',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Joel Alexander Samper Lopez',
+        nrc: '1910',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '13:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'H03A',
+    name: 'Teoria e historia iii',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Teoria e historia iii',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Howard De Jesus Villareal Molina',
+        nrc: '2157',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '17:00 - 18:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'H04A',
+    name: 'Teoria e historia iv',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Teoria e historia iv',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Ivan Enrique Quintero Oyola',
+        nrc: '2338',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'H05A',
+    name: 'Teoria e historia v',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Teoria e historia v',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Joel Alexander Samper Lopez',
+        nrc: '1866',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'H06A',
+    name: 'Teoria e historia vi',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Teoria e historia vi',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Joel Alexander Samper Lopez',
+        nrc: '2352',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '15:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'H07A',
+    name: 'Teoría e historia vii',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Teoría e historia vii',
+        type: 'Laboratorio',
+        credits: 2,
+        professor: 'Rosa Esther Barreto Oliveros',
+        nrc: '1959',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '11:00 - 12:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'T01A',
+    name: 'Tecnología i',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Tecnología i',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Brenda Cristina Pacheco Perna',
+        nrc: '1949',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '11:00 - 12:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'T02A',
+    name: 'Tecnología ii',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Tecnología ii',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Fabian Guillermo Amaya Valdivieso',
+        nrc: '2402',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '07:00 - 08:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'T03A',
+    name: 'Tecnología iii',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Tecnología iii',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Brenda Cristina Pacheco Perna',
+        nrc: '2058',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '12:00 - 13:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'T04A',
+    name: 'Tecnología iv',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Tecnología iv',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Raul Ernesto Lopez Gomez',
+        nrc: '2337',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Tecnología iv',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Brenda Cristina Pacheco Perna',
+        nrc: '1461',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '17:00 - 18:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'T05A',
+    name: 'Tecnologia v',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Tecnologia v',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Ariel Perez Garcia',
+        nrc: '1691',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 07:50'),
+          Schedule(day: 'Martes', time: '12:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'T06A',
+    name: 'Tecnología vi',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Tecnología vi',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Javier Alonso Perez Ortiz',
+        nrc: '2351',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '11:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'T07A',
+    name: 'Tecnologia vii',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Tecnologia vii',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Andres Felipe Camargo Bocanegra',
+        nrc: '1186',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '17:00 - 18:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'T08A',
+    name: 'Tecnologia viii',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Tecnologia viii',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Andres Felipe Camargo Bocanegra',
+        nrc: '1822',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '18:00 - 19:50'),
+          Schedule(day: 'Jueves', time: '18:00 - 18:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'T12A',
+    name: 'Diseño de estructuras para arquitectos',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Diseño de estructuras para arquitectos',
+        type: 'Teorico-practico',
+        credits: 3,
+        professor: 'Fabian Guillermo Amaya Valdivieso',
+        nrc: '2592',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '09:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'U01A',
+    name: 'Urbanismo y ambiente i',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Urbanismo y ambiente i',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Howard De Jesus Villareal Molina',
+        nrc: '2398',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '15:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'U02A',
+    name: 'Urbanismo y ambiente ii',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Urbanismo y ambiente ii',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Alexander Niebles Villarreal',
+        nrc: '2045',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '08:00 - 09:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'U03A',
+    name: 'Urbanismo y ambiente iii',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Urbanismo y ambiente iii',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Fabrizio Milano Londoño',
+        nrc: '1334',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'U04A',
+    name: 'Urbanismo y ambiente iv',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Urbanismo y ambiente iv',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Ausberto Coneo Caicedo',
+        nrc: '2341',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '17:00 - 18:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'U06A',
+    name: 'Urbanismo y ambiente vi',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Urbanismo y ambiente vi',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Ramon Raul Perez Yepez',
+        nrc: '2355',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '15:00 - 16:50'),
+          Schedule(day: 'Lunes', time: '17:00 - 17:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'U07A',
+    name: 'Urbanismo y ambiente vii',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Urbanismo y ambiente vii',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Ausberto Coneo Caicedo',
+        nrc: '1850',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '17:00 - 18:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'D01A',
+    name: 'Introducción a la ciencia de datos introducción a la ciencia de datos',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Introducción a la ciencia de datos introducción a la ciencia de datos',
+        type: 'Laboratorio',
+        credits: 2,
+        professor: 'Andy Rafael Dominguez Monterroza',
+        nrc: '1964',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'D02A',
+    name: 'Programación para ciencia de datos programación para ciencia de datos',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Programación para ciencia de datos programación para ciencia de datos',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Humberto Manuel Marbello Peña',
+        nrc: '1974',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 07:50'),
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E10A',
+    name: 'Estudio de area: africa',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Estudio de area: africa',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Orlando Javier Higuera Torres',
+        nrc: '1204',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '08:00 - 09:50'),
+          Schedule(day: 'Lunes', time: '13:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E14A',
+    name: 'Políticas públicas poblacionales',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Políticas públicas poblacionales',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Marlon Jose Marquez Guardo',
+        nrc: '1231',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 07:50'),
+          Schedule(day: 'Lunes', time: '09:00 - 10:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'N02A',
+    name: 'Enfoques para el análisis polí',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Enfoques para el análisis polí',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Armando Jose Mercado Vega',
+        nrc: '1976',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+          Schedule(day: 'Viernes', time: '13:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'N03A',
+    name: 'Gran historia',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Gran historia',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Pablo Gustavo Abitbol Piñeiro',
+        nrc: '1507',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'N05A',
+    name: 'Filosofía política',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Filosofía política',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Pablo Gustavo Abitbol Piñeiro',
+        nrc: '1982',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '07:00 - 08:50'),
+          Schedule(day: 'Miércoles', time: '09:00 - 09:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'N07A',
+    name: 'Teo de la democracia y desarro',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Teo de la democracia y desarro',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Pablo Gustavo Abitbol Piñeiro',
+        nrc: '1986',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '07:00 - 08:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'N10A',
+    name: 'Nueva economía política',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Nueva economía política',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Pablo Gustavo Abitbol Piñeiro',
+        nrc: '2119',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
+          Schedule(day: 'Viernes', time: '15:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'N12A',
+    name: 'Cult y comport polít en el car',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Cult y comport polít en el car',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Orlando Javier Higuera Torres',
+        nrc: '2244',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '09:00 - 09:50'),
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'N13A',
+    name: 'Ana d conflicto y proce de paz',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Ana d conflicto y proce de paz',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Armando Jose Mercado Vega',
+        nrc: '2261',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
+          Schedule(day: 'Martes', time: '16:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'N14A',
+    name: 'Política comparada',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Política comparada',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Armando Jose Mercado Vega',
+        nrc: '2243',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '07:00 - 07:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'N15A',
+    name: 'Partidos políticos y sist elec',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Partidos políticos y sist elec',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Alfredo Luis Jr. Mendoza Diaz',
+        nrc: '2257',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '14:00 - 14:50'),
+          Schedule(day: 'Viernes', time: '15:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'N16A',
+    name: 'Form de proy para el desarroll',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Form de proy para el desarroll',
+        type: 'Teorico-practico',
+        credits: 3,
+        professor: 'Jhonnatan Ballestas Avilez',
+        nrc: '2466',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 07:50'),
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'P02A',
+    name: 'Inv. cuanti en ciencia politic',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Inv. cuanti en ciencia politic',
+        type: 'Teorico-practico',
+        credits: 3,
+        professor: 'Laura Rueda Sierra',
+        nrc: '2248',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Sábado', time: '08:00 - 09:50'),
+          Schedule(day: 'Martes', time: '12:00 - 12:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'P06A',
+    name: 'Práctica profesionales',
+    credits: 9,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Práctica profesionales',
+        type: 'Laboratorio',
+        credits: 9,
+        professor: 'Armando Jose Mercado Vega',
+        nrc: '1971',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '08:00 - 12:50'),
+          Schedule(day: 'Martes', time: '08:00 - 12:50'),
+          Schedule(day: 'Miércoles', time: '08:00 - 12:50'),
+          Schedule(day: 'Jueves', time: '08:00 - 12:50'),
+          Schedule(day: 'Viernes', time: '08:00 - 12:50'),
+          Schedule(day: 'Lunes', time: '14:00 - 16:50'),
+          Schedule(day: 'Martes', time: '14:00 - 16:50'),
+          Schedule(day: 'Miércoles', time: '14:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '14:00 - 16:50'),
+          Schedule(day: 'Viernes', time: '14:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'R01A',
+    name: 'Historia y geografía internaci',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Historia y geografía internaci',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Diandra Jireth Payares Mendoza',
+        nrc: '1973',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '08:00 - 08:50'),
+          Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'R02A',
+    name: 'Sistema político internacional',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Sistema político internacional',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Diandra Jireth Payares Mendoza',
+        nrc: '1980',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '07:00 - 08:50'),
+          Schedule(day: 'Miércoles', time: '10:00 - 10:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'R05A',
+    name: 'Herramientas de política inter',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Herramientas de política inter',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Diandra Jireth Payares Mendoza',
+        nrc: '1983',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '09:00 - 10:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'R08A',
+    name: 'Análisis de política internaci',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Análisis de política internaci',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Marlon Jose Marquez Guardo',
+        nrc: '2283',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+          Schedule(day: 'Lunes', time: '15:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z01A',
+    name: 'Introduccion a la ciencia poli',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Introduccion a la ciencia poli',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Alfredo Luis Jr. Mendoza Diaz',
+        nrc: '1975',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '14:00 - 14:50'),
+          Schedule(day: 'Martes', time: '15:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z02A',
+    name: 'Cons y sist politico colombian',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Cons y sist politico colombian',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Marlon Jose Marquez Guardo',
+        nrc: '1979',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '09:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '14:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z03A',
+    name: 'Politica colombiana siglo xix',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Politica colombiana siglo xix',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Armando Jose Mercado Vega',
+        nrc: '1981',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '10:00 - 11:50'),
+          Schedule(day: 'Lunes', time: '11:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z05A',
+    name: 'Teo contempo de las relaciones',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Teo contempo de las relaciones',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Orlando Javier Higuera Torres',
+        nrc: '2281',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z06A',
+    name: 'Politi colombiana del siglo xx',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Politi colombiana del siglo xx',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Armando Jose Mercado Vega',
+        nrc: '2519',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '09:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '15:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z07A',
+    name: 'Inv en ciencia politica',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Inv en ciencia politica',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Marlon Jose Marquez Guardo',
+        nrc: '1987',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '12:00 - 13:50'),
+          Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z08A',
+    name: 'Estado, poder y derecho',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Estado, poder y derecho',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Luisa Fernanda Guerra Carrera',
+        nrc: '1985',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+          Schedule(day: 'Miércoles', time: '07:00 - 07:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z09A',
+    name: 'Investigacion mixta aplicada',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Investigacion mixta aplicada',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Jhonnatan Ballestas Avilez',
+        nrc: '1118',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 07:50'),
+          Schedule(day: 'Lunes', time: '09:00 - 10:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z23A',
+    name: 'Historia de las ideas política',
     credits: 4,
     classOptions: [
-      // Grupo 1
       ClassOption(
+        subjectName: 'Historia de las ideas política',
         type: 'Teórico',
-        subjectName: 'Física Mecánica',
         credits: 4,
+        professor: 'Pablo Gustavo Abitbol Piñeiro',
+        nrc: '1978',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z25A',
+    name: 'Ana y dis de políticas pública',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Ana y dis de políticas pública',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Laura Rueda Sierra',
+        nrc: '2285',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Sábado', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '12:00 - 12:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'B01A',
+    name: 'Biología humana',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Biología humana',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Angela Patricia Bertel Sevilla',
+        nrc: '2181',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Biología humana',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Angela Patricia Bertel Sevilla',
+        nrc: '2184',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'B02A',
+    name: 'Biología celular',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Biología celular',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Edisson Chavarro Mesa',
+        nrc: '1666',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Biología celular',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Angela Patricia Bertel Sevilla',
+        nrc: '1667',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '09:00 - 10:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Biología celular',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Angela Patricia Bertel Sevilla',
+        nrc: '1668',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '09:00 - 10:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'B03A',
+    name: 'Biorremediación',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Biorremediación',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Diana Carolina Rubiano Labrador',
+        nrc: '1305',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '09:00 - 09:50'),
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'B04A',
+    name: 'Biología molecular',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Biología molecular',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Diana Carolina Rubiano Labrador',
+        nrc: '1686',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '11:00 - 11:50'),
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Biología molecular',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Diana Carolina Rubiano Labrador',
+        nrc: '1687',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E01A',
+    name: 'Estadística y probabilidad',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Estadística y probabilidad',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Deivinso Villa Moncaris',
+        nrc: '1125',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+          Schedule(day: 'Lunes', time: '17:00 - 17:50'),
+          Schedule(day: 'Martes', time: '17:00 - 18:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística y probabilidad',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Elizabeth Valderrama Serrano',
+        nrc: '1154',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '16:00 - 16:50'),
+          Schedule(day: 'Martes', time: '17:00 - 17:50'),
+          Schedule(day: 'Viernes', time: '17:00 - 18:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística y probabilidad',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Alan Orlando Sanchez Marzan',
+        nrc: '1527',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 07:50'),
+          Schedule(day: 'Sábado', time: '07:00 - 08:50'),
+          Schedule(day: 'Jueves', time: '09:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística y probabilidad',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Cecilia Paillier Gonzalez',
+        nrc: '2304',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 13:50'),
+          Schedule(day: 'Viernes', time: '13:00 - 13:50'),
+          Schedule(day: 'Lunes', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística y probabilidad',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Derlis Aminta Villadiego Rincon',
+        nrc: '2318',
+        groupId: 5,
+        schedules: [
+          Schedule(day: 'Viernes', time: '13:00 - 13:50'),
+          Schedule(day: 'Miércoles', time: '15:00 - 15:50'),
+          Schedule(day: 'Lunes', time: '16:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística y probabilidad',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Elizabeth Valderrama Serrano',
+        nrc: '1110',
+        groupId: 6,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+          Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
+          Schedule(day: 'Jueves', time: '16:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E02A',
+    name: 'Estadística inferencial',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Estadística inferencial',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Roberto Enrique Gomez Fernandez',
+        nrc: '1998',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+          Schedule(day: 'Martes', time: '14:00 - 14:50'),
+          Schedule(day: 'Miércoles', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística inferencial',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Deivinso Villa Moncaris',
+        nrc: '2616',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '14:00 - 15:50'),
+          Schedule(day: 'Miércoles', time: '16:00 - 16:50'),
+          Schedule(day: 'Lunes', time: '18:00 - 18:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística inferencial',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Cecilia Paillier Gonzalez',
+        nrc: '2635',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Lunes', time: '16:00 - 16:50'),
+          Schedule(day: 'Martes', time: '18:00 - 18:50'),
+          Schedule(day: 'Jueves', time: '18:00 - 19:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística inferencial',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Roberto Enrique Gomez Fernandez',
+        nrc: '2017',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+          Schedule(day: 'Miércoles', time: '14:00 - 14:50'),
+          Schedule(day: 'Martes', time: '16:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística inferencial',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Jorge Luis Villalba Acevedo',
+        nrc: '2022',
+        groupId: 5,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+          Schedule(day: 'Martes', time: '13:00 - 13:50'),
+          Schedule(day: 'Viernes', time: '15:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E03A',
+    name: 'Estadística i (facultad ciencias sociales y humanidades)',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Estadística i (facultad ciencias sociales y humanidades)',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Misorly Del Carmen Soto Acevedo',
+        nrc: '2606',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '14:00 - 15:50'),
+          Schedule(day: 'Martes', time: '14:00 - 14:50'),
+          Schedule(day: 'Jueves', time: '15:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística i (facultad ciencias sociales y humanidades)',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Alan Orlando Sanchez Marzan',
+        nrc: '1526',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 07:50'),
+          Schedule(day: 'Sábado', time: '07:00 - 08:50'),
+          Schedule(day: 'Jueves', time: '09:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística i (facultad ciencias sociales y humanidades)',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Jorge Luis Villalba Acevedo',
+        nrc: '2305',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
+          Schedule(day: 'Martes', time: '09:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E03A',
+    name: 'Estadística i (para derecho) en campus ternera',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Estadística i (para derecho) en campus ternera',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Julio Seferino Hurtado Marquez',
+        nrc: '1136',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '07:00 - 08:50'),
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E04A',
+    name: 'Estadística ii (facultad ciencias sociales y humanidades)',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Francisco Mauricio Atencio Contreras',
+        nrc: '2004',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '16:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '16:00 - 16:50'),
+          Schedule(day: 'Miércoles', time: '17:00 - 18:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Alan Orlando Sanchez Marzan',
+        nrc: '2013',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '10:00 - 10:50'),
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+          Schedule(day: 'Viernes', time: '11:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Jorge Luis Villalba Acevedo',
+        nrc: '2023',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+          Schedule(day: 'Martes', time: '13:00 - 13:50'),
+          Schedule(day: 'Viernes', time: '15:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'F01A',
+    name: 'Física mecánica',
+    credits: 4,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Física mecánica',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Vilma Viviana Ojeda Caicedo',
+        nrc: '1632',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física mecánica',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Kevin David Mendoza Vanegas',
+        nrc: '2530',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física mecánica',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Vilma Viviana Ojeda Caicedo',
+        nrc: '2042',
+        groupId: 2,
         schedules: [
           Schedule(day: 'Martes', time: '10:00 - 11:50'),
           Schedule(day: 'Jueves', time: '15:00 - 16:50'),
         ],
-        professor: 'Vilma',
-        nrc: '1001',
-        groupId: 1,
       ),
       ClassOption(
-        subjectName: 'Física Mecánica',
+        subjectName: 'Física mecánica',
         type: 'Laboratorio',
-        credits: 4,
+        credits: 0,
+        professor: 'Kevin David Mendoza Vanegas',
+        nrc: '2043',
+        groupId: 2,
         schedules: [
           Schedule(day: 'Lunes', time: '13:00 - 14:50'),
         ],
-        professor: 'Kevin Mendoza',
-        nrc: '1002',
-        groupId: 1,
       ),
-      // Grupo 2
       ClassOption(
-        subjectName: 'Física Mecánica',
+        subjectName: 'Física mecánica',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Kevin David Mendoza Vanegas',
+        nrc: '2535',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física mecánica',
         type: 'Teórico',
         credits: 4,
+        professor: 'Yony Alejandro Pastrana Caballero',
+        nrc: '2091',
+        groupId: 3,
         schedules: [
           Schedule(day: 'Martes', time: '10:00 - 11:50'),
           Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
         ],
-        professor: 'Yony Pastrana',
-        nrc: '1003',
-        groupId: 2,
       ),
       ClassOption(
-        subjectName: 'Física Mecánica',
+        subjectName: 'Física mecánica',
         type: 'Laboratorio',
-        credits: 4,
+        credits: 0,
+        professor: 'Aris Daniela Hurtado Misal',
+        nrc: '2537',
+        groupId: 3,
         schedules: [
           Schedule(day: 'Viernes', time: '15:00 - 16:50'),
         ],
-        professor: 'Aris Daniela',
-        nrc: '1004',
-        groupId: 2,
       ),
-      // Grupo 3
       ClassOption(
-        subjectName: 'Física Mecánica',
+        subjectName: 'Física mecánica',
         type: 'Teórico',
         credits: 4,
+        professor: 'Elias Guillermo Imitola Coley',
+        nrc: '2100',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Jueves', time: '13:00 - 14:50'),
+          Schedule(day: 'Viernes', time: '16:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física mecánica',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Aris Daniela Hurtado Misal',
+        nrc: '2539',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física mecánica',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Yony Alejandro Pastrana Caballero',
+        nrc: '2133',
+        groupId: 5,
         schedules: [
           Schedule(day: 'Lunes', time: '09:00 - 10:50'),
           Schedule(day: 'Viernes', time: '13:00 - 14:50'),
         ],
-        professor: 'Yony Pastrana',
-        nrc: '1005',
-        groupId: 3,
       ),
       ClassOption(
-        subjectName: 'Física Mecánica',
+        subjectName: 'Física mecánica',
         type: 'Laboratorio',
-        credits: 4,
+        credits: 0,
+        professor: 'Kevin David Mendoza Vanegas',
+        nrc: '2134',
+        groupId: 5,
         schedules: [
           Schedule(day: 'Martes', time: '13:00 - 14:50'),
         ],
-        professor: 'Kevin Mendoza',
-        nrc: '1006',
-        groupId: 3,
       ),
-      // Grupo 4
       ClassOption(
-        subjectName: 'Física Mecánica',
+        subjectName: 'Física mecánica',
         type: 'Teórico',
         credits: 4,
+        professor: 'Elias Guillermo Imitola Coley',
+        nrc: '2138',
+        groupId: 6,
         schedules: [
           Schedule(day: 'Jueves', time: '15:00 - 16:50'),
           Schedule(day: 'Martes', time: '17:00 - 18:50'),
         ],
-        professor: 'Elias Imitola',
-        nrc: '1007',
-        groupId: 4,
       ),
       ClassOption(
-        subjectName: 'Física Mecánica',
+        subjectName: 'Física mecánica',
         type: 'Laboratorio',
-        credits: 4,
+        credits: 0,
+        professor: 'Aris Daniela Hurtado Misal',
+        nrc: '2139',
+        groupId: 6,
         schedules: [
-          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
         ],
-        professor: 'Aris Daniela',
-        nrc: '1008',
-        groupId: 4,
+      ),
+      ClassOption(
+        subjectName: 'Física mecánica',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Aris Daniela Hurtado Misal',
+        nrc: '2542',
+        groupId: 6,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+        ],
       ),
     ],
   ),
-
-  // Cálculo Integral
   Subject(
-    code: 'M03A',
-    name: 'Cálculo Integral',
+    code: 'F02A',
+    name: 'Física electricidad y magnetismo',
     credits: 4,
     classOptions: [
-      // Teórico - Eder Barrios (Grupo 1)
       ClassOption(
-        subjectName: 'Cálculo Integral',
+        subjectName: 'Física electricidad y magnetismo',
         type: 'Teórico',
         credits: 4,
-        schedules: [
-          Schedule(day: 'Martes', time: '07:00 - 08:50'),
-        ],
-        professor: 'Eder Barrios',
-        nrc: '2001',
+        professor: 'Hernando Rafael Altamar Mercado',
+        nrc: '1676',
         groupId: 1,
-      ),
-      // Laboratorios asociados a Eder Barrios (Grupo 1)
-      ClassOption(
-        subjectName: 'Cálculo Integral',
-        type: 'Laboratorio',
-        credits: 4,
         schedules: [
-          Schedule(day: 'Jueves', time: '16:00 - 17:50'),
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+          Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
         ],
-        professor: 'Deimer Zambrano',
-        nrc: '2002',
-        groupId: 1,
       ),
       ClassOption(
-        subjectName: 'Cálculo Integral',
+        subjectName: 'Física electricidad y magnetismo',
         type: 'Laboratorio',
+        credits: 0,
+        professor: 'Elias Guillermo Imitola Coley',
+        nrc: '1677',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física electricidad y magnetismo',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Elias Guillermo Imitola Coley',
+        nrc: '2543',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física electricidad y magnetismo',
+        type: 'Teórico',
         credits: 4,
+        professor: 'Hernando Rafael Altamar Mercado',
+        nrc: '1706',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+          Schedule(day: 'Viernes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física electricidad y magnetismo',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Waldyr Fong Silva',
+        nrc: '1707',
+        groupId: 2,
         schedules: [
           Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
         ],
-        professor: 'Cesar Serna',
-        nrc: '2003',
-        groupId: 1,
       ),
-      // Teórico - Carlos Payares (Grupo 2)
       ClassOption(
-        subjectName: 'Cálculo Integral',
+        subjectName: 'Física electricidad y magnetismo',
         type: 'Teórico',
         credits: 4,
+        professor: 'Waldyr Fong Silva',
+        nrc: '2103',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+          Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física electricidad y magnetismo',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Gabriel Andres Hoyos Gomez Casseres',
+        nrc: '2104',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física electricidad y magnetismo',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Hernando Rafael Altamar Mercado',
+        nrc: '2131',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Lunes', time: '14:00 - 15:50'),
+          Schedule(day: 'Jueves', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física electricidad y magnetismo',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Elias Guillermo Imitola Coley',
+        nrc: '2132',
+        groupId: 4,
         schedules: [
           Schedule(day: 'Martes', time: '13:00 - 14:50'),
         ],
-        professor: 'Carlos Payares',
-        nrc: '2007',
-        groupId: 2,
       ),
-      // Laboratorios asociados a Carlos Payares (Grupo 2)
       ClassOption(
-        subjectName: 'Cálculo Integral',
-        type: 'Laboratorio',
+        subjectName: 'Física electricidad y magnetismo',
+        type: 'Teórico',
         credits: 4,
+        professor: 'Jorge Luis Muñiz Olite',
+        nrc: '2174',
+        groupId: 5,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+          Schedule(day: 'Viernes', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física electricidad y magnetismo',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Gabriel Andres Hoyos Gomez Casseres',
+        nrc: '2551',
+        groupId: 5,
         schedules: [
           Schedule(day: 'Jueves', time: '10:00 - 11:50'),
         ],
-        professor: 'Cesar Serna',
-        nrc: '2008',
-        groupId: 2,
       ),
-      // Teórico - Moisés Quintana (Grupo 3)
+    ],
+  ),
+  Subject(
+    code: 'F03A',
+    name: 'Física calor y ondas',
+    credits: 4,
+    classOptions: [
       ClassOption(
-        subjectName: 'Cálculo Integral',
+        subjectName: 'Física calor y ondas',
         type: 'Teórico',
         credits: 4,
+        professor: 'Alberto Patiño Vanegas',
+        nrc: '1536',
+        groupId: 1,
         schedules: [
-          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+          Schedule(day: 'Viernes', time: '07:00 - 08:50'),
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
         ],
-        professor: 'Moisés Quintana',
-        nrc: '2014',
-        groupId: 3,
       ),
-      // Laboratorios asociados a Moisés Quintana (Grupo 3)
       ClassOption(
-        subjectName: 'Cálculo Integral',
+        subjectName: 'Física calor y ondas',
         type: 'Laboratorio',
-        credits: 4,
+        credits: 0,
+        professor: 'Alexander De Jesus Leyton Coneo',
+        nrc: '1537',
+        groupId: 1,
         schedules: [
           Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
         ],
-        professor: 'Moisés Quintana',
-        nrc: '2018',
+      ),
+      ClassOption(
+        subjectName: 'Física calor y ondas',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Alexander De Jesus Leyton Coneo',
+        nrc: '2553',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física calor y ondas',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Jorge Luis Muñiz Olite',
+        nrc: '1541',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física calor y ondas',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Alexander De Jesus Leyton Coneo',
+        nrc: '1542',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física calor y ondas',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Alberto Patiño Vanegas',
+        nrc: '1545',
         groupId: 3,
+        schedules: [
+          Schedule(day: 'Lunes', time: '08:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física calor y ondas',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Yaleidys Paola Hernandez Diaz',
+        nrc: '1546',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Física calor y ondas',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Yaleidys Paola Hernandez Diaz',
+        nrc: '2555',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
+        ],
       ),
     ],
   ),
-  // Inglés 1
   Subject(
-    code: 'I01A',
-    name: 'Inglés 1',
+    code: 'M01A',
+    name: 'Cálculo diferencial',
+    credits: 4,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Cálculo diferencial',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Laura Natalia Martinez Piña',
+        nrc: '2276',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo diferencial',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Jose Priciliano Perez Santander',
+        nrc: '1917',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo diferencial',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Julio Alberto Castro Garces',
+        nrc: '2147',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo diferencial',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Luzneyda Ballesteros Peinado',
+        nrc: '2153',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo diferencial',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Fernando Perez Berrio',
+        nrc: '2189',
+        groupId: 5,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo diferencial',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Julio Alberto Castro Garces',
+        nrc: '2197',
+        groupId: 6,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '11:00 - 12:50'),
+          Schedule(day: 'Lunes', time: '12:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo diferencial',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Julio Alberto Castro Garces',
+        nrc: '2207',
+        groupId: 7,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo diferencial',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Alejandra Paola Villalobos Jimenez',
+        nrc: '2267',
+        groupId: 8,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'M02A',
+    name: 'Matemáticas básicas',
     credits: 2,
     classOptions: [
-      // Grupo 1
       ClassOption(
-        subjectName: 'Inglés 1',
+        subjectName: 'Matemáticas básicas',
         type: 'Teórico',
         credits: 2,
-        schedules: [
-          Schedule(day: 'Lunes', time: '07:00 - 07:50'),
-          Schedule(day: 'Miércoles', time: '07:00 - 07:50'),
-          Schedule(day: 'Jueves', time: '07:00 - 07:50'),
-          Schedule(day: 'Viernes', time: '07:00 - 07:50'),
-        ],
-        professor: 'Gilsy Martínez Polo',
-        nrc: '3001',
+        professor: 'Carlos Rafael Payares Guevara',
+        nrc: '1100',
         groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
       ),
-      // Grupo 2
       ClassOption(
-        subjectName: 'Inglés 1',
+        subjectName: 'Matemáticas básicas',
         type: 'Teórico',
         credits: 2,
-        schedules: [
-          Schedule(day: 'Lunes', time: '10:00 - 10:50'),
-          Schedule(day: 'Martes', time: '10:00 - 10:50'),
-          Schedule(day: 'Jueves', time: '10:00 - 10:50'),
-          Schedule(day: 'Viernes', time: '10:00 - 10:50'),
-        ],
-        professor: 'Eilin Pérez',
-        nrc: '3002',
+        professor: 'Laura Natalia Martinez Piña',
+        nrc: '1278',
         groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+          Schedule(day: 'Viernes', time: '07:00 - 08:50'),
+        ],
       ),
-      // Grupo 3
       ClassOption(
-        subjectName: 'Inglés 1',
+        subjectName: 'Matemáticas básicas',
         type: 'Teórico',
         credits: 2,
-        schedules: [
-          Schedule(day: 'Viernes', time: '18:00 - 20:00'),
-          Schedule(day: 'Sábado', time: '08:00 - 10:00'),
-        ],
-        professor: 'Cindy Paola',
-        nrc: '3003',
+        professor: 'Carlos Rafael Payares Guevara',
+        nrc: '1289',
         groupId: 3,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Matemáticas básicas',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Diana Carolina Escorcia Espitia',
+        nrc: '1446',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
+          Schedule(day: 'Viernes', time: '08:00 - 09:50'),
+        ],
       ),
     ],
   ),
-
-  // Álgebra Lineal
+  Subject(
+    code: 'M03A',
+    name: 'Cálculo integral',
+    credits: 0,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Teórico',
+        credits: 0,
+        professor: 'Eder Antonio Barrios Hernandez',
+        nrc: '1053',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Deimer Jose Zambrano Gandia',
+        nrc: '1054',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '16:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Cesar Alberto Serna Rapello',
+        nrc: '1055',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Jorge Luis Cohen Torres',
+        nrc: '1056',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Adriana Carolina Castillo Martinez',
+        nrc: '1057',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '09:00 - 10:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Victor Juan Hernandez Del Toro',
+        nrc: '1059',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Sábado', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Eder Antonio Barrios Hernandez',
+        nrc: '2565',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Luzneyda Ballesteros Peinado',
+        nrc: '2567',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '18:00 - 19:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Teórico',
+        credits: 0,
+        professor: 'Carlos Rafael Payares Guevara',
+        nrc: '1342',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Cesar Alberto Serna Rapello',
+        nrc: '1343',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Carlos Rafael Payares Guevara',
+        nrc: '2571',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Laura Natalia Martinez Piña',
+        nrc: '1345',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Jorge Luis Cohen Torres',
+        nrc: '1346',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Cesar Alberto Serna Rapello',
+        nrc: '1347',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Deimer Jose Zambrano Gandia',
+        nrc: '1348',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '16:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Laura Natalia Martinez Piña',
+        nrc: '2569',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Carlos Rafael Payares Guevara',
+        nrc: '2570',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Jueves', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Teórico',
+        credits: 0,
+        professor: 'Moises Ramon Quintana Alvarez',
+        nrc: '1368',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Moises Ramon Quintana Alvarez',
+        nrc: '1369',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Viernes', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Moises Ramon Quintana Alvarez',
+        nrc: '1370',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo integral',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Moises Ramon Quintana Alvarez',
+        nrc: '1371',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
   Subject(
     code: 'M04A',
-    name: 'Álgebra Lineal',
+    name: 'Algebra lineal',
     credits: 3,
     classOptions: [
-      // Grupo 1
       ClassOption(
-        subjectName: 'Álgebra Lineal',
+        subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
+        professor: 'Cristina Osorio Del Valle',
+        nrc: '1072',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+          Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Algebra lineal',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Jorge Luis Cohen Torres',
+        nrc: '2453',
+        groupId: 2,
         schedules: [
           Schedule(day: 'Martes', time: '09:00 - 09:50'),
           Schedule(day: 'Miércoles', time: '09:00 - 10:50'),
         ],
-        professor: 'Jorge Cohen',
-        nrc: '4001',
-        groupId: 1,
       ),
-      // Grupo 2
       ClassOption(
-        subjectName: 'Álgebra Lineal',
+        subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
+        professor: 'Victor Juan Hernandez Del Toro',
+        nrc: '1085',
+        groupId: 3,
         schedules: [
           Schedule(day: 'Jueves', time: '13:00 - 13:50'),
           Schedule(day: 'Viernes', time: '14:00 - 15:50'),
         ],
-        professor: 'Victor Hernández',
-        nrc: '4002',
-        groupId: 2,
       ),
-      // Grupo 3
       ClassOption(
-        subjectName: 'Álgebra Lineal',
+        subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
+        professor: 'Adriana Carolina Castillo Martinez',
+        nrc: '1865',
+        groupId: 4,
         schedules: [
           Schedule(day: 'Lunes', time: '09:00 - 10:50'),
           Schedule(day: 'Miércoles', time: '11:00 - 11:50'),
         ],
-        professor: 'Adriana Castillo',
-        nrc: '4003',
-        groupId: 3,
       ),
-      // Grupo 4
       ClassOption(
-        subjectName: 'Álgebra Lineal',
+        subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
+        professor: 'Cristina Osorio Del Valle',
+        nrc: '2339',
+        groupId: 5,
+        schedules: [
+          Schedule(day: 'Jueves', time: '08:00 - 09:50'),
+          Schedule(day: 'Lunes', time: '11:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Algebra lineal',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Diana Carolina Escorcia Espitia',
+        nrc: '2340',
+        groupId: 6,
         schedules: [
           Schedule(day: 'Lunes', time: '11:00 - 12:50'),
           Schedule(day: 'Jueves', time: '12:00 - 12:50'),
         ],
-        professor: 'Diana Escorcia',
-        nrc: '4004',
-        groupId: 4,
       ),
-      // Grupo 5
       ClassOption(
-        subjectName: 'Álgebra Lineal',
+        subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
+        professor: 'Adriana Carolina Castillo Martinez',
+        nrc: '2343',
+        groupId: 7,
         schedules: [
           Schedule(day: 'Viernes', time: '09:00 - 09:50'),
           Schedule(day: 'Martes', time: '10:00 - 11:50'),
         ],
-        professor: 'Adriana Castillo',
-        nrc: '4005',
-        groupId: 5,
       ),
-      // Grupo 6
       ClassOption(
-        subjectName: 'Álgebra Lineal',
+        subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
+        professor: 'Andy Rafael Dominguez Monterroza',
+        nrc: '2345',
+        groupId: 8,
         schedules: [
           Schedule(day: 'Lunes', time: '13:00 - 14:50'),
           Schedule(day: 'Jueves', time: '16:00 - 16:50'),
         ],
-        professor: 'Andy Domínguez',
-        nrc: '4006',
-        groupId: 6,
       ),
-      // Grupo 7
       ClassOption(
-        subjectName: 'Álgebra Lineal',
+        subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
+        professor: 'Victor Juan Hernandez Del Toro',
+        nrc: '2422',
+        groupId: 9,
         schedules: [
           Schedule(day: 'Jueves', time: '14:00 - 15:50'),
           Schedule(day: 'Martes', time: '16:00 - 16:50'),
         ],
-        professor: 'Victor Hernández',
-        nrc: '4007',
-        groupId: 7,
       ),
-      // Grupo 8
       ClassOption(
-        subjectName: 'Álgebra Lineal',
+        subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
+        professor: 'John Beiro Moreno Barrios',
+        nrc: '2446',
+        groupId: 10,
         schedules: [
           Schedule(day: 'Viernes', time: '16:00 - 17:50'),
           Schedule(day: 'Miércoles', time: '17:00 - 17:50'),
         ],
-        professor: 'John Moreno',
-        nrc: '4008',
-        groupId: 8,
       ),
     ],
   ),
-
-  // Programación
   Subject(
-    code: 'C03A',
-    name: 'Programación',
-    credits: 3,
+    code: 'M05A',
+    name: 'Cálculo vectorial',
+    credits: 0,
     classOptions: [
-      // Grupo 1
       ClassOption(
-        subjectName: 'Programación',
+        subjectName: 'Cálculo vectorial',
         type: 'Teórico',
-        credits: 3,
+        credits: 0,
+        professor: 'Jeovanny De Jesus Muentes Acevedo',
+        nrc: '1019',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'John Beiro Moreno Barrios',
+        nrc: '1020',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '16:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Enrique Pereira Batista',
+        nrc: '1021',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Cesar Alberto Serna Rapello',
+        nrc: '1022',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo vectorial',
+        type: 'Teórico',
+        credits: 0,
+        professor: 'Jeovanny De Jesus Muentes Acevedo',
+        nrc: '1775',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Adriana Carolina Castillo Martinez',
+        nrc: '1776',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Adriana Carolina Castillo Martinez',
+        nrc: '1777',
+        groupId: 2,
         schedules: [
           Schedule(day: 'Jueves', time: '07:00 - 08:50'),
-          Schedule(day: 'Viernes', time: '12:00 - 12:50'),
         ],
-        professor: 'Julio Gamarra',
-        nrc: '5001',
-        groupId: 1,
       ),
-      // Grupo 2
       ClassOption(
-        subjectName: 'Programación',
-        type: 'Teórico',
-        credits: 3,
-        schedules: [
-          Schedule(day: 'Viernes', time: '09:00 - 09:50'),
-          Schedule(day: 'Lunes', time: '15:00 - 16:50'),
-        ],
-        professor: 'María Rincón',
-        nrc: '5002',
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'John Beiro Moreno Barrios',
+        nrc: '1778',
         groupId: 2,
-      ),
-      // Grupo 3
-      ClassOption(
-        subjectName: 'Programación',
-        type: 'Teórico',
-        credits: 3,
         schedules: [
-          Schedule(day: 'Viernes', time: '08:00 - 09:50'),
-          Schedule(day: 'Miércoles', time: '14:00 - 14:50'),
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
         ],
-        professor: 'María Rincón',
-        nrc: '5003',
-        groupId: 3,
       ),
-      // Grupo 4
       ClassOption(
-        subjectName: 'Programación',
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Cesar Alberto Serna Rapello',
+        nrc: '1779',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Cesar Alberto Serna Rapello',
+        nrc: '1780',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Victor Juan Hernandez Del Toro',
+        nrc: '1781',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '16:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'John Beiro Moreno Barrios',
+        nrc: '1782',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Jueves', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Enrique Pereira Batista',
+        nrc: '1783',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Cálculo vectorial',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Enrique Pereira Batista',
+        nrc: '2587',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'M06A',
+    name: 'Ecuaciones diferenciales y en diferencia',
+    credits: 0,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Ecuaciones diferenciales y en diferencia',
+        type: 'Teórico',
+        credits: 0,
+        professor: 'Juan Carlos Palomino Mancilla',
+        nrc: '1484',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Ecuaciones diferenciales y en diferencia',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Juan Carlos Palomino Mancilla',
+        nrc: '1485',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Ecuaciones diferenciales y en diferencia',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Jose Priciliano Perez Santander',
+        nrc: '1486',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Ecuaciones diferenciales y en diferencia',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Enrique Pereira Batista',
+        nrc: '1487',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Ecuaciones diferenciales y en diferencia',
+        type: 'Teórico',
+        credits: 0,
+        professor: 'Juan Carlos Palomino Mancilla',
+        nrc: '2239',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Ecuaciones diferenciales y en diferencia',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Enrique Pereira Batista',
+        nrc: '2241',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Jueves', time: '09:00 - 10:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Ecuaciones diferenciales y en diferencia',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Enrique Pereira Batista',
+        nrc: '2242',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Ecuaciones diferenciales y en diferencia',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Jose Priciliano Perez Santander',
+        nrc: '2589',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Ecuaciones diferenciales y en diferencia',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Juan Carlos Palomino Mancilla',
+        nrc: '2593',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Jueves', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Ecuaciones diferenciales y en diferencia',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Jose Priciliano Perez Santander',
+        nrc: '2595',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '09:00 - 10:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'M08A',
+    name: 'Matemática para ciencias sociales',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Matemática para ciencias sociales',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Alejandra Paola Villalobos Jimenez',
+        nrc: '2188',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Matemática para ciencias sociales',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Alejandra Paola Villalobos Jimenez',
+        nrc: '2048',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Matemática para ciencias sociales',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Alejandra Paola Villalobos Jimenez',
+        nrc: '2190',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Q01A',
+    name: 'Química general',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Química general',
         type: 'Teórico',
         credits: 3,
+        professor: 'Mary Andrea Fennix Agudelo',
+        nrc: '1121',
+        groupId: 1,
         schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+          Schedule(day: 'Jueves', time: '07:00 - 07:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Química general',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Mary Andrea Fennix Agudelo',
+        nrc: '1122',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Química general',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Mary Andrea Fennix Agudelo',
+        nrc: '2522',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Química general',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Mary Andrea Fennix Agudelo',
+        nrc: '1317',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Química general',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Arnaldo De Jesus Jimenez Altamiranda',
+        nrc: '1318',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Q04A',
+    name: 'Análisis químico e instrumenta',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Análisis químico e instrumenta',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Danilo Lusbin Ariza Rua',
+        nrc: '1637',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '07:00 - 07:50'),
           Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectName: 'Análisis químico e instrumenta',
+        type: 'Laboratorio',
+        credits: 0,
+        professor: 'Danilo Lusbin Ariza Rua',
+        nrc: '1638',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'B01A',
+    name: 'Fundamentos de la comunicacion',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Fundamentos de la comunicacion',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Adolfo Baltar Moreno',
+        nrc: '2266',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+          Schedule(day: 'Viernes', time: '13:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'B02A',
+    name: 'Teoría de la comunicación',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Teoría de la comunicación',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Mercedes Lucia Posada Meola',
+        nrc: '2300',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '12:00 - 12:50'),
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'B03A',
+    name: 'Sociología de la comunicación',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Sociología de la comunicación',
+        type: 'Teorico-practico',
+        credits: 3,
+        professor: 'Miguel Efren Garces Prettel',
+        nrc: '2299',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
+          Schedule(day: 'Martes', time: '15:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'B04A',
+    name: 'Legislación de medios',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Legislación de medios',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Ivan Dario Marrugo Jimenez',
+        nrc: '1607',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '11:00 - 12:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'B05A',
+    name: 'Semiótica',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Semiótica',
+        type: 'Teorico-practico',
+        credits: 2,
+        professor: 'Marelbi Del Carmen Olmos Perez',
+        nrc: '2298',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '09:00 - 10:50'),
+          Schedule(day: 'Martes', time: '09:00 - 09:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'B06A',
+    name: 'Opinión pública',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Opinión pública',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Tania Lucia Cobos Cobos',
+        nrc: '1176',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '14:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'B07A',
+    name: 'Ética de la comunicación',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Ética de la comunicación',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Marelbi Del Carmen Olmos Perez',
+        nrc: '1276',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '07:00 - 08:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E12A',
+    name: 'Redes sociales y comunica poli',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Redes sociales y comunica poli',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Tania Lucia Cobos Cobos',
+        nrc: '1223',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
+          Schedule(day: 'Viernes', time: '13:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E17A',
+    name: 'Comunicación, género(s) y femi',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Comunicación, género(s) y femi',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Mercedes Lucia Posada Meola',
+        nrc: '1205',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '14:00 - 15:50'),
           Schedule(day: 'Martes', time: '16:00 - 16:50'),
         ],
-        professor: 'Carlos Botero',
-        nrc: '5004',
-        groupId: 4,
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E18A',
+    name: 'Presentación en tv y plataformas digitales',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Presentación en tv y plataformas digitales',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Aura Vanessa Gomez Herrera',
+        nrc: '1523',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '08:00 - 08:50'),
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'F01A',
+    name: 'Historia contemporánea',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Historia contemporánea',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Lorena Guerrero Palencia',
+        nrc: '2288',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G01A',
+    name: 'Comunicación organizacional i',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Comunicación organizacional i',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Julio Antonio Gomez Mora',
+        nrc: '1189',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '11:00 - 11:50'),
+          Schedule(day: 'Viernes', time: '14:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G02A',
+    name: 'Comunicación organizacional ii',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Comunicación organizacional ii',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Julio Antonio Gomez Mora',
+        nrc: '1400',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '09:00 - 09:50'),
+          Schedule(day: 'Viernes', time: '12:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G03A',
+    name: 'Marketing corporativo',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Marketing corporativo',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Gustavo Adolfo Bossa Gracia',
+        nrc: '1440',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 10:50'),
+          Schedule(day: 'Martes', time: '11:00 - 12:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G04A',
+    name: 'Comunicación para el cambio social i',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Comunicación para el cambio social i',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Lorena Guerrero Palencia',
+        nrc: '1425',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '11:00 - 12:50'),
+          Schedule(day: 'Miércoles', time: '12:00 - 12:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G06A',
+    name: 'Comunicación para el cambio social ii',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Comunicación para el cambio social ii',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Humberto De Jesus Padilla Martinez',
+        nrc: '1221',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
+          Schedule(day: 'Viernes', time: '17:00 - 17:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G07A',
+    name: 'Gestión de proyectos de comunicación',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Gestión de proyectos de comunicación',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Miguel Efren Garces Prettel',
+        nrc: '1466',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '14:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G08A',
+    name: 'Gestión de contenidos digitale - malla 2019',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Gestión de contenidos digitale - malla 2019',
+        type: 'Teorico-practico',
+        credits: 3,
+        professor: 'Tania Lucia Cobos Cobos',
+        nrc: '1447',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '09:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'L01A',
+    name: 'Taller de redacción ii',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Taller de redacción ii',
+        type: 'Teorico-practico',
+        credits: 3,
+        professor: 'Marelbi Del Carmen Olmos Perez',
+        nrc: '2315',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
+          Schedule(day: 'Lunes', time: '14:00 - 15:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'M01A',
+    name: 'Expresión oral',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectName: 'Expresión oral',
+        type: 'Teorico-practico',
+        credits: 3,
+        professor: 'Aura Vanessa Gomez Herrera',
+        nrc: '2272',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '09:00 - 10:50'),
+          Schedule(day: 'Jueves', time: '09:00 - 09:50'),
+        ],
       ),
     ],
   ),
