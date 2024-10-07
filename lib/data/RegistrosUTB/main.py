@@ -147,6 +147,38 @@ if __name__ == "__main__":
                 numeroCurso = per.find_element(By.CSS_SELECTOR, "td[data-property='courseNumber']").text
                 seccion = per.find_element(By.CSS_SELECTOR, "td[data-property='sequenceNumber']").text
                 creditos = per.find_element(By.CSS_SELECTOR, "td[data-property='creditHours']").text
+                if creditos == '0':
+                    per.find_element(By.CSS_SELECTOR, 'a').click()
+                    time.sleep(5)
+                    try:
+                        # Espera hasta que el contenedor esté visible
+                        ele = wait.until(ec.visibility_of_element_located((By.CSS_SELECTOR, '#classDetailsContentDetailsDiv')))
+                        # Obtiene todo el texto del div
+                        full_text = ele.text.strip()
+                        # Imprime el texto completo para depurar
+                        print(full_text)
+                        # Busca las horas de crédito en el texto completo
+                        if "Horas crédito:" in full_text:
+                            # Divide el texto por líneas y busca la línea que contiene "Horas crédito:"
+                            for line in full_text.splitlines():
+                                if "Horas crédito:" in line:
+                                    creditos = line.split(":")[1].strip()
+                                    if not creditos:
+                                        creditos = '0'
+                                    break
+                        else:
+                            creditos = '4'  # Valor por defecto si no se encuentra la línea
+
+                    except TimeoutException:
+                        creditos = '4'  # Valor por defecto si se agota el tiempo de espera
+
+                    # Cierra la ventana
+                    try:
+                        omg = wait.until(ec.element_to_be_clickable((By.XPATH, "//span[text()='close']")))
+                        omg.click()
+                    except TimeoutException:
+                        print("El botón de cerrar no fue encontrado o no es clickable.")
+                    print(creditos)
                 nrc = per.find_element(By.CSS_SELECTOR, "td[data-property='courseReferenceNumber']").text
                 instructor = per.find_element(By.CSS_SELECTOR, "td[data-property='instructor']").text
                 if instructor == "":
