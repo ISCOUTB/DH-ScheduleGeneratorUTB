@@ -1,9 +1,24 @@
 // lib/schedule_generator.dart
+import 'package:flutter/material.dart';
 import '../models/subject.dart';
 import '../models/class_option.dart';
 import '../models/schedule.dart';
-import 'package:flutter/material.dart';
-import 'package:collection/collection.dart'; 
+
+class TimeOfDayRange {
+  final TimeOfDay start;
+  final TimeOfDay end;
+
+  TimeOfDayRange(this.start, this.end);
+
+  bool overlaps(TimeOfDayRange other) {
+    final startMinutes = start.hour * 60 + start.minute;
+    final endMinutes = end.hour * 60 + end.minute;
+    final otherStartMinutes = other.start.hour * 60 + other.start.minute;
+    final otherEndMinutes = other.end.hour * 60 + other.end.minute;
+
+    return (startMinutes < otherEndMinutes) && (endMinutes > otherStartMinutes);
+  }
+}
 
 // Función para obtener combinaciones de opciones de clase para una asignatura
 List<List<ClassOption>> obtenerCombinacionesDeOpciones(Subject asignatura) {
@@ -50,7 +65,8 @@ List<List<ClassOption>> obtenerCombinacionesDeOpciones(Subject asignatura) {
 }
 
 // Función para generar todas las combinaciones posibles de horarios
-List<List<ClassOption>> generarTodosLosHorariosPosibles(List<Subject> asignaturas) {
+List<List<ClassOption>> generarTodosLosHorariosPosibles(
+    List<Subject> asignaturas) {
   // Obtener las combinaciones de opciones para cada asignatura
   List<List<List<ClassOption>>> combinacionesPorAsignatura = [];
 
@@ -62,8 +78,8 @@ List<List<ClassOption>> generarTodosLosHorariosPosibles(List<Subject> asignatura
   // Función recursiva para calcular el producto cartesiano
   List<List<ClassOption>> todosLosHorarios = [];
 
-  void productoCartesiano(
-      int profundidad, List<ClassOption> actual, List<List<ClassOption>> resultado) {
+  void productoCartesiano(int profundidad, List<ClassOption> actual,
+      List<List<ClassOption>> resultado) {
     if (profundidad == combinacionesPorAsignatura.length) {
       resultado.add(List.from(actual));
       return;
@@ -89,16 +105,7 @@ bool horariosSeSolapan(Schedule a, Schedule b) {
   TimeOfDayRange rangoA = parseTimeRange(a.time);
   TimeOfDayRange rangoB = parseTimeRange(b.time);
 
-  return rangosSeSolapan(rangoA, rangoB);
-}
-
-bool rangosSeSolapan(TimeOfDayRange a, TimeOfDayRange b) {
-  final inicioA = a.start.hour * 60 + a.start.minute;
-  final finA = a.end.hour * 60 + a.end.minute;
-  final inicioB = b.start.hour * 60 + b.start.minute;
-  final finB = b.end.hour * 60 + b.end.minute;
-
-  return inicioA < finB && inicioB < finA;
+  return rangoA.overlaps(rangoB);
 }
 
 // Función para verificar si un horario completo tiene conflictos
@@ -120,13 +127,59 @@ bool horarioTieneConflictos(List<ClassOption> horario) {
   return false; // Sin conflictos
 }
 
-// Función para obtener todos los horarios válidos (sin conflictos)
-List<List<ClassOption>> obtenerHorariosValidos(List<Subject> asignaturas) {
-  List<List<ClassOption>> todosLosHorarios = generarTodosLosHorariosPosibles(asignaturas);
+// Función para verificar si un horario cumple con los filtros aplicados
+bool cumpleConFiltros(
+    List<ClassOption> horario, Map<String, dynamic> appliedFilters) {
+  Map<String, dynamic> professorsFilters = appliedFilters['professors'] ?? {};
+
+  for (var opcion in horario) {
+    String subjectCode = opcion.subjectCode;
+
+    if (professorsFilters.containsKey(subjectCode)) {
+      Map<String, dynamic> subjectFilter = professorsFilters[subjectCode];
+      String filterType = subjectFilter['filterType'] as String;
+      List<String> profesoresSeleccionados =
+          subjectFilter['professors'] as List<String>;
+
+      // Aplicar el filtro solo si hay profesores seleccionados
+      if (profesoresSeleccionados.isNotEmpty) {
+        if (filterType == 'include') {
+          // Si la opción de clase es impartida por alguno de los profesores seleccionados, es válida
+          if (profesoresSeleccionados.contains(opcion.professor)) {
+            continue; // Opción válida, seguimos con la siguiente
+          } else {
+            // Si ninguna de las opciones de clase para esta materia es impartida por los profesores seleccionados, invalidar el horario
+            // Pero solo si no hay ninguna otra opción en el horario que sí sea impartida por un profesor seleccionado
+            bool profesorEncontrado = horario.any((otraOpcion) =>
+                otraOpcion.subjectCode == subjectCode &&
+                profesoresSeleccionados.contains(otraOpcion.professor));
+            if (!profesorEncontrado) {
+              return false; // No se encontró ninguna opción con el profesor seleccionado
+            }
+          }
+        } else if (filterType == 'exclude') {
+          // Si la opción de clase es impartida por alguno de los profesores excluidos, es inválida
+          if (profesoresSeleccionados.contains(opcion.professor)) {
+            return false;
+          }
+        }
+      }
+    }
+  }
+
+  return true; // Cumple con todos los filtros
+}
+
+// Función para obtener todos los horarios válidos (sin conflictos y que cumplen con los filtros)
+List<List<ClassOption>> obtenerHorariosValidos(
+    List<Subject> asignaturas, Map<String, dynamic> appliedFilters) {
+  List<List<ClassOption>> todosLosHorarios =
+      generarTodosLosHorariosPosibles(asignaturas);
   List<List<ClassOption>> horariosValidos = [];
 
   for (var horario in todosLosHorarios) {
-    if (!horarioTieneConflictos(horario)) {
+    if (!horarioTieneConflictos(horario) &&
+        cumpleConFiltros(horario, appliedFilters)) {
       horariosValidos.add(horario);
     }
   }
@@ -167,12 +220,4 @@ TimeOfDay parseTimeOfDay(String horaString) {
   }
 
   return TimeOfDay(hour: hora, minute: minuto);
-}
-
-// Definición de TimeOfDayRange
-class TimeOfDayRange {
-  final TimeOfDay start;
-  final TimeOfDay end;
-
-  TimeOfDayRange(this.start, this.end);
 }

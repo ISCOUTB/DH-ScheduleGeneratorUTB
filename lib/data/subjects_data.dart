@@ -8,6 +8,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G01A',
         subjectName: 'Fundamentos de administracion',
         type: 'Teórico',
         credits: 3,
@@ -27,6 +28,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'G02A',
         subjectName: 'Seminario gerencial i',
         type: 'Teórico',
         credits: 1,
@@ -45,6 +47,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G03A',
         subjectName: 'Historia empresarial',
         type: 'Teórico',
         credits: 3,
@@ -57,6 +60,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'G03A',
         subjectName: 'Historia empresarial',
         type: 'Teórico',
         credits: 3,
@@ -76,6 +80,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G04A',
         subjectName: 'Creatividad y emprendimiento',
         type: 'Teórico',
         credits: 3,
@@ -88,6 +93,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'G04A',
         subjectName: 'Creatividad y emprendimiento',
         type: 'Teórico',
         credits: 3,
@@ -100,6 +106,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'G04A',
         subjectName: 'Creatividad y emprendimiento',
         type: 'Teórico',
         credits: 3,
@@ -112,6 +119,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'G04A',
         subjectName: 'Creatividad y emprendimiento',
         type: 'Teórico',
         credits: 3,
@@ -124,6 +132,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'G04A',
         subjectName: 'Creatividad y emprendimiento',
         type: 'Teórico',
         credits: 3,
@@ -136,6 +145,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'G04A',
         subjectName: 'Creatividad y emprendimiento',
         type: 'Teórico',
         credits: 3,
@@ -155,6 +165,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G05A',
         subjectName: 'Organizaciones i',
         type: 'Teórico',
         credits: 3,
@@ -167,6 +178,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'G05A',
         subjectName: 'Organizaciones i',
         type: 'Teórico',
         credits: 3,
@@ -186,6 +198,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G07A',
         subjectName: 'Direccion estrategica',
         type: 'Clase virtual',
         credits: 3,
@@ -203,6 +216,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'G08A',
         subjectName: 'Seminario gerencial ii',
         type: 'Teórico',
         credits: 1,
@@ -221,6 +235,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G10A',
         subjectName: 'Gestion del talento humano',
         type: 'Teórico',
         credits: 3,
@@ -240,6 +255,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G11A',
         subjectName: 'Innovacion',
         type: 'Teórico',
         credits: 3,
@@ -259,6 +275,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'G12A',
         subjectName: 'Consultoria empresarial',
         type: 'Teórico',
         credits: 2,
@@ -277,6 +294,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'G13A',
         subjectName: 'Seminario gerencial iii',
         type: 'Teórico',
         credits: 1,
@@ -295,6 +313,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'G14A',
         subjectName: 'Juego gerencial',
         type: 'Teórico',
         credits: 2,
@@ -313,6 +332,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M02A',
         subjectName: 'Investigacion de mercados',
         type: 'Teórico',
         credits: 3,
@@ -332,6 +352,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'O06A',
         subjectName: 'Negocios inclusivos',
         type: 'Teórico',
         credits: 3,
@@ -351,6 +372,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'O07A',
         subjectName: 'Empresas sostenibles',
         type: 'Teórico',
         credits: 3,
@@ -363,6 +385,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'O07A',
         subjectName: 'Empresas sostenibles',
         type: 'Teórico',
         credits: 3,
@@ -382,6 +405,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'O27A',
         subjectName: 'Skills for digital transformation 4.0',
         type: 'Teórico',
         credits: 3,
@@ -401,6 +425,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Opcion de grado',
         type: 'Clase virtual',
         credits: 2,
@@ -411,6 +436,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Opcion de grado',
         type: 'Clase virtual',
         credits: 2,
@@ -428,6 +454,7 @@ List<Subject> subjects = [
     credits: 0,
     classOptions: [
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Seminario integrador fen',
         type: 'Clase virtual',
         credits: 0,
@@ -438,6 +465,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Seminario integrador fen',
         type: 'Clase virtual',
         credits: 0,
@@ -448,6 +476,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Seminario integrador fen',
         type: 'Clase virtual',
         credits: 0,
@@ -465,6 +494,7 @@ List<Subject> subjects = [
     credits: 9,
     classOptions: [
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Práctica profesional',
         type: 'Laboratorio',
         credits: 9,
@@ -485,6 +515,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Práctica profesional',
         type: 'Laboratorio',
         credits: 9,
@@ -505,6 +536,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Práctica profesional',
         type: 'Laboratorio',
         credits: 9,
@@ -525,6 +557,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Práctica profesional',
         type: 'Laboratorio',
         credits: 9,
@@ -545,6 +578,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Práctica profesional',
         type: 'Laboratorio',
         credits: 9,
@@ -557,6 +591,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Práctica profesional',
         type: 'Laboratorio',
         credits: 9,
@@ -569,6 +604,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Práctica profesional',
         type: 'Laboratorio',
         credits: 9,
@@ -596,6 +632,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R01A',
         subjectName: 'Calidad y operaciones',
         type: 'Teórico',
         credits: 3,
@@ -615,6 +652,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R02A',
         subjectName: 'Gestion de procesos y tecnolog',
         type: 'Teórico',
         credits: 3,
@@ -634,6 +672,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z11A',
         subjectName: 'Gestion de proyectos',
         type: 'Teórico',
         credits: 3,
@@ -653,6 +692,7 @@ List<Subject> subjects = [
     credits: 6,
     classOptions: [
       ClassOption(
+        subjectCode: 'D02A',
         subjectName: 'Taller de diseño ii',
         type: 'Teorico-practico',
         credits: 6,
@@ -672,6 +712,7 @@ List<Subject> subjects = [
     credits: 6,
     classOptions: [
       ClassOption(
+        subjectCode: 'D03A',
         subjectName: 'Taller de diseño iii',
         type: 'Teorico-practico',
         credits: 6,
@@ -691,6 +732,7 @@ List<Subject> subjects = [
     credits: 6,
     classOptions: [
       ClassOption(
+        subjectCode: 'D04A',
         subjectName: 'Taller de diseño iv',
         type: 'Teorico-practico',
         credits: 6,
@@ -703,6 +745,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D04A',
         subjectName: 'Taller de diseño iv',
         type: 'Teorico-practico',
         credits: 6,
@@ -722,6 +765,7 @@ List<Subject> subjects = [
     credits: 6,
     classOptions: [
       ClassOption(
+        subjectCode: 'D06A',
         subjectName: 'Taller de diseño vi',
         type: 'Teorico-practico',
         credits: 6,
@@ -741,6 +785,7 @@ List<Subject> subjects = [
     credits: 6,
     classOptions: [
       ClassOption(
+        subjectCode: 'D07A',
         subjectName: 'Taller de diseño vii (manga-ternera)',
         type: 'Teorico-practico',
         credits: 6,
@@ -760,6 +805,7 @@ List<Subject> subjects = [
     credits: 6,
     classOptions: [
       ClassOption(
+        subjectCode: 'D08A',
         subjectName: 'Taller de diseño viii',
         type: 'Teorico-practico',
         credits: 6,
@@ -779,6 +825,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'E03A',
         subjectName: 'Expresión grafica iii',
         type: 'Laboratorio',
         credits: 2,
@@ -790,6 +837,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E03A',
         subjectName: 'Expresión grafica iii',
         type: 'Laboratorio',
         credits: 2,
@@ -808,6 +856,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'E04A',
         subjectName: 'Expresión gráfica iv',
         type: 'Laboratorio',
         credits: 2,
@@ -826,6 +875,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'E05A',
         subjectName: 'Expresión gráfica v',
         type: 'Laboratorio',
         credits: 2,
@@ -844,6 +894,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E07A',
         subjectName: 'Photoshop para arquitectos',
         type: 'Teorico-practico',
         credits: 3,
@@ -863,6 +914,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Teoria e historia i',
         type: 'Teórico',
         credits: 2,
@@ -881,6 +933,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Teoria e historia ii',
         type: 'Teórico',
         credits: 2,
@@ -899,6 +952,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H03A',
         subjectName: 'Teoria e historia iii',
         type: 'Teórico',
         credits: 2,
@@ -917,6 +971,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Teoria e historia iv',
         type: 'Teórico',
         credits: 2,
@@ -935,6 +990,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Teoria e historia v',
         type: 'Teórico',
         credits: 2,
@@ -953,6 +1009,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H06A',
         subjectName: 'Teoria e historia vi',
         type: 'Teórico',
         credits: 2,
@@ -971,6 +1028,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H07A',
         subjectName: 'Teoría e historia vii',
         type: 'Laboratorio',
         credits: 2,
@@ -989,6 +1047,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'T01A',
         subjectName: 'Tecnología i',
         type: 'Teórico',
         credits: 2,
@@ -1007,6 +1066,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'T02A',
         subjectName: 'Tecnología ii',
         type: 'Teórico',
         credits: 2,
@@ -1025,6 +1085,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T03A',
         subjectName: 'Tecnología iii',
         type: 'Teórico',
         credits: 3,
@@ -1044,6 +1105,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'T04A',
         subjectName: 'Tecnología iv',
         type: 'Teórico',
         credits: 2,
@@ -1055,6 +1117,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'T04A',
         subjectName: 'Tecnología iv',
         type: 'Teórico',
         credits: 2,
@@ -1073,6 +1136,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T05A',
         subjectName: 'Tecnologia v',
         type: 'Teórico',
         credits: 3,
@@ -1092,6 +1156,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T06A',
         subjectName: 'Tecnología vi',
         type: 'Teórico',
         credits: 3,
@@ -1111,6 +1176,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'T07A',
         subjectName: 'Tecnologia vii',
         type: 'Teórico',
         credits: 2,
@@ -1129,6 +1195,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T08A',
         subjectName: 'Tecnologia viii',
         type: 'Teórico',
         credits: 3,
@@ -1148,6 +1215,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T12A',
         subjectName: 'Diseño de estructuras para arquitectos',
         type: 'Teorico-practico',
         credits: 3,
@@ -1167,6 +1235,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'U01A',
         subjectName: 'Urbanismo y ambiente i',
         type: 'Teórico',
         credits: 2,
@@ -1185,6 +1254,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'U02A',
         subjectName: 'Urbanismo y ambiente ii',
         type: 'Teórico',
         credits: 2,
@@ -1203,6 +1273,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'U03A',
         subjectName: 'Urbanismo y ambiente iii',
         type: 'Teórico',
         credits: 2,
@@ -1221,6 +1292,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'U04A',
         subjectName: 'Urbanismo y ambiente iv',
         type: 'Teórico',
         credits: 2,
@@ -1239,6 +1311,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'U06A',
         subjectName: 'Urbanismo y ambiente vi',
         type: 'Teórico',
         credits: 3,
@@ -1258,6 +1331,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'U07A',
         subjectName: 'Urbanismo y ambiente vii',
         type: 'Teórico',
         credits: 2,
@@ -1276,6 +1350,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'D01A',
         subjectName: 'Introducción a la ciencia de datos introducción a la ciencia de datos',
         type: 'Laboratorio',
         credits: 2,
@@ -1294,6 +1369,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D02A',
         subjectName: 'Programación para ciencia de datos programación para ciencia de datos',
         type: 'Teórico',
         credits: 3,
@@ -1313,6 +1389,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E10A',
         subjectName: 'Estudio de area: africa',
         type: 'Teórico',
         credits: 3,
@@ -1332,6 +1409,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E14A',
         subjectName: 'Políticas públicas poblacionales',
         type: 'Teórico',
         credits: 3,
@@ -1351,6 +1429,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N02A',
         subjectName: 'Enfoques para el análisis polí',
         type: 'Teórico',
         credits: 3,
@@ -1370,6 +1449,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'N03A',
         subjectName: 'Gran historia',
         type: 'Teórico',
         credits: 2,
@@ -1388,6 +1468,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N05A',
         subjectName: 'Filosofía política',
         type: 'Teórico',
         credits: 3,
@@ -1407,6 +1488,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N07A',
         subjectName: 'Teo de la democracia y desarro',
         type: 'Teórico',
         credits: 3,
@@ -1426,6 +1508,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N10A',
         subjectName: 'Nueva economía política',
         type: 'Teórico',
         credits: 3,
@@ -1445,6 +1528,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N12A',
         subjectName: 'Cult y comport polít en el car',
         type: 'Teórico',
         credits: 3,
@@ -1464,6 +1548,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N13A',
         subjectName: 'Ana d conflicto y proce de paz',
         type: 'Teórico',
         credits: 3,
@@ -1483,6 +1568,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N14A',
         subjectName: 'Política comparada',
         type: 'Teórico',
         credits: 3,
@@ -1502,6 +1588,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N15A',
         subjectName: 'Partidos políticos y sist elec',
         type: 'Teórico',
         credits: 3,
@@ -1521,6 +1608,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N16A',
         subjectName: 'Form de proy para el desarroll',
         type: 'Teorico-practico',
         credits: 3,
@@ -1540,6 +1628,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Inv. cuanti en ciencia politic',
         type: 'Teorico-practico',
         credits: 3,
@@ -1559,6 +1648,7 @@ List<Subject> subjects = [
     credits: 9,
     classOptions: [
       ClassOption(
+        subjectCode: 'P06A',
         subjectName: 'Práctica profesionales',
         type: 'Laboratorio',
         credits: 9,
@@ -1586,6 +1676,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R01A',
         subjectName: 'Historia y geografía internaci',
         type: 'Teórico',
         credits: 3,
@@ -1605,6 +1696,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R02A',
         subjectName: 'Sistema político internacional',
         type: 'Teórico',
         credits: 3,
@@ -1624,6 +1716,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'R05A',
         subjectName: 'Herramientas de política inter',
         type: 'Teórico',
         credits: 2,
@@ -1642,6 +1735,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R08A',
         subjectName: 'Análisis de política internaci',
         type: 'Teórico',
         credits: 3,
@@ -1661,6 +1755,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z01A',
         subjectName: 'Introduccion a la ciencia poli',
         type: 'Teórico',
         credits: 3,
@@ -1680,6 +1775,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z02A',
         subjectName: 'Cons y sist politico colombian',
         type: 'Teórico',
         credits: 3,
@@ -1699,6 +1795,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z03A',
         subjectName: 'Politica colombiana siglo xix',
         type: 'Teórico',
         credits: 3,
@@ -1718,6 +1815,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z05A',
         subjectName: 'Teo contempo de las relaciones',
         type: 'Teórico',
         credits: 2,
@@ -1736,6 +1834,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z06A',
         subjectName: 'Politi colombiana del siglo xx',
         type: 'Teórico',
         credits: 3,
@@ -1755,6 +1854,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z07A',
         subjectName: 'Inv en ciencia politica',
         type: 'Teórico',
         credits: 3,
@@ -1774,6 +1874,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z08A',
         subjectName: 'Estado, poder y derecho',
         type: 'Teórico',
         credits: 3,
@@ -1793,6 +1894,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z09A',
         subjectName: 'Investigacion mixta aplicada',
         type: 'Teórico',
         credits: 3,
@@ -1812,6 +1914,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z23A',
         subjectName: 'Historia de las ideas política',
         type: 'Teórico',
         credits: 4,
@@ -1831,6 +1934,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z25A',
         subjectName: 'Ana y dis de políticas pública',
         type: 'Teórico',
         credits: 3,
@@ -1850,6 +1954,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Biología humana',
         type: 'Teórico',
         credits: 2,
@@ -1861,6 +1966,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Biología humana',
         type: 'Teórico',
         credits: 2,
@@ -1879,6 +1985,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B02A',
         subjectName: 'Biología celular',
         type: 'Teórico',
         credits: 3,
@@ -1890,6 +1997,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B02A',
         subjectName: 'Biología celular',
         type: 'Laboratorio',
         credits: 3,
@@ -1901,6 +2009,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B02A',
         subjectName: 'Biología celular',
         type: 'Laboratorio',
         credits: 3,
@@ -1919,6 +2028,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B03A',
         subjectName: 'Biorremediación',
         type: 'Teórico',
         credits: 3,
@@ -1938,6 +2048,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B04A',
         subjectName: 'Biología molecular',
         type: 'Teórico',
         credits: 3,
@@ -1950,6 +2061,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B04A',
         subjectName: 'Biología molecular',
         type: 'Laboratorio',
         credits: 3,
@@ -1968,6 +2080,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E01A',
         subjectName: 'Estadística y probabilidad',
         type: 'Teórico',
         credits: 3,
@@ -1981,6 +2094,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E01A',
         subjectName: 'Estadística y probabilidad',
         type: 'Teórico',
         credits: 3,
@@ -1994,12 +2108,27 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E01A',
+        subjectName: 'Estadística y probabilidad',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Deivinso Villa Moncaris',
+        nrc: '1411',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
+          Schedule(day: 'Lunes', time: '16:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '17:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'E01A',
         subjectName: 'Estadística y probabilidad',
         type: 'Teórico',
         credits: 3,
         professor: 'Alan Orlando Sanchez Marzan',
         nrc: '1527',
-        groupId: 3,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Lunes', time: '07:00 - 07:50'),
           Schedule(day: 'Sábado', time: '07:00 - 08:50'),
@@ -2007,12 +2136,13 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E01A',
         subjectName: 'Estadística y probabilidad',
         type: 'Teórico',
         credits: 3,
         professor: 'Cecilia Paillier Gonzalez',
         nrc: '2304',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Martes', time: '13:00 - 13:50'),
           Schedule(day: 'Viernes', time: '13:00 - 13:50'),
@@ -2020,12 +2150,13 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E01A',
         subjectName: 'Estadística y probabilidad',
         type: 'Teórico',
         credits: 3,
         professor: 'Derlis Aminta Villadiego Rincon',
         nrc: '2318',
-        groupId: 5,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Viernes', time: '13:00 - 13:50'),
           Schedule(day: 'Miércoles', time: '15:00 - 15:50'),
@@ -2033,12 +2164,13 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E01A',
         subjectName: 'Estadística y probabilidad',
         type: 'Teórico',
         credits: 3,
         professor: 'Elizabeth Valderrama Serrano',
         nrc: '1110',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Lunes', time: '13:00 - 14:50'),
           Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
@@ -2053,6 +2185,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E02A',
         subjectName: 'Estadística inferencial',
         type: 'Teórico',
         credits: 3,
@@ -2066,6 +2199,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E02A',
         subjectName: 'Estadística inferencial',
         type: 'Teórico',
         credits: 3,
@@ -2079,6 +2213,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E02A',
         subjectName: 'Estadística inferencial',
         type: 'Teórico',
         credits: 3,
@@ -2092,6 +2227,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E02A',
         subjectName: 'Estadística inferencial',
         type: 'Teórico',
         credits: 3,
@@ -2105,6 +2241,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E02A',
         subjectName: 'Estadística inferencial',
         type: 'Teórico',
         credits: 3,
@@ -2125,6 +2262,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E03A',
         subjectName: 'Estadística i (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
@@ -2138,12 +2276,27 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E03A',
+        subjectName: 'Estadística i (facultad ciencias sociales y humanidades)',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Francisco Mauricio Atencio Contreras',
+        nrc: '1140',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '15:00 - 15:50'),
+          Schedule(day: 'Jueves', time: '15:00 - 15:50'),
+          Schedule(day: 'Viernes', time: '16:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'E03A',
         subjectName: 'Estadística i (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Alan Orlando Sanchez Marzan',
         nrc: '1526',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Lunes', time: '07:00 - 07:50'),
           Schedule(day: 'Sábado', time: '07:00 - 08:50'),
@@ -2151,12 +2304,27 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E03A',
+        subjectName: 'Estadística i (facultad ciencias sociales y humanidades)',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Cecilia Paillier Gonzalez',
+        nrc: '2303',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 13:50'),
+          Schedule(day: 'Viernes', time: '13:00 - 13:50'),
+          Schedule(day: 'Lunes', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'E03A',
         subjectName: 'Estadística i (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Jorge Luis Villalba Acevedo',
         nrc: '2305',
-        groupId: 3,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
           Schedule(day: 'Martes', time: '09:00 - 09:50'),
@@ -2171,6 +2339,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E03A',
         subjectName: 'Estadística i (para derecho) en campus ternera',
         type: 'Teórico',
         credits: 3,
@@ -2190,6 +2359,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E04A',
         subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
@@ -2203,6 +2373,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E04A',
         subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
@@ -2216,6 +2387,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E04A',
         subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
@@ -2236,6 +2408,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Teórico',
         credits: 4,
@@ -2248,6 +2421,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Laboratorio',
         credits: 4,
@@ -2259,6 +2433,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Laboratorio',
         credits: 4,
@@ -2270,6 +2445,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Teórico',
         credits: 4,
@@ -2282,6 +2458,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Laboratorio',
         credits: 4,
@@ -2293,6 +2470,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Laboratorio',
         credits: 4,
@@ -2304,6 +2482,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Teórico',
         credits: 4,
@@ -2316,6 +2495,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Laboratorio',
         credits: 4,
@@ -2327,6 +2507,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Teórico',
         credits: 4,
@@ -2339,6 +2520,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Laboratorio',
         credits: 4,
@@ -2350,58 +2532,88 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Física mecánica',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Vilma Viviana Ojeda Caicedo',
+        nrc: '2114',
+        groupId: 5,
+        schedules: [
+          Schedule(day: 'Lunes', time: '14:00 - 15:50'),
+          Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Física mecánica',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Sebastian David Pacheco Orozco',
+        nrc: '2540',
+        groupId: 5,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Teórico',
         credits: 4,
         professor: 'Yony Alejandro Pastrana Caballero',
         nrc: '2133',
-        groupId: 5,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Lunes', time: '09:00 - 10:50'),
           Schedule(day: 'Viernes', time: '13:00 - 14:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Laboratorio',
         credits: 4,
         professor: 'Kevin David Mendoza Vanegas',
         nrc: '2134',
-        groupId: 5,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Martes', time: '13:00 - 14:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Teórico',
         credits: 4,
         professor: 'Elias Guillermo Imitola Coley',
         nrc: '2138',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Jueves', time: '15:00 - 16:50'),
           Schedule(day: 'Martes', time: '17:00 - 18:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Laboratorio',
         credits: 4,
         professor: 'Aris Daniela Hurtado Misal',
         nrc: '2139',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Lunes', time: '10:00 - 11:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Física mecánica',
         type: 'Laboratorio',
         credits: 4,
         professor: 'Aris Daniela Hurtado Misal',
         nrc: '2542',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Lunes', time: '10:00 - 11:50'),
         ],
@@ -2414,6 +2626,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
         type: 'Teórico',
         credits: 4,
@@ -2426,6 +2639,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
         type: 'Laboratorio',
         credits: 4,
@@ -2437,6 +2651,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
         type: 'Laboratorio',
         credits: 4,
@@ -2448,6 +2663,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
         type: 'Teórico',
         credits: 4,
@@ -2460,6 +2676,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
         type: 'Laboratorio',
         credits: 4,
@@ -2471,6 +2688,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
         type: 'Teórico',
         credits: 4,
@@ -2483,6 +2701,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
         type: 'Laboratorio',
         credits: 4,
@@ -2494,6 +2713,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
         type: 'Teórico',
         credits: 4,
@@ -2506,6 +2726,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
         type: 'Laboratorio',
         credits: 4,
@@ -2517,6 +2738,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
         type: 'Teórico',
         credits: 4,
@@ -2529,6 +2751,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
         type: 'Laboratorio',
         credits: 4,
@@ -2547,6 +2770,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Física calor y ondas',
         type: 'Teórico',
         credits: 4,
@@ -2559,6 +2783,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Física calor y ondas',
         type: 'Laboratorio',
         credits: 4,
@@ -2570,6 +2795,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Física calor y ondas',
         type: 'Laboratorio',
         credits: 4,
@@ -2581,6 +2807,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Física calor y ondas',
         type: 'Teórico',
         credits: 4,
@@ -2593,6 +2820,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Física calor y ondas',
         type: 'Laboratorio',
         credits: 4,
@@ -2604,6 +2832,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Física calor y ondas',
         type: 'Teórico',
         credits: 4,
@@ -2616,6 +2845,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Física calor y ondas',
         type: 'Laboratorio',
         credits: 4,
@@ -2627,6 +2857,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Física calor y ondas',
         type: 'Laboratorio',
         credits: 4,
@@ -2645,6 +2876,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Cálculo diferencial',
         type: 'Teórico',
         credits: 4,
@@ -2657,6 +2889,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Cálculo diferencial',
         type: 'Teórico',
         credits: 4,
@@ -2669,6 +2902,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Cálculo diferencial',
         type: 'Teórico',
         credits: 4,
@@ -2681,6 +2915,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Cálculo diferencial',
         type: 'Teórico',
         credits: 4,
@@ -2693,6 +2928,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Cálculo diferencial',
         type: 'Teórico',
         credits: 4,
@@ -2705,6 +2941,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Cálculo diferencial',
         type: 'Teórico',
         credits: 4,
@@ -2717,6 +2954,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Cálculo diferencial',
         type: 'Teórico',
         credits: 4,
@@ -2729,6 +2967,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Cálculo diferencial',
         type: 'Teórico',
         credits: 4,
@@ -2748,6 +2987,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'M02A',
         subjectName: 'Matemáticas básicas',
         type: 'Teórico',
         credits: 2,
@@ -2760,6 +3000,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M02A',
         subjectName: 'Matemáticas básicas',
         type: 'Teórico',
         credits: 2,
@@ -2772,6 +3013,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M02A',
         subjectName: 'Matemáticas básicas',
         type: 'Teórico',
         credits: 2,
@@ -2784,6 +3026,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M02A',
         subjectName: 'Matemáticas básicas',
         type: 'Teórico',
         credits: 2,
@@ -2803,6 +3046,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Teórico',
         credits: 4,
@@ -2814,6 +3058,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2825,6 +3070,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2836,6 +3082,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2847,6 +3094,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2858,6 +3106,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2869,6 +3118,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2880,6 +3130,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2891,6 +3142,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Teórico',
         credits: 4,
@@ -2902,6 +3154,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2913,6 +3166,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2924,6 +3178,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2935,6 +3190,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2946,6 +3202,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2957,6 +3214,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2968,6 +3226,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2979,6 +3238,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -2990,6 +3250,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Teórico',
         credits: 4,
@@ -3001,6 +3262,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -3012,6 +3274,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -3023,6 +3286,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Cálculo integral',
         type: 'Laboratorio',
         credits: 4,
@@ -3041,6 +3305,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
@@ -3053,6 +3318,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
@@ -3065,6 +3331,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
@@ -3077,6 +3344,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
@@ -3089,6 +3357,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
@@ -3101,6 +3370,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
@@ -3113,6 +3383,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
@@ -3125,6 +3396,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
@@ -3137,24 +3409,52 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
+        subjectName: 'Algebra lineal',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'John Beiro Moreno Barrios',
+        nrc: '2348',
+        groupId: 9,
+        schedules: [
+          Schedule(day: 'Lunes', time: '17:00 - 18:50'),
+          Schedule(day: 'Miércoles', time: '18:00 - 18:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M04A',
+        subjectName: 'Algebra lineal',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Cristina Osorio Del Valle',
+        nrc: '2349',
+        groupId: 10,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+          Schedule(day: 'Martes', time: '15:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
         professor: 'Victor Juan Hernandez Del Toro',
         nrc: '2422',
-        groupId: 9,
+        groupId: 11,
         schedules: [
           Schedule(day: 'Jueves', time: '14:00 - 15:50'),
           Schedule(day: 'Martes', time: '16:00 - 16:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
         professor: 'John Beiro Moreno Barrios',
         nrc: '2446',
-        groupId: 10,
+        groupId: 12,
         schedules: [
           Schedule(day: 'Viernes', time: '16:00 - 17:50'),
           Schedule(day: 'Miércoles', time: '17:00 - 17:50'),
@@ -3168,6 +3468,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Teórico',
         credits: 4,
@@ -3179,6 +3480,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3190,6 +3492,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3201,6 +3504,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3212,6 +3516,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Teórico',
         credits: 4,
@@ -3223,6 +3528,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3234,6 +3540,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3245,6 +3552,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3256,6 +3564,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3267,6 +3576,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3278,6 +3588,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3289,6 +3600,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3300,6 +3612,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3311,6 +3624,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Cálculo vectorial',
         type: 'Laboratorio',
         credits: 4,
@@ -3329,6 +3643,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Ecuaciones diferenciales y en diferencia',
         type: 'Teórico',
         credits: 4,
@@ -3340,6 +3655,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Ecuaciones diferenciales y en diferencia',
         type: 'Laboratorio',
         credits: 4,
@@ -3351,6 +3667,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Ecuaciones diferenciales y en diferencia',
         type: 'Laboratorio',
         credits: 4,
@@ -3362,6 +3679,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Ecuaciones diferenciales y en diferencia',
         type: 'Laboratorio',
         credits: 4,
@@ -3373,6 +3691,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Ecuaciones diferenciales y en diferencia',
         type: 'Teórico',
         credits: 4,
@@ -3384,6 +3703,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Ecuaciones diferenciales y en diferencia',
         type: 'Laboratorio',
         credits: 4,
@@ -3395,6 +3715,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Ecuaciones diferenciales y en diferencia',
         type: 'Laboratorio',
         credits: 4,
@@ -3406,6 +3727,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Ecuaciones diferenciales y en diferencia',
         type: 'Laboratorio',
         credits: 4,
@@ -3417,6 +3739,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Ecuaciones diferenciales y en diferencia',
         type: 'Laboratorio',
         credits: 4,
@@ -3428,6 +3751,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Ecuaciones diferenciales y en diferencia',
         type: 'Laboratorio',
         credits: 4,
@@ -3446,6 +3770,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'M08A',
         subjectName: 'Matemática para ciencias sociales',
         type: 'Teórico',
         credits: 2,
@@ -3457,6 +3782,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M08A',
         subjectName: 'Matemática para ciencias sociales',
         type: 'Teórico',
         credits: 2,
@@ -3468,6 +3794,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M08A',
         subjectName: 'Matemática para ciencias sociales',
         type: 'Teórico',
         credits: 2,
@@ -3486,58 +3813,88 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Q01A',
+        subjectName: 'Química general',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Arnaldo De Jesus Jimenez Altamiranda',
+        nrc: '1114',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+          Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'Q01A',
+        subjectName: 'Química general',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Arnaldo De Jesus Jimenez Altamiranda',
+        nrc: '2521',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'Q01A',
         subjectName: 'Química general',
         type: 'Teórico',
         credits: 3,
         professor: 'Mary Andrea Fennix Agudelo',
         nrc: '1121',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Lunes', time: '07:00 - 08:50'),
           Schedule(day: 'Jueves', time: '07:00 - 07:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'Q01A',
         subjectName: 'Química general',
         type: 'Laboratorio',
         credits: 3,
         professor: 'Mary Andrea Fennix Agudelo',
         nrc: '1122',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'Q01A',
         subjectName: 'Química general',
         type: 'Laboratorio',
         credits: 3,
         professor: 'Mary Andrea Fennix Agudelo',
         nrc: '2522',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'Q01A',
         subjectName: 'Química general',
         type: 'Teórico',
         credits: 3,
         professor: 'Mary Andrea Fennix Agudelo',
         nrc: '1317',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Martes', time: '13:00 - 14:50'),
           Schedule(day: 'Jueves', time: '13:00 - 13:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'Q01A',
         subjectName: 'Química general',
         type: 'Laboratorio',
         credits: 3,
         professor: 'Arnaldo De Jesus Jimenez Altamiranda',
         nrc: '1318',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Viernes', time: '13:00 - 14:50'),
         ],
@@ -3550,6 +3907,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Q04A',
         subjectName: 'Análisis químico e instrumenta',
         type: 'Teórico',
         credits: 3,
@@ -3562,6 +3920,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'Q04A',
         subjectName: 'Análisis químico e instrumenta',
         type: 'Laboratorio',
         credits: 3,
@@ -3580,6 +3939,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Fundamentos de la comunicacion',
         type: 'Teórico',
         credits: 3,
@@ -3599,6 +3959,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B02A',
         subjectName: 'Teoría de la comunicación',
         type: 'Teórico',
         credits: 3,
@@ -3618,6 +3979,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B03A',
         subjectName: 'Sociología de la comunicación',
         type: 'Teorico-practico',
         credits: 3,
@@ -3637,6 +3999,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'B04A',
         subjectName: 'Legislación de medios',
         type: 'Teórico',
         credits: 2,
@@ -3655,6 +4018,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'B05A',
         subjectName: 'Semiótica',
         type: 'Teorico-practico',
         credits: 2,
@@ -3674,6 +4038,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'B06A',
         subjectName: 'Opinión pública',
         type: 'Teórico',
         credits: 2,
@@ -3692,6 +4057,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'B07A',
         subjectName: 'Ética de la comunicación',
         type: 'Teórico',
         credits: 2,
@@ -3710,6 +4076,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E12A',
         subjectName: 'Redes sociales y comunica poli',
         type: 'Teórico',
         credits: 3,
@@ -3729,6 +4096,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E17A',
         subjectName: 'Comunicación, género(s) y femi',
         type: 'Teórico',
         credits: 3,
@@ -3748,6 +4116,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E18A',
         subjectName: 'Presentación en tv y plataformas digitales',
         type: 'Teórico',
         credits: 3,
@@ -3767,6 +4136,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Historia contemporánea',
         type: 'Teórico',
         credits: 2,
@@ -3785,6 +4155,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G01A',
         subjectName: 'Comunicación organizacional i',
         type: 'Teórico',
         credits: 3,
@@ -3804,6 +4175,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G02A',
         subjectName: 'Comunicación organizacional ii',
         type: 'Teórico',
         credits: 3,
@@ -3823,6 +4195,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'G03A',
         subjectName: 'Marketing corporativo',
         type: 'Teórico',
         credits: 2,
@@ -3842,6 +4215,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G04A',
         subjectName: 'Comunicación para el cambio social i',
         type: 'Teórico',
         credits: 3,
@@ -3861,6 +4235,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G06A',
         subjectName: 'Comunicación para el cambio social ii',
         type: 'Teórico',
         credits: 3,
@@ -3880,6 +4255,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'G07A',
         subjectName: 'Gestión de proyectos de comunicación',
         type: 'Teórico',
         credits: 2,
@@ -3898,6 +4274,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G08A',
         subjectName: 'Gestión de contenidos digitale - malla 2019',
         type: 'Teorico-practico',
         credits: 3,
@@ -3917,6 +4294,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'L01A',
         subjectName: 'Taller de redacción ii',
         type: 'Teorico-practico',
         credits: 3,
@@ -3936,6 +4314,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Expresión oral',
         type: 'Teorico-practico',
         credits: 3,
@@ -3955,6 +4334,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M02A',
         subjectName: 'Taller de redacción i',
         type: 'Teorico-practico',
         credits: 3,
@@ -3974,6 +4354,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Periodismo escrito',
         type: 'Teorico-practico',
         credits: 3,
@@ -3993,6 +4374,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Guionismo',
         type: 'Teorico-practico',
         credits: 3,
@@ -4012,6 +4394,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Periodismo:crónica y reportaje - malla 2019',
         type: 'Teorico-practico',
         credits: 3,
@@ -4031,6 +4414,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'M07A',
         subjectName: 'Cine y sociedad',
         type: 'Teórico',
         credits: 2,
@@ -4049,6 +4433,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Fundamentos de investigación social',
         type: 'Teorico-practico',
         credits: 3,
@@ -4068,6 +4453,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Investigación cuantitativa',
         type: 'Teorico-practico',
         credits: 3,
@@ -4087,6 +4473,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Investigación cualitativa',
         type: 'Teorico-practico',
         credits: 2,
@@ -4106,6 +4493,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T01A',
         subjectName: 'Introducción a la fotografía',
         type: 'Teorico-practico',
         credits: 3,
@@ -4125,6 +4513,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T02A',
         subjectName: 'Radio i',
         type: 'Teórico',
         credits: 3,
@@ -4136,6 +4525,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'T02A',
         subjectName: 'Radio i',
         type: 'Laboratorio',
         credits: 3,
@@ -4154,6 +4544,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T03A',
         subjectName: 'Producción de medios - malla 2019',
         type: 'Teorico-practico',
         credits: 3,
@@ -4173,6 +4564,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T04A',
         subjectName: 'Radio ii',
         type: 'Teorico-practico',
         credits: 3,
@@ -4192,6 +4584,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'T06A',
         subjectName: 'Diseño digital de medios i',
         type: 'Teorico-practico',
         credits: 2,
@@ -4211,6 +4604,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'T07A',
         subjectName: 'Producción transmedia',
         type: 'Teorico-practico',
         credits: 2,
@@ -4230,6 +4624,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'T08A',
         subjectName: 'Diseño digital de medios ii',
         type: 'Teorico-practico',
         credits: 2,
@@ -4242,6 +4637,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'T08A',
         subjectName: 'Diseño digital de medios ii',
         type: 'Teorico-practico',
         credits: 2,
@@ -4261,6 +4657,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A01A',
         subjectName: 'Fundam de control y aseguram',
         type: 'Clase virtual',
         credits: 3,
@@ -4278,6 +4675,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Auditoria aplicada',
         type: 'Teórico',
         credits: 3,
@@ -4297,6 +4695,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Revisoria fiscal',
         type: 'Teórico',
         credits: 3,
@@ -4311,11 +4710,32 @@ List<Subject> subjects = [
     ],
   ),
   Subject(
+    code: 'C01A',
+    name: 'Contabilidad financiera',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'C01A',
+        subjectName: 'Contabilidad financiera',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Norjadys Gonzalez Garizao',
+        nrc: '1506',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+          Schedule(day: 'Martes', time: '16:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
     code: 'C02A',
     name: 'Contabilidad internacional i',
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C02A',
         subjectName: 'Contabilidad internacional i',
         type: 'Teórico',
         credits: 3,
@@ -4335,6 +4755,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C04A',
         subjectName: 'Contabilidad internacional iii',
         type: 'Teórico',
         credits: 3,
@@ -4354,6 +4775,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C05A',
         subjectName: 'Teoria contable',
         type: 'Clase virtual',
         credits: 3,
@@ -4371,6 +4793,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G01A',
         subjectName: 'Fundamentos de costos',
         type: 'Teórico',
         credits: 3,
@@ -4390,6 +4813,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G02A',
         subjectName: 'Costos modernos',
         type: 'Teórico',
         credits: 3,
@@ -4409,6 +4833,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G03A',
         subjectName: 'Contabilidad de gestion',
         type: 'Teórico',
         credits: 3,
@@ -4428,6 +4853,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G04A',
         subjectName: 'Presupuesto',
         type: 'Clase virtual',
         credits: 3,
@@ -4445,6 +4871,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'O02A',
         subjectName: 'English for accounting and fin',
         type: 'Teórico',
         credits: 2,
@@ -4464,6 +4891,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T01A',
         subjectName: 'Impuestos i',
         type: 'Teórico',
         credits: 3,
@@ -4483,6 +4911,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T03A',
         subjectName: 'Derecho empresarial y laboral',
         type: 'Teórico',
         credits: 3,
@@ -4495,6 +4924,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'T03A',
         subjectName: 'Derecho empresarial y laboral',
         type: 'Teórico',
         credits: 3,
@@ -4514,6 +4944,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z05A',
         subjectName: 'Contab financiera avanzada',
         type: 'Teórico',
         credits: 3,
@@ -4533,6 +4964,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z09A',
         subjectName: 'Contabilidad gerencial ii',
         type: 'Teórico',
         credits: 3,
@@ -4552,6 +4984,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z12A',
         subjectName: 'Costos modernos',
         type: 'Teórico',
         credits: 3,
@@ -4571,6 +5004,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Introducción al derecho',
         type: 'Teórico',
         credits: 3,
@@ -4590,6 +5024,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Historia del derecho',
         type: 'Teórico',
         credits: 2,
@@ -4608,6 +5043,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J01A',
         subjectName: 'Personas',
         type: 'Teórico',
         credits: 3,
@@ -4627,6 +5063,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J02A',
         subjectName: 'Teoría del estado',
         type: 'Teórico',
         credits: 3,
@@ -4646,6 +5083,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J03A',
         subjectName: 'Bienes',
         type: 'Teórico',
         credits: 3,
@@ -4665,6 +5103,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J04A',
         subjectName: 'Derecho constitucional general',
         type: 'Teórico',
         credits: 3,
@@ -4684,6 +5123,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J05A',
         subjectName: 'Teoría general del proceso',
         type: 'Teórico',
         credits: 3,
@@ -4703,6 +5143,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J06A',
         subjectName: 'Obligaciones i',
         type: 'Teórico',
         credits: 3,
@@ -4722,6 +5163,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J07A',
         subjectName: 'Derecho constitucional colombi',
         type: 'Teórico',
         credits: 3,
@@ -4741,6 +5183,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'J08A',
         subjectName: 'Derecho procesal civil i',
         type: 'Teórico',
         credits: 2,
@@ -4759,6 +5202,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J09A',
         subjectName: 'Derecho laboral individual',
         type: 'Teórico',
         credits: 3,
@@ -4778,6 +5222,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J10A',
         subjectName: 'Obligaciones ii',
         type: 'Teórico',
         credits: 3,
@@ -4797,6 +5242,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J11A',
         subjectName: 'Derecho administrativo general',
         type: 'Teórico',
         credits: 3,
@@ -4816,6 +5262,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'J12A',
         subjectName: 'Derecho procesal civil ii',
         type: 'Teórico',
         credits: 2,
@@ -4834,6 +5281,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J13A',
         subjectName: 'Seguridad social',
         type: 'Teórico',
         credits: 3,
@@ -4853,6 +5301,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J14A',
         subjectName: 'Derecho penal general',
         type: 'Teórico',
         credits: 3,
@@ -4872,6 +5321,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'J15A',
         subjectName: 'Derecho procesal constituciona',
         type: 'Teórico',
         credits: 2,
@@ -4890,6 +5340,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J16A',
         subjectName: 'Contratos i (manga - ternera)',
         type: 'Teórico',
         credits: 3,
@@ -4909,6 +5360,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'J17A',
         subjectName: 'Derecho administrativo colombi',
         type: 'Teórico',
         credits: 2,
@@ -4927,6 +5379,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J18A',
         subjectName: 'Derecho probatorio',
         type: 'Teórico',
         credits: 3,
@@ -4946,6 +5399,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'J19A',
         subjectName: 'Derecho laboral colectivo',
         type: 'Teórico',
         credits: 2,
@@ -4964,6 +5418,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J20A',
         subjectName: 'Derecho penal especial',
         type: 'Teórico',
         credits: 3,
@@ -4983,6 +5438,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J21A',
         subjectName: 'Derecho comercial',
         type: 'Teórico',
         credits: 3,
@@ -5002,6 +5458,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J22A',
         subjectName: 'Contratos ii (manga - ternera)',
         type: 'Teórico',
         credits: 3,
@@ -5021,6 +5478,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'J23A',
         subjectName: 'Derecho procesal administrativ',
         type: 'Teórico',
         credits: 2,
@@ -5039,6 +5497,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'J24A',
         subjectName: 'Derecho procesal laboral',
         type: 'Teórico',
         credits: 2,
@@ -5057,6 +5516,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'J25A',
         subjectName: 'Derecho procesal penal',
         type: 'Teórico',
         credits: 2,
@@ -5075,6 +5535,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'J26A',
         subjectName: 'Derecho de sociedades',
         type: 'Teórico',
         credits: 2,
@@ -5093,6 +5554,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J27A',
         subjectName: 'Derecho de familia',
         type: 'Teórico',
         credits: 3,
@@ -5112,6 +5574,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J28A',
         subjectName: 'Responsabilidad civil y del es',
         type: 'Teórico',
         credits: 3,
@@ -5131,6 +5594,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'J29A',
         subjectName: 'Contratación estatal',
         type: 'Teórico',
         credits: 2,
@@ -5149,6 +5613,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J30A',
         subjectName: 'Derecho internacional público',
         type: 'Teórico',
         credits: 3,
@@ -5168,6 +5633,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J31A',
         subjectName: 'Títulos valores',
         type: 'Teórico',
         credits: 3,
@@ -5187,6 +5653,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J33A',
         subjectName: 'Derecho internacional privado',
         type: 'Teórico',
         credits: 3,
@@ -5206,6 +5673,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'J34A',
         subjectName: 'Propiedad intelectual',
         type: 'Teórico',
         credits: 2,
@@ -5224,6 +5692,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J44A',
         subjectName: 'Derecho urbanístico',
         type: 'Teórico',
         credits: 3,
@@ -5243,6 +5712,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J54A',
         subjectName: 'Bioderecho (biocienciasy dere (presencial - remoto)',
         type: 'Teórico',
         credits: 3,
@@ -5262,6 +5732,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J57A',
         subjectName: 'Ejercicio profesional del derecho',
         type: 'Teórico',
         credits: 3,
@@ -5281,6 +5752,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'J64A',
         subjectName: 'Catedra derecho digital y legaltech',
         type: 'Teórico',
         credits: 3,
@@ -5300,6 +5772,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Mecani alternativos en la solu',
         type: 'Teórico',
         credits: 2,
@@ -5318,6 +5791,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Consultorio jurídico i',
         type: 'Teórico',
         credits: 3,
@@ -5337,6 +5811,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Consultorio jurídico ii',
         type: 'Teórico',
         credits: 3,
@@ -5356,6 +5831,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'P04A',
         subjectName: 'Consultorio jurídico iii (campus casa lemaitre)',
         type: 'Teórico',
         credits: 3,
@@ -5375,6 +5851,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'P05A',
         subjectName: 'Consultorio jurídico iv - (campus casa lemaitre)',
         type: 'Teórico',
         credits: 3,
@@ -5394,6 +5871,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'T01A',
         subjectName: 'Argumentación jurídica',
         type: 'Teórico',
         credits: 2,
@@ -5412,6 +5890,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'T02A',
         subjectName: 'Interpretación jurídica y cons',
         type: 'Teórico',
         credits: 2,
@@ -5430,6 +5909,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'T03A',
         subjectName: 'M. de la investigación jurídica y socio j (ternera - manga)',
         type: 'Teórico',
         credits: 3,
@@ -5449,6 +5929,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Econometría',
         type: 'Teórico',
         credits: 3,
@@ -5460,6 +5941,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Econometría',
         type: 'Laboratorio',
         credits: 3,
@@ -5471,6 +5953,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Econometría',
         type: 'Teórico',
         credits: 3,
@@ -5482,6 +5965,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Econometría',
         type: 'Laboratorio',
         credits: 3,
@@ -5493,6 +5977,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Econometría',
         type: 'Teórico',
         credits: 3,
@@ -5504,6 +5989,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Econometría',
         type: 'Laboratorio',
         credits: 3,
@@ -5522,6 +6008,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C02A',
         subjectName: 'Seminario de econometría',
         type: 'Teórico',
         credits: 3,
@@ -5533,6 +6020,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C02A',
         subjectName: 'Seminario de econometría',
         type: 'Laboratorio',
         credits: 3,
@@ -5552,6 +6040,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'E02A',
         subjectName: 'Pensamiento económico',
         type: 'Teórico',
         credits: 2,
@@ -5571,6 +6060,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Historia económica mundial',
         type: 'Teórico',
         credits: 3,
@@ -5590,6 +6080,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Historia económica de colombia',
         type: 'Teórico',
         credits: 3,
@@ -5609,6 +6100,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'I01A',
         subjectName: 'Fundamentos de economía',
         type: 'Teórico',
         credits: 3,
@@ -5621,6 +6113,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I01A',
         subjectName: 'Fundamentos de economía',
         type: 'Teórico',
         credits: 3,
@@ -5633,6 +6126,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I01A',
         subjectName: 'Fundamentos de economía',
         type: 'Teórico',
         credits: 3,
@@ -5652,6 +6146,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Microeconomía i',
         type: 'Teórico',
         credits: 3,
@@ -5664,6 +6159,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Microeconomía i',
         type: 'Teórico',
         credits: 3,
@@ -5676,6 +6172,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Microeconomía i',
         type: 'Teórico',
         credits: 3,
@@ -5688,6 +6185,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Microeconomía i',
         type: 'Teórico',
         credits: 3,
@@ -5707,6 +6205,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Microeconomía ii',
         type: 'Teórico',
         credits: 3,
@@ -5726,6 +6225,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Economía y ambiente',
         type: 'Clase virtual',
         credits: 3,
@@ -5743,6 +6243,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'I06A',
         subjectName: 'Teoría de juegos',
         type: 'Teórico',
         credits: 3,
@@ -5762,6 +6263,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Macroeconomía i',
         type: 'Teórico',
         credits: 3,
@@ -5774,6 +6276,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Macroeconomía i',
         type: 'Teórico',
         credits: 3,
@@ -5786,6 +6289,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Macroeconomía i',
         type: 'Teórico',
         credits: 3,
@@ -5805,6 +6309,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M02A',
         subjectName: 'Macroeconomía ii',
         type: 'Teórico',
         credits: 3,
@@ -5824,6 +6329,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Medición económica',
         type: 'Teórico',
         credits: 3,
@@ -5843,6 +6349,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Geografía económica',
         type: 'Teórico',
         credits: 3,
@@ -5862,6 +6369,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Finanzas públicas',
         type: 'Teórico',
         credits: 3,
@@ -5881,6 +6389,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M07A',
         subjectName: 'Desarrollo económico',
         type: 'Teórico',
         credits: 3,
@@ -5900,6 +6409,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M10A',
         subjectName: 'Economía y políticas públicas',
         type: 'Teórico',
         credits: 3,
@@ -5919,6 +6429,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M12A',
         subjectName: 'Formulación y evaluac de proye',
         type: 'Teórico',
         credits: 3,
@@ -5931,6 +6442,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M12A',
         subjectName: 'Formulación y evaluac de proye',
         type: 'Teórico',
         credits: 3,
@@ -5943,6 +6455,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M12A',
         subjectName: 'Formulación y evaluac de proye',
         type: 'Teórico',
         credits: 3,
@@ -5955,6 +6468,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M12A',
         subjectName: 'Formulación y evaluac de proye',
         type: 'Teórico',
         credits: 3,
@@ -5974,6 +6488,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'O01A',
         subjectName: 'Economia de la ener y des sost',
         type: 'Clase virtual',
         credits: 3,
@@ -5991,6 +6506,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'O12A',
         subjectName: 'Economía y sociedad en cartagena',
         type: 'Teórico',
         credits: 3,
@@ -6010,6 +6526,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Seminario de investigación',
         type: 'Teórico',
         credits: 2,
@@ -6021,6 +6538,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Seminario de investigación',
         type: 'Teórico',
         credits: 2,
@@ -6039,6 +6557,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Opción de grado',
         type: 'Teórico',
         credits: 2,
@@ -6056,6 +6575,7 @@ List<Subject> subjects = [
     credits: 0,
     classOptions: [
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Seminario integrador fen',
         type: 'Clase virtual',
         credits: 0,
@@ -6073,6 +6593,7 @@ List<Subject> subjects = [
     credits: 9,
     classOptions: [
       ClassOption(
+        subjectCode: 'P04A',
         subjectName: 'Práctica profesional',
         type: 'Laboratorio',
         credits: 9,
@@ -6100,6 +6621,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z01A',
         subjectName: 'Entorno económico',
         type: 'Teórico',
         credits: 3,
@@ -6119,6 +6641,7 @@ List<Subject> subjects = [
     credits: 0,
     classOptions: [
       ClassOption(
+        subjectCode: 'U01A',
         subjectName: 'Desarrollo universitario',
         type: 'Clase virtual',
         credits: 0,
@@ -6136,6 +6659,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Tic aplicada a los negocios',
         type: 'Teorico-practico',
         credits: 3,
@@ -6148,6 +6672,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Tic aplicada a los negocios',
         type: 'Teorico-practico',
         credits: 3,
@@ -6167,6 +6692,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Matematica financiera',
         type: 'Teórico',
         credits: 2,
@@ -6179,6 +6705,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Matematica financiera',
         type: 'Teórico',
         credits: 2,
@@ -6191,24 +6718,39 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
+        subjectName: 'Matematica financiera',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Juan Camilo Medellin Rojas',
+        nrc: '2333',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+          Schedule(day: 'Martes', time: '14:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Matematica financiera',
         type: 'Teórico',
         credits: 2,
         professor: 'Juan Camilo Medellin Rojas',
         nrc: '2335',
-        groupId: 3,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Lunes', time: '10:00 - 11:50'),
           Schedule(day: 'Jueves', time: '13:00 - 13:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Matematica financiera',
         type: 'Teórico',
         credits: 2,
         professor: 'Jose Julio Vergara Arrieta',
         nrc: '2475',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Martes', time: '09:00 - 09:50'),
           Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
@@ -6222,6 +6764,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Análisis financiero y proyecci',
         type: 'Teórico',
         credits: 2,
@@ -6234,6 +6777,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Análisis financiero y proyecci',
         type: 'Teórico',
         credits: 2,
@@ -6253,6 +6797,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F04A',
         subjectName: 'Derecho aduanero y financiero',
         type: 'Teórico',
         credits: 3,
@@ -6272,6 +6817,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F05A',
         subjectName: 'Mercado de capitales',
         type: 'Teórico',
         credits: 3,
@@ -6283,6 +6829,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F05A',
         subjectName: 'Mercado de capitales',
         type: 'Laboratorio',
         credits: 3,
@@ -6294,6 +6841,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F05A',
         subjectName: 'Mercado de capitales',
         type: 'Teórico',
         credits: 3,
@@ -6305,6 +6853,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F05A',
         subjectName: 'Mercado de capitales',
         type: 'Laboratorio',
         credits: 3,
@@ -6323,6 +6872,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F06A',
         subjectName: 'Finanzas i',
         type: 'Teórico',
         credits: 3,
@@ -6335,6 +6885,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F06A',
         subjectName: 'Finanzas i',
         type: 'Teórico',
         credits: 3,
@@ -6354,6 +6905,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F07A',
         subjectName: 'Finanzas ii',
         type: 'Teórico',
         credits: 3,
@@ -6366,6 +6918,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F07A',
         subjectName: 'Finanzas ii',
         type: 'Teórico',
         credits: 3,
@@ -6385,6 +6938,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F08A',
         subjectName: 'International finance',
         type: 'Teórico',
         credits: 3,
@@ -6397,6 +6951,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F08A',
         subjectName: 'International finance',
         type: 'Teórico',
         credits: 3,
@@ -6416,6 +6971,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N01A',
         subjectName: 'Introducción a los neg interna',
         type: 'Teórico',
         credits: 3,
@@ -6435,6 +6991,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N03A',
         subjectName: 'Administración internacional',
         type: 'Teórico',
         credits: 3,
@@ -6454,6 +7011,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N04A',
         subjectName: 'Integración económica (remoto)',
         type: 'Teórico',
         credits: 3,
@@ -6466,6 +7024,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'N04A',
         subjectName: 'Integración económica (remoto)',
         type: 'Teórico',
         credits: 3,
@@ -6485,6 +7044,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N05A',
         subjectName: 'Estrategias de negociación',
         type: 'Teórico',
         credits: 3,
@@ -6497,6 +7057,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'N05A',
         subjectName: 'Estrategias de negociación',
         type: 'Teórico',
         credits: 3,
@@ -6516,6 +7077,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N06A',
         subjectName: 'Comercio exterior',
         type: 'Teórico',
         credits: 3,
@@ -6535,6 +7097,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N07A',
         subjectName: 'Logistics & ifd',
         type: 'Teórico',
         credits: 3,
@@ -6547,6 +7110,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'N07A',
         subjectName: 'Logistics & ifd',
         type: 'Teórico',
         credits: 3,
@@ -6566,6 +7130,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N08A',
         subjectName: 'Simulación de negocios',
         type: 'Teórico',
         credits: 3,
@@ -6585,6 +7150,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'N09A',
         subjectName: 'International marketing',
         type: 'Teórico',
         credits: 3,
@@ -6597,6 +7163,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'N09A',
         subjectName: 'International marketing',
         type: 'Teórico',
         credits: 3,
@@ -6616,6 +7183,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'O01A',
         subjectName: 'Gerencia de las exportaciones',
         type: 'Teórico',
         credits: 3,
@@ -6635,6 +7203,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'O05A',
         subjectName: 'Planeación y prospectiva',
         type: 'Clase virtual',
         credits: 3,
@@ -6652,6 +7221,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'O06A',
         subjectName: 'Estrategias y procesos estrate',
         type: 'Clase virtual',
         credits: 3,
@@ -6669,6 +7239,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'O16A',
         subjectName: 'Remote work',
         type: 'Clase virtual',
         credits: 2,
@@ -6686,6 +7257,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'O17A',
         subjectName: 'E commerce & digital marketing',
         type: 'Clase virtual',
         credits: 3,
@@ -6703,6 +7275,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'O19A',
         subjectName: 'Fintech',
         type: 'Clase virtual',
         credits: 3,
@@ -6720,6 +7293,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Opción de grado',
         type: 'Clase virtual',
         credits: 2,
@@ -6737,6 +7311,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z04A',
         subjectName: 'Capital market',
         type: 'Teórico',
         credits: 3,
@@ -6748,6 +7323,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'Z04A',
         subjectName: 'Capital market',
         type: 'Laboratorio',
         credits: 3,
@@ -6759,6 +7335,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'Z04A',
         subjectName: 'Capital market',
         type: 'Teórico',
         credits: 3,
@@ -6770,6 +7347,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'Z04A',
         subjectName: 'Capital market',
         type: 'Laboratorio',
         credits: 3,
@@ -6788,6 +7366,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z07A',
         subjectName: 'International marketing',
         type: 'Teórico',
         credits: 2,
@@ -6800,6 +7379,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'Z07A',
         subjectName: 'International marketing',
         type: 'Teórico',
         credits: 2,
@@ -6819,6 +7399,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z09A',
         subjectName: 'International finance',
         type: 'Teórico',
         credits: 3,
@@ -6831,6 +7412,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'Z09A',
         subjectName: 'International finance',
         type: 'Teórico',
         credits: 3,
@@ -6850,6 +7432,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z11A',
         subjectName: 'Administración internacional',
         type: 'Teórico',
         credits: 3,
@@ -6869,6 +7452,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'A01A',
         subjectName: 'Apreciación del arte',
         type: 'Teórico',
         credits: 2,
@@ -6887,6 +7471,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Apreciación musical',
         type: 'Teórico',
         credits: 2,
@@ -6898,6 +7483,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Apreciación musical',
         type: 'Teórico',
         credits: 2,
@@ -6916,6 +7502,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Imagen y discurso',
         type: 'Teórico',
         credits: 2,
@@ -6927,6 +7514,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Imagen y discurso',
         type: 'Teórico',
         credits: 2,
@@ -6938,6 +7526,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Imagen y discurso',
         type: 'Teórico',
         credits: 2,
@@ -6956,6 +7545,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'A07A',
         subjectName: 'Fotografía creativa-manga',
         type: 'Teórico',
         credits: 2,
@@ -6967,6 +7557,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A07A',
         subjectName: 'Fotografía creativa-manga',
         type: 'Teórico',
         credits: 2,
@@ -6985,6 +7576,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'A10A',
         subjectName: 'Historia del arte',
         type: 'Teórico',
         credits: 2,
@@ -6996,6 +7588,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A10A',
         subjectName: 'Historia del arte',
         type: 'Teórico',
         credits: 2,
@@ -7014,6 +7607,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'A11A',
         subjectName: 'Música y contexto: siglo xx y xxi',
         type: 'Teórico',
         credits: 2,
@@ -7032,6 +7626,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'C03A',
         subjectName: 'Cátedra de paz',
         type: 'Teórico',
         credits: 2,
@@ -7050,6 +7645,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'C04A',
         subjectName: 'Masculinidades, violencia y cr',
         type: 'Teórico',
         credits: 2,
@@ -7068,6 +7664,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'C07A',
         subjectName: 'Escritura etnográfica',
         type: 'Teórico',
         credits: 2,
@@ -7079,6 +7676,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C07A',
         subjectName: 'Escritura etnográfica',
         type: 'Teórico',
         credits: 2,
@@ -7097,6 +7695,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'C08A',
         subjectName: 'Género, igualdad y cine',
         type: 'Teórico',
         credits: 2,
@@ -7107,6 +7706,18 @@ List<Subject> subjects = [
           Schedule(day: 'Lunes', time: '14:00 - 15:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'C08A',
+        subjectName: 'Género, igualdad y cine',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Claudia Cecilia Ayola Escallon',
+        nrc: '2203',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '12:00 - 13:50'),
+        ],
+      ),
     ],
   ),
   Subject(
@@ -7115,6 +7726,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Taller de comprensión lectora',
         type: 'Teórico',
         credits: 3,
@@ -7127,6 +7739,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Taller de comprensión lectora',
         type: 'Teórico',
         credits: 3,
@@ -7139,6 +7752,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Taller de comprensión lectora',
         type: 'Teórico',
         credits: 3,
@@ -7151,6 +7765,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Taller de comprensión lectora',
         type: 'Teórico',
         credits: 3,
@@ -7163,6 +7778,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Taller de comprensión lectora',
         type: 'Teórico',
         credits: 3,
@@ -7175,6 +7791,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Taller de comprensión lectora',
         type: 'Teórico',
         credits: 3,
@@ -7187,6 +7804,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Taller de comprensión lectora',
         type: 'Teórico',
         credits: 3,
@@ -7199,6 +7817,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Taller de comprensión lectora',
         type: 'Teórico',
         credits: 3,
@@ -7211,6 +7830,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Taller de comprensión lectora',
         type: 'Teórico',
         credits: 3,
@@ -7223,6 +7843,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Taller de comprensión lectora',
         type: 'Teórico',
         credits: 3,
@@ -7235,6 +7856,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H01A',
         subjectName: 'Taller de comprensión lectora',
         type: 'Teórico',
         credits: 3,
@@ -7254,6 +7876,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
@@ -7266,6 +7889,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
@@ -7278,6 +7902,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
@@ -7290,6 +7915,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
@@ -7302,6 +7928,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
@@ -7314,42 +7941,59 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
+        subjectName: 'Taller de escritura académica',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Federico Ochoa Escobar',
+        nrc: '1927',
+        groupId: 6,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 07:50'),
+          Schedule(day: 'Martes', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
         professor: 'Rogers Montt Torres',
         nrc: '1929',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
           Schedule(day: 'Jueves', time: '10:00 - 10:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
         professor: 'Alexander De Jesus Casalins Perez',
         nrc: '1931',
-        groupId: 7,
+        groupId: 8,
         schedules: [
           Schedule(day: 'Martes', time: '10:00 - 10:50'),
           Schedule(day: 'Viernes', time: '10:00 - 11:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
         professor: 'Alexander De Jesus Casalins Perez',
         nrc: '1932',
-        groupId: 8,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Lunes', time: '07:00 - 07:50'),
           Schedule(day: 'Miércoles', time: '09:00 - 10:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
@@ -7362,6 +8006,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
@@ -7374,6 +8019,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
@@ -7386,6 +8032,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
@@ -7398,6 +8045,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
@@ -7417,6 +8065,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'H02A',
         subjectName: 'Taller de escritura académica-manga',
         type: 'Teórico',
         credits: 3,
@@ -7436,6 +8085,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H03A',
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
@@ -7447,6 +8097,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H03A',
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
@@ -7458,6 +8109,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H03A',
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
@@ -7469,6 +8121,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H03A',
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
@@ -7480,6 +8133,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H03A',
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
@@ -7491,6 +8145,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H03A',
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
@@ -7502,6 +8157,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H03A',
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
@@ -7513,6 +8169,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H03A',
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
@@ -7524,6 +8181,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H03A',
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
@@ -7535,6 +8193,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H03A',
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
@@ -7553,6 +8212,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
@@ -7564,122 +8224,145 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H04A',
+        subjectName: 'Ética',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Ingrid Yaneth Silva Arroyo',
+        nrc: '2363',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
         professor: 'Yerlys Guardo Gonzalez',
         nrc: '2368',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
         professor: 'Ingrid Yaneth Silva Arroyo',
         nrc: '2439',
-        groupId: 3,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Viernes', time: '08:00 - 09:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
         professor: 'Jose Carlos Garcia Martinez',
         nrc: '1238',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Jueves', time: '16:00 - 17:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
         professor: 'Andrea Carolina Fierro Chaves',
         nrc: '1396',
-        groupId: 5,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Jueves', time: '17:00 - 18:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
         professor: 'Andrea Carolina Fierro Chaves',
         nrc: '1452',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Miércoles', time: '17:00 - 18:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
         professor: 'Jose Carlos Garcia Martinez',
         nrc: '1517',
-        groupId: 7,
+        groupId: 8,
         schedules: [
           Schedule(day: 'Miércoles', time: '16:00 - 17:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
         professor: 'Yerlys Guardo Gonzalez',
         nrc: '1547',
-        groupId: 8,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Jueves', time: '10:00 - 11:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
         professor: 'Jose Carlos Garcia Martinez',
         nrc: '1600',
-        groupId: 9,
+        groupId: 10,
         schedules: [
           Schedule(day: 'Martes', time: '17:00 - 18:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
         professor: 'Andrea Carolina Fierro Chaves',
         nrc: '1769',
-        groupId: 10,
+        groupId: 11,
         schedules: [
           Schedule(day: 'Miércoles', time: '15:00 - 16:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
         professor: 'Andrea Carolina Fierro Chaves',
         nrc: '1935',
-        groupId: 11,
+        groupId: 12,
         schedules: [
           Schedule(day: 'Martes', time: '16:00 - 17:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'H04A',
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
         professor: 'Jose Carlos Garcia Martinez',
         nrc: '2039',
-        groupId: 12,
+        groupId: 13,
         schedules: [
           Schedule(day: 'Lunes', time: '17:00 - 18:50'),
         ],
@@ -7692,6 +8375,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Ciudadanía global',
         type: 'Teórico',
         credits: 2,
@@ -7703,6 +8387,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Ciudadanía global',
         type: 'Teórico',
         credits: 2,
@@ -7714,6 +8399,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Ciudadanía global',
         type: 'Teórico',
         credits: 2,
@@ -7725,6 +8411,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Ciudadanía global',
         type: 'Teórico',
         credits: 2,
@@ -7736,6 +8423,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Ciudadanía global',
         type: 'Teórico',
         credits: 2,
@@ -7747,6 +8435,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Ciudadanía global',
         type: 'Teórico',
         credits: 2,
@@ -7758,6 +8447,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Ciudadanía global',
         type: 'Teórico',
         credits: 2,
@@ -7769,6 +8459,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Ciudadanía global',
         type: 'Teórico',
         credits: 2,
@@ -7780,6 +8471,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Ciudadanía global',
         type: 'Teórico',
         credits: 2,
@@ -7791,6 +8483,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Ciudadanía global',
         type: 'Teórico',
         credits: 2,
@@ -7809,6 +8502,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'H05A',
         subjectName: 'Ciudadanía global-derecho',
         type: 'Teórico',
         credits: 2,
@@ -7827,6 +8521,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'L06A',
         subjectName: 'Literatura latinoamericana',
         type: 'Teórico',
         credits: 2,
@@ -7845,6 +8540,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'L07A',
         subjectName: 'Lectura crítica y escritura',
         type: 'Teórico',
         credits: 2,
@@ -7863,6 +8559,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'S02A',
         subjectName: 'Conflicto armado c/biano y mem',
         type: 'Teórico',
         credits: 2,
@@ -7874,6 +8571,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'S02A',
         subjectName: 'Conflicto armado c/biano y mem',
         type: 'Teórico',
         credits: 2,
@@ -7892,6 +8590,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'S03A',
         subjectName: 'Historia social y política de',
         type: 'Teórico',
         credits: 2,
@@ -7910,6 +8609,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'S04A',
         subjectName: 'Historia del mundo contemporán',
         type: 'Teórico',
         credits: 2,
@@ -7928,6 +8628,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Francés i',
         type: 'Teórico',
         credits: 2,
@@ -7947,6 +8648,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I01A',
         subjectName: 'Ingles i - (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -7966,6 +8668,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I01A',
         subjectName: 'Ingles i',
         type: 'Teórico',
         credits: 2,
@@ -7980,6 +8683,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I01A',
         subjectName: 'Ingles i',
         type: 'Teórico',
         credits: 2,
@@ -7994,6 +8698,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I01A',
         subjectName: 'Ingles i',
         type: 'Teórico',
         credits: 2,
@@ -8015,6 +8720,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I01A',
         subjectName: 'Ingles i - programa arquitectura y derecho (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8034,6 +8740,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8048,6 +8755,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8062,6 +8770,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8076,6 +8785,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8090,6 +8800,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8102,6 +8813,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8116,6 +8828,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8130,6 +8843,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8144,6 +8858,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8158,6 +8873,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8172,6 +8888,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8186,6 +8903,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8200,6 +8918,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8214,6 +8933,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
@@ -8235,6 +8955,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii - programa de derecho (manga)',
         type: 'Teórico',
         credits: 2,
@@ -8254,6 +8975,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Ingles ii programa de arquitectura (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8273,6 +8995,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8285,6 +9008,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8297,6 +9021,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8311,6 +9036,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8323,6 +9049,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8335,6 +9062,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8347,6 +9075,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8359,6 +9088,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8371,6 +9101,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8383,6 +9114,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8395,6 +9127,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8407,6 +9140,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8419,6 +9153,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8431,6 +9166,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8445,6 +9181,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8459,6 +9196,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8473,6 +9211,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
@@ -8494,6 +9233,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii - programa de derecho (manga)',
         type: 'Teórico',
         credits: 2,
@@ -8513,6 +9253,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I03A',
         subjectName: 'Ingles iii programa de arquitectura (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8532,6 +9273,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv',
         type: 'Teórico',
         credits: 2,
@@ -8544,6 +9286,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv',
         type: 'Teórico',
         credits: 2,
@@ -8556,6 +9299,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv',
         type: 'Teórico',
         credits: 2,
@@ -8568,6 +9312,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv',
         type: 'Teórico',
         credits: 2,
@@ -8580,6 +9325,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv',
         type: 'Teórico',
         credits: 2,
@@ -8592,6 +9338,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv',
         type: 'Teórico',
         credits: 2,
@@ -8604,6 +9351,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv',
         type: 'Teórico',
         credits: 2,
@@ -8616,6 +9364,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv',
         type: 'Teórico',
         credits: 2,
@@ -8635,6 +9384,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8647,6 +9397,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8659,6 +9410,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8678,6 +9430,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I04A',
         subjectName: 'Ingles iv - programa de derecho (ternera)',
         type: 'Teórico',
         credits: 2,
@@ -8697,6 +9450,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Ingles v',
         type: 'Teórico',
         credits: 2,
@@ -8709,6 +9463,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Ingles v',
         type: 'Teórico',
         credits: 2,
@@ -8721,6 +9476,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Ingles v',
         type: 'Teórico',
         credits: 2,
@@ -8733,6 +9489,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Ingles v',
         type: 'Teórico',
         credits: 2,
@@ -8745,6 +9502,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Ingles v',
         type: 'Teórico',
         credits: 2,
@@ -8764,6 +9522,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Ingles v - programa derecho (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8783,6 +9542,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Ingles v (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8795,6 +9555,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Ingles v (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8807,6 +9568,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Ingles v (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8819,6 +9581,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Ingles v (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8838,6 +9601,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'I05A',
         subjectName: 'Ingles v - programa de arquitectura (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
@@ -8857,6 +9621,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'A01A',
         subjectName: 'Seminario de ing. ambiental',
         type: 'Teórico',
         credits: 1,
@@ -8875,6 +9640,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Termoquímica ambiental',
         type: 'Laboratorio',
         credits: 3,
@@ -8886,6 +9652,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Termoquímica ambiental',
         type: 'Teórico',
         credits: 3,
@@ -8904,6 +9671,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'A04A',
         subjectName: 'Legislación y política ambient',
         type: 'Teórico',
         credits: 2,
@@ -8923,6 +9691,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Calidad del aire y meteorologi',
         type: 'Teórico',
         credits: 3,
@@ -8942,6 +9711,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A06A',
         subjectName: 'Calidad del agua',
         type: 'Teórico',
         credits: 3,
@@ -8961,6 +9731,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A07A',
         subjectName: 'Calidad del suelo',
         type: 'Teórico',
         credits: 3,
@@ -8980,6 +9751,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A08A',
         subjectName: 'Control de emisiones atmosféri',
         type: 'Teórico',
         credits: 3,
@@ -8999,6 +9771,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A10A',
         subjectName: 'Tratamiento de suelo',
         type: 'Teórico',
         credits: 3,
@@ -9018,6 +9791,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A12A',
         subjectName: 'Gestión integral de residuos s',
         type: 'Teórico',
         credits: 3,
@@ -9037,6 +9811,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A13A',
         subjectName: 'Evaluación ambiental',
         type: 'Teórico',
         credits: 3,
@@ -9056,6 +9831,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A17A',
         subjectName: 'Desarrollo sostenible',
         type: 'Teórico',
         credits: 3,
@@ -9075,6 +9851,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A18A',
         subjectName: 'Sistemas de información geográ',
         type: 'Teórico',
         credits: 3,
@@ -9094,6 +9871,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Sistemas biológicos',
         type: 'Teórico',
         credits: 2,
@@ -9105,6 +9883,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Sistemas biológicos',
         type: 'Laboratorio',
         credits: 2,
@@ -9123,6 +9902,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'B02A',
         subjectName: 'Microbiología',
         type: 'Teórico',
         credits: 2,
@@ -9134,6 +9914,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B02A',
         subjectName: 'Microbiología',
         type: 'Laboratorio',
         credits: 2,
@@ -9152,6 +9933,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'B03A',
         subjectName: 'Ecologia',
         type: 'Teórico',
         credits: 2,
@@ -9163,6 +9945,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B03A',
         subjectName: 'Ecologia',
         type: 'Laboratorio',
         credits: 2,
@@ -9181,6 +9964,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Proyecto de ingeniería i',
         type: 'Teórico',
         credits: 3,
@@ -9192,6 +9976,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Proyecto de ingeniería i',
         type: 'Teórico',
         credits: 3,
@@ -9203,6 +9988,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Proyecto de ingeniería i',
         type: 'Teórico',
         credits: 3,
@@ -9215,6 +10001,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Proyecto de ingeniería i',
         type: 'Teórico',
         credits: 3,
@@ -9227,6 +10014,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Proyecto de ingeniería i',
         type: 'Teórico',
         credits: 3,
@@ -9239,6 +10027,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Proyecto de ingeniería i',
         type: 'Teórico',
         credits: 3,
@@ -9250,6 +10039,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Proyecto de ingeniería i',
         type: 'Teórico',
         credits: 3,
@@ -9262,6 +10052,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Proyecto de ingeniería i',
         type: 'Teórico',
         credits: 3,
@@ -9274,6 +10065,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Proyecto de ingeniería i',
         type: 'Teórico',
         credits: 3,
@@ -9285,6 +10077,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Proyecto de ingeniería i',
         type: 'Teórico',
         credits: 3,
@@ -9296,6 +10089,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Proyecto de ingeniería i',
         type: 'Teórico',
         credits: 3,
@@ -9314,6 +10108,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Proyecto de ingeniería ii',
         type: 'Teórico',
         credits: 3,
@@ -9325,6 +10120,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Proyecto de ingeniería ii',
         type: 'Teórico',
         credits: 3,
@@ -9336,6 +10132,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Proyecto de ingeniería ii',
         type: 'Teórico',
         credits: 3,
@@ -9347,6 +10144,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Proyecto de ingeniería ii',
         type: 'Teórico',
         credits: 3,
@@ -9359,6 +10157,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Proyecto de ingeniería ii',
         type: 'Teórico',
         credits: 3,
@@ -9371,6 +10170,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Proyecto de ingeniería ii',
         type: 'Teórico',
         credits: 3,
@@ -9382,6 +10182,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Proyecto de ingeniería ii',
         type: 'Teórico',
         credits: 3,
@@ -9394,6 +10195,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Proyecto de ingeniería ii',
         type: 'Teórico',
         credits: 3,
@@ -9405,6 +10207,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Proyecto de ingeniería ii',
         type: 'Teórico',
         credits: 3,
@@ -9416,6 +10219,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Proyecto de ingeniería ii',
         type: 'Teórico',
         credits: 3,
@@ -9427,6 +10231,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P02A',
         subjectName: 'Proyecto de ingeniería ii',
         type: 'Teórico',
         credits: 3,
@@ -9445,6 +10250,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z04A',
         subjectName: 'Procesos unitarios',
         type: 'Teórico',
         credits: 3,
@@ -9464,6 +10270,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z06A',
         subjectName: 'Gestión y geoplanificación',
         type: 'Teórico',
         credits: 3,
@@ -9483,6 +10290,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z14A',
         subjectName: 'Evaluación ambiental',
         type: 'Teórico',
         credits: 3,
@@ -9502,6 +10310,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Diseño de vias',
         type: 'Teórico',
         credits: 3,
@@ -9521,6 +10330,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Hidráulica',
         type: 'Teórico',
         credits: 3,
@@ -9540,6 +10350,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Análisis estructural',
         type: 'Teórico',
         credits: 3,
@@ -9552,6 +10363,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Análisis estructural',
         type: 'Teórico',
         credits: 3,
@@ -9571,6 +10383,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A06A',
         subjectName: 'Principios de geotecnia',
         type: 'Teórico',
         credits: 3,
@@ -9582,6 +10395,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A06A',
         subjectName: 'Principios de geotecnia',
         type: 'Laboratorio',
         credits: 3,
@@ -9593,6 +10407,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A06A',
         subjectName: 'Principios de geotecnia',
         type: 'Laboratorio',
         credits: 3,
@@ -9611,6 +10426,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'A08A',
         subjectName: 'Diseño estructural',
         type: 'Teórico',
         credits: 4,
@@ -9630,6 +10446,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A09A',
         subjectName: 'Estructuras geotécnicas',
         type: 'Teórico',
         credits: 3,
@@ -9649,6 +10466,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A10A',
         subjectName: 'Administración y control de la',
         type: 'Teórico',
         credits: 3,
@@ -9668,6 +10486,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A11A',
         subjectName: 'Acueducto y alcantarillado',
         type: 'Teórico',
         credits: 3,
@@ -9680,6 +10499,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A11A',
         subjectName: 'Acueducto y alcantarillado',
         type: 'Teórico',
         credits: 3,
@@ -9699,6 +10519,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A12A',
         subjectName: 'Pavimentos',
         type: 'Teórico',
         credits: 3,
@@ -9718,6 +10539,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A13A',
         subjectName: 'Ingeniería de tránsito',
         type: 'Teórico',
         credits: 3,
@@ -9730,6 +10552,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A13A',
         subjectName: 'Ingeniería de tránsito',
         type: 'Teórico',
         credits: 3,
@@ -9749,6 +10572,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A14A',
         subjectName: 'Estructuras hidráulicas',
         type: 'Teórico',
         credits: 3,
@@ -9768,6 +10592,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A16A',
         subjectName: 'Estructuras metálicas',
         type: 'Teórico',
         credits: 3,
@@ -9787,6 +10612,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A17A',
         subjectName: 'Estabilidad de taludes y obras',
         type: 'Teórico',
         credits: 3,
@@ -9806,6 +10632,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A19A',
         subjectName: 'Dibujo e interpretación de pla',
         type: 'Teórico',
         credits: 3,
@@ -9818,6 +10645,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A19A',
         subjectName: 'Dibujo e interpretación de pla',
         type: 'Teórico',
         credits: 3,
@@ -9837,6 +10665,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A21A',
         subjectName: 'Métodos no convencionales de construcción',
         type: 'Teórico',
         credits: 3,
@@ -9856,6 +10685,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A22A',
         subjectName: 'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
         type: 'Teórico',
         credits: 3,
@@ -9875,6 +10705,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Materiales de ingenieria civil',
         type: 'Teórico',
         credits: 3,
@@ -9887,6 +10718,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Materiales de ingenieria civil',
         type: 'Teórico',
         credits: 3,
@@ -9906,6 +10738,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B02A',
         subjectName: 'Resistencia de materiales',
         type: 'Laboratorio',
         credits: 3,
@@ -9924,6 +10757,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B03A',
         subjectName: 'Geomática',
         type: 'Laboratorio',
         credits: 3,
@@ -9935,6 +10769,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B03A',
         subjectName: 'Geomática',
         type: 'Teórico',
         credits: 3,
@@ -9946,6 +10781,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B03A',
         subjectName: 'Geomática',
         type: 'Laboratorio',
         credits: 3,
@@ -9957,6 +10793,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B03A',
         subjectName: 'Geomática',
         type: 'Laboratorio',
         credits: 3,
@@ -9975,6 +10812,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'B04A',
         subjectName: 'Geociencias',
         type: 'Teórico',
         credits: 2,
@@ -9993,6 +10831,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B05A',
         subjectName: 'Hidrología',
         type: 'Teórico',
         credits: 3,
@@ -10005,6 +10844,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B05A',
         subjectName: 'Hidrología',
         type: 'Teórico',
         credits: 3,
@@ -10024,6 +10864,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z08A',
         subjectName: 'Diseño y comp. de los material',
         type: 'Teórico',
         credits: 4,
@@ -10043,6 +10884,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z10A',
         subjectName: 'Hidrología',
         type: 'Teórico',
         credits: 2,
@@ -10062,6 +10904,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z11A',
         subjectName: 'Hidráulica',
         type: 'Teórico',
         credits: 4,
@@ -10081,6 +10924,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Automatismos',
         type: 'Teórico',
         credits: 3,
@@ -10100,6 +10944,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E01A',
         subjectName: 'Máquinas eléctricas i',
         type: 'Teórico',
         credits: 3,
@@ -10119,6 +10964,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E02A',
         subjectName: 'Máquinas eléctricas ii',
         type: 'Teórico',
         credits: 3,
@@ -10131,6 +10977,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E02A',
         subjectName: 'Máquinas eléctricas ii',
         type: 'Laboratorio',
         credits: 3,
@@ -10149,6 +10996,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E03A',
         subjectName: 'Sistemas de generación',
         type: 'Teórico',
         credits: 3,
@@ -10168,6 +11016,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E04A',
         subjectName: 'Sistemas de energias sostenibl',
         type: 'Teórico',
         credits: 3,
@@ -10180,6 +11029,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'E04A',
         subjectName: 'Sistemas de energias sostenibl',
         type: 'Laboratorio',
         credits: 3,
@@ -10198,6 +11048,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E08A',
         subjectName: 'Energías renovables',
         type: 'Clase virtual',
         credits: 3,
@@ -10216,6 +11067,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Seminario de ing. eléctrica',
         type: 'Teórico',
         credits: 1,
@@ -10234,6 +11086,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Dibujo eléctrico',
         type: 'Teórico',
         credits: 1,
@@ -10252,6 +11105,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Circuitos eléctricos i',
         type: 'Teórico',
         credits: 3,
@@ -10264,6 +11118,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Circuitos eléctricos i',
         type: 'Teórico',
         credits: 3,
@@ -10283,6 +11138,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F04A',
         subjectName: 'Teoría electromagnética',
         type: 'Teórico',
         credits: 3,
@@ -10302,6 +11158,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F05A',
         subjectName: 'Circuitos eléctricos ii',
         type: 'Teórico',
         credits: 3,
@@ -10321,6 +11178,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F06A',
         subjectName: 'Mediciones eléctricas',
         type: 'Teórico',
         credits: 3,
@@ -10340,6 +11198,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F07A',
         subjectName: 'Electricidad y electrónica bás',
         type: 'Teórico',
         credits: 3,
@@ -10352,6 +11211,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F07A',
         subjectName: 'Electricidad y electrónica bás',
         type: 'Teórico',
         credits: 3,
@@ -10371,6 +11231,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'W01A',
         subjectName: 'Transp. y distrib. de energía',
         type: 'Teórico',
         credits: 3,
@@ -10390,6 +11251,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'W02A',
         subjectName: 'Instalaciones eléctricas',
         type: 'Teórico',
         credits: 3,
@@ -10409,6 +11271,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'W03A',
         subjectName: 'Análisis de sist de potencia',
         type: 'Teórico',
         credits: 3,
@@ -10428,6 +11291,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z02A',
         subjectName: 'Máquinas eléctricas',
         type: 'Teórico',
         credits: 4,
@@ -10447,6 +11311,7 @@ List<Subject> subjects = [
     credits: 9,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z03A',
         subjectName: 'Práctica profesional',
         type: 'Laboratorio',
         credits: 9,
@@ -10474,6 +11339,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C02A',
         subjectName: 'Control ii',
         type: 'Teórico',
         credits: 3,
@@ -10493,6 +11359,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C03A',
         subjectName: 'Instrumentación electrónica',
         type: 'Teórico',
         credits: 3,
@@ -10512,6 +11379,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C04A',
         subjectName: 'Electrónica de potencia',
         type: 'Teórico',
         credits: 3,
@@ -10531,6 +11399,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C05A',
         subjectName: 'Instrumentación y control',
         type: 'Teórico',
         credits: 3,
@@ -10543,6 +11412,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C05A',
         subjectName: 'Instrumentación y control',
         type: 'Laboratorio',
         credits: 3,
@@ -10554,6 +11424,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C05A',
         subjectName: 'Instrumentación y control',
         type: 'Laboratorio',
         credits: 3,
@@ -10572,6 +11443,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D01A',
         subjectName: 'Sistemas digitales ii',
         type: 'Teórico',
         credits: 3,
@@ -10591,6 +11463,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D02A',
         subjectName: 'Electrónica ii',
         type: 'Teórico',
         credits: 3,
@@ -10610,6 +11483,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D03A',
         subjectName: 'Sistemas embebidos',
         type: 'Teórico',
         credits: 3,
@@ -10629,6 +11503,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Seminario de ing. electrónica',
         type: 'Teórico',
         credits: 1,
@@ -10647,6 +11522,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Sistemas digitales i',
         type: 'Teórico',
         credits: 3,
@@ -10659,6 +11535,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Sistemas digitales i',
         type: 'Teórico',
         credits: 3,
@@ -10678,6 +11555,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Señales y sistemas',
         type: 'Teórico',
         credits: 4,
@@ -10690,6 +11568,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Señales y sistemas',
         type: 'Laboratorio',
         credits: 4,
@@ -10701,6 +11580,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Señales y sistemas',
         type: 'Laboratorio',
         credits: 4,
@@ -10712,6 +11592,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Señales y sistemas',
         type: 'Teórico',
         credits: 4,
@@ -10724,6 +11605,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Señales y sistemas',
         type: 'Laboratorio',
         credits: 4,
@@ -10742,6 +11624,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F04A',
         subjectName: 'Electrónica i',
         type: 'Teórico',
         credits: 3,
@@ -10761,6 +11644,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Ondas y líneas de transmisión',
         type: 'Teórico',
         credits: 3,
@@ -10780,6 +11664,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M02A',
         subjectName: 'Comunicaciones',
         type: 'Teórico',
         credits: 3,
@@ -10799,6 +11684,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Redes de comunicaciones',
         type: 'Teórico',
         credits: 3,
@@ -10818,6 +11704,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z01A',
         subjectName: 'Señales y sistemas',
         type: 'Laboratorio',
         credits: 3,
@@ -10829,6 +11716,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'Z01A',
         subjectName: 'Señales y sistemas',
         type: 'Teórico',
         credits: 3,
@@ -10841,6 +11729,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'Z01A',
         subjectName: 'Señales y sistemas',
         type: 'Laboratorio',
         credits: 3,
@@ -10859,6 +11748,7 @@ List<Subject> subjects = [
     credits: 9,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z04A',
         subjectName: 'Práctica profesional',
         type: 'Laboratorio',
         credits: 9,
@@ -10886,6 +11776,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'A01A',
         subjectName: 'Seminario de ing. industrial',
         type: 'Teórico',
         credits: 1,
@@ -10904,6 +11795,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Administración industrial',
         type: 'Teórico',
         credits: 2,
@@ -10916,6 +11808,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Administración industrial',
         type: 'Teórico',
         credits: 2,
@@ -10935,6 +11828,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Estrategia de operaciones',
         type: 'Teórico',
         credits: 2,
@@ -10947,6 +11841,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Estrategia de operaciones',
         type: 'Teórico',
         credits: 2,
@@ -10966,6 +11861,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A04A',
         subjectName: 'Sistemas de costeo',
         type: 'Teórico',
         credits: 3,
@@ -10978,6 +11874,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A04A',
         subjectName: 'Sistemas de costeo',
         type: 'Teórico',
         credits: 3,
@@ -10997,6 +11894,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Ingenieria económica',
         type: 'Teórico',
         credits: 3,
@@ -11009,6 +11907,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Ingenieria económica',
         type: 'Teórico',
         credits: 3,
@@ -11021,6 +11920,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Ingenieria económica',
         type: 'Teórico',
         credits: 3,
@@ -11040,6 +11940,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A06A',
         subjectName: 'Gestión del talento humano',
         type: 'Teórico',
         credits: 3,
@@ -11059,6 +11960,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A07A',
         subjectName: 'Seguridad y salud laboral',
         type: 'Teórico',
         credits: 3,
@@ -11078,6 +11980,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A09A',
         subjectName: 'Gestión de inn. y el conocimie',
         type: 'Teórico',
         credits: 3,
@@ -11097,6 +12000,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R01A',
         subjectName: 'Procesos de fabricación',
         type: 'Teórico',
         credits: 3,
@@ -11116,24 +12020,39 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R02A',
+        subjectName: 'Optimización',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Holman Ospina Mateus',
+        nrc: '2269',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
+          Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'R02A',
         subjectName: 'Optimización',
         type: 'Teórico',
         credits: 3,
         professor: 'Misael Cruz Monroy',
         nrc: '2270',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Viernes', time: '10:00 - 11:50'),
           Schedule(day: 'Miércoles', time: '11:00 - 11:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'R02A',
         subjectName: 'Optimización',
         type: 'Teórico',
         credits: 3,
         professor: 'Misael Cruz Monroy',
         nrc: '2511',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Viernes', time: '07:00 - 07:50'),
           Schedule(day: 'Martes', time: '13:00 - 14:50'),
@@ -11147,6 +12066,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R04A',
         subjectName: 'Procesos estocásticos',
         type: 'Teórico',
         credits: 3,
@@ -11166,6 +12086,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R05A',
         subjectName: 'Ingenieria de productividad',
         type: 'Teorico-practico',
         credits: 3,
@@ -11177,6 +12098,19 @@ List<Subject> subjects = [
           Schedule(day: 'Viernes', time: '10:00 - 11:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'R05A',
+        subjectName: 'Ingenieria de productividad',
+        type: 'Teorico-practico',
+        credits: 3,
+        professor: 'Fabian Alfonso Gazabon Arrieta',
+        nrc: '2102',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+          Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
+        ],
+      ),
     ],
   ),
   Subject(
@@ -11185,6 +12119,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R07A',
         subjectName: 'Gestión cadena de suministro',
         type: 'Teórico',
         credits: 3,
@@ -11204,6 +12139,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R09A',
         subjectName: 'Plan, prog y cont producción',
         type: 'Teórico',
         credits: 3,
@@ -11223,6 +12159,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R10A',
         subjectName: 'Control de calidad',
         type: 'Teórico',
         credits: 3,
@@ -11242,6 +12179,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R11A',
         subjectName: 'Distribución y transporte',
         type: 'Teórico',
         credits: 3,
@@ -11254,6 +12192,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'R11A',
         subjectName: 'Distribución y transporte',
         type: 'Teórico',
         credits: 3,
@@ -11273,6 +12212,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R12A',
         subjectName: 'Simulación',
         type: 'Teórico',
         credits: 3,
@@ -11285,6 +12225,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'R12A',
         subjectName: 'Simulación',
         type: 'Teórico',
         credits: 3,
@@ -11304,6 +12245,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R13A',
         subjectName: 'Diseño de experimentos',
         type: 'Teórico',
         credits: 3,
@@ -11323,6 +12265,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R14A',
         subjectName: 'Ciencia de los datos',
         type: 'Teórico',
         credits: 3,
@@ -11342,6 +12285,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R20A',
         subjectName: 'Producción mas limpia',
         type: 'Teórico',
         credits: 3,
@@ -11361,6 +12305,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Seminario de ing. mecánica',
         type: 'Teórico',
         credits: 1,
@@ -11379,6 +12324,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'D01A',
         subjectName: 'Expresión gráfica',
         type: 'Teórico',
         credits: 2,
@@ -11391,6 +12337,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D01A',
         subjectName: 'Expresión gráfica',
         type: 'Teórico',
         credits: 2,
@@ -11403,6 +12350,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D01A',
         subjectName: 'Expresión gráfica',
         type: 'Teórico',
         credits: 2,
@@ -11415,6 +12363,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D01A',
         subjectName: 'Expresión gráfica',
         type: 'Teórico',
         credits: 2,
@@ -11427,6 +12376,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D01A',
         subjectName: 'Expresión gráfica',
         type: 'Teórico',
         credits: 2,
@@ -11446,6 +12396,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'D02A',
         subjectName: 'Curso no valido para estudiantes de ing. naval',
         type: 'Teorico-practico',
         credits: 2,
@@ -11458,6 +12409,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D02A',
         subjectName: 'Curso no valido para estudiantes de ing. naval',
         type: 'Teorico-practico',
         credits: 2,
@@ -11470,6 +12422,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D02A',
         subjectName: 'Curso no valido para estudiantes de ing. naval',
         type: 'Teorico-practico',
         credits: 2,
@@ -11489,6 +12442,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D03A',
         subjectName: 'Estática',
         type: 'Teórico',
         credits: 3,
@@ -11501,6 +12455,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D03A',
         subjectName: 'Estática',
         type: 'Teórico',
         credits: 3,
@@ -11513,6 +12468,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D03A',
         subjectName: 'Estática',
         type: 'Teórico',
         credits: 3,
@@ -11525,6 +12481,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D03A',
         subjectName: 'Estática',
         type: 'Teórico',
         credits: 3,
@@ -11544,6 +12501,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D04A',
         subjectName: 'Dinámica',
         type: 'Teórico',
         credits: 3,
@@ -11556,6 +12514,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D04A',
         subjectName: 'Dinámica',
         type: 'Teórico',
         credits: 3,
@@ -11568,6 +12527,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D04A',
         subjectName: 'Dinámica',
         type: 'Teórico',
         credits: 3,
@@ -11587,6 +12547,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D05A',
         subjectName: 'Mecanismos',
         type: 'Teórico',
         credits: 3,
@@ -11606,6 +12567,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D06A',
         subjectName: 'Resistencia de materiales',
         type: 'Teórico',
         credits: 3,
@@ -11618,6 +12580,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D06A',
         subjectName: 'Resistencia de materiales',
         type: 'Teórico',
         credits: 3,
@@ -11637,6 +12600,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D08A',
         subjectName: 'Diseño de sistemas mecánicos',
         type: 'Teórico',
         credits: 3,
@@ -11656,6 +12620,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D09A',
         subjectName: 'Mantenimiento industrial',
         type: 'Teórico',
         credits: 3,
@@ -11668,6 +12633,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'D09A',
         subjectName: 'Mantenimiento industrial',
         type: 'Laboratorio',
         credits: 3,
@@ -11686,6 +12652,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D10A',
         subjectName: 'Ing. de proyectos mecánicos',
         type: 'Teórico',
         credits: 3,
@@ -11705,6 +12672,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D11A',
         subjectName: 'Integridad y mantenimiento',
         type: 'Teórico',
         credits: 3,
@@ -11724,6 +12692,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Mecánica de fluidos',
         type: 'Teórico',
         credits: 3,
@@ -11736,6 +12705,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Mecánica de fluidos',
         type: 'Laboratorio',
         credits: 3,
@@ -11747,6 +12717,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Mecánica de fluidos',
         type: 'Laboratorio',
         credits: 3,
@@ -11758,6 +12729,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Mecánica de fluidos',
         type: 'Teórico',
         credits: 3,
@@ -11769,6 +12741,18 @@ List<Subject> subjects = [
           Schedule(day: 'Jueves', time: '10:00 - 10:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Mecánica de fluidos',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Veronica Jesus Abuchar Soto',
+        nrc: '1146',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '15:00 - 15:50'),
+        ],
+      ),
     ],
   ),
   Subject(
@@ -11777,6 +12761,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Termodinámica i',
         type: 'Teórico',
         credits: 3,
@@ -11796,6 +12781,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Máquinas de flujo',
         type: 'Teórico',
         credits: 3,
@@ -11815,6 +12801,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F04A',
         subjectName: 'Termodinámica ii',
         type: 'Teórico',
         credits: 3,
@@ -11834,6 +12821,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F05A',
         subjectName: 'Transferencia de calor',
         type: 'Teórico',
         credits: 3,
@@ -11853,6 +12841,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F06A',
         subjectName: 'Máquinas térmicas',
         type: 'Teórico',
         credits: 3,
@@ -11872,6 +12861,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F07A',
         subjectName: 'Refrigeración y aire acondicio',
         type: 'Teórico',
         credits: 3,
@@ -11891,6 +12881,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F08A',
         subjectName: 'Termodinámica y fluidos',
         type: 'Teórico',
         credits: 3,
@@ -11910,6 +12901,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Teórico',
         credits: 3,
@@ -11922,6 +12914,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
@@ -11933,6 +12926,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
@@ -11944,6 +12938,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
@@ -11955,6 +12950,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Teórico',
         credits: 3,
@@ -11967,6 +12963,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
@@ -11978,6 +12975,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
@@ -11989,6 +12987,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
@@ -12000,6 +12999,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Teórico',
         credits: 3,
@@ -12012,6 +13012,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
@@ -12023,6 +13024,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
@@ -12034,6 +13036,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
@@ -12045,6 +13048,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
@@ -12063,6 +13067,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M02A',
         subjectName: 'Materiales ii',
         type: 'Teórico',
         credits: 3,
@@ -12082,6 +13087,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Tecnologías de fabricación',
         type: 'Teórico',
         credits: 3,
@@ -12094,6 +13100,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Tecnologías de fabricación',
         type: 'Laboratorio',
         credits: 3,
@@ -12105,6 +13112,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Tecnologías de fabricación',
         type: 'Teórico',
         credits: 3,
@@ -12117,6 +13125,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Tecnologías de fabricación',
         type: 'Laboratorio',
         credits: 3,
@@ -12128,6 +13137,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Tecnologías de fabricación',
         type: 'Laboratorio',
         credits: 3,
@@ -12146,6 +13156,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Corrosión',
         type: 'Teórico',
         credits: 3,
@@ -12157,6 +13168,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Corrosión',
         type: 'Laboratorio',
         credits: 3,
@@ -12168,6 +13180,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Corrosión',
         type: 'Laboratorio',
         credits: 3,
@@ -12186,6 +13199,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z01A',
         subjectName: 'Conversión de energía',
         type: 'Teórico',
         credits: 3,
@@ -12205,6 +13219,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A01A',
         subjectName: 'Sensores e instrumentación',
         type: 'Teórico',
         credits: 3,
@@ -12217,6 +13232,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A01A',
         subjectName: 'Sensores e instrumentación',
         type: 'Laboratorio',
         credits: 3,
@@ -12235,6 +13251,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Sist automáticos de producción',
         type: 'Teórico',
         credits: 3,
@@ -12254,6 +13271,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Robótica',
         type: 'Teórico',
         credits: 3,
@@ -12273,6 +13291,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A04A',
         subjectName: 'Control inteligente',
         type: 'Teórico',
         credits: 3,
@@ -12292,6 +13311,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Robótica médica',
         type: 'Teórico',
         credits: 3,
@@ -12311,6 +13331,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A07A',
         subjectName: 'Domotica',
         type: 'Teórico',
         credits: 3,
@@ -12330,6 +13351,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Seminario de ing. mecatrónica',
         type: 'Teórico',
         credits: 1,
@@ -12348,6 +13370,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Sist mecatrónicos programables',
         type: 'Teórico',
         credits: 3,
@@ -12360,6 +13383,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Sist mecatrónicos programables',
         type: 'Laboratorio',
         credits: 3,
@@ -12378,6 +13402,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C02A',
         subjectName: 'Diseño concurrente',
         type: 'Teórico',
         credits: 3,
@@ -12397,6 +13422,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D01A',
         subjectName: 'Diseño mecatrónico',
         type: 'Teórico',
         credits: 3,
@@ -12416,6 +13442,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Taller de mecatrónica',
         type: 'Teórico',
         credits: 1,
@@ -12427,6 +13454,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Taller de mecatrónica',
         type: 'Laboratorio',
         credits: 1,
@@ -12438,6 +13466,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Taller de mecatrónica',
         type: 'Teórico',
         credits: 1,
@@ -12449,6 +13478,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Taller de mecatrónica',
         type: 'Laboratorio',
         credits: 1,
@@ -12460,6 +13490,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Taller de mecatrónica',
         type: 'Teórico',
         credits: 1,
@@ -12471,6 +13502,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Taller de mecatrónica',
         type: 'Laboratorio',
         credits: 1,
@@ -12489,6 +13521,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z04A',
         subjectName: 'Sist automáticos de producción',
         type: 'Teórico',
         credits: 3,
@@ -12508,6 +13541,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'A01A',
         subjectName: 'Manejo de sólidos',
         type: 'Teórico',
         credits: 4,
@@ -12520,6 +13554,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A01A',
         subjectName: 'Manejo de sólidos',
         type: 'Laboratorio',
         credits: 4,
@@ -12538,6 +13573,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Control de procesos',
         type: 'Teórico',
         credits: 3,
@@ -12549,6 +13585,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Control de procesos',
         type: 'Laboratorio',
         credits: 3,
@@ -12560,6 +13597,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Control de procesos',
         type: 'Laboratorio',
         credits: 3,
@@ -12578,6 +13616,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Ingeniería de las reacciones',
         type: 'Teórico',
         credits: 3,
@@ -12597,6 +13636,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A04A',
         subjectName: 'Operaciones unitarias',
         type: 'Teórico',
         credits: 3,
@@ -12608,6 +13648,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A04A',
         subjectName: 'Operaciones unitarias',
         type: 'Laboratorio',
         credits: 3,
@@ -12626,6 +13667,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Procesos de separación',
         type: 'Teórico',
         credits: 4,
@@ -12638,6 +13680,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Procesos de separación',
         type: 'Laboratorio',
         credits: 4,
@@ -12656,6 +13699,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A06A',
         subjectName: 'Ingeniería de procesos',
         type: 'Teórico',
         credits: 3,
@@ -12667,6 +13711,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A06A',
         subjectName: 'Ingeniería de procesos',
         type: 'Laboratorio',
         credits: 3,
@@ -12685,6 +13730,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A07A',
         subjectName: 'Modelamiento y simulación',
         type: 'Teórico',
         credits: 3,
@@ -12696,6 +13742,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A07A',
         subjectName: 'Modelamiento y simulación',
         type: 'Laboratorio',
         credits: 3,
@@ -12714,6 +13761,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A08A',
         subjectName: 'Diseño y optimización de proce',
         type: 'Teórico',
         credits: 3,
@@ -12725,6 +13773,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A08A',
         subjectName: 'Diseño y optimización de proce',
         type: 'Laboratorio',
         credits: 3,
@@ -12743,6 +13792,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A09A',
         subjectName: 'Diseño de plantas de procesos',
         type: 'Teórico',
         credits: 3,
@@ -12754,6 +13804,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A09A',
         subjectName: 'Diseño de plantas de procesos',
         type: 'Laboratorio',
         credits: 3,
@@ -12772,6 +13823,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A14A',
         subjectName: 'Fundamentos de seguridad de procesos industriales',
         type: 'Teórico',
         credits: 3,
@@ -12791,6 +13843,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Seminario de ing. química',
         type: 'Teórico',
         credits: 1,
@@ -12809,6 +13862,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B02A',
         subjectName: 'Balance de materia y energía',
         type: 'Teórico',
         credits: 3,
@@ -12828,6 +13882,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B03A',
         subjectName: 'Termodínamica i',
         type: 'Teórico',
         credits: 3,
@@ -12839,6 +13894,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B03A',
         subjectName: 'Termodínamica i',
         type: 'Laboratorio',
         credits: 3,
@@ -12857,6 +13913,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B04A',
         subjectName: 'Fenómenos de transporte',
         type: 'Teórico',
         credits: 3,
@@ -12876,6 +13933,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B05A',
         subjectName: 'Termodinámica ii',
         type: 'Teórico',
         credits: 3,
@@ -12887,6 +13945,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B05A',
         subjectName: 'Termodinámica ii',
         type: 'Laboratorio',
         credits: 3,
@@ -12905,6 +13964,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'Z12A',
         subjectName: 'Control y sim. de procesos ii',
         type: 'Teórico',
         credits: 3,
@@ -12916,6 +13976,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'Z12A',
         subjectName: 'Control y sim. de procesos ii',
         type: 'Laboratorio',
         credits: 3,
@@ -12934,6 +13995,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Bioquímica',
         type: 'Teórico',
         credits: 3,
@@ -12953,6 +14015,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'F01A',
         subjectName: 'Sem. de ingeniería biomédica',
         type: 'Teórico',
         credits: 1,
@@ -12971,6 +14034,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Taller de ingeniería biomédica',
         type: 'Teorico-practico',
         credits: 1,
@@ -12982,6 +14046,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F02A',
         subjectName: 'Taller de ingeniería biomédica',
         type: 'Teorico-practico',
         credits: 1,
@@ -13000,6 +14065,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Anatomía y fisiología humana',
         type: 'Teórico',
         credits: 4,
@@ -13012,6 +14078,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F03A',
         subjectName: 'Anatomía y fisiología humana',
         type: 'Laboratorio',
         credits: 4,
@@ -13030,6 +14097,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F04A',
         subjectName: 'Bioderecho',
         type: 'Teórico',
         credits: 3,
@@ -13049,6 +14117,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'F05A',
         subjectName: 'Biofísica',
         type: 'Teórico',
         credits: 3,
@@ -13061,6 +14130,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'F05A',
         subjectName: 'Biofísica',
         type: 'Laboratorio',
         credits: 3,
@@ -13079,6 +14149,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'I01A',
         subjectName: 'Instrumentación biomédica',
         type: 'Teórico',
         credits: 4,
@@ -13091,6 +14162,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'I01A',
         subjectName: 'Instrumentación biomédica',
         type: 'Laboratorio',
         credits: 4,
@@ -13109,6 +14181,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Biomecánica',
         type: 'Teórico',
         credits: 4,
@@ -13121,6 +14194,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M01A',
         subjectName: 'Biomecánica',
         type: 'Laboratorio',
         credits: 4,
@@ -13139,6 +14213,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'O02A',
         subjectName: 'Bioinformática',
         type: 'Teórico',
         credits: 3,
@@ -13151,6 +14226,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'O02A',
         subjectName: 'Bioinformática',
         type: 'Laboratorio',
         credits: 3,
@@ -13169,6 +14245,7 @@ List<Subject> subjects = [
     credits: 9,
     classOptions: [
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Prácticas profesionales',
         type: 'Laboratorio',
         credits: 9,
@@ -13181,6 +14258,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'P03A',
         subjectName: 'Prácticas profesionales',
         type: 'Laboratorio',
         credits: 9,
@@ -13208,6 +14286,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'P06A',
         subjectName: 'Biomateriales e ing de tejido',
         type: 'Teórico',
         credits: 3,
@@ -13227,6 +14306,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'P08A',
         subjectName: 'Ingeniería clínica y gestión de tecnología biomédica',
         type: 'Teórico',
         credits: 3,
@@ -13246,6 +14326,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A01A',
         subjectName: 'Base de datos',
         type: 'Teórico',
         credits: 3,
@@ -13265,6 +14346,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Desarrollo de software',
         type: 'Teórico',
         credits: 3,
@@ -13276,6 +14358,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A02A',
         subjectName: 'Desarrollo de software',
         type: 'Laboratorio',
         credits: 3,
@@ -13294,6 +14377,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Algoritmos y complejidad',
         type: 'Teórico',
         credits: 3,
@@ -13305,6 +14389,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Algoritmos y complejidad',
         type: 'Laboratorio',
         credits: 3,
@@ -13316,6 +14401,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Algoritmos y complejidad',
         type: 'Teórico',
         credits: 3,
@@ -13327,6 +14413,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A03A',
         subjectName: 'Algoritmos y complejidad',
         type: 'Laboratorio',
         credits: 3,
@@ -13345,23 +14432,49 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A04A',
+        subjectName: 'Arquitectura de software',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Jairo Enrique Serrano Castañeda',
+        nrc: '1588',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '08:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'A04A',
+        subjectName: 'Arquitectura de software',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Jairo Enrique Serrano Castañeda',
+        nrc: '1589',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'A04A',
         subjectName: 'Arquitectura de software',
         type: 'Teórico',
         credits: 3,
         professor: 'Jairo Enrique Serrano Castañeda',
         nrc: '1593',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Miércoles', time: '07:00 - 07:50'),
         ],
       ),
       ClassOption(
+        subjectCode: 'A04A',
         subjectName: 'Arquitectura de software',
         type: 'Laboratorio',
         credits: 3,
         professor: 'Jairo Enrique Serrano Castañeda',
         nrc: '1594',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Lunes', time: '07:00 - 08:50'),
         ],
@@ -13374,6 +14487,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Ingeniería de software',
         type: 'Teórico',
         credits: 3,
@@ -13393,6 +14507,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A07A',
         subjectName: 'Infraestructura para ti',
         type: 'Teórico',
         credits: 3,
@@ -13411,6 +14526,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A08A',
         subjectName: 'Computación en paralelo',
         type: 'Teórico',
         credits: 3,
@@ -13422,6 +14538,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'A08A',
         subjectName: 'Computación en paralelo',
         type: 'Laboratorio',
         credits: 3,
@@ -13435,11 +14552,43 @@ List<Subject> subjects = [
     ],
   ),
   Subject(
+    code: 'A19A',
+    name: 'Computación e interfaces',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'A19A',
+        subjectName: 'Computación e interfaces',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Juan Carlos Martinez Santos',
+        nrc: '1697',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'A19A',
+        subjectName: 'Computación e interfaces',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Juan Carlos Martinez Santos',
+        nrc: '1698',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
     code: 'C01A',
     name: 'Sem. ing. de sistema y computa',
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Sem. ing. de sistema y computa',
         type: 'Teórico',
         credits: 1,
@@ -13451,6 +14600,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Sem. ing. de sistema y computa',
         type: 'Teórico',
         credits: 1,
@@ -13469,6 +14619,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C02A',
         subjectName: 'Fundamentos de programación',
         type: 'Teórico',
         credits: 3,
@@ -13481,6 +14632,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C02A',
         subjectName: 'Fundamentos de programación',
         type: 'Teórico',
         credits: 3,
@@ -13493,6 +14645,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C02A',
         subjectName: 'Fundamentos de programación',
         type: 'Teórico',
         credits: 3,
@@ -13505,6 +14658,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C02A',
         subjectName: 'Fundamentos de programación',
         type: 'Teórico',
         credits: 3,
@@ -13517,6 +14671,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C02A',
         subjectName: 'Fundamentos de programación',
         type: 'Teórico',
         credits: 3,
@@ -13536,6 +14691,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C03A',
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
@@ -13548,6 +14704,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C03A',
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
@@ -13560,6 +14717,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C03A',
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
@@ -13572,6 +14730,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C03A',
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
@@ -13584,6 +14743,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C03A',
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
@@ -13596,6 +14756,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C03A',
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
@@ -13608,6 +14769,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C03A',
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
@@ -13620,6 +14782,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C03A',
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
@@ -13639,6 +14802,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C04A',
         subjectName: 'Programación orientada a objet',
         type: 'Teórico',
         credits: 3,
@@ -13651,6 +14815,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'C04A',
         subjectName: 'Programación orientada a objet',
         type: 'Teórico',
         credits: 3,
@@ -13670,6 +14835,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C05A',
         subjectName: 'Estructura de datos',
         type: 'Teórico',
         credits: 3,
@@ -13689,6 +14855,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C06A',
         subjectName: 'Matemática discreta',
         type: 'Teórico',
         credits: 3,
@@ -13708,6 +14875,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C07A',
         subjectName: 'Procesamiento numérico',
         type: 'Teórico',
         credits: 3,
@@ -13727,6 +14895,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C08A',
         subjectName: 'Comunicaciones y redes',
         type: 'Teórico',
         credits: 3,
@@ -13746,6 +14915,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C09A',
         subjectName: 'Arquitectura del computador',
         type: 'Teórico',
         credits: 3,
@@ -13765,6 +14935,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C12A',
         subjectName: 'Tóp espe de ciencias computaci',
         type: 'Teórico',
         credits: 3,
@@ -13784,6 +14955,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A01A',
         subjectName: 'Resistencia y propulsion',
         type: 'Teórico',
         credits: 3,
@@ -13803,6 +14975,7 @@ List<Subject> subjects = [
     credits: 1,
     classOptions: [
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Seminario de ingenieria naval',
         type: 'Teórico',
         credits: 1,
@@ -13821,6 +14994,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B02A',
         subjectName: 'Introduccion a la ing naval',
         type: 'Teórico',
         credits: 3,
@@ -13840,6 +15014,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Proyecto naval',
         type: 'Teórico',
         credits: 3,
@@ -13859,6 +15034,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D01A',
         subjectName: 'Arquitectura naval',
         type: 'Teórico',
         credits: 3,
@@ -13878,6 +15054,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D03A',
         subjectName: 'Metodologia de diseño naval',
         type: 'Teórico',
         credits: 3,
@@ -13897,6 +15074,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D04A',
         subjectName: 'Estructuras navales ii',
         type: 'Teórico',
         credits: 3,
@@ -13916,6 +15094,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D05A',
         subjectName: 'Hidrodinamica naval',
         type: 'Teórico',
         credits: 3,
@@ -13935,6 +15114,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'D06A',
         subjectName: 'Log del trans marit y fluvial',
         type: 'Teórico',
         credits: 3,
@@ -13954,6 +15134,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E02A',
         subjectName: 'Tecnología de embarcaciones menores',
         type: 'Teórico',
         credits: 3,
@@ -13973,6 +15154,7 @@ List<Subject> subjects = [
     credits: 4,
     classOptions: [
       ClassOption(
+        subjectCode: 'L01A',
         subjectName: 'Construccion naval',
         type: 'Teórico',
         credits: 4,
@@ -13992,6 +15174,7 @@ List<Subject> subjects = [
     credits: 0,
     classOptions: [
       ClassOption(
+        subjectCode: 'SP011',
         subjectName: 'Seminario de profundización nueva economía digital y competitividad de negocios',
         type: 'Teórico',
         credits: 0,
@@ -14026,6 +15209,7 @@ List<Subject> subjects = [
     credits: 0,
     classOptions: [
       ClassOption(
+        subjectCode: 'SP04',
         subjectName: 'Seminario de profundización gestión del talento humano',
         type: 'Teórico',
         credits: 0,
@@ -14056,6 +15240,7 @@ List<Subject> subjects = [
     credits: 0,
     classOptions: [
       ClassOption(
+        subjectCode: 'SP06',
         subjectName: 'Seminario de profundización gestión de proyectos',
         type: 'Teórico',
         credits: 0,
@@ -14091,6 +15276,7 @@ List<Subject> subjects = [
     credits: 0,
     classOptions: [
       ClassOption(
+        subjectCode: 'SP14',
         subjectName: 'Seminario de profundización en automatización industrial',
         type: 'Teórico',
         credits: 0,
@@ -14118,6 +15304,7 @@ List<Subject> subjects = [
     credits: 0,
     classOptions: [
       ClassOption(
+        subjectCode: 'SP24',
         subjectName: 'Seminario de prof herramientas para el cuidado profesional y colectivo',
         type: 'Teórico',
         credits: 0,
@@ -14150,10 +15337,11 @@ List<Subject> subjects = [
     credits: 0,
     classOptions: [
       ClassOption(
+        subjectCode: 'SP26',
         subjectName: 'Gerencia de negocios internaci',
         type: 'Teórico',
         credits: 0,
-        professor: 'Victor Alfredo Tarra Diaz Belkys Linder Mosquera Manyoma',
+        professor: 'Victor Alfredo Tarra Diaz, Belkys Linder Mosquera Manyoma',
         nrc: '2678',
         groupId: 1,
         schedules: [
@@ -14184,6 +15372,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A05A',
         subjectName: 'Psicología educativa-remoto',
         type: 'Teórico',
         credits: 3,
@@ -14203,6 +15392,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A07A',
         subjectName: 'Psicología social comunitaria',
         type: 'Teórico',
         credits: 3,
@@ -14222,6 +15412,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A08A',
         subjectName: 'Psicología organizacional',
         type: 'Teórico',
         credits: 3,
@@ -14241,6 +15432,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A12A',
         subjectName: 'Gestión del talento humano-malla2016',
         type: 'Teórico',
         credits: 3,
@@ -14260,6 +15452,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A16A',
         subjectName: 'Estrategias de int en psi edu-remoto',
         type: 'Teórico',
         credits: 3,
@@ -14279,6 +15472,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A19A',
         subjectName: 'Intervención a victimas',
         type: 'Teórico',
         credits: 3,
@@ -14298,6 +15492,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A20A',
         subjectName: 'Estrategias de intervencion cl',
         type: 'Teórico',
         credits: 3,
@@ -14317,6 +15512,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'A22A',
         subjectName: 'Psicología clínica y de la sal-malla2021',
         type: 'Teórico',
         credits: 3,
@@ -14336,6 +15532,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Introducción a la psicología',
         type: 'Teórico',
         credits: 3,
@@ -14348,6 +15545,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B01A',
         subjectName: 'Introducción a la psicología',
         type: 'Teórico',
         credits: 3,
@@ -14367,6 +15565,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'B04A',
         subjectName: 'Seminario de autoformación i',
         type: 'Teórico',
         credits: 3,
@@ -14379,6 +15578,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'B04A',
         subjectName: 'Seminario de autoformación i',
         type: 'Teórico',
         credits: 3,
@@ -14398,6 +15598,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'C01A',
         subjectName: 'Seminario de autoformación ii',
         type: 'Teórico',
         credits: 3,
@@ -14417,6 +15618,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E04A',
         subjectName: 'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
         type: 'Teórico',
         credits: 3,
@@ -14436,6 +15638,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'E07A',
         subjectName: 'Evaluación neuropsic en adults',
         type: 'Teórico',
         credits: 3,
@@ -14455,6 +15658,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'G01A',
         subjectName: 'Neuropsicología humana',
         type: 'Teórico',
         credits: 3,
@@ -14466,6 +15670,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'G01A',
         subjectName: 'Neuropsicología humana',
         type: 'Laboratorio',
         credits: 3,
@@ -14477,6 +15682,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'G01A',
         subjectName: 'Neuropsicología humana',
         type: 'Teórico',
         credits: 3,
@@ -14488,6 +15694,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'G01A',
         subjectName: 'Neuropsicología humana',
         type: 'Laboratorio',
         credits: 3,
@@ -14506,6 +15713,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'I02A',
         subjectName: 'Psicología y gestión humana-malla2021',
         type: 'Teórico',
         credits: 3,
@@ -14525,6 +15733,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Psicometría',
         type: 'Teórico',
         credits: 3,
@@ -14536,6 +15745,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Psicometría',
         type: 'Laboratorio',
         credits: 3,
@@ -14547,6 +15757,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Psicometría',
         type: 'Laboratorio',
         credits: 3,
@@ -14558,6 +15769,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Psicometría',
         type: 'Teórico',
         credits: 3,
@@ -14569,6 +15781,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M03A',
         subjectName: 'Psicometría',
         type: 'Laboratorio',
         credits: 3,
@@ -14587,6 +15800,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Fundamentos de investigación',
         type: 'Teórico',
         credits: 3,
@@ -14599,6 +15813,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M04A',
         subjectName: 'Fundamentos de investigación',
         type: 'Teórico',
         credits: 3,
@@ -14618,6 +15833,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Investigación cuantitativa',
         type: 'Teórico',
         credits: 3,
@@ -14630,6 +15846,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'M05A',
         subjectName: 'Investigación cuantitativa',
         type: 'Teórico',
         credits: 3,
@@ -14649,6 +15866,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'M06A',
         subjectName: 'Investigación cualitativa',
         type: 'Teórico',
         credits: 3,
@@ -14668,6 +15886,7 @@ List<Subject> subjects = [
     credits: 6,
     classOptions: [
       ClassOption(
+        subjectCode: 'P01A',
         subjectName: 'Práctica profesional i',
         type: 'Laboratorio',
         credits: 6,
@@ -14690,6 +15909,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'R01A',
         subjectName: 'Evaluación psicológica-malla2021',
         type: 'Teórico',
         credits: 3,
@@ -14702,6 +15922,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'R01A',
         subjectName: 'Evaluación psicológica-malla2021',
         type: 'Teórico',
         credits: 3,
@@ -14721,6 +15942,7 @@ List<Subject> subjects = [
     credits: 2,
     classOptions: [
       ClassOption(
+        subjectCode: 'R02A',
         subjectName: 'Seminario de trabajo de grado i -malla2021',
         type: 'Teórico',
         credits: 2,
@@ -14740,6 +15962,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'S13A',
         subjectName: 'Psicopatología',
         type: 'Teórico',
         credits: 3,
@@ -14759,6 +15982,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'S14A',
         subjectName: 'Neurociencias y comportamiento',
         type: 'Teórico',
         credits: 3,
@@ -14770,6 +15994,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'S14A',
         subjectName: 'Neurociencias y comportamiento',
         type: 'Laboratorio',
         credits: 3,
@@ -14788,6 +16013,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'S15A',
         subjectName: 'Teoriás y sistemas psicológicos i',
         type: 'Teórico',
         credits: 3,
@@ -14800,6 +16026,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'S15A',
         subjectName: 'Teoriás y sistemas psicológicos i',
         type: 'Teórico',
         credits: 3,
@@ -14819,6 +16046,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'S16A',
         subjectName: 'Teoriás y sistemas psicológicos ii',
         type: 'Teórico',
         credits: 3,
@@ -14838,6 +16066,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'S17A',
         subjectName: 'Fundamentos en psicología soci-malla2021',
         type: 'Teórico',
         credits: 3,
@@ -14857,6 +16086,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'S18A',
         subjectName: 'Teorias de la personalida-malla2021',
         type: 'Teórico',
         credits: 3,
@@ -14876,6 +16106,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'S18A',
         subjectName: 'Teorias de la personalidad-malla2021',
         type: 'Teórico',
         credits: 3,
@@ -14895,6 +16126,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'S19A',
         subjectName: 'Aprendizaje y memoria',
         type: 'Teórico',
         credits: 3,
@@ -14906,6 +16138,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'S19A',
         subjectName: 'Aprendizaje y memoria',
         type: 'Laboratorio',
         credits: 3,
@@ -14917,6 +16150,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'S19A',
         subjectName: 'Aprendizaje y memoria',
         type: 'Teórico',
         credits: 3,
@@ -14928,6 +16162,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'S19A',
         subjectName: 'Aprendizaje y memoria',
         type: 'Laboratorio',
         credits: 3,
@@ -14946,6 +16181,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'S20A',
         subjectName: 'Desarrollo del ciclo de vida i',
         type: 'Teórico',
         credits: 3,
@@ -14958,6 +16194,7 @@ List<Subject> subjects = [
         ],
       ),
       ClassOption(
+        subjectCode: 'S20A',
         subjectName: 'Desarrollo del ciclo de vida i',
         type: 'Teórico',
         credits: 3,
@@ -14977,6 +16214,7 @@ List<Subject> subjects = [
     credits: 3,
     classOptions: [
       ClassOption(
+        subjectCode: 'V01A',
         subjectName: 'Evaluación psicológica-malla2016',
         type: 'Teórico',
         credits: 3,

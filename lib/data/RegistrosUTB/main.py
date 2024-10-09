@@ -39,6 +39,7 @@ def format_as_dart(subjects):
         dart_code += "    classOptions: [\n"
         for option in subject['classOptions']:
             dart_code += "      ClassOption(\n"
+            dart_code += f"        subjectCode: '{option['code']}',\n"
             dart_code += f"        subjectName: '{option['subjectName']}',\n"
             dart_code += f"        type: '{option['type']}',\n"
             dart_code += f"        credits: {option['credits']},\n"
@@ -110,8 +111,6 @@ if __name__ == "__main__":
         ele = wait.until(ec.visibility_of_element_located((By.CSS_SELECTOR, "select.page-size-select")))
         seleccionador = Select(ele)
         seleccionador.select_by_value("50")
-        time.sleep(10)  # Esperar a que cargue la página
-
         time.sleep(15)  # Esperar a que cargue la página
         # Obtengo el número de páginas totales
         PAGINAS = int(wait.until(ec.visibility_of_element_located((By.CSS_SELECTOR, "span.total-pages"))).text)
@@ -124,7 +123,7 @@ if __name__ == "__main__":
         for page_index in range(PAGINAS):  # Recorro las páginas
             # Espero a que aparezca el primer elemento
             parada = wait.until(ec.element_to_be_clickable((By.CSS_SELECTOR, "tr[data-id]")))
-            time.sleep(10)
+            time.sleep(5)
             # Obtengo todos los registros de la página
             perlas = driver.find_elements(By.CSS_SELECTOR, "tr[data-id]")
             print("------------------------------------------------")
@@ -267,6 +266,7 @@ if __name__ == "__main__":
                     # Agregar la clase actual como ClassOption
                     class_option = {
                         'subjectName': nombre,
+                        'code': numeroCurso,
                         'type': teo,
                         'credits': creditos,
                         'schedules': schedule_list,
@@ -289,6 +289,7 @@ if __name__ == "__main__":
                     # Agregar la clase actual como ClassOption
                     class_option = {
                         'subjectName': nombre,
+                        'code': numeroCurso,
                         'type': teo,
                         'credits': creditos,
                         'schedules': schedule_list,

@@ -91,6 +91,7 @@ class ScheduleGridWidget extends StatelessWidget {
     }
 
     return Container(
+      color: Colors.white,
       padding: const EdgeInsets.all(4),
       child: Column(
         children: [
