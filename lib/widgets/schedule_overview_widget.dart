@@ -192,14 +192,6 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                                                 color: Colors.white,
                                               ),
                                             ),
-                                            Text(
-                                              '${classOption.type}\n${classOption.professor}',
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontSize: 8,
-                                                color: Colors.white,
-                                              ),
-                                            ),
                                           ],
                                         ),
                                       ),
@@ -247,6 +239,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                                   Text(
                                     'Horario: ${classOption.schedules.map((s) => s.day + ' ' + s.time).join(', ')}',
                                   ),
+                                  Text('NRC: ${classOption.nrc}'),
                                   Text('Número de créditos: ${classOption.credits}'),
                                   SizedBox(height: 8),
                                 ],
