@@ -27,7 +27,8 @@ class _FilterWidgetState extends State<FilterWidget> {
   @override
   void initState() {
     super.initState();
-    professorsFilters = Map<String, dynamic>.from(widget.currentFilters['professors'] ?? {});
+    professorsFilters =
+        Map<String, dynamic>.from(widget.currentFilters['professors'] ?? {});
   }
 
   @override
@@ -59,64 +60,62 @@ class _FilterWidgetState extends State<FilterWidget> {
             child: ListView(
               children: widget.addedSubjects.map((subject) {
                 String subjectCode = subject.code;
-                Map<String, dynamic> subjectFilter = professorsFilters[subjectCode] ?? {
-                  'filterType': 'include',
-                  'professors': <String>[],
-                };
+                Map<String, dynamic> subjectFilter =
+                    professorsFilters[subjectCode] ??
+                        {
+                          'filterType': 'include',
+                          'professors': <String>[],
+                        };
 
                 return ExpansionTile(
                   leading: const Icon(Icons.book),
                   title: Text(subject.name),
                   children: [
-                    // Contenido reorganizado en una fila
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    // Opciones de selección única
+                    Column(
                       children: [
-                        // Lista de profesores
-                        SizedBox(
-                          width: 300, // Ancho fijo para hacerlo más angosto
-                          height: 200,
-                          child: ProfessorFilterWidget(
-                            subject: subject,
-                            selectedProfessors: List<String>.from(subjectFilter['professors']),
-                            onSelectionChanged: (selectedProfessors) {
-                              subjectFilter['professors'] = selectedProfessors;
+                        RadioListTile<String>(
+                          title: const Text('Incluir profesores seleccionados'),
+                          value: 'include',
+                          groupValue: subjectFilter['filterType'],
+                          onChanged: (value) {
+                            setState(() {
+                              subjectFilter['filterType'] = value!;
                               professorsFilters[subjectCode] = subjectFilter;
-                            },
-                          ),
+                            });
+                          },
                         ),
-                        const SizedBox(width: 16), // Espacio entre los widgets
-                        // Opciones de selección única
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RadioListTile<String>(
-                                title: const Text('Incluir profesores seleccionados'),
-                                value: 'include',
-                                groupValue: subjectFilter['filterType'],
-                                onChanged: (value) {
-                                  setState(() {
-                                    subjectFilter['filterType'] = value!;
-                                    professorsFilters[subjectCode] = subjectFilter;
-                                  });
-                                },
-                              ),
-                              RadioListTile<String>(
-                                title: const Text('No incluir profesores seleccionados'),
-                                value: 'exclude',
-                                groupValue: subjectFilter['filterType'],
-                                onChanged: (value) {
-                                  setState(() {
-                                    subjectFilter['filterType'] = value!;
-                                    professorsFilters[subjectCode] = subjectFilter;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
+                        RadioListTile<String>(
+                          title:
+                              const Text('No incluir profesores seleccionados'),
+                          value: 'exclude',
+                          groupValue: subjectFilter['filterType'],
+                          onChanged: (value) {
+                            setState(() {
+                              subjectFilter['filterType'] = value!;
+                              professorsFilters[subjectCode] = subjectFilter;
+                            });
+                          },
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 10),
+                    // Envolver en Align para alinearlo a la derecha
+                    Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        width: 400, // Ancho limitado para hacerla más angosta
+                        height: 200,
+                        child: ProfessorFilterWidget(
+                          subject: subject,
+                          selectedProfessors:
+                              List<String>.from(subjectFilter['professors']),
+                          onSelectionChanged: (selectedProfessors) {
+                            subjectFilter['professors'] = selectedProfessors;
+                            professorsFilters[subjectCode] = subjectFilter;
+                          },
+                        ),
+                      ),
                     ),
                   ],
                 );

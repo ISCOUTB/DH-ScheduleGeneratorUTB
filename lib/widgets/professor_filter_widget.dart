@@ -83,12 +83,10 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
         ),
         const SizedBox(height: 10),
         // Lista de profesores
-        filteredProfessors.isEmpty
-            ? const Expanded(
-                child: Center(child: Text('No hay resultados')),
-              )
-            : Expanded(
-                child: ListView.builder(
+        Expanded(
+          child: filteredProfessors.isEmpty
+              ? const Center(child: Text('No hay resultados'))
+              : ListView.builder(
                   primary: false,
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
@@ -98,7 +96,12 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
                     bool isSelected = selectedProfessors.contains(professor);
 
                     return ListTile(
-                      title: Text(professor),
+                      title: Text(
+                        professor,
+                        style: TextStyle(
+                            fontSize:
+                                14), // Reducir tamaño de fuente si es necesario
+                      ),
                       trailing: IconButton(
                         icon: Icon(
                           isSelected
@@ -112,7 +115,7 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
                     );
                   },
                 ),
-              ),
+        ),
       ],
     );
   }
