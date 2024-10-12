@@ -1,1 +1,2 @@
 *.dill filter=lfs diff=lfs merge=lfs -text
+build/cache.dill.track.dill filter=lfs diff=lfs merge=lfs -text
