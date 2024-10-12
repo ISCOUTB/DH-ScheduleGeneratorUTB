@@ -14,11 +14,14 @@ class ScheduleGridWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Generar el mapa de colores para las materias
+    Map<String, Color> subjectColors = _generateSubjectColors();
+
     return GridView.builder(
       itemCount: allSchedules.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2, // Dos horarios por fila
-        childAspectRatio: 2.5, // Más ancho que alto (ajusta este valor según prefieras)
+        childAspectRatio: 2.5, // Ajusta este valor según prefieras
       ),
       itemBuilder: (context, index) {
         return GestureDetector(
@@ -26,14 +29,27 @@ class ScheduleGridWidget extends StatelessWidget {
           child: Card(
             elevation: 2,
             margin: const EdgeInsets.all(8),
-            child: buildSchedulePreview(allSchedules[index]),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10), // Esquinas redondeadas
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10), // Esquinas redondeadas
+                border: Border.all(
+                  color: Colors.white, // Color del marco
+                  width: 7, // Ancho del marco
+                ),
+              ),
+              child: buildSchedulePreview(allSchedules[index], subjectColors),
+            ),
           ),
         );
       },
     );
   }
 
-  Widget buildSchedulePreview(List<ClassOption> schedule) {
+  Widget buildSchedulePreview(
+      List<ClassOption> schedule, Map<String, Color> subjectColors) {
     final List<String> timeSlots = [
       '07:00',
       '08:00',
@@ -91,23 +107,27 @@ class ScheduleGridWidget extends StatelessWidget {
     }
 
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        borderRadius:
+            BorderRadius.circular(10), // Esquinas redondeadas del grid
+        // No es necesario agregar el borde aquí, ya que lo agregamos en el contenedor padre
+      ),
+      clipBehavior: Clip.hardEdge, // Asegura que el contenido se ajuste
       child: Column(
         children: [
           // Encabezado de días
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: days
-                .map((day) => Expanded(
-                      child: Text(
-                        day,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 8),
-                      ),
-                    ))
-                .toList(),
+            children: [
+              const SizedBox(width: 25), // Espacio para la columna de horas
+              ...days.map((day) => Expanded(
+                    child: Text(
+                      day,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 8),
+                    ),
+                  ))
+            ],
           ),
           const SizedBox(height: 2),
           // Horarios
@@ -116,31 +136,52 @@ class ScheduleGridWidget extends StatelessWidget {
               child: Column(
                 children: timeSlots.map((time) {
                   return Row(
-                    children: days.map((day) {
-                      ClassOption? classOption = scheduleMatrix[time]![day];
-                      return Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.all(0.5),
-                          height: 14.5, // Altura ajustada para minimizar
-                          color: classOption != null
-                              ? Colors.blueAccent
-                              : Colors.grey[200],
-                          child: classOption != null
-                              ? Center(
-                                  child: Text(
-                                    classOption.subjectName.length > 3
-                                        ? classOption.subjectName.substring(0, 3)
-                                        : classOption.subjectName,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 6,
-                                    ),
-                                  ),
-                                )
-                              : null,
+                    children: [
+                      // Columna de horas
+                      SizedBox(
+                        width: 25,
+                        child: Text(
+                          time,
+                          style: const TextStyle(fontSize: 6),
                         ),
-                      );
-                    }).toList(),
+                      ),
+                      ...days.map((day) {
+                        ClassOption? classOption = scheduleMatrix[time]![day];
+                        Color? subjectColor;
+                        if (classOption != null) {
+                          subjectColor =
+                              subjectColors[classOption.subjectName] ??
+                                  Colors.blueAccent;
+                        }
+                        return Expanded(
+                          child: Container(
+                            margin: const EdgeInsets.all(0.5),
+                            height: 14.5, // Altura ajustada para minimizar
+                            decoration: BoxDecoration(
+                              color: classOption != null
+                                  ? subjectColor
+                                  : Colors.grey[200],
+                              borderRadius: BorderRadius.circular(
+                                  4), // Esquinas redondeadas
+                            ),
+                            child: classOption != null
+                                ? Center(
+                                    child: Text(
+                                      classOption.subjectName.length > 3
+                                          ? classOption.subjectName
+                                              .substring(0, 3)
+                                          : classOption.subjectName,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 6,
+                                      ),
+                                    ),
+                                  )
+                                : null,
+                          ),
+                        );
+                      }).toList(),
+                    ],
                   );
                 }).toList(),
               ),
@@ -149,6 +190,46 @@ class ScheduleGridWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // Generar un mapa de colores para las materias
+  Map<String, Color> _generateSubjectColors() {
+    List<Color> colors = [
+      Colors.red,
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.cyan,
+      Colors.amber,
+      Colors.teal,
+      Colors.indigo,
+      Colors.pink,
+      Colors.lime,
+      Colors.deepOrange,
+      Colors.lightBlue,
+      Colors.lightGreen,
+      Colors.deepPurple,
+    ];
+
+    Map<String, Color> subjectColors = {};
+    int colorIndex = 0;
+
+    // Suponiendo que tenemos acceso a todas las materias
+    // Aquí podrías iterar sobre 'allSchedules' para obtener todas las materias
+    Set<String> allSubjects = {};
+    for (var schedule in allSchedules) {
+      for (var classOption in schedule) {
+        allSubjects.add(classOption.subjectName);
+      }
+    }
+
+    for (var subject in allSubjects) {
+      subjectColors[subject] = colors[colorIndex % colors.length];
+      colorIndex++;
+    }
+
+    return subjectColors;
   }
 
   // Funciones auxiliares para parsear y formatear horarios

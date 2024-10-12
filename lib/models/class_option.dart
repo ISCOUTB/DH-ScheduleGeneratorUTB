@@ -13,7 +13,7 @@ class ClassOption {
 
   ClassOption({
     required this.subjectName,
-    required this.subjectCode, // Añadido al constructor
+    required this.subjectCode,
     required this.type,
     required this.schedules,
     required this.professor,

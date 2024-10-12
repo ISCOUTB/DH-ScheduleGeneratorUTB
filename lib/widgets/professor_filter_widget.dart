@@ -83,10 +83,15 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
         ),
         const SizedBox(height: 10),
         // Lista de profesores
-        Expanded(
-          child: filteredProfessors.isEmpty
-              ? const Center(child: Text('No hay resultados'))
-              : ListView.builder(
+        filteredProfessors.isEmpty
+            ? const Expanded(
+                child: Center(child: Text('No hay resultados')),
+              )
+            : Expanded(
+                child: ListView.builder(
+                  primary: false,
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
                   itemCount: filteredProfessors.length,
                   itemBuilder: (context, index) {
                     String professor = filteredProfessors[index];
@@ -107,7 +112,7 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
                     );
                   },
                 ),
-        ),
+              ),
       ],
     );
   }
