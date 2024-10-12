@@ -6,12 +6,9 @@ import 'models/class_option.dart';
 import 'widgets/search_widget.dart';
 import 'widgets/added_subjects_widgets.dart';
 import 'widgets/schedule_grid_widget.dart';
-import 'models/schedule.dart';
 import 'widgets/schedule_overview_widget.dart';
 import 'widgets/filter_widget.dart';
-import 'widgets/professor_filter_widget.dart';
 import 'utils/schedule_generator.dart'; // Importamos el archivo con las funciones de generación
-import 'package:collection/collection.dart'; //
 import 'package:flutter/services.dart'; // Import para manejar eventos de teclado
 
 void main() {
@@ -164,7 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.deepPurple, Colors.purpleAccent],
+              colors: [Colors.deepPurple, Colors.purple],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

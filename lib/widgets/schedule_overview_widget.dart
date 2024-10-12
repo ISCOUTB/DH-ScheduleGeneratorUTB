@@ -55,6 +55,16 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     'Sábado',
   ];
 
+  // Mapa de colores para las materias
+  late Map<String, Color> subjectColors;
+
+  @override
+  void initState() {
+    super.initState();
+    // Generar el mapa de colores para las materias
+    subjectColors = _generateSubjectColors();
+  }
+
   @override
   void dispose() {
     // Liberar los controladores de scroll cuando el widget se elimina
@@ -107,38 +117,17 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     }
 
     return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.circular(10), // Esquinas redondeadas del diálogo
+      ),
       child: Container(
         width: 1000,
         height: 800,
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Botón de cierre y botones de descarga
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Botones para descargar Excel y PDF
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => downloadScheduleAsExcel(),
-                      child: Text('Descargar Excel'),
-                    ),
-                    SizedBox(width: 10),
-                    ElevatedButton(
-                      onPressed: () => downloadScheduleAsPDF(),
-                      child: Text('Descargar PDF'),
-                    ),
-                  ],
-                ),
-                // Botón de cierre
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: widget.onClose,
-                  tooltip: 'Cerrar',
-                ),
-              ],
-            ),
+            // ... (botones y otros widgets)
             SizedBox(height: 16),
             // Widget del horario
             Expanded(
@@ -172,11 +161,18 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                               ...days.map((day) {
                                 var classOption = scheduleMatrix[time]![day];
                                 if (classOption != null) {
+                                  Color subjectColor =
+                                      subjectColors[classOption.subjectName] ??
+                                          Colors.lightBlueAccent;
                                   return DataCell(
                                     Center(
                                       child: Container(
                                         margin: const EdgeInsets.all(3),
-                                        color: Colors.lightBlueAccent,
+                                        decoration: BoxDecoration(
+                                          color: subjectColor,
+                                          borderRadius: BorderRadius.circular(
+                                              4), // Esquinas redondeadas
+                                        ),
                                         width: 90,
                                         padding: const EdgeInsets.all(4),
                                         child: Column(
@@ -227,24 +223,26 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                       builder: (context) {
                         return AlertDialog(
                           title: Text(subjectName),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: classOptions.map((classOption) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Tipo: ${classOption.type}'),
-                                  Text('Profesor: ${classOption.professor}'),
-                                  Text(
-                                    'Horario: ${classOption.schedules.map((s) => s.day + ' ' + s.time).join(', ')}',
-                                  ),
-                                  Text('NRC: ${classOption.nrc}'),
-                                  Text('Número de créditos: ${classOption.credits}'),
-                                  SizedBox(height: 8),
-                                ],
-                              );
-                            }).toList(),
+                          content: SingleChildScrollView(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: classOptions.map((classOption) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Tipo: ${classOption.type}'),
+                                    Text('Profesor: ${classOption.professor}'),
+                                    Text(
+                                      'Horario: ${classOption.schedules.map((s) => s.day + ' ' + s.time).join(', ')}',
+                                    ),
+                                    Text('NRC: ${classOption.nrc}'),
+                                    Text(
+                                        'Número de créditos: ${classOption.credits}'),
+                                    SizedBox(height: 8),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
                           ),
                           actions: [
                             TextButton(
@@ -265,6 +263,43 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         ),
       ),
     );
+  }
+
+// Generar un mapa de colores para las materias
+  Map<String, Color> _generateSubjectColors() {
+    List<Color> colors = [
+      Colors.red,
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.cyan,
+      Colors.amber,
+      Colors.teal,
+      Colors.indigo,
+      Colors.pink,
+      Colors.lime,
+      Colors.deepOrange,
+      Colors.lightBlue,
+      Colors.lightGreen,
+      Colors.deepPurple,
+    ];
+
+    Map<String, Color> subjectColors = {};
+    int colorIndex = 0;
+
+    // Obtener todas las materias del horario actual
+    Set<String> allSubjects = {};
+    for (var classOption in widget.schedule) {
+      allSubjects.add(classOption.subjectName);
+    }
+
+    for (var subject in allSubjects) {
+      subjectColors[subject] = colors[colorIndex % colors.length];
+      colorIndex++;
+    }
+
+    return subjectColors;
   }
 
   Future<void> downloadScheduleAsExcel() async {
@@ -349,7 +384,11 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
             },
           ),
         );
-        row.add(classOption?.subjectName ?? '');
+        // Concatenar subjectName y nrc si existe la opción
+        if (classOption != null) {
+          row.add('${classOption.subjectName}\r\n NRC: ${classOption.nrc}');
+        } else
+          row.add('');
       }
       sheetObject.appendRow(row);
     }
@@ -375,7 +414,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
-          return pw.Table.fromTextArray(
+          return pw.TableHelper.fromTextArray(
             headers: ['Horario', ...days],
             data: [
               for (var timeSlot in timeSlots)
@@ -392,7 +431,10 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                         },
                       ),
                     );
-                    return classOption?.subjectName ?? '';
+                    if (classOption != null) {
+                      return '${classOption.subjectName}\n NRC: ${classOption.nrc}';
+                    } else
+                      return '';
                   }).toList(),
                 ]
             ],
@@ -403,13 +445,12 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         },
       ),
     );
-
     return await pdf.save();
   }
 
   // Funciones auxiliares
 
-  // Añade la función isTimeWithinRange
+  //Función isTimeWithinRange
   bool isTimeWithinRange(TimeOfDay time, TimeOfDayRange range) {
     final timeMinutes = time.hour * 60 + time.minute;
     final startMinutes = range.start.hour * 60 + range.start.minute;
@@ -419,7 +460,6 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   }
 
   // Funciones para parsear los horarios
-
   TimeOfDayRange parseTimeRange(String timeRange) {
     List<String> parts = timeRange.split(' - ');
     TimeOfDay start = parseTimeOfDay(parts[0].trim());
