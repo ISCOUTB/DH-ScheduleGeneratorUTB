@@ -41,29 +41,61 @@ List<List<ClassOption>> obtenerCombinacionesDeOpciones(Subject asignatura) {
 
   List<List<ClassOption>> combinaciones = [];
 
-  // Generar combinaciones de opciones teóricas y prácticas por grupo
+  // Generar combinaciones de opciones por grupo
   for (var opcionesGrupo in opcionesPorGrupo.values) {
     List<ClassOption> opcionesTeoricas = [];
     List<ClassOption> opcionesPracticas = [];
+    List<ClassOption> opcionesTeoricoPracticas = [];
 
     for (var opcion in opcionesGrupo) {
       if (opcion.type == 'Teórico') {
         opcionesTeoricas.add(opcion);
       } else if (opcion.type == 'Laboratorio') {
         opcionesPracticas.add(opcion);
+      } else if (opcion.type == 'Teorico-practico') {
+        opcionesTeoricoPracticas.add(opcion);
       }
     }
 
-    // Emparejar opciones teóricas y prácticas
+    // Generar combinaciones posibles
+    if (opcionesTeoricoPracticas.isNotEmpty) {
+      // Si hay opciones Teorico-practico, las consideramos como una combinación completa
+      for (var opcionTP in opcionesTeoricoPracticas) {
+        combinaciones.add([opcionTP]);
+      }
+
+      // También podemos combinarlas con teóricas y prácticas si es necesario
+      for (var opcionTP in opcionesTeoricoPracticas) {
+        if (opcionesTeoricas.isNotEmpty) {
+          for (var opcionTeorica in opcionesTeoricas) {
+            combinaciones.add([opcionTeorica, opcionTP]);
+          }
+        }
+        if (opcionesPracticas.isNotEmpty) {
+          for (var opcionPractica in opcionesPracticas) {
+            combinaciones.add([opcionTP, opcionPractica]);
+          }
+        }
+      }
+    }
+
     if (opcionesTeoricas.isNotEmpty && opcionesPracticas.isNotEmpty) {
+      // Combinar opciones teóricas y prácticas
       for (var teorica in opcionesTeoricas) {
         for (var practica in opcionesPracticas) {
           combinaciones.add([teorica, practica]);
         }
       }
-    } else {
-      // Si solo hay un tipo de opción
-      for (var opcion in opcionesTeoricas + opcionesPracticas) {
+    }
+
+    // Si solo hay un tipo de opción (Teórico o Laboratorio), agregarlos individualmente
+    if (opcionesTeoricas.isNotEmpty && opcionesPracticas.isEmpty) {
+      for (var opcion in opcionesTeoricas) {
+        combinaciones.add([opcion]);
+      }
+    }
+    if (opcionesPracticas.isNotEmpty && opcionesTeoricas.isEmpty) {
+      for (var opcion in opcionesPracticas) {
         combinaciones.add([opcion]);
       }
     }
