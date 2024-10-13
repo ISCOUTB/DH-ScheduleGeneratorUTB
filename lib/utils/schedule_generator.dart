@@ -1,4 +1,4 @@
-// lib/schedule_generator.dart
+// lib/utils/schedule_generator.dart
 import 'package:flutter/material.dart';
 import '../models/subject.dart';
 import '../models/class_option.dart';
@@ -17,6 +17,14 @@ class TimeOfDayRange {
     final otherEndMinutes = other.end.hour * 60 + other.end.minute;
 
     return (startMinutes < otherEndMinutes) && (endMinutes > otherStartMinutes);
+  }
+
+  bool contains(TimeOfDay time) {
+    final timeMinutes = time.hour * 60 + time.minute;
+    final startMinutes = start.hour * 60 + start.minute;
+    final endMinutes = end.hour * 60 + end.minute;
+
+    return timeMinutes >= startMinutes && timeMinutes < endMinutes;
   }
 }
 
@@ -131,10 +139,12 @@ bool horarioTieneConflictos(List<ClassOption> horario) {
 bool cumpleConFiltros(
     List<ClassOption> horario, Map<String, dynamic> appliedFilters) {
   Map<String, dynamic> professorsFilters = appliedFilters['professors'] ?? {};
+  Map<String, dynamic> timeFilters = appliedFilters['timeFilters'] ?? {};
 
   for (var opcion in horario) {
     String subjectCode = opcion.subjectCode;
 
+    // Filtrar por profesores
     if (professorsFilters.containsKey(subjectCode)) {
       Map<String, dynamic> subjectFilter = professorsFilters[subjectCode];
       String filterType = subjectFilter['filterType'] as String;
@@ -146,7 +156,7 @@ bool cumpleConFiltros(
         if (filterType == 'include') {
           // Si la opción de clase es impartida por alguno de los profesores seleccionados, es válida
           if (profesoresSeleccionados.contains(opcion.professor)) {
-            continue; // Opción válida, seguimos con la siguiente
+            // Opción válida, seguimos con la siguiente
           } else {
             // Si ninguna de las opciones de clase para esta materia es impartida por los profesores seleccionados, invalidar el horario
             // Pero solo si no hay ninguna otra opción en el horario que sí sea impartida por un profesor seleccionado
@@ -161,6 +171,23 @@ bool cumpleConFiltros(
           // Si la opción de clase es impartida por alguno de los profesores excluidos, es inválida
           if (profesoresSeleccionados.contains(opcion.professor)) {
             return false;
+          }
+        }
+      }
+    }
+
+    // Filtrar por horas no disponibles
+    for (var schedule in opcion.schedules) {
+      String day = schedule.day;
+      if (timeFilters.containsKey(day)) {
+        List<String> unavailableTimes = List<String>.from(timeFilters[day]);
+        TimeOfDayRange classTimeRange = parseTimeRange(schedule.time);
+
+        // Verificar si alguna hora no disponible coincide con el horario de la clase
+        for (var time in unavailableTimes) {
+          TimeOfDay unavailableTime = parseTimeOfDay(time);
+          if (classTimeRange.contains(unavailableTime)) {
+            return false; // La clase está en una hora no disponible
           }
         }
       }
@@ -184,7 +211,118 @@ List<List<ClassOption>> obtenerHorariosValidos(
     }
   }
 
+  // Optimizar horarios
+  bool optimizeFreeDays = appliedFilters['optimizeFreeDays'] == true;
+  bool optimizeGaps = appliedFilters['optimizeGaps'] == true;
+
+  if (optimizeFreeDays || optimizeGaps) {
+    horariosValidos.sort((a, b) {
+      double scoreA = 0;
+      double scoreB = 0;
+
+      if (optimizeFreeDays) {
+        int freeDaysA = calcularDiasLibres(horario: a);
+        int freeDaysB = calcularDiasLibres(horario: b);
+        // Mayor cantidad de días libres, mayor puntuación
+        scoreA +=
+            freeDaysA * 1000; // Multiplicamos por 1000 para darle más peso
+        scoreB += freeDaysB * 1000;
+      }
+
+      if (optimizeGaps) {
+        int gapsA = calcularHuecos(horario: a);
+        int gapsB = calcularHuecos(horario: b);
+        // Menor cantidad de huecos, mayor puntuación
+        scoreA -= gapsA; // Restamos los huecos
+        scoreB -= gapsB;
+      }
+
+      // Ordenar de mayor a menor puntuación
+      return scoreB.compareTo(scoreA);
+    });
+  }
+
   return horariosValidos;
+}
+
+// Función para calcular la cantidad total de horas de huecos en un horario
+int calcularHuecos({required List<ClassOption> horario}) {
+  // Crear una lista de todas las clases con su horario
+  List<Map<String, dynamic>> clases = [];
+
+  for (var opcion in horario) {
+    for (var schedule in opcion.schedules) {
+      TimeOfDayRange timeRange = parseTimeRange(schedule.time);
+      clases.add({
+        'day': schedule.day,
+        'start': timeRange.start,
+        'end': timeRange.end,
+      });
+    }
+  }
+
+  int totalGapsMinutes = 0;
+
+  // Agrupar clases por día
+  Map<String, List<Map<String, dynamic>>> clasesPorDia = {};
+  for (var clase in clases) {
+    String day = clase['day'];
+    clasesPorDia.putIfAbsent(day, () => []);
+    clasesPorDia[day]!.add(clase);
+  }
+
+  // Calcular huecos por día
+  for (var dia in clasesPorDia.keys) {
+    List<Map<String, dynamic>> clasesDelDia = clasesPorDia[dia]!;
+
+    // Ordenar las clases por hora de inicio
+    clasesDelDia.sort((a, b) {
+      int startA = a['start'].hour * 60 + a['start'].minute;
+      int startB = b['start'].hour * 60 + b['start'].minute;
+      return startA.compareTo(startB);
+    });
+
+    // Calcular los huecos entre clases
+    for (int i = 0; i < clasesDelDia.length - 1; i++) {
+      TimeOfDay endCurrent = clasesDelDia[i]['end'];
+      TimeOfDay startNext = clasesDelDia[i + 1]['start'];
+      int gapMinutes = (startNext.hour * 60 + startNext.minute) -
+          (endCurrent.hour * 60 + endCurrent.minute);
+      if (gapMinutes > 0) {
+        totalGapsMinutes += gapMinutes;
+      }
+    }
+  }
+
+  // Retornar el total de huecos en minutos
+  return totalGapsMinutes;
+}
+
+// Función para calcular la cantidad de días libres en un horario
+int calcularDiasLibres({required List<ClassOption> horario}) {
+  // Días de la semana
+  List<String> allDays = [
+    'Lunes',
+    'Martes',
+    'Miércoles',
+    'Jueves',
+    'Viernes',
+    'Sábado'
+  ];
+
+  // Obtener los días ocupados en el horario
+  Set<String> diasOcupados = {};
+
+  for (var opcion in horario) {
+    for (var schedule in opcion.schedules) {
+      diasOcupados.add(schedule.day);
+    }
+  }
+
+  // Calcular los días libres
+  int diasLibres = allDays.length - diasOcupados.length;
+
+  return diasLibres;
 }
 
 // Funciones auxiliares para parsear horarios

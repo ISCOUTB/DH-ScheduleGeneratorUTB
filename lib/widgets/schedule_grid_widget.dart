@@ -21,7 +21,7 @@ class ScheduleGridWidget extends StatelessWidget {
       itemCount: allSchedules.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2, // Dos horarios por fila
-        childAspectRatio: 2.5, // Ajusta este valor según prefieras
+        childAspectRatio: 1.5, // Relación de aspecto cuadrada
       ),
       itemBuilder: (context, index) {
         return GestureDetector(
@@ -156,7 +156,7 @@ class ScheduleGridWidget extends StatelessWidget {
                         return Expanded(
                           child: Container(
                             margin: const EdgeInsets.all(0.5),
-                            height: 14.5, // Altura ajustada para minimizar
+                            height: 27, // Altura ajustada para minimizar
                             decoration: BoxDecoration(
                               color: classOption != null
                                   ? subjectColor
@@ -169,7 +169,8 @@ class ScheduleGridWidget extends StatelessWidget {
                                     child: Text(
                                       classOption.subjectName.length > 3
                                           ? classOption.subjectName
-                                              .substring(0, 3)
+                                              .split(' ')
+                                              .first
                                           : classOption.subjectName,
                                       style: const TextStyle(
                                         color: Colors.white,
