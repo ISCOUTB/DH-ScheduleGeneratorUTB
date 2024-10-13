@@ -560,12 +560,16 @@ List<Subject> subjects = [
         nrc: '2663',
         groupId: 4,
         schedules: [
-          Schedule(
-              day: 'Lunes,martes,miércoles,jueves,viernes',
-              time: '08:00 - 12:50'),
-          Schedule(
-              day: 'Lunes,martes,miércoles,jueves,viernes',
-              time: '14:00 - 16:50'),
+          Schedule(day: 'Lunes', time: '08:00 - 12:50'),
+          Schedule(day: 'Martes', time: '08:00 - 12:50'),
+          Schedule(day: 'Miércoles', time: '08:00 - 12:50'),
+          Schedule(day: 'Jueves', time: '08:00 - 12:50'),
+          Schedule(day: 'Viernes', time: '08:00 - 12:50'),
+          Schedule(day: 'Lunes', time: '14:00 - 16:50'),
+          Schedule(day: 'Martes', time: '14:00 - 16:50'),
+          Schedule(day: 'Miércoles', time: '14:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '14:00 - 16:50'),
+          Schedule(day: 'Viernes', time: '14:00 - 16:50'),
         ],
       ),
       ClassOption(
@@ -598,12 +602,16 @@ List<Subject> subjects = [
         nrc: '2665',
         groupId: 6,
         schedules: [
-          Schedule(
-              day: 'Lunes,martes,miércoles,jueves,viernes',
-              time: '08:00 - 12:50'),
-          Schedule(
-              day: 'Lunes,martes,miércoles,jueves,viernes',
-              time: '14:00 - 16:50'),
+          Schedule(day: 'Lunes', time: '08:00 - 12:50'),
+          Schedule(day: 'Martes', time: '08:00 - 12:50'),
+          Schedule(day: 'Miércoles', time: '08:00 - 12:50'),
+          Schedule(day: 'Jueves', time: '08:00 - 12:50'),
+          Schedule(day: 'Viernes', time: '08:00 - 12:50'),
+          Schedule(day: 'Lunes', time: '14:00 - 16:50'),
+          Schedule(day: 'Martes', time: '14:00 - 16:50'),
+          Schedule(day: 'Miércoles', time: '14:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '14:00 - 16:50'),
+          Schedule(day: 'Viernes', time: '14:00 - 16:50'),
         ],
       ),
       ClassOption(
@@ -615,12 +623,16 @@ List<Subject> subjects = [
         nrc: '2677',
         groupId: 4,
         schedules: [
-          Schedule(
-              day: 'Lunes,martes,miércoles,jueves,viernes',
-              time: '08:00 - 12:50'),
-          Schedule(
-              day: 'Lunes,martes,miércoles,jueves,viernes',
-              time: '14:00 - 16:50'),
+          Schedule(day: 'Lunes', time: '08:00 - 12:50'),
+          Schedule(day: 'Martes', time: '08:00 - 12:50'),
+          Schedule(day: 'Miércoles', time: '08:00 - 12:50'),
+          Schedule(day: 'Jueves', time: '08:00 - 12:50'),
+          Schedule(day: 'Viernes', time: '08:00 - 12:50'),
+          Schedule(day: 'Lunes', time: '14:00 - 16:50'),
+          Schedule(day: 'Martes', time: '14:00 - 16:50'),
+          Schedule(day: 'Miércoles', time: '14:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '14:00 - 16:50'),
+          Schedule(day: 'Viernes', time: '14:00 - 16:50'),
         ],
       ),
       ClassOption(
@@ -14805,12 +14817,16 @@ List<Subject> subjects = [
         nrc: '2611',
         groupId: 1,
         schedules: [
-          Schedule(
-              day: 'Lunes,martes,miércoles,jueves,viernes',
-              time: '08:00 - 12:50'),
-          Schedule(
-              day: 'Lunes,martes,miércoles,jueves,viernes',
-              time: '14:00 - 16:50'),
+          Schedule(day: 'Lunes', time: '08:00 - 12:50'),
+          Schedule(day: 'Martes', time: '08:00 - 12:50'),
+          Schedule(day: 'Miércoles', time: '08:00 - 12:50'),
+          Schedule(day: 'Jueves', time: '08:00 - 12:50'),
+          Schedule(day: 'Viernes', time: '08:00 - 12:50'),
+          Schedule(day: 'Lunes', time: '14:00 - 16:50'),
+          Schedule(day: 'Martes', time: '14:00 - 16:50'),
+          Schedule(day: 'Miércoles', time: '14:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '14:00 - 16:50'),
+          Schedule(day: 'Viernes', time: '14:00 - 16:50'),
         ],
       ),
       ClassOption(
