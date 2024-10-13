@@ -127,7 +127,34 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // ... (botones y otros widgets)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Horario Detallado',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.picture_as_pdf),
+                      tooltip: 'Descargar PDF',
+                      onPressed: downloadScheduleAsPDF,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.table_chart),
+                      tooltip: 'Descargar Excel',
+                      onPressed: downloadScheduleAsExcel,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close),
+                      tooltip: 'Cerrar',
+                      onPressed: widget.onClose,
+                    ),
+                  ],
+                ),
+              ],
+            ),
             SizedBox(height: 16),
             // Widget del horario
             Expanded(
