@@ -289,7 +289,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       allSubjects: subjects,
                       onSubjectSelected: (subject) {
                         addSubject(subject);
-                        // Aquí se elimina el código que cerraba el widget inmediatamente
                         subjectController.clear();
                         // Deja el widget abierto para permitir más selecciones
                       },
