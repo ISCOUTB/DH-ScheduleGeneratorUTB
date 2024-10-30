@@ -1,7 +1,6 @@
 import '../../../models/class_option.dart';
 import '../../../models/schedule.dart';
 import '../../../models/subject.dart';
-
 List<Subject> subjects = [
   Subject(
     code: 'G01A',
@@ -19,6 +18,17 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Viernes', time: '09:00 - 10:50'),
           Schedule(day: 'Martes', time: '16:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'G01A',
+        subjectName: 'Fundamentos de administracion',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2710',
+        groupId: 2,
+        schedules: [
         ],
       ),
     ],
@@ -112,8 +122,21 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 3,
         professor: 'Gabriel Roman Melendez',
-        nrc: '1629',
+        nrc: '1479',
         groupId: 3,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '15:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'G04A',
+        subjectName: 'Creatividad y emprendimiento',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Gabriel Roman Melendez',
+        nrc: '1629',
+        groupId: 4,
         schedules: [
           Schedule(day: 'Jueves', time: '13:00 - 13:50'),
           Schedule(day: 'Martes', time: '15:00 - 16:50'),
@@ -124,9 +147,20 @@ List<Subject> subjects = [
         subjectName: 'Creatividad y emprendimiento',
         type: 'Teórico',
         credits: 3,
+        professor: 'NA',
+        nrc: '2712',
+        groupId: 5,
+        schedules: [
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'G04A',
+        subjectName: 'Creatividad y emprendimiento',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Lina Margarita Marrugo Salas',
         nrc: '2021',
-        groupId: 4,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Jueves', time: '08:00 - 09:50'),
           Schedule(day: 'Lunes', time: '14:00 - 14:50'),
@@ -139,7 +173,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Lina Margarita Marrugo Salas',
         nrc: '2154',
-        groupId: 5,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Miércoles', time: '09:00 - 09:50'),
           Schedule(day: 'Jueves', time: '15:00 - 16:50'),
@@ -152,10 +186,23 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Lina Margarita Marrugo Salas',
         nrc: '2155',
-        groupId: 6,
+        groupId: 8,
         schedules: [
           Schedule(day: 'Lunes', time: '08:00 - 09:50'),
           Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'G04A',
+        subjectName: 'Creatividad y emprendimiento',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Lina Margarita Marrugo Salas',
+        nrc: '2164',
+        groupId: 9,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 13:50'),
+          Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
         ],
       ),
     ],
@@ -206,7 +253,8 @@ List<Subject> subjects = [
         professor: 'Martha Patricia Castro Porto',
         nrc: '1847',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -230,6 +278,24 @@ List<Subject> subjects = [
     ],
   ),
   Subject(
+    code: 'G09A',
+    name: 'Responsabilidad social',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'G09A',
+        subjectName: 'Responsabilidad social',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2727',
+        groupId: 1,
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
     code: 'G10A',
     name: 'Gestion del talento humano',
     credits: 3,
@@ -245,6 +311,17 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Lunes', time: '08:00 - 09:50'),
           Schedule(day: 'Jueves', time: '16:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'G10A',
+        subjectName: 'Gestion del talento humano',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2721',
+        groupId: 2,
+        schedules: [
         ],
       ),
     ],
@@ -267,6 +344,17 @@ List<Subject> subjects = [
           Schedule(day: 'Lunes', time: '15:00 - 15:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'G11A',
+        subjectName: 'Innovacion',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2725',
+        groupId: 2,
+        schedules: [
+        ],
+      ),
     ],
   ),
   Subject(
@@ -284,6 +372,17 @@ List<Subject> subjects = [
         groupId: 1,
         schedules: [
           Schedule(day: 'Lunes', time: '17:00 - 18:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'G12A',
+        subjectName: 'Consultoria empresarial',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'NA',
+        nrc: '2723',
+        groupId: 2,
+        schedules: [
         ],
       ),
     ],
@@ -324,6 +423,35 @@ List<Subject> subjects = [
           Schedule(day: 'Martes', time: '17:00 - 18:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'G14A',
+        subjectName: 'Juego gerencial',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'NA',
+        nrc: '2726',
+        groupId: 2,
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'M01A',
+    name: 'Fundamentos de mercadeo',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'M01A',
+        subjectName: 'Fundamentos de mercadeo',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2730',
+        groupId: 1,
+        schedules: [
+        ],
+      ),
     ],
   ),
   Subject(
@@ -342,6 +470,17 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Miércoles', time: '15:00 - 16:50'),
           Schedule(day: 'Jueves', time: '15:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M02A',
+        subjectName: 'Investigacion de mercados',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2722',
+        groupId: 2,
+        schedules: [
         ],
       ),
     ],
@@ -397,6 +536,64 @@ List<Subject> subjects = [
           Schedule(day: 'Miércoles', time: '19:00 - 19:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'O07A',
+        subjectName: 'Empresas sostenibles',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2707',
+        groupId: 3,
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'O08A',
+    name: 'Panorama internal y cambio soc',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'O08A',
+        subjectName: 'Panorama internal y cambio soc',
+        type: 'Clase virtual',
+        credits: 3,
+        professor: 'Sammir Montemiranda Pajaro',
+        nrc: '1230',
+        groupId: 1,
+        schedules: [
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'O08A',
+        subjectName: 'Panorama internal y cambio soc',
+        type: 'Clase virtual',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2773',
+        groupId: 2,
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'O12A',
+    name: 'Tecnolog aplicadas a la admini',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'O12A',
+        subjectName: 'Tecnolog aplicadas a la admini',
+        type: 'Clase virtual',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2729',
+        groupId: 1,
+        schedules: [
+        ],
+      ),
     ],
   ),
   Subject(
@@ -432,7 +629,8 @@ List<Subject> subjects = [
         professor: 'Benjamin De Jesus Garcia Garcerant',
         nrc: '1965',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
       ClassOption(
         subjectCode: 'P01A',
@@ -442,7 +640,8 @@ List<Subject> subjects = [
         professor: 'Benjamin De Jesus Garcia Garcerant',
         nrc: '1525',
         groupId: 2,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -459,7 +658,8 @@ List<Subject> subjects = [
         professor: 'Dayana Maria Sanchez Monterrosa',
         nrc: '1969',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
       ClassOption(
         subjectCode: 'P02A',
@@ -469,7 +669,8 @@ List<Subject> subjects = [
         professor: 'Dayana Maria Sanchez Monterrosa',
         nrc: '1912',
         groupId: 3,
-        schedules: [],
+        schedules: [
+        ],
       ),
       ClassOption(
         subjectCode: 'P02A',
@@ -479,7 +680,8 @@ List<Subject> subjects = [
         professor: 'Dayana Maria Sanchez Monterrosa',
         nrc: '1259',
         groupId: 2,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -560,16 +762,8 @@ List<Subject> subjects = [
         nrc: '2663',
         groupId: 4,
         schedules: [
-          Schedule(day: 'Lunes', time: '08:00 - 12:50'),
-          Schedule(day: 'Martes', time: '08:00 - 12:50'),
-          Schedule(day: 'Miércoles', time: '08:00 - 12:50'),
-          Schedule(day: 'Jueves', time: '08:00 - 12:50'),
-          Schedule(day: 'Viernes', time: '08:00 - 12:50'),
-          Schedule(day: 'Lunes', time: '14:00 - 16:50'),
-          Schedule(day: 'Martes', time: '14:00 - 16:50'),
-          Schedule(day: 'Miércoles', time: '14:00 - 16:50'),
-          Schedule(day: 'Jueves', time: '14:00 - 16:50'),
-          Schedule(day: 'Viernes', time: '14:00 - 16:50'),
+          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '08:00 - 12:50'),
+          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '14:00 - 16:50'),
         ],
       ),
       ClassOption(
@@ -598,41 +792,12 @@ List<Subject> subjects = [
         subjectName: 'Práctica profesional',
         type: 'Laboratorio',
         credits: 9,
-        professor: 'Maria Jose Gonzalez Campo',
-        nrc: '2665',
-        groupId: 6,
-        schedules: [
-          Schedule(day: 'Lunes', time: '08:00 - 12:50'),
-          Schedule(day: 'Martes', time: '08:00 - 12:50'),
-          Schedule(day: 'Miércoles', time: '08:00 - 12:50'),
-          Schedule(day: 'Jueves', time: '08:00 - 12:50'),
-          Schedule(day: 'Viernes', time: '08:00 - 12:50'),
-          Schedule(day: 'Lunes', time: '14:00 - 16:50'),
-          Schedule(day: 'Martes', time: '14:00 - 16:50'),
-          Schedule(day: 'Miércoles', time: '14:00 - 16:50'),
-          Schedule(day: 'Jueves', time: '14:00 - 16:50'),
-          Schedule(day: 'Viernes', time: '14:00 - 16:50'),
-        ],
-      ),
-      ClassOption(
-        subjectCode: 'P03A',
-        subjectName: 'Práctica profesional',
-        type: 'Laboratorio',
-        credits: 9,
         professor: 'Armando Antonio Mendoza Diaz',
         nrc: '2677',
-        groupId: 4,
+        groupId: 3,
         schedules: [
-          Schedule(day: 'Lunes', time: '08:00 - 12:50'),
-          Schedule(day: 'Martes', time: '08:00 - 12:50'),
-          Schedule(day: 'Miércoles', time: '08:00 - 12:50'),
-          Schedule(day: 'Jueves', time: '08:00 - 12:50'),
-          Schedule(day: 'Viernes', time: '08:00 - 12:50'),
-          Schedule(day: 'Lunes', time: '14:00 - 16:50'),
-          Schedule(day: 'Martes', time: '14:00 - 16:50'),
-          Schedule(day: 'Miércoles', time: '14:00 - 16:50'),
-          Schedule(day: 'Jueves', time: '14:00 - 16:50'),
-          Schedule(day: 'Viernes', time: '14:00 - 16:50'),
+          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '08:00 - 12:50'),
+          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '14:00 - 16:50'),
         ],
       ),
       ClassOption(
@@ -694,6 +859,35 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Jueves', time: '18:00 - 19:50'),
           Schedule(day: 'Martes', time: '19:00 - 19:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'R02A',
+        subjectName: 'Gestion de procesos y tecnolog',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2771',
+        groupId: 2,
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z07A',
+    name: 'Administ de recursos humanos',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'Z07A',
+        subjectName: 'Administ de recursos humanos',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2728',
+        groupId: 1,
+        schedules: [
         ],
       ),
     ],
@@ -867,6 +1061,25 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Miércoles', time: '09:00 - 12:50'),
           Schedule(day: 'Lunes', time: '13:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'E01A',
+    name: 'Expresión grafica i',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'E01A',
+        subjectName: 'Expresión grafica i',
+        type: 'Teorico-practico',
+        credits: 2,
+        professor: 'Cesar Anibal Duran Ruge',
+        nrc: '2067',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Sábado', time: '09:00 - 10:50'),
         ],
       ),
     ],
@@ -1330,8 +1543,20 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 2,
         professor: 'Fabrizio Milano Londoño',
-        nrc: '1334',
+        nrc: '2334',
         groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'U03A',
+        subjectName: 'Urbanismo y ambiente iii',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Fabrizio Milano Londoño',
+        nrc: '1334',
+        groupId: 2,
         schedules: [
           Schedule(day: 'Lunes', time: '13:00 - 14:50'),
         ],
@@ -1398,14 +1623,12 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'D01A',
-    name:
-        'Introducción a la ciencia de datos introducción a la ciencia de datos',
+    name: 'Introducción a la ciencia de datos introducción a la ciencia de datos',
     credits: 2,
     classOptions: [
       ClassOption(
         subjectCode: 'D01A',
-        subjectName:
-            'Introducción a la ciencia de datos introducción a la ciencia de datos',
+        subjectName: 'Introducción a la ciencia de datos introducción a la ciencia de datos',
         type: 'Laboratorio',
         credits: 2,
         professor: 'Andy Rafael Dominguez Monterroza',
@@ -1419,14 +1642,12 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'D02A',
-    name:
-        'Programación para ciencia de datos programación para ciencia de datos',
+    name: 'Programación para ciencia de datos programación para ciencia de datos',
     credits: 3,
     classOptions: [
       ClassOption(
         subjectCode: 'D02A',
-        subjectName:
-            'Programación para ciencia de datos programación para ciencia de datos',
+        subjectName: 'Programación para ciencia de datos programación para ciencia de datos',
         type: 'Teórico',
         credits: 3,
         professor: 'Humberto Manuel Marbello Peña',
@@ -1632,8 +1853,6 @@ List<Subject> subjects = [
         nrc: '2243',
         groupId: 1,
         schedules: [
-          Schedule(day: 'Martes', time: '07:00 - 07:50'),
-          Schedule(day: 'Jueves', time: '13:00 - 14:50'),
         ],
       ),
     ],
@@ -2154,9 +2373,36 @@ List<Subject> subjects = [
         subjectName: 'Estadística y probabilidad',
         type: 'Teórico',
         credits: 3,
+        professor: 'Julio Seferino Hurtado Marquez',
+        nrc: '1137',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '07:00 - 08:50'),
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'E01A',
+        subjectName: 'Estadística y probabilidad',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Francisco Mauricio Atencio Contreras',
+        nrc: '1141',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Martes', time: '15:00 - 15:50'),
+          Schedule(day: 'Jueves', time: '15:00 - 15:50'),
+          Schedule(day: 'Viernes', time: '16:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'E01A',
+        subjectName: 'Estadística y probabilidad',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Elizabeth Valderrama Serrano',
         nrc: '1154',
-        groupId: 2,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Miércoles', time: '16:00 - 16:50'),
           Schedule(day: 'Martes', time: '17:00 - 17:50'),
@@ -2170,7 +2416,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Deivinso Villa Moncaris',
         nrc: '1411',
-        groupId: 3,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
           Schedule(day: 'Lunes', time: '16:00 - 16:50'),
@@ -2184,7 +2430,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Alan Orlando Sanchez Marzan',
         nrc: '1527',
-        groupId: 4,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Lunes', time: '07:00 - 07:50'),
           Schedule(day: 'Sábado', time: '07:00 - 08:50'),
@@ -2198,7 +2444,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Cecilia Paillier Gonzalez',
         nrc: '2304',
-        groupId: 5,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Martes', time: '13:00 - 13:50'),
           Schedule(day: 'Viernes', time: '13:00 - 13:50'),
@@ -2212,7 +2458,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Jorge Luis Villalba Acevedo',
         nrc: '2306',
-        groupId: 6,
+        groupId: 8,
         schedules: [
           Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
           Schedule(day: 'Martes', time: '09:00 - 09:50'),
@@ -2226,7 +2472,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Julio Seferino Hurtado Marquez',
         nrc: '2314',
-        groupId: 7,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Jueves', time: '11:00 - 11:50'),
           Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
@@ -2240,7 +2486,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Derlis Aminta Villadiego Rincon',
         nrc: '2318',
-        groupId: 8,
+        groupId: 10,
         schedules: [
           Schedule(day: 'Viernes', time: '13:00 - 13:50'),
           Schedule(day: 'Miércoles', time: '15:00 - 15:50'),
@@ -2254,7 +2500,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Elizabeth Valderrama Serrano',
         nrc: '1110',
-        groupId: 9,
+        groupId: 11,
         schedules: [
           Schedule(day: 'Lunes', time: '13:00 - 14:50'),
           Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
@@ -2268,7 +2514,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Misorly Del Carmen Soto Acevedo',
         nrc: '2615',
-        groupId: 10,
+        groupId: 12,
         schedules: [
           Schedule(day: 'Lunes', time: '16:00 - 17:50'),
           Schedule(day: 'Martes', time: '16:00 - 16:50'),
@@ -2287,9 +2533,23 @@ List<Subject> subjects = [
         subjectName: 'Estadística inferencial',
         type: 'Teórico',
         credits: 3,
+        professor: 'Alan Orlando Sanchez Marzan',
+        nrc: '1995',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '09:00 - 09:50'),
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+          Schedule(day: 'Miércoles', time: '11:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'E02A',
+        subjectName: 'Estadística inferencial',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Roberto Enrique Gomez Fernandez',
         nrc: '1998',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Jueves', time: '13:00 - 13:50'),
           Schedule(day: 'Martes', time: '14:00 - 14:50'),
@@ -2303,7 +2563,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Jorge Luis Villalba Acevedo',
         nrc: '2000',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Lunes', time: '15:00 - 15:50'),
           Schedule(day: 'Martes', time: '15:00 - 15:50'),
@@ -2317,7 +2577,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Deivinso Villa Moncaris',
         nrc: '2616',
-        groupId: 3,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Viernes', time: '14:00 - 15:50'),
           Schedule(day: 'Miércoles', time: '16:00 - 16:50'),
@@ -2331,7 +2591,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Cecilia Paillier Gonzalez',
         nrc: '2635',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Lunes', time: '16:00 - 16:50'),
           Schedule(day: 'Martes', time: '18:00 - 18:50'),
@@ -2345,7 +2605,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Roberto Enrique Gomez Fernandez',
         nrc: '2017',
-        groupId: 5,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Viernes', time: '13:00 - 14:50'),
           Schedule(day: 'Miércoles', time: '14:00 - 14:50'),
@@ -2359,7 +2619,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Jorge Luis Villalba Acevedo',
         nrc: '2022',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Lunes', time: '13:00 - 14:50'),
           Schedule(day: 'Martes', time: '13:00 - 13:50'),
@@ -2378,9 +2638,23 @@ List<Subject> subjects = [
         subjectName: 'Estadística i (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
+        professor: 'Deivinso Villa Moncaris',
+        nrc: '1124',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+          Schedule(day: 'Lunes', time: '17:00 - 17:50'),
+          Schedule(day: 'Martes', time: '17:00 - 18:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'E03A',
+        subjectName: 'Estadística i (facultad ciencias sociales y humanidades)',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Misorly Del Carmen Soto Acevedo',
         nrc: '2606',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Lunes', time: '14:00 - 15:50'),
           Schedule(day: 'Martes', time: '14:00 - 14:50'),
@@ -2507,13 +2781,26 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'E04A',
-        subjectName:
-            'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Roberto Enrique Gomez Fernandez',
+        nrc: '1999',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+          Schedule(day: 'Martes', time: '14:00 - 14:50'),
+          Schedule(day: 'Miércoles', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'E04A',
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Jorge Luis Villalba Acevedo',
         nrc: '2001',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Lunes', time: '15:00 - 15:50'),
           Schedule(day: 'Martes', time: '15:00 - 15:50'),
@@ -2522,13 +2809,12 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName:
-            'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Francisco Mauricio Atencio Contreras',
         nrc: '2004',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Martes', time: '16:00 - 16:50'),
           Schedule(day: 'Jueves', time: '16:00 - 16:50'),
@@ -2537,13 +2823,25 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName:
-            'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Andy Rafael Dominguez Monterroza',
+        nrc: '2006',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+          Schedule(day: 'Martes', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'E04A',
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Alan Orlando Sanchez Marzan',
         nrc: '2013',
-        groupId: 3,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Miércoles', time: '10:00 - 10:50'),
           Schedule(day: 'Jueves', time: '10:00 - 11:50'),
@@ -2552,13 +2850,12 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName:
-            'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Jorge Luis Villalba Acevedo',
         nrc: '2023',
-        groupId: 4,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Lunes', time: '13:00 - 14:50'),
           Schedule(day: 'Martes', time: '13:00 - 13:50'),
@@ -2665,6 +2962,18 @@ List<Subject> subjects = [
         type: 'Laboratorio',
         credits: 4,
         professor: 'Aris Daniela Hurtado Misal',
+        nrc: '2092',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Viernes', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Física mecánica',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Aris Daniela Hurtado Misal',
         nrc: '2537',
         groupId: 3,
         schedules: [
@@ -2676,9 +2985,71 @@ List<Subject> subjects = [
         subjectName: 'Física mecánica',
         type: 'Teórico',
         credits: 4,
+        professor: 'Yaleidys Paola Hernandez Diaz',
+        nrc: '2095',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+          Schedule(day: 'Viernes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Física mecánica',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Aris Daniela Hurtado Misal',
+        nrc: '2096',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Física mecánica',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Lenny Alexandra Romero Perez',
+        nrc: '2388',
+        groupId: 5,
+        schedules: [
+          Schedule(day: 'Viernes', time: '08:00 - 09:50'),
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Física mecánica',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Sebastian David Pacheco Orozco',
+        nrc: '2389',
+        groupId: 5,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Física mecánica',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Sebastian David Pacheco Orozco',
+        nrc: '2531',
+        groupId: 5,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Física mecánica',
+        type: 'Teórico',
+        credits: 4,
         professor: 'Elias Guillermo Imitola Coley',
         nrc: '2100',
-        groupId: 4,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Jueves', time: '13:00 - 14:50'),
           Schedule(day: 'Viernes', time: '16:00 - 17:50'),
@@ -2691,7 +3062,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Aris Daniela Hurtado Misal',
         nrc: '2101',
-        groupId: 4,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
         ],
@@ -2703,7 +3074,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Aris Daniela Hurtado Misal',
         nrc: '2539',
-        groupId: 4,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
         ],
@@ -2715,7 +3086,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Vilma Viviana Ojeda Caicedo',
         nrc: '2114',
-        groupId: 5,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Lunes', time: '14:00 - 15:50'),
           Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
@@ -2728,7 +3099,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Sebastian David Pacheco Orozco',
         nrc: '2115',
-        groupId: 5,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Jueves', time: '07:00 - 08:50'),
         ],
@@ -2740,7 +3111,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Sebastian David Pacheco Orozco',
         nrc: '2540',
-        groupId: 5,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Jueves', time: '07:00 - 08:50'),
         ],
@@ -2752,7 +3123,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Yony Alejandro Pastrana Caballero',
         nrc: '2133',
-        groupId: 6,
+        groupId: 8,
         schedules: [
           Schedule(day: 'Lunes', time: '09:00 - 10:50'),
           Schedule(day: 'Viernes', time: '13:00 - 14:50'),
@@ -2765,7 +3136,19 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Kevin David Mendoza Vanegas',
         nrc: '2134',
-        groupId: 6,
+        groupId: 8,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Física mecánica',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Kevin David Mendoza Vanegas',
+        nrc: '2541',
+        groupId: 8,
         schedules: [
           Schedule(day: 'Martes', time: '13:00 - 14:50'),
         ],
@@ -2777,7 +3160,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Elias Guillermo Imitola Coley',
         nrc: '2138',
-        groupId: 7,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Jueves', time: '15:00 - 16:50'),
           Schedule(day: 'Martes', time: '17:00 - 18:50'),
@@ -2790,7 +3173,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Aris Daniela Hurtado Misal',
         nrc: '2139',
-        groupId: 7,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Lunes', time: '10:00 - 11:50'),
         ],
@@ -2802,7 +3185,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Aris Daniela Hurtado Misal',
         nrc: '2542',
-        groupId: 7,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Lunes', time: '10:00 - 11:50'),
         ],
@@ -3015,6 +3398,18 @@ List<Subject> subjects = [
       ClassOption(
         subjectCode: 'F02A',
         subjectName: 'Física electricidad y magnetismo',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Sebastian David Pacheco Orozco',
+        nrc: '2550',
+        groupId: 6,
+        schedules: [
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F02A',
+        subjectName: 'Física electricidad y magnetismo',
         type: 'Teórico',
         credits: 4,
         professor: 'Jorge Luis Muñiz Olite',
@@ -3023,6 +3418,18 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Lunes', time: '07:00 - 08:50'),
           Schedule(day: 'Viernes', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F02A',
+        subjectName: 'Física electricidad y magnetismo',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Gabriel Andres Hoyos Gomez Casseres',
+        nrc: '2175',
+        groupId: 7,
+        schedules: [
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
         ],
       ),
       ClassOption(
@@ -3143,6 +3550,31 @@ List<Subject> subjects = [
           Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'F03A',
+        subjectName: 'Física calor y ondas',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Jorge Luis Muñiz Olite',
+        nrc: '1555',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Lunes', time: '15:00 - 16:50'),
+          Schedule(day: 'Jueves', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F03A',
+        subjectName: 'Física calor y ondas',
+        type: 'Laboratorio',
+        credits: 4,
+        professor: 'Kevin David Mendoza Vanegas',
+        nrc: '2557',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Viernes', time: '09:00 - 10:50'),
+        ],
+      ),
     ],
   ),
   Subject(
@@ -3155,9 +3587,22 @@ List<Subject> subjects = [
         subjectName: 'Cálculo diferencial',
         type: 'Teórico',
         credits: 4,
+        professor: 'Eder Antonio Barrios Hernandez',
+        nrc: '1524',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+          Schedule(day: 'Viernes', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M01A',
+        subjectName: 'Cálculo diferencial',
+        type: 'Teórico',
+        credits: 4,
         professor: 'Laura Natalia Martinez Piña',
         nrc: '2276',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Lunes', time: '10:00 - 11:50'),
           Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
@@ -3168,9 +3613,22 @@ List<Subject> subjects = [
         subjectName: 'Cálculo diferencial',
         type: 'Teórico',
         credits: 4,
+        professor: 'Eder Antonio Barrios Hernandez',
+        nrc: '1535',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Martes', time: '15:00 - 16:50'),
+          Schedule(day: 'Viernes', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M01A',
+        subjectName: 'Cálculo diferencial',
+        type: 'Teórico',
+        credits: 4,
         professor: 'Jose Priciliano Perez Santander',
         nrc: '1917',
-        groupId: 2,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Lunes', time: '10:00 - 11:50'),
           Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
@@ -3183,7 +3641,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Julio Alberto Castro Garces',
         nrc: '2147',
-        groupId: 3,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Martes', time: '13:00 - 14:50'),
           Schedule(day: 'Jueves', time: '13:00 - 14:50'),
@@ -3196,7 +3654,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Luzneyda Ballesteros Peinado',
         nrc: '2153',
-        groupId: 4,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
           Schedule(day: 'Viernes', time: '13:00 - 14:50'),
@@ -3209,7 +3667,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Fernando Perez Berrio',
         nrc: '2189',
-        groupId: 5,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Lunes', time: '10:00 - 11:50'),
           Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
@@ -3222,7 +3680,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Julio Alberto Castro Garces',
         nrc: '2197',
-        groupId: 6,
+        groupId: 8,
         schedules: [
           Schedule(day: 'Miércoles', time: '11:00 - 12:50'),
           Schedule(day: 'Lunes', time: '12:00 - 13:50'),
@@ -3235,7 +3693,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Julio Alberto Castro Garces',
         nrc: '2207',
-        groupId: 7,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Martes', time: '10:00 - 11:50'),
           Schedule(day: 'Jueves', time: '10:00 - 11:50'),
@@ -3248,7 +3706,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Juan Carlos Palomino Mancilla',
         nrc: '2218',
-        groupId: 8,
+        groupId: 10,
         schedules: [
           Schedule(day: 'Lunes', time: '10:00 - 11:50'),
           Schedule(day: 'Jueves', time: '10:00 - 11:50'),
@@ -3261,7 +3719,7 @@ List<Subject> subjects = [
         credits: 4,
         professor: 'Alejandra Paola Villalobos Jimenez',
         nrc: '2267',
-        groupId: 9,
+        groupId: 11,
         schedules: [
           Schedule(day: 'Martes', time: '10:00 - 11:50'),
           Schedule(day: 'Jueves', time: '10:00 - 11:50'),
@@ -3727,9 +4185,22 @@ List<Subject> subjects = [
         subjectName: 'Algebra lineal',
         type: 'Teórico',
         credits: 3,
+        professor: 'Diana Carolina Escorcia Espitia',
+        nrc: '2605',
+        groupId: 10,
+        schedules: [
+          Schedule(day: 'Viernes', time: '07:00 - 07:50'),
+          Schedule(day: 'Jueves', time: '09:00 - 10:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M04A',
+        subjectName: 'Algebra lineal',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Cristina Osorio Del Valle',
         nrc: '2349',
-        groupId: 10,
+        groupId: 11,
         schedules: [
           Schedule(day: 'Lunes', time: '13:00 - 14:50'),
           Schedule(day: 'Martes', time: '15:00 - 15:50'),
@@ -3742,7 +4213,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Victor Juan Hernandez Del Toro',
         nrc: '2422',
-        groupId: 11,
+        groupId: 12,
         schedules: [
           Schedule(day: 'Jueves', time: '14:00 - 15:50'),
           Schedule(day: 'Martes', time: '16:00 - 16:50'),
@@ -3755,7 +4226,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Jorge Luis Cohen Torres',
         nrc: '2428',
-        groupId: 12,
+        groupId: 13,
         schedules: [
           Schedule(day: 'Lunes', time: '08:00 - 09:50'),
           Schedule(day: 'Viernes', time: '09:00 - 09:50'),
@@ -3768,7 +4239,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'John Beiro Moreno Barrios',
         nrc: '2446',
-        groupId: 13,
+        groupId: 14,
         schedules: [
           Schedule(day: 'Viernes', time: '16:00 - 17:50'),
           Schedule(day: 'Miércoles', time: '17:00 - 17:50'),
@@ -4417,6 +4888,26 @@ List<Subject> subjects = [
     ],
   ),
   Subject(
+    code: 'E15A',
+    name: 'Manejo de fuentes',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'E15A',
+        subjectName: 'Manejo de fuentes',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Julio Antonio Gomez Mora',
+        nrc: '1203',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '09:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '15:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
     code: 'E17A',
     name: 'Comunicación, género(s) y femi',
     credits: 3,
@@ -4990,7 +5481,19 @@ List<Subject> subjects = [
         professor: 'Juan Carlos Barrios Espinosa',
         nrc: '2055',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'A01A',
+        subjectName: 'Fundam de control y aseguram',
+        type: 'Clase virtual',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2779',
+        groupId: 2,
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -5052,6 +5555,19 @@ List<Subject> subjects = [
           Schedule(day: 'Martes', time: '16:00 - 16:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'C01A',
+        subjectName: 'Contabilidad financiera',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Cesar Gerardo Marquez Morales',
+        nrc: '2325',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '09:00 - 10:50'),
+          Schedule(day: 'Miércoles', time: '10:00 - 10:50'),
+        ],
+      ),
     ],
   ),
   Subject(
@@ -5092,6 +5608,17 @@ List<Subject> subjects = [
           Schedule(day: 'Jueves', time: '17:00 - 18:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'C04A',
+        subjectName: 'Contabilidad internacional iii',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2778',
+        groupId: 2,
+        schedules: [
+        ],
+      ),
     ],
   ),
   Subject(
@@ -5107,7 +5634,39 @@ List<Subject> subjects = [
         professor: 'Juan Carlos Barrios Espinosa',
         nrc: '1157',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'C06A',
+    name: 'Costos para la toma de decisio',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'C06A',
+        subjectName: 'Costos para la toma de decisio',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Ana Susana Cantillo Orozco',
+        nrc: '2027',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'C06A',
+        subjectName: 'Costos para la toma de decisio',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2772',
+        groupId: 2,
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -5169,6 +5728,17 @@ List<Subject> subjects = [
           Schedule(day: 'Viernes', time: '07:00 - 08:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'G03A',
+        subjectName: 'Contabilidad de gestion',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2780',
+        groupId: 2,
+        schedules: [
+        ],
+      ),
     ],
   ),
   Subject(
@@ -5184,7 +5754,44 @@ List<Subject> subjects = [
         professor: 'Juan Carlos Barrios Espinosa',
         nrc: '1903',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'G05A',
+    name: 'Gestion y contabilidad publica',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'G05A',
+        subjectName: 'Gestion y contabilidad publica',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2781',
+        groupId: 1,
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'O01A',
+    name: 'Sistemas de informaci contable',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'O01A',
+        subjectName: 'Sistemas de informaci contable',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2782',
+        groupId: 1,
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -5206,6 +5813,35 @@ List<Subject> subjects = [
           Schedule(day: 'Lunes', time: '19:00 - 19:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'O02A',
+        subjectName: 'English for accounting and fin',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'NA',
+        nrc: '2724',
+        groupId: 2,
+        schedules: [
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'O03A',
+    name: 'Impuesto de la renta',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'O03A',
+        subjectName: 'Impuesto de la renta',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2783',
+        groupId: 1,
+        schedules: [
+        ],
+      ),
     ],
   ),
   Subject(
@@ -5224,6 +5860,17 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Martes', time: '08:00 - 09:50'),
           Schedule(day: 'Miércoles', time: '09:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'T01A',
+        subjectName: 'Impuestos i',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2777',
+        groupId: 2,
+        schedules: [
         ],
       ),
     ],
@@ -6233,8 +6880,7 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'T03A',
-        subjectName:
-            'M. de la investigación jurídica y socio j (ternera - manga)',
+        subjectName: 'M. de la investigación jurídica y socio j (ternera - manga)',
         type: 'Teórico',
         credits: 3,
         professor: 'Katleen Paola Marun Uparela',
@@ -6454,9 +7100,22 @@ List<Subject> subjects = [
         subjectName: 'Fundamentos de economía',
         type: 'Teórico',
         credits: 3,
+        professor: 'Luis Fernando Lopez Pineda',
+        nrc: '1500',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Lunes', time: '08:00 - 08:50'),
+          Schedule(day: 'Jueves', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'I01A',
+        subjectName: 'Fundamentos de economía',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Katty Johanna Gomez Acevedo',
         nrc: '1694',
-        groupId: 3,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Miércoles', time: '15:00 - 15:50'),
           Schedule(day: 'Viernes', time: '15:00 - 16:50'),
@@ -6469,7 +7128,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Clark Junior Granger Castaño',
         nrc: '2149',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Lunes', time: '13:00 - 13:50'),
           Schedule(day: 'Jueves', time: '14:00 - 15:50'),
@@ -6569,7 +7228,8 @@ List<Subject> subjects = [
         professor: 'Jhorland Ayala Garcia',
         nrc: '1602',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -6769,9 +7429,20 @@ List<Subject> subjects = [
         subjectName: 'Formulación y evaluac de proye',
         type: 'Teórico',
         credits: 3,
+        professor: 'NA',
+        nrc: '2749',
+        groupId: 1,
+        schedules: [
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M12A',
+        subjectName: 'Formulación y evaluac de proye',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Yunaris Elvira Coneo Mendoza',
         nrc: '1039',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Martes', time: '17:00 - 18:50'),
           Schedule(day: 'Miércoles', time: '18:00 - 18:50'),
@@ -6784,7 +7455,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Katty Johanna Gomez Acevedo',
         nrc: '1052',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Jueves', time: '16:00 - 17:50'),
           Schedule(day: 'Miércoles', time: '18:00 - 18:50'),
@@ -6797,7 +7468,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Yunaris Elvira Coneo Mendoza',
         nrc: '1092',
-        groupId: 3,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Lunes', time: '15:00 - 15:50'),
           Schedule(day: 'Miércoles', time: '16:00 - 17:50'),
@@ -6810,7 +7481,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Gerson Javier Perez Valbuena',
         nrc: '2232',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Miércoles', time: '17:00 - 18:50'),
           Schedule(day: 'Lunes', time: '18:00 - 18:50'),
@@ -6823,7 +7494,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Leinys Melgarejo Causado',
         nrc: '2233',
-        groupId: 5,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Jueves', time: '15:00 - 15:50'),
           Schedule(day: 'Lunes', time: '16:00 - 17:50'),
@@ -6844,7 +7515,8 @@ List<Subject> subjects = [
         professor: 'Jhorland Ayala Garcia',
         nrc: '1603',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -6912,7 +7584,8 @@ List<Subject> subjects = [
         professor: 'Benjamin De Jesus Garcia Garcerant',
         nrc: '1726',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -6929,7 +7602,8 @@ List<Subject> subjects = [
         professor: 'Dayana Maria Sanchez Monterrosa',
         nrc: '2136',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -6994,7 +7668,8 @@ List<Subject> subjects = [
         professor: 'Yenni Astrith Angarita Calderon',
         nrc: '1194',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -7139,9 +7814,22 @@ List<Subject> subjects = [
         subjectName: 'Análisis financiero y proyecci',
         type: 'Teórico',
         credits: 2,
+        professor: 'Luis Carlos Diaz Canedo',
+        nrc: '2034',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '11:00 - 11:50'),
+          Schedule(day: 'Lunes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F03A',
+        subjectName: 'Análisis financiero y proyecci',
+        type: 'Teórico',
+        credits: 2,
         professor: 'Juan Camilo Medellin Rojas',
         nrc: '2038',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Martes', time: '15:00 - 16:50'),
           Schedule(day: 'Lunes', time: '16:00 - 16:50'),
@@ -7165,6 +7853,30 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Lunes', time: '08:00 - 09:50'),
           Schedule(day: 'Jueves', time: '09:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F04A',
+        subjectName: 'Derecho aduanero y financiero',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Sally Del Carmen Baron Mercado',
+        nrc: '2627',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
+          Schedule(day: 'Jueves', time: '11:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F04A',
+        subjectName: 'Derecho aduanero y financiero',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2753',
+        groupId: 3,
+        schedules: [
         ],
       ),
     ],
@@ -7246,6 +7958,17 @@ List<Subject> subjects = [
           Schedule(day: 'Viernes', time: '07:00 - 08:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'F05A',
+        subjectName: 'Mercado de capitales',
+        type: 'Teórico',
+        credits: 0 TO 3,
+        professor: 'NA',
+        nrc: '2751',
+        groupId: 4,
+        schedules: [
+        ],
+      ),
     ],
   ),
   Subject(
@@ -7272,11 +7995,37 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 3,
         professor: 'Luis Carlos Diaz Canedo',
-        nrc: '1811',
+        nrc: '1766',
         groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '07:00 - 08:50'),
+          Schedule(day: 'Miércoles', time: '16:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F06A',
+        subjectName: 'Finanzas i',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Luis Carlos Diaz Canedo',
+        nrc: '1811',
+        groupId: 3,
         schedules: [
           Schedule(day: 'Jueves', time: '07:00 - 07:50'),
           Schedule(day: 'Viernes', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F06A',
+        subjectName: 'Finanzas i',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Rolando Mario Ariza Olaya',
+        nrc: '2372',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Viernes', time: '13:00 - 14:50'),
+          Schedule(day: 'Lunes', time: '16:00 - 16:50'),
         ],
       ),
     ],
@@ -7383,6 +8132,19 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Lunes', time: '15:00 - 16:50'),
           Schedule(day: 'Martes', time: '16:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'N03A',
+        subjectName: 'Administración internacional',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Juan Francisco Silva Suarez',
+        nrc: '1609',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '17:00 - 18:50'),
+          Schedule(day: 'Miércoles', time: '19:00 - 19:50'),
         ],
       ),
     ],
@@ -7524,6 +8286,17 @@ List<Subject> subjects = [
           Schedule(day: 'Martes', time: '17:00 - 17:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'N08A',
+        subjectName: 'Simulación de negocios',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'NA',
+        nrc: '2752',
+        groupId: 2,
+        schedules: [
+        ],
+      ),
     ],
   ),
   Subject(
@@ -7592,7 +8365,8 @@ List<Subject> subjects = [
         professor: 'Jorge Luis Del Rio Cortina',
         nrc: '1936',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -7609,7 +8383,8 @@ List<Subject> subjects = [
         professor: 'Benjamin De Jesus Garcia Garcerant',
         nrc: '1824',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -7626,7 +8401,8 @@ List<Subject> subjects = [
         professor: 'Javier Mauricio Prieto Florez',
         nrc: '1303',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -7643,7 +8419,8 @@ List<Subject> subjects = [
         professor: 'Dayana Maria Sanchez Monterrosa',
         nrc: '1253',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -7660,7 +8437,8 @@ List<Subject> subjects = [
         professor: 'Alba Zulay Cardenas Escobar',
         nrc: '2434',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -7677,7 +8455,8 @@ List<Subject> subjects = [
         professor: 'Benjamin De Jesus Garcia Garcerant',
         nrc: '1734',
         groupId: 1,
-        schedules: [],
+        schedules: [
+        ],
       ),
     ],
   ),
@@ -8039,8 +8818,20 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 2,
         professor: 'Claudia Cecilia Ayola Escallon',
-        nrc: '1714',
+        nrc: '1219',
         groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '16:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'C04A',
+        subjectName: 'Masculinidades, violencia y cr',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Claudia Cecilia Ayola Escallon',
+        nrc: '1714',
+        groupId: 2,
         schedules: [
           Schedule(day: 'Miércoles', time: '16:00 - 17:50'),
         ],
@@ -8105,6 +8896,45 @@ List<Subject> subjects = [
         groupId: 2,
         schedules: [
           Schedule(day: 'Miércoles', time: '12:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'C12A',
+    name: 'Int a las ciencias sociales y',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'C12A',
+        subjectName: 'Int a las ciencias sociales y',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Graciela Victoria Franco Martinez',
+        nrc: '2185',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'C17A',
+    name: 'Ciudadanías bajo la lupa-romota',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'C17A',
+        subjectName: 'Ciudadanías bajo la lupa-romota',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Ingrid Yaneth Silva Arroyo',
+        nrc: '1922',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '14:00 - 15:50'),
+          Schedule(day: 'Viernes', time: '14:00 - 15:50'),
         ],
       ),
     ],
@@ -8269,9 +9099,22 @@ List<Subject> subjects = [
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
+        professor: 'Gilma Antonia Mestre De Mogollon',
+        nrc: '1101',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 07:50'),
+          Schedule(day: 'Lunes', time: '09:00 - 10:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H02A',
+        subjectName: 'Taller de escritura académica',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Richard Villadiego Beltran',
         nrc: '1590',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Lunes', time: '17:00 - 18:50'),
           Schedule(day: 'Miércoles', time: '17:00 - 17:50'),
@@ -8284,7 +9127,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Rogers Montt Torres',
         nrc: '1918',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Viernes', time: '12:00 - 13:50'),
           Schedule(day: 'Martes', time: '18:00 - 18:50'),
@@ -8295,9 +9138,22 @@ List<Subject> subjects = [
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
+        professor: 'Nelson David Zabaleta Rojas',
+        nrc: '1921',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Viernes', time: '14:00 - 15:50'),
+          Schedule(day: 'Martes', time: '17:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H02A',
+        subjectName: 'Taller de escritura académica',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Rafael Enrique Cantillo Castillo',
         nrc: '1924',
-        groupId: 3,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Jueves', time: '07:00 - 08:50'),
           Schedule(day: 'Miércoles', time: '11:00 - 11:50'),
@@ -8310,7 +9166,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Ricardo Carpio Franco',
         nrc: '1925',
-        groupId: 4,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Martes', time: '17:00 - 18:50'),
           Schedule(day: 'Lunes', time: '18:00 - 18:50'),
@@ -8323,7 +9179,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Ana Lucia Coa Murillo',
         nrc: '1926',
-        groupId: 5,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
           Schedule(day: 'Viernes', time: '09:00 - 09:50'),
@@ -8336,7 +9192,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Federico Ochoa Escobar',
         nrc: '1927',
-        groupId: 6,
+        groupId: 8,
         schedules: [
           Schedule(day: 'Miércoles', time: '07:00 - 07:50'),
           Schedule(day: 'Martes', time: '15:00 - 16:50'),
@@ -8349,7 +9205,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Rogers Montt Torres',
         nrc: '1929',
-        groupId: 7,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
           Schedule(day: 'Jueves', time: '10:00 - 10:50'),
@@ -8362,7 +9218,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Alexander De Jesus Casalins Perez',
         nrc: '1931',
-        groupId: 8,
+        groupId: 10,
         schedules: [
           Schedule(day: 'Martes', time: '10:00 - 10:50'),
           Schedule(day: 'Viernes', time: '10:00 - 11:50'),
@@ -8375,7 +9231,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Alexander De Jesus Casalins Perez',
         nrc: '1932',
-        groupId: 9,
+        groupId: 11,
         schedules: [
           Schedule(day: 'Lunes', time: '07:00 - 07:50'),
           Schedule(day: 'Miércoles', time: '09:00 - 10:50'),
@@ -8400,8 +9256,21 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 3,
         professor: 'Richard Villadiego Beltran',
-        nrc: '1543',
+        nrc: '1539',
         groupId: 3,
+        schedules: [
+          Schedule(day: 'Viernes', time: '17:00 - 18:50'),
+          Schedule(day: 'Miércoles', time: '18:00 - 18:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H02A',
+        subjectName: 'Taller de escritura académica',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Richard Villadiego Beltran',
+        nrc: '1543',
+        groupId: 4,
         schedules: [
           Schedule(day: 'Martes', time: '16:00 - 17:50'),
           Schedule(day: 'Jueves', time: '16:00 - 16:50'),
@@ -8414,7 +9283,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Julio Alfonso Muñoz Castaño',
         nrc: '1558',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Jueves', time: '14:00 - 14:50'),
           Schedule(day: 'Lunes', time: '16:00 - 17:50'),
@@ -8425,9 +9294,22 @@ List<Subject> subjects = [
         subjectName: 'Taller de escritura académica',
         type: 'Teórico',
         credits: 3,
+        professor: 'Ana Lucia Coa Murillo',
+        nrc: '1564',
+        groupId: 6,
+        schedules: [
+          Schedule(day: 'Viernes', time: '07:00 - 08:50'),
+          Schedule(day: 'Jueves', time: '09:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H02A',
+        subjectName: 'Taller de escritura académica',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Ricardo Carpio Franco',
         nrc: '1577',
-        groupId: 5,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Lunes', time: '17:00 - 17:50'),
           Schedule(day: 'Miércoles', time: '17:00 - 18:50'),
@@ -8440,7 +9322,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Gilma Antonia Mestre De Mogollon',
         nrc: '1584',
-        groupId: 6,
+        groupId: 8,
         schedules: [
           Schedule(day: 'Martes', time: '07:00 - 07:50'),
           Schedule(day: 'Viernes', time: '10:00 - 11:50'),
@@ -8491,8 +9373,20 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 2,
         professor: 'Yamile Esther Acevedo Acevedo',
-        nrc: '1661',
+        nrc: '1566',
         groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H03A',
+        subjectName: 'Constitución política',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Yamile Esther Acevedo Acevedo',
+        nrc: '1661',
+        groupId: 3,
         schedules: [
           Schedule(day: 'Viernes', time: '09:00 - 10:50'),
         ],
@@ -8504,7 +9398,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Ramon Elias Medina Arteta',
         nrc: '1872',
-        groupId: 3,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Viernes', time: '07:00 - 08:50'),
         ],
@@ -8516,7 +9410,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Jorge Luis Ahumada Segura',
         nrc: '1875',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Martes', time: '13:00 - 14:50'),
         ],
@@ -8528,7 +9422,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Yerlys Guardo Gonzalez',
         nrc: '1119',
-        groupId: 5,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Martes', time: '08:00 - 09:50'),
         ],
@@ -8540,7 +9434,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Jorge Luis Ahumada Segura',
         nrc: '1126',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Martes', time: '16:00 - 17:50'),
         ],
@@ -8550,9 +9444,21 @@ List<Subject> subjects = [
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
+        professor: 'Yamile Esther Acevedo Acevedo',
+        nrc: '1134',
+        groupId: 8,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '09:00 - 10:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H03A',
+        subjectName: 'Constitución política',
+        type: 'Teórico',
+        credits: 2,
         professor: 'Jorge Luis Ahumada Segura',
         nrc: '1191',
-        groupId: 7,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
         ],
@@ -8562,9 +9468,33 @@ List<Subject> subjects = [
         subjectName: 'Constitución política',
         type: 'Teórico',
         credits: 2,
+        professor: 'Luis Eduardo Espinosa Velasquez',
+        nrc: '1234',
+        groupId: 10,
+        schedules: [
+          Schedule(day: 'Jueves', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H03A',
+        subjectName: 'Constitución política',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Andrea Carolina Fierro Chaves',
+        nrc: '1372',
+        groupId: 11,
+        schedules: [
+          Schedule(day: 'Jueves', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H03A',
+        subjectName: 'Constitución política',
+        type: 'Teórico',
+        credits: 2,
         professor: 'Yerlys Guardo Gonzalez',
         nrc: '1407',
-        groupId: 8,
+        groupId: 12,
         schedules: [
           Schedule(day: 'Lunes', time: '10:00 - 11:50'),
         ],
@@ -8576,7 +9506,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Jorge Luis Ahumada Segura',
         nrc: '1501',
-        groupId: 9,
+        groupId: 13,
         schedules: [
           Schedule(day: 'Viernes', time: '13:00 - 14:50'),
         ],
@@ -8588,9 +9518,21 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Yamile Esther Acevedo Acevedo',
         nrc: '1519',
-        groupId: 10,
+        groupId: 14,
         schedules: [
           Schedule(day: 'Viernes', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H03A',
+        subjectName: 'Constitución política',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Yamile Esther Acevedo Acevedo',
+        nrc: '2463',
+        groupId: 15,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
         ],
       ),
     ],
@@ -8713,9 +9655,21 @@ List<Subject> subjects = [
         subjectName: 'Ética',
         type: 'Teórico',
         credits: 2,
+        professor: 'Yerlys Guardo Gonzalez',
+        nrc: '1548',
+        groupId: 10,
+        schedules: [
+          Schedule(day: 'Jueves', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H04A',
+        subjectName: 'Ética',
+        type: 'Teórico',
+        credits: 2,
         professor: 'Jose Carlos Garcia Martinez',
         nrc: '1600',
-        groupId: 10,
+        groupId: 11,
         schedules: [
           Schedule(day: 'Martes', time: '17:00 - 18:50'),
         ],
@@ -8727,7 +9681,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Andrea Carolina Fierro Chaves',
         nrc: '1769',
-        groupId: 11,
+        groupId: 12,
         schedules: [
           Schedule(day: 'Miércoles', time: '15:00 - 16:50'),
         ],
@@ -8739,7 +9693,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Andrea Carolina Fierro Chaves',
         nrc: '1935',
-        groupId: 12,
+        groupId: 13,
         schedules: [
           Schedule(day: 'Martes', time: '16:00 - 17:50'),
         ],
@@ -8750,10 +9704,33 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 2,
         professor: 'Jose Carlos Garcia Martinez',
+        nrc: '2014',
+        groupId: 14,
+        schedules: [
+          Schedule(day: 'Lunes', time: '15:00 - 16:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H04A',
+        subjectName: 'Ética',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Jose Carlos Garcia Martinez',
         nrc: '2039',
-        groupId: 13,
+        groupId: 15,
         schedules: [
           Schedule(day: 'Lunes', time: '17:00 - 18:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H04A',
+        subjectName: 'Ética',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'NA',
+        nrc: '2788',
+        groupId: 16,
+        schedules: [
         ],
       ),
     ],
@@ -8768,9 +9745,21 @@ List<Subject> subjects = [
         subjectName: 'Ciudadanía global',
         type: 'Teórico',
         credits: 2,
+        professor: 'Ramon Elias Medina Arteta',
+        nrc: '1117',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '16:00 - 17:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H05A',
+        subjectName: 'Ciudadanía global',
+        type: 'Teórico',
+        credits: 2,
         professor: 'Luis Sergio Fuenzalida Galvez',
         nrc: '2312',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Jueves', time: '11:00 - 12:50'),
         ],
@@ -8782,7 +9771,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Ingrid Yaneth Silva Arroyo',
         nrc: '2336',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Lunes', time: '15:00 - 16:50'),
         ],
@@ -8794,7 +9783,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Luis Sergio Fuenzalida Galvez',
         nrc: '2360',
-        groupId: 3,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Jueves', time: '08:00 - 09:50'),
         ],
@@ -8806,7 +9795,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Jorge Luis Ahumada Segura',
         nrc: '1314',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Viernes', time: '16:00 - 17:50'),
         ],
@@ -8818,7 +9807,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Luis Eduardo Espinosa Velasquez',
         nrc: '1901',
-        groupId: 5,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
         ],
@@ -8830,7 +9819,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Ingrid Yaneth Silva Arroyo',
         nrc: '1905',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Jueves', time: '08:00 - 09:50'),
         ],
@@ -8893,6 +9882,18 @@ List<Subject> subjects = [
         groupId: 6,
         schedules: [
           Schedule(day: 'Lunes', time: '11:00 - 12:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'H05A',
+        subjectName: 'Ciudadanía global',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Ramon Elias Medina Arteta',
+        nrc: '2302',
+        groupId: 7,
+        schedules: [
+          Schedule(day: 'Viernes', time: '09:00 - 10:50'),
         ],
       ),
     ],
@@ -9015,10 +10016,41 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 2,
         professor: 'Estela Simancas Mendoza',
-        nrc: '1290',
+        nrc: '1245',
         groupId: 1,
         schedules: [
+          Schedule(day: 'Lunes', time: '07:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'S04A',
+        subjectName: 'Historia del mundo contemporán',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Estela Simancas Mendoza',
+        nrc: '1290',
+        groupId: 2,
+        schedules: [
           Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'V04A',
+    name: 'La revolución de la comida-remoto',
+    credits: 2,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'V04A',
+        subjectName: 'La revolución de la comida-remoto',
+        type: 'Teórico',
+        credits: 2,
+        professor: 'Liliana Ujueta Velandia',
+        nrc: '2508',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '09:00 - 10:50'),
         ],
       ),
     ],
@@ -9122,8 +10154,7 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'I01A',
-        subjectName:
-            'Ingles i - programa arquitectura y derecho (presencial - remoto)',
+        subjectName: 'Ingles i - programa arquitectura y derecho (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
         professor: 'Lina Margarita Castilla Carrera',
@@ -9221,9 +10252,24 @@ List<Subject> subjects = [
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
+        professor: 'Rodolfo Romny Rodriguez Picot',
+        nrc: '2431',
+        groupId: 6,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 10:50'),
+          Schedule(day: 'Miércoles', time: '10:00 - 10:50'),
+          Schedule(day: 'Jueves', time: '10:00 - 10:50'),
+          Schedule(day: 'Viernes', time: '10:00 - 10:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'I02A',
+        subjectName: 'Ingles ii',
+        type: 'Teórico',
+        credits: 2,
         professor: 'Gilsy Martinez Polo',
         nrc: '1073',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Lunes', time: '08:00 - 09:50'),
           Schedule(day: 'Jueves', time: '08:00 - 09:50'),
@@ -9236,7 +10282,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Carolina Perez Bonfante',
         nrc: '1232',
-        groupId: 7,
+        groupId: 8,
         schedules: [
           Schedule(day: 'Lunes', time: '17:00 - 17:50'),
           Schedule(day: 'Martes', time: '17:00 - 17:50'),
@@ -9251,7 +10297,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Stefania Arias Cifuentes',
         nrc: '1270',
-        groupId: 8,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Lunes', time: '09:00 - 09:50'),
           Schedule(day: 'Martes', time: '09:00 - 09:50'),
@@ -9266,7 +10312,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Stefania Arias Cifuentes',
         nrc: '1275',
-        groupId: 9,
+        groupId: 10,
         schedules: [
           Schedule(day: 'Lunes', time: '07:00 - 07:50'),
           Schedule(day: 'Miércoles', time: '07:00 - 07:50'),
@@ -9281,7 +10327,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Stefania Arias Cifuentes',
         nrc: '1884',
-        groupId: 10,
+        groupId: 11,
         schedules: [
           Schedule(day: 'Lunes', time: '08:00 - 08:50'),
           Schedule(day: 'Miércoles', time: '08:00 - 08:50'),
@@ -9296,7 +10342,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Jesus Rafael Ramos Pacheco',
         nrc: '1885',
-        groupId: 11,
+        groupId: 12,
         schedules: [
           Schedule(day: 'Lunes', time: '18:00 - 18:50'),
           Schedule(day: 'Martes', time: '18:00 - 18:50'),
@@ -9457,9 +10503,22 @@ List<Subject> subjects = [
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
+        professor: 'Janeth Patricia Gomez De Castro',
+        nrc: '2086',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'I03A',
+        subjectName: 'Ingles iii',
+        type: 'Teórico',
+        credits: 2,
         professor: 'Hernando De Jesus Vargas Cuesta',
         nrc: '2490',
-        groupId: 3,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Lunes', time: '14:00 - 14:50'),
           Schedule(day: 'Martes', time: '14:00 - 14:50'),
@@ -9474,7 +10533,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Josue David Guerrero Cordero',
         nrc: '2219',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Martes', time: '17:00 - 18:50'),
           Schedule(day: 'Viernes', time: '17:00 - 18:50'),
@@ -9487,7 +10546,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Enrique Jose Gomez Ortega',
         nrc: '2425',
-        groupId: 5,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Martes', time: '16:00 - 17:50'),
           Schedule(day: 'Miércoles', time: '16:00 - 17:50'),
@@ -9500,7 +10559,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Lorena Bermejo Banquez',
         nrc: '2429',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Martes', time: '16:00 - 17:50'),
           Schedule(day: 'Viernes', time: '16:00 - 17:50'),
@@ -9513,7 +10572,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Kelly Susana Tarra Pardo',
         nrc: '1311',
-        groupId: 7,
+        groupId: 8,
         schedules: [
           Schedule(day: 'Lunes', time: '15:00 - 16:50'),
           Schedule(day: 'Miércoles', time: '15:00 - 16:50'),
@@ -9526,7 +10585,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Diana Del Carmen Gonzalez Herrera',
         nrc: '1540',
-        groupId: 8,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Lunes', time: '16:00 - 17:50'),
           Schedule(day: 'Jueves', time: '16:00 - 17:50'),
@@ -9539,7 +10598,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Carmen Julia Torres Torres',
         nrc: '1559',
-        groupId: 9,
+        groupId: 10,
         schedules: [
           Schedule(day: 'Lunes', time: '15:00 - 16:50'),
           Schedule(day: 'Viernes', time: '15:00 - 16:50'),
@@ -9552,7 +10611,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Enrique Jose Gomez Ortega',
         nrc: '2069',
-        groupId: 10,
+        groupId: 11,
         schedules: [
           Schedule(day: 'Lunes', time: '17:00 - 18:50'),
           Schedule(day: 'Jueves', time: '17:00 - 18:50'),
@@ -9565,7 +10624,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Danny Hernandez Diaz',
         nrc: '2075',
-        groupId: 11,
+        groupId: 12,
         schedules: [
           Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
           Schedule(day: 'Viernes', time: '13:00 - 14:50'),
@@ -9578,7 +10637,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Libary Luz Manjarres Molina',
         nrc: '2077',
-        groupId: 12,
+        groupId: 13,
         schedules: [
           Schedule(day: 'Lunes', time: '13:00 - 14:50'),
           Schedule(day: 'Viernes', time: '13:00 - 14:50'),
@@ -9591,7 +10650,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Janeth Patricia Gomez De Castro',
         nrc: '2081',
-        groupId: 13,
+        groupId: 14,
         schedules: [
           Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
           Schedule(day: 'Viernes', time: '07:00 - 08:50'),
@@ -9632,9 +10691,24 @@ List<Subject> subjects = [
         subjectName: 'Ingles iii',
         type: 'Teórico',
         credits: 2,
+        professor: 'Gustavo Adolfo Jauregui Posso',
+        nrc: '2495',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 13:50'),
+          Schedule(day: 'Martes', time: '13:00 - 13:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+          Schedule(day: 'Viernes', time: '13:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'I03A',
+        subjectName: 'Ingles iii',
+        type: 'Teórico',
+        credits: 2,
         professor: 'Diana Del Carmen Gonzalez Herrera',
         nrc: '2486',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Lunes', time: '18:00 - 18:50'),
           Schedule(day: 'Miércoles', time: '18:00 - 18:50'),
@@ -9649,7 +10723,7 @@ List<Subject> subjects = [
         credits: 2,
         professor: 'Hernando De Jesus Vargas Cuesta',
         nrc: '2488',
-        groupId: 5,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Lunes', time: '15:00 - 15:50'),
           Schedule(day: 'Martes', time: '15:00 - 15:50'),
@@ -9686,8 +10760,7 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'I03A',
-        subjectName:
-            'Ingles iii programa de arquitectura (presencial - remoto)',
+        subjectName: 'Ingles iii programa de arquitectura (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
         professor: 'Libary Luz Manjarres Molina',
@@ -9847,9 +10920,22 @@ List<Subject> subjects = [
         subjectName: 'Ingles iv (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
+        professor: 'Cindy Paola Leon Paternina',
+        nrc: '1493',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Martes', time: '17:00 - 18:50'),
+          Schedule(day: 'Jueves', time: '17:00 - 18:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'I04A',
+        subjectName: 'Ingles iv (presencial - remoto)',
+        type: 'Teórico',
+        credits: 2,
         professor: 'Andrea Carolina Beltran Martinez',
         nrc: '1520',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Martes', time: '10:00 - 11:50'),
           Schedule(day: 'Jueves', time: '10:00 - 11:50'),
@@ -10035,8 +11121,7 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'I05A',
-        subjectName:
-            'Ingles v - programa de arquitectura (presencial - remoto)',
+        subjectName: 'Ingles v - programa de arquitectura (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
         professor: 'Andrea Carolina Beltran Martinez',
@@ -10095,6 +11180,18 @@ List<Subject> subjects = [
         groupId: 1,
         schedules: [
           Schedule(day: 'Viernes', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'A03A',
+        subjectName: 'Termoquímica ambiental',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Deyler Rafael Castilla Caballero',
+        nrc: '2560',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '11:00 - 11:50'),
         ],
       ),
     ],
@@ -10215,6 +11312,26 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Viernes', time: '07:00 - 08:50'),
           Schedule(day: 'Martes', time: '15:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'A11A',
+    name: 'Gestión ambiental',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'A11A',
+        subjectName: 'Gestión ambiental',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Monica Liseth Toloza Duran',
+        nrc: '1770',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '18:00 - 19:50'),
+          Schedule(day: 'Jueves', time: '18:00 - 18:50'),
         ],
       ),
     ],
@@ -10597,7 +11714,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Natalie Morales Londoño',
         nrc: '1685',
-        groupId: 3,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Viernes', time: '10:00 - 11:50'),
           Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
@@ -10855,6 +11972,26 @@ List<Subject> subjects = [
     ],
   ),
   Subject(
+    code: 'A07A',
+    name: 'Infraestructura',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'A07A',
+        subjectName: 'Infraestructura',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Claudia Patricia Baron Torres',
+        nrc: '2234',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '17:00 - 18:50'),
+          Schedule(day: 'Jueves', time: '19:00 - 19:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
     code: 'A08A',
     name: 'Diseño estructural',
     credits: 4,
@@ -10872,6 +12009,19 @@ List<Subject> subjects = [
           Schedule(day: 'Viernes', time: '08:00 - 09:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'A08A',
+        subjectName: 'Diseño estructural',
+        type: 'Teórico',
+        credits: 4,
+        professor: 'Jefferson Andres Piedrahita Gonzalez',
+        nrc: '2432',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '10:00 - 11:50'),
+        ],
+      ),
     ],
   ),
   Subject(
@@ -10885,8 +12035,21 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 3,
         professor: 'Rafael David Mendez Anillo',
-        nrc: '2229',
+        nrc: '2227',
         groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'A09A',
+        subjectName: 'Estructuras geotécnicas',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Rafael David Mendez Anillo',
+        nrc: '2229',
+        groupId: 2,
         schedules: [
           Schedule(day: 'Lunes', time: '13:00 - 14:50'),
           Schedule(day: 'Jueves', time: '13:00 - 14:50'),
@@ -10899,7 +12062,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Rafael David Mendez Anillo',
         nrc: '2449',
-        groupId: 2,
+        groupId: 3,
         schedules: [
           Schedule(day: 'Lunes', time: '08:00 - 09:50'),
           Schedule(day: 'Jueves', time: '15:00 - 16:50'),
@@ -10917,9 +12080,22 @@ List<Subject> subjects = [
         subjectName: 'Administración y control de la',
         type: 'Teórico',
         credits: 3,
+        professor: 'Claudia Patricia Baron Torres',
+        nrc: '1196',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '17:00 - 18:50'),
+          Schedule(day: 'Jueves', time: '18:00 - 18:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'A10A',
+        subjectName: 'Administración y control de la',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Clara Mercedes Perez Martelo',
         nrc: '2498',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Miércoles', time: '08:00 - 09:50'),
           Schedule(day: 'Jueves', time: '09:00 - 09:50'),
@@ -11128,14 +12304,12 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'A22A',
-    name:
-        'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
+    name: 'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
     credits: 3,
     classOptions: [
       ClassOption(
         subjectCode: 'A22A',
-        subjectName:
-            'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
+        subjectName: 'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
         type: 'Teórico',
         credits: 3,
         professor: 'Mauro Antonio Maza Chamorro',
@@ -11230,6 +12404,30 @@ List<Subject> subjects = [
     name: 'Geomática',
     credits: 3,
     classOptions: [
+      ClassOption(
+        subjectCode: 'B03A',
+        subjectName: 'Geomática',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Milton Cesar Guerrero Pajaro',
+        nrc: '1105',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '10:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'B03A',
+        subjectName: 'Geomática',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Milton Cesar Guerrero Pajaro',
+        nrc: '1106',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '15:00 - 15:50'),
+        ],
+      ),
       ClassOption(
         subjectCode: 'B03A',
         subjectName: 'Geomática',
@@ -12116,6 +13314,18 @@ List<Subject> subjects = [
         subjectName: 'Señales y sistemas',
         type: 'Laboratorio',
         credits: 4,
+        professor: 'Caleb David Romero Mercado',
+        nrc: '1013',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Lunes', time: '11:00 - 12:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F03A',
+        subjectName: 'Señales y sistemas',
+        type: 'Laboratorio',
+        credits: 4,
         professor: 'Malorys Mercedes Elles Fang',
         nrc: '1015',
         groupId: 2,
@@ -12221,18 +13431,43 @@ List<Subject> subjects = [
   Subject(
     code: 'Z01A',
     name: 'Señales y sistemas',
-    credits: 4,
+    credits: 3,
     classOptions: [
       ClassOption(
         subjectCode: 'Z01A',
         subjectName: 'Señales y sistemas',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Yina Paola Cabarcas Mena',
+        nrc: '1002',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'Z01A',
+        subjectName: 'Señales y sistemas',
         type: 'Laboratorio',
-        credits: 4,
+        credits: 3,
         professor: 'Caleb David Romero Mercado',
         nrc: '1004',
         groupId: 1,
         schedules: [
           Schedule(day: 'Lunes', time: '14:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'Z01A',
+        subjectName: 'Señales y sistemas',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Caleb David Romero Mercado',
+        nrc: '1006',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
         ],
       ),
       ClassOption(
@@ -12515,6 +13750,26 @@ List<Subject> subjects = [
     ],
   ),
   Subject(
+    code: 'P01Z',
+    name: 'Proyecto de ingeniería i',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'P01Z',
+        subjectName: 'Proyecto de ingeniería i',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Natalie Morales Londoño',
+        nrc: '2638',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '14:00 - 14:50'),
+          Schedule(day: 'Lunes', time: '15:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
     code: 'R01A',
     name: 'Procesos de fabricación',
     credits: 3,
@@ -12576,6 +13831,26 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Viernes', time: '07:00 - 07:50'),
           Schedule(day: 'Martes', time: '13:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'R03A',
+    name: 'Procesos industriales',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'R03A',
+        subjectName: 'Procesos industriales',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Edisson Duarte Restrepo',
+        nrc: '2286',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 08:50'),
+          Schedule(day: 'Viernes', time: '08:00 - 09:50'),
         ],
       ),
     ],
@@ -12797,6 +14072,19 @@ List<Subject> subjects = [
           Schedule(day: 'Jueves', time: '14:00 - 14:50'),
         ],
       ),
+      ClassOption(
+        subjectCode: 'R13A',
+        subjectName: 'Diseño de experimentos',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Roberto Enrique Gomez Fernandez',
+        nrc: '2513',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '15:00 - 15:50'),
+        ],
+      ),
     ],
   ),
   Subject(
@@ -12815,6 +14103,26 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Viernes', time: '08:00 - 09:50'),
           Schedule(day: 'Miércoles', time: '09:00 - 09:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'R17A',
+    name: 'Ergonomía',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'R17A',
+        subjectName: 'Ergonomía',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Holman Ospina Mateus',
+        nrc: '2515',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '08:00 - 09:50'),
+          Schedule(day: 'Martes', time: '15:00 - 15:50'),
         ],
       ),
     ],
@@ -13176,10 +14484,10 @@ List<Subject> subjects = [
         subjectCode: 'D09A',
         subjectName: 'Mantenimiento industrial',
         type: 'Laboratorio',
-        credits: 4,
+        credits: 3,
         professor: 'Adolfo Enrique Ortiz Lafaurie',
         nrc: '2637',
-        groupId: 2,
+        groupId: 1,
         schedules: [
           Schedule(day: 'Martes', time: '16:00 - 16:50'),
         ],
@@ -13286,11 +14594,35 @@ List<Subject> subjects = [
         subjectName: 'Mecánica de fluidos',
         type: 'Laboratorio',
         credits: 3,
+        professor: 'Andrea Carolina Mendoza Zabaleta',
+        nrc: '1145',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '09:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Mecánica de fluidos',
+        type: 'Laboratorio',
+        credits: 3,
         professor: 'Veronica Jesus Abuchar Soto',
         nrc: '1146',
         groupId: 2,
         schedules: [
           Schedule(day: 'Viernes', time: '15:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'F01A',
+        subjectName: 'Mecánica de fluidos',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Veronica Jesus Abuchar Soto',
+        nrc: '1147',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '16:00 - 16:50'),
         ],
       ),
       ClassOption(
@@ -13543,6 +14875,18 @@ List<Subject> subjects = [
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
+        professor: 'Walberto Marrugo Orozco',
+        nrc: '1381',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Viernes', time: '11:00 - 11:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M01A',
+        subjectName: 'Materiales i',
+        type: 'Laboratorio',
+        credits: 3,
         professor: 'Deibys David Barreto Ponton',
         nrc: '1382',
         groupId: 2,
@@ -13602,6 +14946,19 @@ List<Subject> subjects = [
       ClassOption(
         subjectCode: 'M01A',
         subjectName: 'Materiales i',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Manuel Alejandro Salina Casseres',
+        nrc: '1416',
+        groupId: 4,
+        schedules: [
+          Schedule(day: 'Viernes', time: '11:00 - 11:50'),
+          Schedule(day: 'Lunes', time: '12:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M01A',
+        subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
         professor: 'Deibys David Barreto Ponton',
@@ -13618,7 +14975,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Andrea Carolina Mendoza Zabaleta',
         nrc: '1421',
-        groupId: 5,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Jueves', time: '10:00 - 10:50'),
         ],
@@ -13667,7 +15024,7 @@ List<Subject> subjects = [
         subjectCode: 'M03A',
         subjectName: 'Tecnologías de fabricación',
         type: 'Laboratorio',
-        credits: 4,
+        credits: 3,
         professor: 'Alexander Jose Narvaez Cruz',
         nrc: '2572',
         groupId: 1,
@@ -14024,7 +15381,7 @@ List<Subject> subjects = [
         credits: 1,
         professor: 'Manuel Alejandro Salina Casseres',
         nrc: '1951',
-        groupId: 2,
+        groupId: 1,
         schedules: [
           Schedule(day: 'Martes', time: '14:00 - 14:50'),
         ],
@@ -14036,7 +15393,7 @@ List<Subject> subjects = [
         credits: 1,
         professor: 'Fernando Jose Quintero Vasquez',
         nrc: '2396',
-        groupId: 3,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Martes', time: '13:00 - 13:50'),
         ],
@@ -14048,9 +15405,33 @@ List<Subject> subjects = [
         credits: 1,
         professor: 'Fernando Jose Quintero Vasquez',
         nrc: '2397',
-        groupId: 3,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M01A',
+        subjectName: 'Taller de mecatrónica',
+        type: 'Teórico',
+        credits: 1,
+        professor: 'Manuel Alejandro Salina Casseres',
+        nrc: '2406',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Martes', time: '15:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M01A',
+        subjectName: 'Taller de mecatrónica',
+        type: 'Laboratorio',
+        credits: 1,
+        professor: 'Manuel Alejandro Salina Casseres',
+        nrc: '2407',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Jueves', time: '10:00 - 10:50'),
         ],
       ),
       ClassOption(
@@ -14095,6 +15476,26 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Miércoles', time: '11:00 - 12:50'),
           Schedule(day: 'Lunes', time: '12:00 - 13:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'Z05A',
+    name: 'Diseño mecatrónico',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'Z05A',
+        subjectName: 'Diseño mecatrónico',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Harold Alberto Rodriguez Arias',
+        nrc: '1083',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '15:00 - 16:50'),
+          Schedule(day: 'Viernes', time: '15:00 - 16:50'),
         ],
       ),
     ],
@@ -14817,16 +16218,8 @@ List<Subject> subjects = [
         nrc: '2611',
         groupId: 1,
         schedules: [
-          Schedule(day: 'Lunes', time: '08:00 - 12:50'),
-          Schedule(day: 'Martes', time: '08:00 - 12:50'),
-          Schedule(day: 'Miércoles', time: '08:00 - 12:50'),
-          Schedule(day: 'Jueves', time: '08:00 - 12:50'),
-          Schedule(day: 'Viernes', time: '08:00 - 12:50'),
-          Schedule(day: 'Lunes', time: '14:00 - 16:50'),
-          Schedule(day: 'Martes', time: '14:00 - 16:50'),
-          Schedule(day: 'Miércoles', time: '14:00 - 16:50'),
-          Schedule(day: 'Jueves', time: '14:00 - 16:50'),
-          Schedule(day: 'Viernes', time: '14:00 - 16:50'),
+          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '08:00 - 12:50'),
+          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '14:00 - 16:50'),
         ],
       ),
       ClassOption(
@@ -15074,6 +16467,26 @@ List<Subject> subjects = [
     ],
   ),
   Subject(
+    code: 'A06A',
+    name: 'Inteligencia artificial',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'A06A',
+        subjectName: 'Inteligencia artificial',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Edwin Alexander Puertas Del Castillo',
+        nrc: '1328',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '13:00 - 13:50'),
+          Schedule(day: 'Viernes', time: '15:00 - 16:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
     code: 'A07A',
     name: 'Infraestructura para ti',
     credits: 3,
@@ -15306,9 +16719,22 @@ List<Subject> subjects = [
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
+        professor: 'Oscar Pablo Porto Solano',
+        nrc: '2409',
+        groupId: 3,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '12:00 - 12:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'C03A',
+        subjectName: 'Programación',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Julio Cesar Gamarra Cabarcas',
         nrc: '1159',
-        groupId: 3,
+        groupId: 4,
         schedules: [
           Schedule(day: 'Jueves', time: '07:00 - 08:50'),
           Schedule(day: 'Viernes', time: '12:00 - 12:50'),
@@ -15321,7 +16747,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Maria Eugenia Rincon Socha',
         nrc: '1816',
-        groupId: 4,
+        groupId: 5,
         schedules: [
           Schedule(day: 'Viernes', time: '09:00 - 09:50'),
           Schedule(day: 'Lunes', time: '15:00 - 16:50'),
@@ -15334,7 +16760,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Carlos Ernesto Botero Pareja',
         nrc: '1835',
-        groupId: 5,
+        groupId: 6,
         schedules: [
           Schedule(day: 'Viernes', time: '12:00 - 12:50'),
           Schedule(day: 'Jueves', time: '13:00 - 14:50'),
@@ -15347,7 +16773,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Maria Eugenia Rincon Socha',
         nrc: '1840',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Jueves', time: '07:00 - 08:50'),
           Schedule(day: 'Viernes', time: '11:00 - 11:50'),
@@ -15360,7 +16786,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Julio Cesar Gamarra Cabarcas',
         nrc: '1953',
-        groupId: 7,
+        groupId: 8,
         schedules: [
           Schedule(day: 'Martes', time: '10:00 - 11:50'),
           Schedule(day: 'Miércoles', time: '12:00 - 12:50'),
@@ -15373,7 +16799,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Maria Eugenia Rincon Socha',
         nrc: '1956',
-        groupId: 8,
+        groupId: 9,
         schedules: [
           Schedule(day: 'Lunes', time: '08:00 - 09:50'),
           Schedule(day: 'Miércoles', time: '14:00 - 14:50'),
@@ -15386,7 +16812,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Maria Eugenia Rincon Socha',
         nrc: '2145',
-        groupId: 9,
+        groupId: 10,
         schedules: [
           Schedule(day: 'Jueves', time: '11:00 - 12:50'),
           Schedule(day: 'Miércoles', time: '13:00 - 13:50'),
@@ -15399,7 +16825,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Julio Cesar Gamarra Cabarcas',
         nrc: '2158',
-        groupId: 10,
+        groupId: 11,
         schedules: [
           Schedule(day: 'Viernes', time: '07:00 - 08:50'),
           Schedule(day: 'Martes', time: '09:00 - 09:50'),
@@ -15410,9 +16836,22 @@ List<Subject> subjects = [
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
+        professor: 'Maria Fernanda Medina Reyes',
+        nrc: '2173',
+        groupId: 12,
+        schedules: [
+          Schedule(day: 'Martes', time: '10:00 - 11:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'C03A',
+        subjectName: 'Programación',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Oscar Pablo Porto Solano',
         nrc: '2180',
-        groupId: 11,
+        groupId: 13,
         schedules: [
           Schedule(day: 'Jueves', time: '10:00 - 11:50'),
           Schedule(day: 'Lunes', time: '12:00 - 12:50'),
@@ -15425,7 +16864,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Carlos Ernesto Botero Pareja',
         nrc: '2193',
-        groupId: 12,
+        groupId: 14,
         schedules: [
           Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
           Schedule(day: 'Martes', time: '16:00 - 16:50'),
@@ -15477,8 +16916,21 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 3,
         professor: 'Rafael Enrique Monterroza Barrios',
-        nrc: '2268',
+        nrc: '2053',
         groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '17:00 - 17:50'),
+          Schedule(day: 'Miércoles', time: '18:00 - 19:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'C05A',
+        subjectName: 'Estructura de datos',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Rafael Enrique Monterroza Barrios',
+        nrc: '2268',
+        groupId: 2,
         schedules: [
           Schedule(day: 'Miércoles', time: '17:00 - 17:50'),
           Schedule(day: 'Martes', time: '18:00 - 19:50'),
@@ -15516,9 +16968,22 @@ List<Subject> subjects = [
         subjectName: 'Procesamiento numérico',
         type: 'Teórico',
         credits: 3,
+        professor: 'Moises Ramon Quintana Alvarez',
+        nrc: '2290',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '07:00 - 07:50'),
+          Schedule(day: 'Martes', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'C07A',
+        subjectName: 'Procesamiento numérico',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Oscar Pablo Porto Solano',
         nrc: '2295',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Martes', time: '12:00 - 13:50'),
           Schedule(day: 'Lunes', time: '13:00 - 13:50'),
@@ -15686,6 +17151,26 @@ List<Subject> subjects = [
     ],
   ),
   Subject(
+    code: 'D02A',
+    name: 'Estructuras navales i',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'D02A',
+        subjectName: 'Estructuras navales i',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Jairo Humberto Cabrera Tovar',
+        nrc: '1612',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+          Schedule(day: 'Jueves', time: '13:00 - 14:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
     code: 'D03A',
     name: 'Metodologia de diseño naval',
     credits: 3,
@@ -15807,18 +17292,17 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'SP011',
-    name:
-        'Seminario de profundización nueva economía digital y competitividad de negocios',
+    name: 'Seminario de profundización nueva economía digital y competitividad de negocios',
     credits: 0,
     classOptions: [
       ClassOption(
         subjectCode: 'SP011',
-        subjectName:
-            'Seminario de profundización nueva economía digital y competitividad de negocios',
+        subjectName: 'Seminario de profundización nueva economía digital y competitividad de negocios',
         type: 'Teórico',
         credits: 0,
-        professor:
-            'Raul Ernesto Acosta Mesa, Ricardo Andres Ariza Aguilar, Rita Cecilia De La Hoz Del Villar',
+        professor: 'Raul Ernesto Acosta Mesa
+        Ricardo Andres Ariza Aguilar
+      Rita Cecilia De La Hoz Del Villar',
         nrc: '2680',
         groupId: 1,
         schedules: [
@@ -15846,13 +17330,13 @@ List<Subject> subjects = [
   Subject(
     code: 'SP04',
     name: 'Seminario de profundización gestión del talento humano',
-    credits: 4,
+    credits: 0,
     classOptions: [
       ClassOption(
         subjectCode: 'SP04',
         subjectName: 'Seminario de profundización gestión del talento humano',
         type: 'Teórico',
-        credits: 4,
+        credits: 0,
         professor: 'Yuly Patricia Fang Alandette',
         nrc: '2682',
         groupId: 1,
@@ -15884,7 +17368,8 @@ List<Subject> subjects = [
         subjectName: 'Seminario de profundización gestión de proyectos',
         type: 'Teórico',
         credits: 0,
-        professor: 'Hugo Antonio Elles Niño, Ismael Cardenas Espinosa',
+        professor: 'Hugo Antonio Elles Niño
+        Ismael Cardenas Espinosa',
         nrc: '2685',
         groupId: 1,
         schedules: [
@@ -15920,8 +17405,10 @@ List<Subject> subjects = [
         subjectName: 'Seminario de profundización en automatización industrial',
         type: 'Teórico',
         credits: 0,
-        professor:
-            'Jorge Eliecer Duque Pardo, Eduardo Gomez Vasquez, Jose Luis Villa Ramirez, Luis Enrique Acosta Galvan',
+        professor: 'Jorge Eliecer Duque Pardo
+        Eduardo Gomez Vasquez
+      Jose Luis Villa Ramirez
+      Luis Enrique Acosta Galvan',
         nrc: '2681',
         groupId: 1,
         schedules: [
@@ -15941,18 +17428,18 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'SP24',
-    name:
-        'Seminario de prof herramientas para el cuidado profesional y colectivo',
+    name: 'Seminario de prof herramientas para el cuidado profesional y colectivo',
     credits: 0,
     classOptions: [
       ClassOption(
         subjectCode: 'SP24',
-        subjectName:
-            'Seminario de prof herramientas para el cuidado profesional y colectivo',
+        subjectName: 'Seminario de prof herramientas para el cuidado profesional y colectivo',
         type: 'Teórico',
         credits: 0,
-        professor:
-            'Elias Rafael Geney Castro, David Javier Fortich Perez, Prisca Espinosa Acevedo, Jeimer David Ortiz Marimon',
+        professor: 'Elias Rafael Geney Castro
+        David Javier Fortich Perez
+      Prisca Espinosa Acevedo
+      Jeimer David Ortiz Marimon',
         nrc: '2684',
         groupId: 1,
         schedules: [
@@ -15985,8 +17472,9 @@ List<Subject> subjects = [
         subjectName: 'Gerencia de negocios internaci',
         type: 'Teórico',
         credits: 0,
-        professor: 'Victor Alfredo Tarra Diaz, Belkys Linder Mosquera Manyoma',
-        nrc: '2678',
+        professor: 'Victor Alfredo Tarra Diaz
+        Belkys Linder Mosquera Manyoma',
+      nrc: '2678',
         groupId: 1,
         schedules: [
           Schedule(day: 'Sábado', time: '07:00 - 13:50'),
@@ -16258,14 +17746,12 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'E04A',
-    name:
-        'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
+    name: 'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
     credits: 3,
     classOptions: [
       ClassOption(
         subjectCode: 'E04A',
-        subjectName:
-            'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
+        subjectName: 'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
         type: 'Teórico',
         credits: 3,
         professor: 'Marlyn Patricia Conde Gutierrez',
@@ -16313,6 +17799,18 @@ List<Subject> subjects = [
         groupId: 1,
         schedules: [
           Schedule(day: 'Miércoles', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'G01A',
+        subjectName: 'Neuropsicología humana',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Karol Patricia Gutierrez Ruiz',
+        nrc: '1455',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '16:00 - 16:50'),
         ],
       ),
       ClassOption(
@@ -16424,6 +17922,18 @@ List<Subject> subjects = [
         groupId: 2,
         schedules: [
           Schedule(day: 'Martes', time: '13:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'M03A',
+        subjectName: 'Psicometría',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'David Javier Fortich Perez',
+        nrc: '1449',
+        groupId: 2,
+        schedules: [
+          Schedule(day: 'Jueves', time: '15:00 - 15:50'),
         ],
       ),
       ClassOption(
@@ -16603,6 +18113,37 @@ List<Subject> subjects = [
     ],
   ),
   Subject(
+    code: 'S08A',
+    name: 'Sensación y percepción',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'S08A',
+        subjectName: 'Sensación y percepción',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Jeison David Neira Salas',
+        nrc: '1239',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Jueves', time: '08:00 - 09:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'S08A',
+        subjectName: 'Sensación y percepción',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Jeison David Neira Salas',
+        nrc: '1241',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Lunes', time: '11:00 - 11:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
     code: 'S13A',
     name: 'Psicopatología',
     credits: 3,
@@ -16633,8 +18174,32 @@ List<Subject> subjects = [
         type: 'Teórico',
         credits: 3,
         professor: 'Karen Paola Perez Perez',
-        nrc: '2204',
+        nrc: '2200',
         groupId: 1,
+        schedules: [
+          Schedule(day: 'Sábado', time: '09:00 - 10:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'S14A',
+        subjectName: 'Neurociencias y comportamiento',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Karen Paola Perez Perez',
+        nrc: '2202',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Viernes', time: '08:00 - 08:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'S14A',
+        subjectName: 'Neurociencias y comportamiento',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Karen Paola Perez Perez',
+        nrc: '2204',
+        groupId: 2,
         schedules: [
           Schedule(day: 'Sábado', time: '07:00 - 08:50'),
         ],
@@ -16646,7 +18211,7 @@ List<Subject> subjects = [
         credits: 3,
         professor: 'Karen Paola Perez Perez',
         nrc: '2205',
-        groupId: 1,
+        groupId: 2,
         schedules: [
           Schedule(day: 'Viernes', time: '10:00 - 10:50'),
         ],
@@ -16863,6 +18428,26 @@ List<Subject> subjects = [
         schedules: [
           Schedule(day: 'Lunes', time: '17:00 - 18:50'),
           Schedule(day: 'Miércoles', time: '18:00 - 18:50'),
+        ],
+      ),
+    ],
+  ),
+  Subject(
+    code: 'S22A',
+    name: 'Pensamiento y lenguaje',
+    credits: 3,
+    classOptions: [
+      ClassOption(
+        subjectCode: 'S22A',
+        subjectName: 'Pensamiento y lenguaje',
+        type: 'Teórico',
+        credits: 3,
+        professor: 'Jose Alexander Estrada Hernandez',
+        nrc: '2424',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Miércoles', time: '10:00 - 11:50'),
+          Schedule(day: 'Viernes', time: '12:00 - 12:50'),
         ],
       ),
     ],
