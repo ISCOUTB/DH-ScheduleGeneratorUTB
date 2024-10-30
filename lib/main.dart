@@ -35,7 +35,6 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
-  final String letras;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -139,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     List<List<ClassOption>> horariosValidos =
-        obtenerHorariosValidos(addedSubjects, appliedFilters);
+    obtenerHorariosValidos(addedSubjects, appliedFilters);
 
     if (horariosValidos.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -243,7 +242,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: const Tooltip(
                           message: 'Generar Horarios',
                           child:
-                              Icon(Icons.calendar_today, color: Colors.white),
+                          Icon(Icons.calendar_today, color: Colors.white),
                         ),
                       ),
                     ),
@@ -255,18 +254,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Center(
                   child: allSchedules.isEmpty
                       ? const Text(
-                          '¡Bienvenido al Generador de Horarios UTB!',
-                          style: TextStyle(fontSize: 24, color: Colors.white),
-                          textAlign: TextAlign.center,
-                        )
+                    '¡Bienvenido al Generador de Horarios UTB!',
+                    style: TextStyle(fontSize: 24, color: Colors.white),
+                    textAlign: TextAlign.center,
+                  )
                       : ScheduleGridWidget(
-                          allSchedules: allSchedules,
-                          onScheduleTap: (index) {
-                            setState(() {
-                              selectedScheduleIndex = index;
-                            });
-                          },
-                        ),
+                    allSchedules: allSchedules,
+                    onScheduleTap: (index) {
+                      setState(() {
+                        selectedScheduleIndex = index;
+                      });
+                    },
+                  ),
                 ),
               ),
             ],
@@ -381,7 +380,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     });
                     return KeyEventResult.handled;
                   } else if (event.logicalKey ==
-                          LogicalKeyboardKey.arrowRight &&
+                      LogicalKeyboardKey.arrowRight &&
                       selectedScheduleIndex! < allSchedules.length - 1) {
                     setState(() {
                       selectedScheduleIndex = selectedScheduleIndex! + 1;

@@ -4,9 +4,10 @@ import '../models/class_option.dart';
 import 'package:excel/excel.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:typed_data';
-import 'dart:html' as html; // Import necesario para Flutter Web
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart'; // Para kIsWeb
+import '../utils/file_utils.dart'; // Importamos nuestra utilidad de archivos
 
 class ScheduleOverviewWidget extends StatefulWidget {
   final List<ClassOption> schedule;
@@ -337,17 +338,10 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         'days': days,
       });
 
-      // Crear un Blob y descargar el archivo
-      final blob = html.Blob([bytes],
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.AnchorElement(href: url)
-        ..setAttribute('download', 'horario.xlsx')
-        ..click();
-      html.Url.revokeObjectUrl(url);
+      await saveAndOpenFile(bytes, 'horario.xlsx');
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Descargando archivo Excel')),
+        SnackBar(content: Text('Archivo Excel generado exitosamente')),
       );
     } catch (e) {
       print('Error al generar el Excel: $e');
@@ -366,16 +360,10 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         'days': days,
       });
 
-      // Crear un Blob y descargar el archivo
-      final blob = html.Blob([bytes], 'application/pdf');
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.AnchorElement(href: url)
-        ..setAttribute('download', 'horario.pdf')
-        ..click();
-      html.Url.revokeObjectUrl(url);
+      await saveAndOpenFile(bytes, 'horario.pdf');
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Descargando archivo PDF')),
+        SnackBar(content: Text('Archivo PDF generado exitosamente')),
       );
     } catch (e) {
       print('Error al generar el PDF: $e');
