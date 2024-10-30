@@ -293,7 +293,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     );
   }
 
-// Generar un mapa de colores para las materias
+  // Generar un mapa de colores para las materias
   Map<String, Color> _generateSubjectColors() {
     List<Color> colors = [
       Colors.red,

@@ -1,3 +1,28 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:db96185c83e5a8bf89d76ffa614df62b9d1907c527b37debaa7f0d79be63b5b2
-size 793
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+
+        
+        {
+            "name": "DH-ScheduleGeneratorUTB",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "DH-ScheduleGeneratorUTB (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "DH-ScheduleGeneratorUTB (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
