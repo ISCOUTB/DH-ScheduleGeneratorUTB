@@ -1,6 +1,7 @@
 // lib/widgets/schedule_grid_widget.dart
 import 'package:flutter/material.dart';
 import '../models/class_option.dart';
+import 'package:flutter/foundation.dart'; // Para kIsWeb y defaultTargetPlatform
 
 class ScheduleGridWidget extends StatelessWidget {
   final List<List<ClassOption>> allSchedules;
@@ -12,37 +13,58 @@ class ScheduleGridWidget extends StatelessWidget {
     required this.onScheduleTap,
   }) : super(key: key);
 
+  bool isMobile() {
+    if (kIsWeb) return false;
+    return defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS;
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool mobile = isMobile();
+    int crossAxisCount = mobile ? 1 : 2;
+
     // Generar el mapa de colores para las materias
     Map<String, Color> subjectColors = _generateSubjectColors();
 
-    return GridView.builder(
-      itemCount: allSchedules.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Dos horarios por fila
-        childAspectRatio: 1.5, // Relación de aspecto cuadrada
-      ),
-      itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () => onScheduleTap(index),
-          child: Card(
-            elevation: 2,
-            margin: const EdgeInsets.all(8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), // Esquinas redondeadas
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10), // Esquinas redondeadas
-                border: Border.all(
-                  color: Colors.white, // Color del marco
-                  width: 7, // Ancho del marco
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Ajustar el aspect ratio en móvil
+        double childAspectRatio = mobile ? 2.5 : 1.5; // Mayor ratio en móvil
+
+        return GridView.builder(
+          itemCount: allSchedules.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: childAspectRatio,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+          ),
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () => onScheduleTap(index),
+              child: Card(
+                elevation: 2,
+                margin: const EdgeInsets.all(8),
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(10), // Esquinas redondeadas
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(10), // Esquinas redondeadas
+                    border: Border.all(
+                      color: Colors.white, // Color del borde
+                      width: 2, // Ancho del borde
+                    ),
+                  ),
+                  child:
+                      buildSchedulePreview(allSchedules[index], subjectColors),
                 ),
               ),
-              child: buildSchedulePreview(allSchedules[index], subjectColors),
-            ),
-          ),
+            );
+          },
         );
       },
     );
@@ -106,43 +128,66 @@ class ScheduleGridWidget extends StatelessWidget {
       }
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius:
-            BorderRadius.circular(10), // Esquinas redondeadas del grid
-        // No es necesario agregar el borde aquí, ya que lo agregamos en el contenedor padre
-      ),
-      clipBehavior: Clip.hardEdge, // Asegura que el contenido se ajuste
-      child: Column(
-        children: [
-          // Encabezado de días
-          Row(
-            children: [
-              const SizedBox(width: 25), // Espacio para la columna de horas
-              ...days.map((day) => Expanded(
-                    child: Text(
-                      day,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 8),
-                    ),
-                  ))
-            ],
-          ),
-          const SizedBox(height: 2),
-          // Horarios
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: timeSlots.map((time) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Cálculo de tamaños adaptativos
+        double totalWidth = constraints.maxWidth;
+        double totalHeight = constraints.maxHeight;
+
+        double hourColumnWidth = totalWidth * 0.10; // 10% del ancho total
+        double dayColumnWidth = (totalWidth - hourColumnWidth) / days.length;
+
+        double cellHeight =
+            totalHeight / (timeSlots.length + 1); // +1 para el encabezado
+
+        double fontSize = cellHeight * 0.5; // Ajusta según sea necesario
+
+        return Column(
+          children: [
+            // Encabezado de días
+            Row(
+              children: [
+                SizedBox(
+                  width: hourColumnWidth,
+                  child: const Text(''),
+                ),
+                ...days.map((day) => SizedBox(
+                      width: dayColumnWidth,
+                      child: Center(
+                        child: Text(
+                          day,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: fontSize * 0.8,
+                          ),
+                        ),
+                      ),
+                    )),
+              ],
+            ),
+            // Horarios
+            Expanded(
+              child: ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: timeSlots.length,
+                itemBuilder: (context, rowIndex) {
+                  String time = timeSlots[rowIndex];
                   return Row(
                     children: [
                       // Columna de horas
                       SizedBox(
-                        width: 25,
-                        child: Text(
-                          time,
-                          style: const TextStyle(fontSize: 6),
+                        width: hourColumnWidth,
+                        height: cellHeight,
+                        child: Center(
+                          child: Text(
+                            time,
+                            style: TextStyle(
+                              fontSize: fontSize * 0.7,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                       ...days.map((day) {
@@ -153,28 +198,31 @@ class ScheduleGridWidget extends StatelessWidget {
                               subjectColors[classOption.subjectName] ??
                                   Colors.blueAccent;
                         }
-                        return Expanded(
+                        return SizedBox(
+                          width: dayColumnWidth,
+                          height: cellHeight,
                           child: Container(
                             margin: const EdgeInsets.all(0.5),
-                            height: 27, // Altura ajustada para minimizar
                             decoration: BoxDecoration(
                               color: classOption != null
                                   ? subjectColor
                                   : Colors.grey[200],
-                              borderRadius: BorderRadius.circular(
-                                  4), // Esquinas redondeadas
+                              borderRadius: BorderRadius.circular(4),
                             ),
                             child: classOption != null
                                 ? Center(
-                                    child: Text(
-                                      classOption.subjectName.length > 3
-                                          ? classOption.subjectName
-                                              .split(' ')
-                                              .first
-                                          : classOption.subjectName,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 6,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        classOption.subjectName.length > 3
+                                            ? classOption.subjectName
+                                                .split(' ')
+                                                .first
+                                            : classOption.subjectName,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: fontSize * 0.6,
+                                        ),
                                       ),
                                     ),
                                   )
@@ -184,40 +232,39 @@ class ScheduleGridWidget extends StatelessWidget {
                       }).toList(),
                     ],
                   );
-                }).toList(),
+                },
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 
   // Generar un mapa de colores para las materias
   Map<String, Color> _generateSubjectColors() {
     List<Color> colors = [
-      Colors.red,
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.cyan,
-      Colors.amber,
-      Colors.teal,
-      Colors.indigo,
-      Colors.pink,
-      Colors.lime,
-      Colors.deepOrange,
-      Colors.lightBlue,
-      Colors.lightGreen,
-      Colors.deepPurple,
+      Colors.redAccent,
+      Colors.blueAccent,
+      Colors.greenAccent,
+      Colors.orangeAccent,
+      Colors.purpleAccent,
+      Colors.cyanAccent,
+      Colors.amberAccent,
+      Colors.tealAccent,
+      Colors.indigoAccent,
+      Colors.pinkAccent,
+      Colors.limeAccent,
+      Colors.deepOrangeAccent,
+      Colors.lightBlueAccent,
+      Colors.lightGreenAccent,
+      Colors.deepPurpleAccent,
     ];
 
     Map<String, Color> subjectColors = {};
     int colorIndex = 0;
 
     // Suponiendo que tenemos acceso a todas las materias
-    // Aquí podrías iterar sobre 'allSchedules' para obtener todas las materias
     Set<String> allSubjects = {};
     for (var schedule in allSchedules) {
       for (var classOption in schedule) {
@@ -242,10 +289,8 @@ class ScheduleGridWidget extends StatelessWidget {
   }
 
   TimeOfDay parseTimeOfDay(String timeString) {
-    // Eliminar espacios y convertir a mayúsculas
     timeString = timeString.trim();
 
-    // Separar horas y minutos
     List<String> timeParts = timeString.split(':');
     int hour = int.parse(timeParts[0]);
     int minute = int.parse(timeParts[1]);
