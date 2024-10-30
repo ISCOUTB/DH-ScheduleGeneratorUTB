@@ -1,0 +1,33 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    xmlns:tools="http://schemas.android.com/tools"
+4    package="com.crazecoder.openfile" >
+5
+6    <uses-sdk android:minSdkVersion="16" />
+7
+8    <application>
+8-->C:\Users\gabri\AppData\Local\Pub\Cache\hosted\pub.dev\open_file_android-1.0.2\android\src\main\AndroidManifest.xml:5:5-18:19
+9        <provider
+9-->C:\Users\gabri\AppData\Local\Pub\Cache\hosted\pub.dev\open_file_android-1.0.2\android\src\main\AndroidManifest.xml:6:9-17:20
+10            android:name="com.crazecoder.openfile.FileProvider"
+10-->C:\Users\gabri\AppData\Local\Pub\Cache\hosted\pub.dev\open_file_android-1.0.2\android\src\main\AndroidManifest.xml:7:13-64
+11            android:authorities="${applicationId}.fileProvider.com.crazecoder.openfile"
+11-->C:\Users\gabri\AppData\Local\Pub\Cache\hosted\pub.dev\open_file_android-1.0.2\android\src\main\AndroidManifest.xml:8:13-88
+12            android:exported="false"
+12-->C:\Users\gabri\AppData\Local\Pub\Cache\hosted\pub.dev\open_file_android-1.0.2\android\src\main\AndroidManifest.xml:9:13-37
+13            android:grantUriPermissions="true"
+13-->C:\Users\gabri\AppData\Local\Pub\Cache\hosted\pub.dev\open_file_android-1.0.2\android\src\main\AndroidManifest.xml:10:13-47
+14            android:requestLegacyExternalStorage="true"
+14-->C:\Users\gabri\AppData\Local\Pub\Cache\hosted\pub.dev\open_file_android-1.0.2\android\src\main\AndroidManifest.xml:11:13-56
+15            tools:replace="android:authorities" >
+15-->C:\Users\gabri\AppData\Local\Pub\Cache\hosted\pub.dev\open_file_android-1.0.2\android\src\main\AndroidManifest.xml:12:13-48
+16            <meta-data
+16-->C:\Users\gabri\AppData\Local\Pub\Cache\hosted\pub.dev\open_file_android-1.0.2\android\src\main\AndroidManifest.xml:13:13-16:20
+17                android:name="android.support.FILE_PROVIDER_PATHS"
+17-->C:\Users\gabri\AppData\Local\Pub\Cache\hosted\pub.dev\open_file_android-1.0.2\android\src\main\AndroidManifest.xml:14:17-67
+18                android:resource="@xml/filepaths" />
+18-->C:\Users\gabri\AppData\Local\Pub\Cache\hosted\pub.dev\open_file_android-1.0.2\android\src\main\AndroidManifest.xml:15:17-50
+19        </provider>
+20    </application>
+21
+22</manifest>

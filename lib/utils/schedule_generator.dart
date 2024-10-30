@@ -41,7 +41,7 @@ List<List<ClassOption>> obtenerCombinacionesDeOpciones(Subject asignatura) {
 
   List<List<ClassOption>> combinaciones = [];
 
-  // Generar combinaciones de opciones por grupo
+  // Generar combinaciones posibles para cada grupo
   for (var opcionesGrupo in opcionesPorGrupo.values) {
     List<ClassOption> opcionesTeoricas = [];
     List<ClassOption> opcionesPracticas = [];
@@ -59,42 +59,22 @@ List<List<ClassOption>> obtenerCombinacionesDeOpciones(Subject asignatura) {
 
     // Generar combinaciones posibles
     if (opcionesTeoricoPracticas.isNotEmpty) {
-      // Si hay opciones Teorico-practico, las consideramos como una combinación completa
       for (var opcionTP in opcionesTeoricoPracticas) {
         combinaciones.add([opcionTP]);
-      }
-
-      // También podemos combinarlas con teóricas y prácticas si es necesario
-      for (var opcionTP in opcionesTeoricoPracticas) {
-        if (opcionesTeoricas.isNotEmpty) {
-          for (var opcionTeorica in opcionesTeoricas) {
-            combinaciones.add([opcionTeorica, opcionTP]);
-          }
-        }
-        if (opcionesPracticas.isNotEmpty) {
-          for (var opcionPractica in opcionesPracticas) {
-            combinaciones.add([opcionTP, opcionPractica]);
-          }
-        }
       }
     }
 
     if (opcionesTeoricas.isNotEmpty && opcionesPracticas.isNotEmpty) {
-      // Combinar opciones teóricas y prácticas
       for (var teorica in opcionesTeoricas) {
         for (var practica in opcionesPracticas) {
           combinaciones.add([teorica, practica]);
         }
       }
-    }
-
-    // Si solo hay un tipo de opción (Teórico o Laboratorio), agregarlos individualmente
-    if (opcionesTeoricas.isNotEmpty && opcionesPracticas.isEmpty) {
+    } else if (opcionesTeoricas.isNotEmpty) {
       for (var opcion in opcionesTeoricas) {
         combinaciones.add([opcion]);
       }
-    }
-    if (opcionesPracticas.isNotEmpty && opcionesTeoricas.isEmpty) {
+    } else if (opcionesPracticas.isNotEmpty) {
       for (var opcion in opcionesPracticas) {
         combinaciones.add([opcion]);
       }
@@ -104,9 +84,11 @@ List<List<ClassOption>> obtenerCombinacionesDeOpciones(Subject asignatura) {
   return combinaciones;
 }
 
-// Función para generar todas las combinaciones posibles de horarios
-List<List<ClassOption>> generarTodosLosHorariosPosibles(
-    List<Subject> asignaturas) {
+// Función para obtener todos los horarios válidos usando backtracking
+List<List<ClassOption>> obtenerHorariosValidos(
+    List<Subject> asignaturas, Map<String, dynamic> appliedFilters) {
+  List<List<ClassOption>> horariosValidos = [];
+
   // Obtener las combinaciones de opciones para cada asignatura
   List<List<List<ClassOption>>> combinacionesPorAsignatura = [];
 
@@ -115,135 +97,32 @@ List<List<ClassOption>> generarTodosLosHorariosPosibles(
     combinacionesPorAsignatura.add(combinaciones);
   }
 
-  // Función recursiva para calcular el producto cartesiano
-  List<List<ClassOption>> todosLosHorarios = [];
-
-  void productoCartesiano(int profundidad, List<ClassOption> actual,
-      List<List<ClassOption>> resultado) {
-    if (profundidad == combinacionesPorAsignatura.length) {
-      resultado.add(List.from(actual));
+  void backtrack(int nivel, List<ClassOption> horarioActual) {
+    if (nivel == combinacionesPorAsignatura.length) {
+      // Hemos seleccionado una opción para cada asignatura
+      if (cumpleConFiltros(horarioActual, appliedFilters)) {
+        horariosValidos.add(List.from(horarioActual));
+      }
       return;
     }
 
-    for (var opcionSet in combinacionesPorAsignatura[profundidad]) {
-      actual.addAll(opcionSet);
-      productoCartesiano(profundidad + 1, actual, resultado);
-      actual.removeRange(actual.length - opcionSet.length, actual.length);
-    }
-  }
-
-  productoCartesiano(0, [], todosLosHorarios);
-  return todosLosHorarios;
-}
-
-// Función para verificar si hay solapamientos entre dos horarios
-bool horariosSeSolapan(Schedule a, Schedule b) {
-  // Verificar si los días coinciden
-  if (a.day != b.day) return false;
-
-  // Parsear los horarios
-  TimeOfDayRange rangoA = parseTimeRange(a.time);
-  TimeOfDayRange rangoB = parseTimeRange(b.time);
-
-  return rangoA.overlaps(rangoB);
-}
-
-// Función para verificar si un horario completo tiene conflictos
-bool horarioTieneConflictos(List<ClassOption> horario) {
-  List<Schedule> todosLosHorarios = [];
-
-  for (var opcion in horario) {
-    todosLosHorarios.addAll(opcion.schedules);
-  }
-
-  // Comparar cada horario con los demás
-  for (int i = 0; i < todosLosHorarios.length; i++) {
-    for (int j = i + 1; j < todosLosHorarios.length; j++) {
-      if (horariosSeSolapan(todosLosHorarios[i], todosLosHorarios[j])) {
-        return true; // Conflicto encontrado
-      }
-    }
-  }
-  return false; // Sin conflictos
-}
-
-// Función para verificar si un horario cumple con los filtros aplicados
-bool cumpleConFiltros(
-    List<ClassOption> horario, Map<String, dynamic> appliedFilters) {
-  Map<String, dynamic> professorsFilters = appliedFilters['professors'] ?? {};
-  Map<String, dynamic> timeFilters = appliedFilters['timeFilters'] ?? {};
-
-  for (var opcion in horario) {
-    String subjectCode = opcion.subjectCode;
-
-    // Filtrar por profesores
-    if (professorsFilters.containsKey(subjectCode)) {
-      Map<String, dynamic> subjectFilter = professorsFilters[subjectCode];
-      String filterType = subjectFilter['filterType'] as String;
-      List<String> profesoresSeleccionados =
-          subjectFilter['professors'] as List<String>;
-
-      // Aplicar el filtro solo si hay profesores seleccionados
-      if (profesoresSeleccionados.isNotEmpty) {
-        if (filterType == 'include') {
-          // Si la opción de clase es impartida por alguno de los profesores seleccionados, es válida
-          if (profesoresSeleccionados.contains(opcion.professor)) {
-            // Opción válida, seguimos con la siguiente
-          } else {
-            // Si ninguna de las opciones de clase para esta materia es impartida por los profesores seleccionados, invalidar el horario
-            // Pero solo si no hay ninguna otra opción en el horario que sí sea impartida por un profesor seleccionado
-            bool profesorEncontrado = horario.any((otraOpcion) =>
-                otraOpcion.subjectCode == subjectCode &&
-                profesoresSeleccionados.contains(otraOpcion.professor));
-            if (!profesorEncontrado) {
-              return false; // No se encontró ninguna opción con el profesor seleccionado
-            }
-          }
-        } else if (filterType == 'exclude') {
-          // Si la opción de clase es impartida por alguno de los profesores excluidos, es inválida
-          if (profesoresSeleccionados.contains(opcion.professor)) {
-            return false;
-          }
-        }
-      }
-    }
-
-    // Filtrar por horas no disponibles
-    for (var schedule in opcion.schedules) {
-      String day = schedule.day;
-      if (timeFilters.containsKey(day)) {
-        List<String> unavailableTimes = List<String>.from(timeFilters[day]);
-        TimeOfDayRange classTimeRange = parseTimeRange(schedule.time);
-
-        // Verificar si alguna hora no disponible coincide con el horario de la clase
-        for (var time in unavailableTimes) {
-          TimeOfDay unavailableTime = parseTimeOfDay(time);
-          if (classTimeRange.contains(unavailableTime)) {
-            return false; // La clase está en una hora no disponible
-          }
-        }
+    for (var opcionGrupo in combinacionesPorAsignatura[nivel]) {
+      // Verificar si la opción no tiene conflictos con el horario actual
+      if (!tieneConflictos(horarioActual, opcionGrupo)) {
+        // Añadir las opciones al horario actual
+        horarioActual.addAll(opcionGrupo);
+        // Continuar al siguiente nivel
+        backtrack(nivel + 1, horarioActual);
+        // Quitar las opciones añadidas (backtracking)
+        horarioActual.removeRange(
+            horarioActual.length - opcionGrupo.length, horarioActual.length);
       }
     }
   }
 
-  return true; // Cumple con todos los filtros
-}
+  backtrack(0, []);
 
-// Función para obtener todos los horarios válidos (sin conflictos y que cumplen con los filtros)
-List<List<ClassOption>> obtenerHorariosValidos(
-    List<Subject> asignaturas, Map<String, dynamic> appliedFilters) {
-  List<List<ClassOption>> todosLosHorarios =
-      generarTodosLosHorariosPosibles(asignaturas);
-  List<List<ClassOption>> horariosValidos = [];
-
-  for (var horario in todosLosHorarios) {
-    if (!horarioTieneConflictos(horario) &&
-        cumpleConFiltros(horario, appliedFilters)) {
-      horariosValidos.add(horario);
-    }
-  }
-
-  // Optimizar horarios
+  // Optimizar horarios si es necesario
   bool optimizeFreeDays = appliedFilters['optimizeFreeDays'] == true;
   bool optimizeGaps = appliedFilters['optimizeGaps'] == true;
 
@@ -277,7 +156,97 @@ List<List<ClassOption>> obtenerHorariosValidos(
   return horariosValidos;
 }
 
-// Función para calcular la cantidad total de horas de huecos en un horario
+// Función para verificar si agregar una nueva opción genera conflictos
+bool tieneConflictos(
+    List<ClassOption> horarioActual, List<ClassOption> nuevaOpcion) {
+  for (var opcionExistente in horarioActual) {
+    for (var opcionNueva in nuevaOpcion) {
+      if (opcionesEnConflicto(opcionExistente, opcionNueva)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// Función para verificar si dos opciones de clase tienen conflicto
+bool opcionesEnConflicto(ClassOption opcion1, ClassOption opcion2) {
+  for (var schedule1 in opcion1.schedules) {
+    for (var schedule2 in opcion2.schedules) {
+      if (horariosSeSolapan(schedule1, schedule2)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// Función para verificar si hay solapamientos entre dos horarios
+bool horariosSeSolapan(Schedule a, Schedule b) {
+  // Verificar si los días coinciden
+  if (a.day != b.day) return false;
+
+  // Parsear los horarios
+  TimeOfDayRange rangoA = parseTimeRange(a.time);
+  TimeOfDayRange rangoB = parseTimeRange(b.time);
+
+  return rangoA.overlaps(rangoB);
+}
+
+// Función para verificar si un horario cumple con los filtros aplicados
+bool cumpleConFiltros(
+    List<ClassOption> horario, Map<String, dynamic> appliedFilters) {
+  Map<String, dynamic> professorsFilters = appliedFilters['professors'] ?? {};
+  Map<String, dynamic> timeFilters = appliedFilters['timeFilters'] ?? {};
+
+  for (var opcion in horario) {
+    String subjectCode = opcion.subjectCode;
+
+    // Filtrar por profesores
+    if (professorsFilters.containsKey(subjectCode)) {
+      Map<String, dynamic> subjectFilter = professorsFilters[subjectCode];
+      String filterType = subjectFilter['filterType'] as String;
+      List<String> profesoresSeleccionados =
+      subjectFilter['professors'] as List<String>;
+
+      // Aplicar el filtro solo si hay profesores seleccionados
+      if (profesoresSeleccionados.isNotEmpty) {
+        if (filterType == 'include') {
+          // Si la opción de clase es impartida por alguno de los profesores seleccionados, es válida
+          if (!profesoresSeleccionados.contains(opcion.professor)) {
+            return false; // Profesor no está en la lista de inclusión
+          }
+        } else if (filterType == 'exclude') {
+          // Si la opción de clase es impartida por alguno de los profesores excluidos, es inválida
+          if (profesoresSeleccionados.contains(opcion.professor)) {
+            return false; // Profesor está en la lista de exclusión
+          }
+        }
+      }
+    }
+
+    // Filtrar por horas no disponibles
+    for (var schedule in opcion.schedules) {
+      String day = schedule.day;
+      if (timeFilters.containsKey(day)) {
+        List<String> unavailableTimes = List<String>.from(timeFilters[day]);
+        TimeOfDayRange classTimeRange = parseTimeRange(schedule.time);
+
+        // Verificar si alguna hora no disponible coincide con el horario de la clase
+        for (var time in unavailableTimes) {
+          TimeOfDay unavailableTime = parseTimeOfDay(time);
+          if (classTimeRange.contains(unavailableTime)) {
+            return false; // La clase está en una hora no disponible
+          }
+        }
+      }
+    }
+  }
+
+  return true; // Cumple con todos los filtros
+}
+
+// Función para calcular la cantidad total de huecos en un horario
 int calcularHuecos({required List<ClassOption> horario}) {
   // Crear una lista de todas las clases con su horario
   List<Map<String, dynamic>> clases = [];
