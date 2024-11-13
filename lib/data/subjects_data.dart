@@ -1,6 +1,7 @@
 import '../../../models/class_option.dart';
 import '../../../models/schedule.dart';
 import '../../../models/subject.dart';
+
 List<Subject> subjects = [
   Subject(
     code: 'G01A',
@@ -28,8 +29,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2710',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -150,8 +150,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2712',
         groupId: 5,
-        schedules: [
-        ],
+        schedules: [],
       ),
       ClassOption(
         subjectCode: 'G04A',
@@ -253,8 +252,7 @@ List<Subject> subjects = [
         professor: 'Martha Patricia Castro Porto',
         nrc: '1847',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -290,8 +288,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2727',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -321,8 +318,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2721',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -352,8 +348,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2725',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -382,8 +377,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2723',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -431,8 +425,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2726',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -449,8 +442,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2730',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -480,8 +472,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2722',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -544,8 +535,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2707',
         groupId: 3,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -562,8 +552,7 @@ List<Subject> subjects = [
         professor: 'Sammir Montemiranda Pajaro',
         nrc: '1230',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
       ClassOption(
         subjectCode: 'O08A',
@@ -573,8 +562,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2773',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -591,8 +579,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2729',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -629,8 +616,7 @@ List<Subject> subjects = [
         professor: 'Benjamin De Jesus Garcia Garcerant',
         nrc: '1965',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
       ClassOption(
         subjectCode: 'P01A',
@@ -640,8 +626,7 @@ List<Subject> subjects = [
         professor: 'Benjamin De Jesus Garcia Garcerant',
         nrc: '1525',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -658,8 +643,7 @@ List<Subject> subjects = [
         professor: 'Dayana Maria Sanchez Monterrosa',
         nrc: '1969',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
       ClassOption(
         subjectCode: 'P02A',
@@ -669,8 +653,7 @@ List<Subject> subjects = [
         professor: 'Dayana Maria Sanchez Monterrosa',
         nrc: '1912',
         groupId: 3,
-        schedules: [
-        ],
+        schedules: [],
       ),
       ClassOption(
         subjectCode: 'P02A',
@@ -680,8 +663,7 @@ List<Subject> subjects = [
         professor: 'Dayana Maria Sanchez Monterrosa',
         nrc: '1259',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -762,8 +744,12 @@ List<Subject> subjects = [
         nrc: '2663',
         groupId: 4,
         schedules: [
-          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '08:00 - 12:50'),
-          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '14:00 - 16:50'),
+          Schedule(
+              day: 'Lunes,martes,miércoles,jueves,viernes',
+              time: '08:00 - 12:50'),
+          Schedule(
+              day: 'Lunes,martes,miércoles,jueves,viernes',
+              time: '14:00 - 16:50'),
         ],
       ),
       ClassOption(
@@ -796,8 +782,12 @@ List<Subject> subjects = [
         nrc: '2677',
         groupId: 3,
         schedules: [
-          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '08:00 - 12:50'),
-          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '14:00 - 16:50'),
+          Schedule(
+              day: 'Lunes,martes,miércoles,jueves,viernes',
+              time: '08:00 - 12:50'),
+          Schedule(
+              day: 'Lunes,martes,miércoles,jueves,viernes',
+              time: '14:00 - 16:50'),
         ],
       ),
       ClassOption(
@@ -869,8 +859,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2771',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -887,8 +876,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2728',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -1623,12 +1611,14 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'D01A',
-    name: 'Introducción a la ciencia de datos introducción a la ciencia de datos',
+    name:
+        'Introducción a la ciencia de datos introducción a la ciencia de datos',
     credits: 2,
     classOptions: [
       ClassOption(
         subjectCode: 'D01A',
-        subjectName: 'Introducción a la ciencia de datos introducción a la ciencia de datos',
+        subjectName:
+            'Introducción a la ciencia de datos introducción a la ciencia de datos',
         type: 'Laboratorio',
         credits: 2,
         professor: 'Andy Rafael Dominguez Monterroza',
@@ -1642,12 +1632,14 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'D02A',
-    name: 'Programación para ciencia de datos programación para ciencia de datos',
+    name:
+        'Programación para ciencia de datos programación para ciencia de datos',
     credits: 3,
     classOptions: [
       ClassOption(
         subjectCode: 'D02A',
-        subjectName: 'Programación para ciencia de datos programación para ciencia de datos',
+        subjectName:
+            'Programación para ciencia de datos programación para ciencia de datos',
         type: 'Teórico',
         credits: 3,
         professor: 'Humberto Manuel Marbello Peña',
@@ -1852,8 +1844,7 @@ List<Subject> subjects = [
         professor: 'Armando Jose Mercado Vega',
         nrc: '2243',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -2781,7 +2772,8 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'E04A',
-        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName:
+            'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Roberto Enrique Gomez Fernandez',
@@ -2795,7 +2787,8 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName:
+            'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Jorge Luis Villalba Acevedo',
@@ -2809,7 +2802,8 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName:
+            'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Francisco Mauricio Atencio Contreras',
@@ -2823,7 +2817,8 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName:
+            'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Andy Rafael Dominguez Monterroza',
@@ -2836,7 +2831,8 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName:
+            'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Alan Orlando Sanchez Marzan',
@@ -2850,7 +2846,8 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName:
+            'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Jorge Luis Villalba Acevedo',
@@ -5481,8 +5478,7 @@ List<Subject> subjects = [
         professor: 'Juan Carlos Barrios Espinosa',
         nrc: '2055',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
       ClassOption(
         subjectCode: 'A01A',
@@ -5492,8 +5488,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2779',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -5616,8 +5611,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2778',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -5634,8 +5628,7 @@ List<Subject> subjects = [
         professor: 'Juan Carlos Barrios Espinosa',
         nrc: '1157',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -5665,8 +5658,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2772',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -5736,8 +5728,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2780',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -5754,8 +5745,7 @@ List<Subject> subjects = [
         professor: 'Juan Carlos Barrios Espinosa',
         nrc: '1903',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -5772,8 +5762,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2781',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -5790,8 +5779,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2782',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -5821,8 +5809,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2724',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -5839,8 +5826,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2783',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -5870,8 +5856,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2777',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -6880,7 +6865,8 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'T03A',
-        subjectName: 'M. de la investigación jurídica y socio j (ternera - manga)',
+        subjectName:
+            'M. de la investigación jurídica y socio j (ternera - manga)',
         type: 'Teórico',
         credits: 3,
         professor: 'Katleen Paola Marun Uparela',
@@ -7228,8 +7214,7 @@ List<Subject> subjects = [
         professor: 'Jhorland Ayala Garcia',
         nrc: '1602',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -7432,8 +7417,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2749',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
       ClassOption(
         subjectCode: 'M12A',
@@ -7515,8 +7499,7 @@ List<Subject> subjects = [
         professor: 'Jhorland Ayala Garcia',
         nrc: '1603',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -7584,8 +7567,7 @@ List<Subject> subjects = [
         professor: 'Benjamin De Jesus Garcia Garcerant',
         nrc: '1726',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -7602,8 +7584,7 @@ List<Subject> subjects = [
         professor: 'Dayana Maria Sanchez Monterrosa',
         nrc: '2136',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -7668,8 +7649,7 @@ List<Subject> subjects = [
         professor: 'Yenni Astrith Angarita Calderon',
         nrc: '1194',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -7876,8 +7856,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2753',
         groupId: 3,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -7962,12 +7941,11 @@ List<Subject> subjects = [
         subjectCode: 'F05A',
         subjectName: 'Mercado de capitales',
         type: 'Teórico',
-        credits: 0 TO 3,
+        credits: 3,
         professor: 'NA',
         nrc: '2751',
         groupId: 4,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -8294,8 +8272,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2752',
         groupId: 2,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -8365,8 +8342,7 @@ List<Subject> subjects = [
         professor: 'Jorge Luis Del Rio Cortina',
         nrc: '1936',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -8383,8 +8359,7 @@ List<Subject> subjects = [
         professor: 'Benjamin De Jesus Garcia Garcerant',
         nrc: '1824',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -8401,8 +8376,7 @@ List<Subject> subjects = [
         professor: 'Javier Mauricio Prieto Florez',
         nrc: '1303',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -8419,8 +8393,7 @@ List<Subject> subjects = [
         professor: 'Dayana Maria Sanchez Monterrosa',
         nrc: '1253',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -8437,8 +8410,7 @@ List<Subject> subjects = [
         professor: 'Alba Zulay Cardenas Escobar',
         nrc: '2434',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -8455,8 +8427,7 @@ List<Subject> subjects = [
         professor: 'Benjamin De Jesus Garcia Garcerant',
         nrc: '1734',
         groupId: 1,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -9730,8 +9701,7 @@ List<Subject> subjects = [
         professor: 'NA',
         nrc: '2788',
         groupId: 16,
-        schedules: [
-        ],
+        schedules: [],
       ),
     ],
   ),
@@ -10154,7 +10124,8 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'I01A',
-        subjectName: 'Ingles i - programa arquitectura y derecho (presencial - remoto)',
+        subjectName:
+            'Ingles i - programa arquitectura y derecho (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
         professor: 'Lina Margarita Castilla Carrera',
@@ -10760,7 +10731,8 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'I03A',
-        subjectName: 'Ingles iii programa de arquitectura (presencial - remoto)',
+        subjectName:
+            'Ingles iii programa de arquitectura (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
         professor: 'Libary Luz Manjarres Molina',
@@ -11121,7 +11093,8 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'I05A',
-        subjectName: 'Ingles v - programa de arquitectura (presencial - remoto)',
+        subjectName:
+            'Ingles v - programa de arquitectura (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
         professor: 'Andrea Carolina Beltran Martinez',
@@ -12304,12 +12277,14 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'A22A',
-    name: 'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
+    name:
+        'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
     credits: 3,
     classOptions: [
       ClassOption(
         subjectCode: 'A22A',
-        subjectName: 'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
+        subjectName:
+            'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
         type: 'Teórico',
         credits: 3,
         professor: 'Mauro Antonio Maza Chamorro',
@@ -16218,8 +16193,12 @@ List<Subject> subjects = [
         nrc: '2611',
         groupId: 1,
         schedules: [
-          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '08:00 - 12:50'),
-          Schedule(day: 'Lunes,martes,miércoles,jueves,viernes', time: '14:00 - 16:50'),
+          Schedule(
+              day: 'Lunes,martes,miércoles,jueves,viernes',
+              time: '08:00 - 12:50'),
+          Schedule(
+              day: 'Lunes,martes,miércoles,jueves,viernes',
+              time: '14:00 - 16:50'),
         ],
       ),
       ClassOption(
@@ -17292,17 +17271,18 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'SP011',
-    name: 'Seminario de profundización nueva economía digital y competitividad de negocios',
+    name:
+        'Seminario de profundización nueva economía digital y competitividad de negocios',
     credits: 0,
     classOptions: [
       ClassOption(
         subjectCode: 'SP011',
-        subjectName: 'Seminario de profundización nueva economía digital y competitividad de negocios',
+        subjectName:
+            'Seminario de profundización nueva economía digital y competitividad de negocios',
         type: 'Teórico',
         credits: 0,
-        professor: 'Raul Ernesto Acosta Mesa
-        Ricardo Andres Ariza Aguilar
-      Rita Cecilia De La Hoz Del Villar',
+        professor:
+            'Raul Ernesto Acosta Mesa, Ricardo Andres Ariza Aguilar, Rita Cecilia, De La Hoz Del Villar',
         nrc: '2680',
         groupId: 1,
         schedules: [
@@ -17368,8 +17348,7 @@ List<Subject> subjects = [
         subjectName: 'Seminario de profundización gestión de proyectos',
         type: 'Teórico',
         credits: 0,
-        professor: 'Hugo Antonio Elles Niño
-        Ismael Cardenas Espinosa',
+        professor: 'Hugo Antonio Elles Niño, Ismael Cardenas Espinosa',
         nrc: '2685',
         groupId: 1,
         schedules: [
@@ -17405,10 +17384,8 @@ List<Subject> subjects = [
         subjectName: 'Seminario de profundización en automatización industrial',
         type: 'Teórico',
         credits: 0,
-        professor: 'Jorge Eliecer Duque Pardo
-        Eduardo Gomez Vasquez
-      Jose Luis Villa Ramirez
-      Luis Enrique Acosta Galvan',
+        professor:
+            'Jorge Eliecer Duque Pardo, Eduardo Gomez Vasquez, Jose Luis Villa Ramirez, Luis Enrique Acosta Galvan',
         nrc: '2681',
         groupId: 1,
         schedules: [
@@ -17428,18 +17405,18 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'SP24',
-    name: 'Seminario de prof herramientas para el cuidado profesional y colectivo',
+    name:
+        'Seminario de prof herramientas para el cuidado profesional y colectivo',
     credits: 0,
     classOptions: [
       ClassOption(
         subjectCode: 'SP24',
-        subjectName: 'Seminario de prof herramientas para el cuidado profesional y colectivo',
+        subjectName:
+            'Seminario de prof herramientas para el cuidado profesional y colectivo',
         type: 'Teórico',
         credits: 0,
-        professor: 'Elias Rafael Geney Castro
-        David Javier Fortich Perez
-      Prisca Espinosa Acevedo
-      Jeimer David Ortiz Marimon',
+        professor:
+            'Elias Rafael Geney Castro, David Javier Fortich Perez, Prisca Espinosa Acevedo, Jeimer David Ortiz Marimon',
         nrc: '2684',
         groupId: 1,
         schedules: [
@@ -17472,9 +17449,8 @@ List<Subject> subjects = [
         subjectName: 'Gerencia de negocios internaci',
         type: 'Teórico',
         credits: 0,
-        professor: 'Victor Alfredo Tarra Diaz
-        Belkys Linder Mosquera Manyoma',
-      nrc: '2678',
+        professor: 'Victor Alfredo Tarra Diaz, Belkys Linder Mosquera Manyoma',
+        nrc: '2678',
         groupId: 1,
         schedules: [
           Schedule(day: 'Sábado', time: '07:00 - 13:50'),
@@ -17746,12 +17722,14 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'E04A',
-    name: 'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
+    name:
+        'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
     credits: 3,
     classOptions: [
       ClassOption(
         subjectCode: 'E04A',
-        subjectName: 'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
+        subjectName:
+            'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
         type: 'Teórico',
         credits: 3,
         professor: 'Marlyn Patricia Conde Gutierrez',
