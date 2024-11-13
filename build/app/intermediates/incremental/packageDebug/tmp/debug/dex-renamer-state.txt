@@ -1,4 +1,4 @@
-#Wed Oct 30 03:22:45 COT 2024
+#Tue Nov 12 21:48:41 COT 2024
 base.0=C\:\\Users\\gabri\\OneDrive\\Documentos\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
 base.1=C\:\\Users\\gabri\\OneDrive\\Documentos\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
 base.2=C\:\\Users\\gabri\\OneDrive\\Documentos\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
