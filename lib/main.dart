@@ -180,6 +180,17 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  // Nueva función para limpiar los horarios generados
+  void clearSchedules() {
+    setState(() {
+      allSchedules.clear();
+      selectedScheduleIndex = null;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Horarios generados eliminados')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     bool mobile = isMobile();
@@ -301,6 +312,21 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 20),
+                        // Botón para limpiar horarios generados
+                        MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: GestureDetector(
+                            onTap: () {
+                              clearSchedules();
+                            },
+                            child: const Tooltip(
+                              message: 'Limpiar Horarios Generados',
+                              child: Icon(Icons.delete_outline,
+                                  color: Colors.white),
+                            ),
+                          ),
+                        ),
                         const Spacer(),
                         // Botón de generar horarios
                         Padding(
@@ -326,11 +352,68 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(
                     child: Center(
                       child: allSchedules.isEmpty
-                          ? const Text(
-                              '¡Bienvenido al Generador de Horarios UTB!',
-                              style:
-                                  TextStyle(fontSize: 24, color: Colors.white),
-                              textAlign: TextAlign.center,
+                          ? SingleChildScrollView(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    '¡Bienvenido al Generador de Horarios UTB!',
+                                    style: TextStyle(
+                                        fontSize: 24, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  const Text(
+                                    'Instrucciones:',
+                                    style: TextStyle(
+                                        fontSize: 20, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                    '1. Haz clic en el ícono de búsqueda en la barra lateral izquierda para buscar y agregar materias.',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                    '2. Una vez agregadas las materias, puedes revisar las materias seleccionadas haciendo clic en el ícono de lista.',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                    '3. Opcionalmente, puedes aplicar filtros haciendo clic en el ícono de filtro.',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                    '4. Para generar los horarios posibles, haz clic en el botón amarillo con el ícono de calendario en la parte inferior de la barra lateral.',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                    '5. Los horarios generados aparecerán en la pantalla. Puedes presionar sobre ellos para ver los detalles de las materias.',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  const Text(
+                                    '6. Para limpiar los horarios generados, haz clic en el ícono de la papelera en la barra lateral.',
+                                    style: TextStyle(
+                                        fontSize: 16, color: Colors.white),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              ),
                             )
                           : ScheduleGridWidget(
                               allSchedules: allSchedules,

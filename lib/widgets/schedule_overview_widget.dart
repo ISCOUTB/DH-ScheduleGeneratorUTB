@@ -8,6 +8,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart'; // Para kIsWeb
 import '../utils/file_utils.dart'; // Importamos nuestra utilidad de archivos
+import '../utils/schedule_generator.dart';
 
 class ScheduleOverviewWidget extends StatefulWidget {
   final List<ClassOption> schedule;
@@ -24,9 +25,8 @@ class ScheduleOverviewWidget extends StatefulWidget {
 }
 
 class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
-  // Controladores de scroll
-  final ScrollController _horizontalScrollController = ScrollController();
-  final ScrollController _verticalScrollController = ScrollController();
+  // Mapa de colores para las materias
+  late Map<String, Color> subjectColors;
 
   // Definir los horarios y días (en formato de 24 horas)
   final List<String> timeSlots = [
@@ -56,9 +56,6 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     'Sábado',
   ];
 
-  // Mapa de colores para las materias
-  late Map<String, Color> subjectColors;
-
   @override
   void initState() {
     super.initState();
@@ -67,45 +64,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   }
 
   @override
-  void dispose() {
-    // Liberar los controladores de scroll cuando el widget se elimina
-    _horizontalScrollController.dispose();
-    _verticalScrollController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // Crear la matriz del horario
-    Map<String, Map<String, ClassOption?>> scheduleMatrix = {};
-
-    for (String time in timeSlots) {
-      scheduleMatrix[time] = {};
-      for (String day in days) {
-        scheduleMatrix[time]![day] = null; // Inicialmente vacío
-      }
-    }
-
-    // Llenar la matriz del horario con las clases
-    for (var classOption in widget.schedule) {
-      for (var sched in classOption.schedules) {
-        TimeOfDayRange range = parseTimeRange(sched.time);
-        String day = sched.day;
-
-        int startIndex = getStartTimeSlotIndex(range.start, timeSlots);
-        int endIndex = getEndTimeSlotIndex(range.end, timeSlots);
-
-        if (startIndex == -1 || endIndex == -1) continue;
-
-        // Llenamos los bloques de tiempo entre el inicio y el fin de la clase
-        for (int i = startIndex; i < endIndex; i++) {
-          if (i < timeSlots.length) {
-            scheduleMatrix[timeSlots[i]]![day] = classOption;
-          }
-        }
-      }
-    }
-
     // Agrupar las materias y sus opciones
     Map<String, List<ClassOption>> groupedSubjects = {};
 
@@ -123,16 +82,16 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
             BorderRadius.circular(10), // Esquinas redondeadas del diálogo
       ),
       child: Container(
-        width: 1000,
-        height: 800,
+        width: 600,
         padding: const EdgeInsets.all(16),
         child: Column(
+          mainAxisSize: MainAxisSize.min, // Ajustar el tamaño al contenido
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Horario Detallado',
+                  'Detalles del horario',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Row(
@@ -155,84 +114,6 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                   ],
                 ),
               ],
-            ),
-            SizedBox(height: 16),
-            // Widget del horario
-            Expanded(
-              child: Scrollbar(
-                controller: _horizontalScrollController,
-                thumbVisibility: true,
-                child: SingleChildScrollView(
-                  controller: _horizontalScrollController,
-                  scrollDirection: Axis.horizontal,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 1000),
-                    child: Scrollbar(
-                      controller: _verticalScrollController,
-                      thumbVisibility: true,
-                      child: SingleChildScrollView(
-                        controller: _verticalScrollController,
-                        scrollDirection: Axis.vertical,
-                        child: DataTable(
-                          border: TableBorder(
-                            verticalInside:
-                                BorderSide(width: 1, color: Colors.grey),
-                          ),
-                          columnSpacing: 20,
-                          columns: [
-                            const DataColumn(label: Text('Horario')),
-                            ...days.map((day) => DataColumn(label: Text(day))),
-                          ],
-                          rows: timeSlots.map((time) {
-                            return DataRow(cells: [
-                              DataCell(Text('$time')),
-                              ...days.map((day) {
-                                var classOption = scheduleMatrix[time]![day];
-                                if (classOption != null) {
-                                  Color subjectColor =
-                                      subjectColors[classOption.subjectName] ??
-                                          Colors.lightBlueAccent;
-                                  return DataCell(
-                                    Center(
-                                      child: Container(
-                                        margin: const EdgeInsets.all(3),
-                                        decoration: BoxDecoration(
-                                          color: subjectColor,
-                                          borderRadius: BorderRadius.circular(
-                                              4), // Esquinas redondeadas
-                                        ),
-                                        width: 90,
-                                        padding: const EdgeInsets.all(4),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              classOption.subjectName,
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                fontSize: 8,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                } else {
-                                  return const DataCell(Text(''));
-                                }
-                              }).toList(),
-                            ]);
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
             ),
             SizedBox(height: 16),
             // Botones de materias con ícono de información
@@ -353,7 +234,6 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
   Future<void> downloadScheduleAsPDF() async {
     try {
-      // Generar el PDF de forma asíncrona
       final bytes = await _generatePDF({
         'schedule': widget.schedule,
         'timeSlots': timeSlots,
@@ -401,7 +281,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         );
         // Concatenar subjectName y nrc si existe la opción
         if (classOption != null) {
-          row.add('${classOption.subjectName}\r\n NRC: ${classOption.nrc}');
+          row.add('${classOption.subjectName}\nNRC: ${classOption.nrc}');
         } else
           row.add('');
       }
@@ -423,13 +303,13 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     final pdf = pw.Document();
 
     // Cargar la fuente predeterminada
-    final font = await rootBundle.load("assets/fonts/Roboto-Regular.ttf");
-    final ttf = pw.Font.ttf(font);
+    final fontData = await rootBundle.load("assets/fonts/Roboto-Regular.ttf");
+    final ttf = pw.Font.ttf(fontData.buffer.asByteData());
 
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
-          return pw.TableHelper.fromTextArray(
+          return pw.Table.fromTextArray(
             headers: ['Horario', ...days],
             data: [
               for (var timeSlot in timeSlots)
@@ -447,15 +327,17 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                       ),
                     );
                     if (classOption != null) {
-                      return '${classOption.subjectName}\n NRC: ${classOption.nrc}';
+                      return '${classOption.subjectName}\nNRC: ${classOption.nrc}';
                     } else
                       return '';
                   }).toList(),
                 ]
             ],
-            cellStyle: pw.TextStyle(font: ttf),
-            headerStyle:
-                pw.TextStyle(font: ttf, fontWeight: pw.FontWeight.bold),
+            cellStyle: pw.TextStyle(font: ttf, fontSize: 10),
+            headerStyle: pw.TextStyle(
+                font: ttf, fontWeight: pw.FontWeight.bold, fontSize: 12),
+            cellAlignment: pw.Alignment.center,
+            headerAlignment: pw.Alignment.center,
           );
         },
       ),
@@ -508,42 +390,4 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
     return TimeOfDay(hour: hour, minute: minute);
   }
-
-  // Función para obtener el índice del timeSlot de inicio
-  int getStartTimeSlotIndex(TimeOfDay time, List<String> timeSlots) {
-    int timeMinutes = time.hour * 60 + time.minute;
-
-    for (int i = 0; i < timeSlots.length; i++) {
-      TimeOfDay slotTime = parseTimeOfDay(timeSlots[i]);
-      int slotMinutes = slotTime.hour * 60 + slotTime.minute;
-
-      if (timeMinutes <= slotMinutes) {
-        return i;
-      }
-    }
-    return timeSlots.length - 1;
-  }
-
-  // Función para obtener el índice del timeSlot de fin
-  int getEndTimeSlotIndex(TimeOfDay time, List<String> timeSlots) {
-    int timeMinutes = time.hour * 60 + time.minute;
-
-    for (int i = 0; i < timeSlots.length; i++) {
-      TimeOfDay slotTime = parseTimeOfDay(timeSlots[i]);
-      int slotMinutes = slotTime.hour * 60 + slotTime.minute;
-
-      if (timeMinutes <= slotMinutes) {
-        return i;
-      }
-    }
-    return timeSlots.length;
-  }
-}
-
-// Definición de TimeOfDayRange
-class TimeOfDayRange {
-  final TimeOfDay start;
-  final TimeOfDay end;
-
-  TimeOfDayRange(this.start, this.end);
 }

@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 application
-INJECTED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:2:5-33:19
+INJECTED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:4:5-36:19
 INJECTED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\debug\AndroidManifest.xml
 MERGED from [:open_file_android] C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\build\open_file_android\intermediates\merged_manifest\debug\AndroidManifest.xml:8:5-20:19
 MERGED from [:open_file_android] C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\build\open_file_android\intermediates\merged_manifest\debug\AndroidManifest.xml:8:5-20:19
@@ -25,13 +25,14 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\ga
 	android:name
 		INJECTED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml
 manifest
-ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:1:1-45:12
-MERGED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:1:1-45:12
+ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:1:1-48:12
+MERGED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:1:1-48:12
 INJECTED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\debug\AndroidManifest.xml:1:1-7:12
 INJECTED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\debug\AndroidManifest.xml:1:1-7:12
 INJECTED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\debug\AndroidManifest.xml:1:1-7:12
 MERGED from [:open_file_android] C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\build\open_file_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-22:12
 MERGED from [:path_provider_android] C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\build\path_provider_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-7:12
+MERGED from [:permission_handler_android] C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\build\permission_handler_android\intermediates\merged_manifest\debug\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\gabri\.gradle\caches\transforms-3\fd7d6b048f12dc26953778cf64b6b922\transformed\jetified-appcompat-resources-1.6.1\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\gabri\.gradle\caches\transforms-3\8b51bb040b32a2abc8f296afdae29f34\transformed\appcompat-1.6.1\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.fragment:fragment:1.7.1] C:\Users\gabri\.gradle\caches\transforms-3\a49cd171355a6a39687e69f028c8bcbc\transformed\fragment-1.7.1\AndroidManifest.xml:2:1-7:12
@@ -73,18 +74,26 @@ MERGED from [androidx.annotation:annotation-experimental:1.4.0] C:\Users\gabri\.
 		INJECTED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\debug\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:1:11-69
-queries
-ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:39:5-44:15
-intent#action:name:android.intent.action.PROCESS_TEXT+data:mimeType:text/plain
-ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:40:9-43:18
-action#android.intent.action.PROCESS_TEXT
-ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:41:13-72
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:2:5-79
 	android:name
-		ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:41:21-70
+		ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:2:22-77
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:3:5-80
+	android:name
+		ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:3:22-78
+queries
+ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:42:5-47:15
+intent#action:name:android.intent.action.PROCESS_TEXT+data:mimeType:text/plain
+ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:43:9-46:18
+action#android.intent.action.PROCESS_TEXT
+ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:44:13-72
+	android:name
+		ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:44:21-70
 data
-ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:42:13-50
+ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:45:13-50
 	android:mimeType
-		ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:42:19-48
+		ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\main\AndroidManifest.xml:45:19-48
 uses-permission#android.permission.INTERNET
 ADDED from C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\android\app\src\debug\AndroidManifest.xml:6:5-66
 	android:name
@@ -97,6 +106,8 @@ MERGED from [:open_file_android] C:\Users\gabri\OneDrive\Documentos\GitHub\DH-Sc
 MERGED from [:open_file_android] C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\build\open_file_android\intermediates\merged_manifest\debug\AndroidManifest.xml:6:5-44
 MERGED from [:path_provider_android] C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\build\path_provider_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-44
 MERGED from [:path_provider_android] C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\build\path_provider_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-44
+MERGED from [:permission_handler_android] C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\build\permission_handler_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-44
+MERGED from [:permission_handler_android] C:\Users\gabri\OneDrive\Documentos\GitHub\DH-ScheduleGeneratorUTB\build\permission_handler_android\intermediates\merged_manifest\debug\AndroidManifest.xml:5:5-44
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\gabri\.gradle\caches\transforms-3\fd7d6b048f12dc26953778cf64b6b922\transformed\jetified-appcompat-resources-1.6.1\AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat-resources:1.6.1] C:\Users\gabri\.gradle\caches\transforms-3\fd7d6b048f12dc26953778cf64b6b922\transformed\jetified-appcompat-resources-1.6.1\AndroidManifest.xml:20:5-44
 MERGED from [androidx.appcompat:appcompat:1.6.1] C:\Users\gabri\.gradle\caches\transforms-3\8b51bb040b32a2abc8f296afdae29f34\transformed\appcompat-1.6.1\AndroidManifest.xml:20:5-44
