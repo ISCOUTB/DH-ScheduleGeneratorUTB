@@ -51,5 +51,23 @@ Future<String> getFilePath(String fileName) async {
     await directory.create(recursive: true);
   }
 
-  return '${directory.path}/$fileName';
+  // Aquí es donde verificamos si el archivo existe y generamos un nombre único
+  String filePath = '${directory.path}/$fileName';
+  filePath = await _getUniqueFilePath(filePath);
+
+  return filePath;
+}
+
+Future<String> _getUniqueFilePath(String filePath) async {
+  String pathWithoutExtension =
+      filePath.substring(0, filePath.lastIndexOf('.'));
+  String extension = filePath.substring(filePath.lastIndexOf('.'));
+  int fileNumber = 1;
+
+  while (await File(filePath).exists()) {
+    filePath = '${pathWithoutExtension}(${fileNumber.toString()})$extension';
+    fileNumber++;
+  }
+
+  return filePath;
 }
