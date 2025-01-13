@@ -99,7 +99,7 @@ if __name__ == "__main__":
         ele.click()  # Hago click en examinar clases
         ele = wait.until(ec.element_to_be_clickable((By.ID, "select2-chosen-1")))
         ele.click()  # Hago click en seleccionar periodo
-        ele = wait.until(ec.element_to_be_clickable((By.ID, "202420")))
+        ele = wait.until(ec.element_to_be_clickable((By.ID, "202510")))
         ele.click()  # Selecciono el periodo correspondiente 2024-1
         ele = wait.until(ec.element_to_be_clickable((By.ID, "term-go")))
         ele.click()  # Hago click en "ir"
@@ -112,6 +112,7 @@ if __name__ == "__main__":
         seleccionador = Select(ele)
         seleccionador.select_by_value("50")
         time.sleep(15)  # Esperar a que cargue la página
+
         # Obtengo el número de páginas totales
         PAGINAS = int(wait.until(ec.visibility_of_element_located((By.CSS_SELECTOR, "span.total-pages"))).text)
         contaPer = 0
@@ -133,16 +134,19 @@ if __name__ == "__main__":
             print()
             # Recorro todas las perlas
             idx = 0
-            #Probando commits
+
             while idx < len(perlas):
                 per = perlas[idx]
                 contaPer += 1
                 print()
+
                 # Extracción de datos
                 nombre = per.find_element(By.CSS_SELECTOR, 'a').text
                 nombre = formatear_cadena(nombre.title())
+
                 teo = per.find_element(By.CSS_SELECTOR, 'span').text
                 teo = formatear_cadena(teo)
+
                 escuela = per.find_element(By.CSS_SELECTOR, "td[data-property='subjectDescription']").get_attribute("title")
                 numeroCurso = per.find_element(By.CSS_SELECTOR, "td[data-property='courseNumber']").text
                 seccion = per.find_element(By.CSS_SELECTOR, "td[data-property='sequenceNumber']").text
@@ -159,7 +163,6 @@ if __name__ == "__main__":
                         print(full_text)
                         # Busca las horas de crédito en el texto completo
                         if "Horas crédito:" in full_text:
-                            # Divide el texto por líneas y busca la línea que contiene "Horas crédito:"
                             for line in full_text.splitlines():
                                 if "Horas crédito:" in line:
                                     creditos = line.split(":")[1].strip()
@@ -179,7 +182,17 @@ if __name__ == "__main__":
                     except TimeoutException:
                         print("El botón de cerrar no fue encontrado o no es clickable.")
                     print(creditos)
+
                 nrc = per.find_element(By.CSS_SELECTOR, "td[data-property='courseReferenceNumber']").text
+
+                # ====== NUEVO BLOQUE PARA OMITIR VARIOS NRCs PROBLEMÁTICOS ======
+                nrcs_a_omitir = {"2604", "2672", "2594", "2595", "2596", "2597"}
+                if nrc in nrcs_a_omitir:
+                    print(f"Omitimos la clase con NRC {nrc} por error en la página.")
+                    idx += 1
+                    continue
+                # ===============================================================
+
                 instructor = per.find_element(By.CSS_SELECTOR, "td[data-property='instructor']").text
                 if instructor == "":
                     instructor = "NA"
@@ -189,7 +202,7 @@ if __name__ == "__main__":
                 # Guardo el HORARIO usando tu método original
                 strhorario = per.find_element(By.CSS_SELECTOR, "td[data-property='meetingTime']").get_attribute("title")
                 strhorario = strhorario.replace("LunMarMiéJueVieSábDom", " ")
-                strhorario = strhorario.replace("2024", "Tipo")
+                strhorario = strhorario.replace("2025", "Tipo")
                 strhorario = strhorario.split("Tipo")
                 horario = []
                 for i in range(0, len(strhorario), 3):
