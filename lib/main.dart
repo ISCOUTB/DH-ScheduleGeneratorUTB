@@ -138,7 +138,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void removeSubject(Subject subject) {
     setState(() {
-      addedSubjects.removeWhere((s) => s.code == subject.code);
+      addedSubjects
+          .removeWhere((s) => s.code == subject.code && s.name == subject.name);
       usedCredits -= subject.credits;
 
       ScaffoldMessenger.of(context).showSnackBar(
