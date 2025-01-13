@@ -1,0 +1,4 @@
+https://schedulegenerator.vercel.app/
+https://schedule-app-five.vercel.app/
+
+Cualquiera de los dos es funcional.
