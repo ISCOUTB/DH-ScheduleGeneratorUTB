@@ -46184,7 +46184,8 @@ r.toString
 r.f.jO(A.x7(s,s,s,s,s,B.ao,s,A.bT("Materia eliminada: "+p.b,s,s,s,s,s,s),s,B.co,s,s,s,s,s,s,s,s,s))},
 $S:0}
 A.auq.prototype={
-$1(a){return a.a===this.a.a},
+$1(a){var s=this.a
+return a.a===s.a&&a.b===s.b},
 $S:102}
 A.auo.prototype={
 $0(){var s=this.a
