@@ -101,7 +101,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void addSubject(Subject subject) {
     // Verificar si la materia ya fue agregada
-    if (addedSubjects.any((s) => s.code == subject.code)) {
+    if (addedSubjects
+        .any((s) => s.code == subject.code && s.name == subject.name)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('La materia ya ha sido agregada')),
       );
