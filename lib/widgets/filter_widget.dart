@@ -110,264 +110,268 @@ class _FilterWidgetState extends State<FilterWidget> {
             const Divider(),
             // Contenido
             Expanded(
-              child: ListView(
-                children: [
-                  // Filtros por Materia (Profesores)
-                  Theme(
-                    data: Theme.of(context).copyWith(
-                      dividerColor: Colors.transparent,
-                      unselectedWidgetColor:
-                          textColor, // Color de íconos sin seleccionar
-                      colorScheme: Theme.of(context).colorScheme.copyWith(
-                            secondary: accentColor, // Color de acento
-                          ),
-                    ),
-                    child: ExpansionTile(
-                      leading: Icon(Icons.book, color: textColor),
-                      title: Text('Filtros por Materia',
-                          style: TextStyle(color: textColor)),
-                      children: widget.addedSubjects.map((subject) {
-                        String subjectCode = subject.code;
-                        Map<String, dynamic> subjectFilter =
-                            professorsFilters[subjectCode] ??
-                                {
-                                  'filterType': 'include',
-                                  'professors': <String>[],
-                                };
+              child: SingleChildScrollView(
+                // Barra desplazadora aquí
+                child: Column(
+                  children: [
+                    // Filtros por Materia (Profesores)
+                    Theme(
+                      data: Theme.of(context).copyWith(
+                        dividerColor: Colors.transparent,
+                        unselectedWidgetColor:
+                            textColor, // Color de íconos sin seleccionar
+                        colorScheme: Theme.of(context).colorScheme.copyWith(
+                              secondary: accentColor, // Color de acento
+                            ),
+                      ),
+                      child: ExpansionTile(
+                        leading: Icon(Icons.book, color: textColor),
+                        title: Text('Filtros por Materia',
+                            style: TextStyle(color: textColor)),
+                        children: widget.addedSubjects.map((subject) {
+                          String subjectCode = subject.code;
+                          Map<String, dynamic> subjectFilter =
+                              professorsFilters[subjectCode] ??
+                                  {
+                                    'filterType': 'include',
+                                    'professors': <String>[]
+                                  };
 
-                        return Theme(
-                          data: Theme.of(context).copyWith(
-                            dividerColor: Colors.transparent,
-                            unselectedWidgetColor: textColor,
-                            colorScheme: Theme.of(context).colorScheme.copyWith(
-                                  secondary: accentColor,
-                                ),
-                          ),
-                          child: ExpansionTile(
-                            leading: Icon(Icons.book, color: textColor),
-                            title: Text(subject.name,
-                                style: TextStyle(color: textColor)),
-                            children: [
-                              // Opciones de selección única
-                              Column(
-                                children: [
-                                  RadioListTile<String>(
-                                    activeColor: accentColor,
-                                    title: Text(
-                                        'Incluir profesores seleccionados',
-                                        style: TextStyle(color: textColor)),
-                                    value: 'include',
-                                    groupValue: subjectFilter['filterType'],
-                                    onChanged: (value) {
-                                      setState(() {
-                                        subjectFilter['filterType'] = value!;
-                                        professorsFilters[subjectCode] =
-                                            subjectFilter;
-                                      });
-                                    },
-                                  ),
-                                  RadioListTile<String>(
-                                    activeColor: accentColor,
-                                    title: Text(
-                                        'No incluir profesores seleccionados',
-                                        style: TextStyle(color: textColor)),
-                                    value: 'exclude',
-                                    groupValue: subjectFilter['filterType'],
-                                    onChanged: (value) {
-                                      setState(() {
-                                        subjectFilter['filterType'] = value!;
-                                        professorsFilters[subjectCode] =
-                                            subjectFilter;
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              SizedBox(
-                                width: 400,
-                                height: 200,
-                                child: ProfessorFilterWidget(
-                                  subject: subject,
-                                  selectedProfessors: List<String>.from(
-                                      subjectFilter['professors']),
-                                  onSelectionChanged: (selectedProfessors) {
-                                    subjectFilter['professors'] =
-                                        selectedProfessors;
-                                    professorsFilters[subjectCode] =
-                                        subjectFilter;
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  // Filtros de Horas Disponibles
-                  Theme(
-                    data: Theme.of(context).copyWith(
-                      dividerColor: Colors.transparent,
-                      unselectedWidgetColor: textColor,
-                      colorScheme: Theme.of(context).colorScheme.copyWith(
-                            secondary: accentColor,
-                          ),
-                    ),
-                    child: ExpansionTile(
-                      leading: Icon(Icons.access_time, color: textColor),
-                      title: Text('Filtros de Horas Disponibles',
-                          style: TextStyle(color: textColor)),
-                      children: [
-                        // Mostrar días con checkboxes ordenados
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: days.map((day) {
-                            bool isDaySelected = timeFilters.containsKey(day);
-                            return FilterChip(
-                              label:
-                                  Text(day, style: TextStyle(color: textColor)),
-                              selected: isDaySelected,
-                              selectedColor: accentColor,
-                              backgroundColor: isDarkMode
-                                  ? Colors.grey[800]
-                                  : Colors.grey[300],
-                              onSelected: (selected) {
-                                setState(() {
-                                  if (selected) {
-                                    // Agregar el día con horas no disponibles vacías inicialmente
-                                    timeFilters[day] = <String>[];
-                                  } else {
-                                    // Remover el día
-                                    timeFilters.remove(day);
-                                  }
-                                });
-                              },
-                            );
-                          }).toList(),
-                        ),
-                        const SizedBox(height: 10),
-                        // Para cada día seleccionado, mostrar las horas en orden
-                        ...days
-                            .where((day) => timeFilters.containsKey(day))
-                            .map((day) {
-                          List<String> unavailableHours =
-                              List<String>.from(timeFilters[day] ?? []);
-
-                          // Verificar si todas las horas están seleccionadas
-                          bool allHoursSelected =
-                              unavailableHours.length == timeSlots.length;
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                '$day - Selecciona las horas que deseas estar libre:',
-                                style: TextStyle(color: textColor),
-                              ),
-                              // Opción de seleccionar todas las horas
-                              CheckboxListTile(
-                                activeColor: accentColor,
-                                title: Text(
-                                  'Seleccionar todas las horas (No tener clases este día)',
-                                  style: TextStyle(color: textColor),
-                                ),
-                                value: allHoursSelected,
-                                onChanged: (value) {
-                                  setState(() {
-                                    if (value == true) {
-                                      // Seleccionar todas las horas
-                                      unavailableHours =
-                                          List<String>.from(timeSlots);
-                                    } else {
-                                      // Deseleccionar todas las horas
-                                      unavailableHours.clear();
-                                    }
-                                    timeFilters[day] = unavailableHours;
-                                  });
-                                },
-                              ),
-                              SizedBox(
-                                width: 400,
-                                height: 100,
-                                child: GridView.count(
-                                  crossAxisCount: 4,
-                                  childAspectRatio: 3,
-                                  children: timeSlots.map((time) {
-                                    bool isSelected =
-                                        unavailableHours.contains(time);
-                                    return FilterChip(
-                                      label: Text(time,
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              dividerColor: Colors.transparent,
+                              unselectedWidgetColor: textColor,
+                              colorScheme:
+                                  Theme.of(context).colorScheme.copyWith(
+                                        secondary: accentColor,
+                                      ),
+                            ),
+                            child: ExpansionTile(
+                              leading: Icon(Icons.book, color: textColor),
+                              title: Text(subject.name,
+                                  style: TextStyle(color: textColor)),
+                              children: [
+                                // Opciones de selección única
+                                Column(
+                                  children: [
+                                    RadioListTile<String>(
+                                      activeColor: accentColor,
+                                      title: Text(
+                                          'Incluir profesores seleccionados',
                                           style: TextStyle(color: textColor)),
-                                      selected: isSelected,
-                                      selectedColor: accentColor,
-                                      backgroundColor: isDarkMode
-                                          ? Colors.grey[800]
-                                          : Colors.grey[300],
-                                      onSelected: (selected) {
+                                      value: 'include',
+                                      groupValue: subjectFilter['filterType'],
+                                      onChanged: (value) {
                                         setState(() {
-                                          if (selected) {
-                                            unavailableHours.add(time);
-                                          } else {
-                                            unavailableHours.remove(time);
-                                          }
-                                          timeFilters[day] = unavailableHours;
+                                          subjectFilter['filterType'] = value!;
+                                          professorsFilters[subjectCode] =
+                                              subjectFilter;
                                         });
                                       },
-                                    );
-                                  }).toList(),
+                                    ),
+                                    RadioListTile<String>(
+                                      activeColor: accentColor,
+                                      title: Text(
+                                          'No incluir profesores seleccionados',
+                                          style: TextStyle(color: textColor)),
+                                      value: 'exclude',
+                                      groupValue: subjectFilter['filterType'],
+                                      onChanged: (value) {
+                                        setState(() {
+                                          subjectFilter['filterType'] = value!;
+                                          professorsFilters[subjectCode] =
+                                              subjectFilter;
+                                        });
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 10),
+                                SizedBox(
+                                  width: 400,
+                                  height: 200,
+                                  child: ProfessorFilterWidget(
+                                    subject: subject,
+                                    selectedProfessors: List<String>.from(
+                                        subjectFilter['professors']),
+                                    onSelectionChanged: (selectedProfessors) {
+                                      subjectFilter['professors'] =
+                                          selectedProfessors;
+                                      professorsFilters[subjectCode] =
+                                          subjectFilter;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           );
                         }).toList(),
-                      ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  // Opciones de Optimización
-                  Theme(
-                    data: Theme.of(context).copyWith(
-                      dividerColor: Colors.transparent,
-                      unselectedWidgetColor: textColor,
-                      colorScheme: Theme.of(context).colorScheme.copyWith(
-                            secondary: accentColor,
+                    const SizedBox(height: 10),
+                    // Filtros de Horas Disponibles
+                    Theme(
+                      data: Theme.of(context).copyWith(
+                        dividerColor: Colors.transparent,
+                        unselectedWidgetColor: textColor,
+                        colorScheme: Theme.of(context).colorScheme.copyWith(
+                              secondary: accentColor,
+                            ),
+                      ),
+                      child: ExpansionTile(
+                        leading: Icon(Icons.access_time, color: textColor),
+                        title: Text('Filtros de Horas Disponibles',
+                            style: TextStyle(color: textColor)),
+                        children: [
+                          // Mostrar días con checkboxes ordenados
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: days.map((day) {
+                              bool isDaySelected = timeFilters.containsKey(day);
+                              return FilterChip(
+                                label: Text(day,
+                                    style: TextStyle(color: textColor)),
+                                selected: isDaySelected,
+                                selectedColor: accentColor,
+                                backgroundColor: isDarkMode
+                                    ? Colors.grey[800]
+                                    : Colors.grey[300],
+                                onSelected: (selected) {
+                                  setState(() {
+                                    if (selected) {
+                                      // Agregar el día con horas no disponibles vacías inicialmente
+                                      timeFilters[day] = <String>[];
+                                    } else {
+                                      // Remover el día
+                                      timeFilters.remove(day);
+                                    }
+                                  });
+                                },
+                              );
+                            }).toList(),
                           ),
+                          const SizedBox(height: 10),
+                          // Para cada día seleccionado, mostrar las horas en orden
+                          ...days
+                              .where((day) => timeFilters.containsKey(day))
+                              .map((day) {
+                            List<String> unavailableHours =
+                                List<String>.from(timeFilters[day] ?? []);
+
+                            // Verificar si todas las horas están seleccionadas
+                            bool allHoursSelected =
+                                unavailableHours.length == timeSlots.length;
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '$day - Selecciona las horas que deseas estar libre:',
+                                  style: TextStyle(color: textColor),
+                                ),
+                                // Opción de seleccionar todas las horas
+                                CheckboxListTile(
+                                  activeColor: accentColor,
+                                  title: Text(
+                                    'Seleccionar todas las horas (No tener clases este día)',
+                                    style: TextStyle(color: textColor),
+                                  ),
+                                  value: allHoursSelected,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (value == true) {
+                                        // Seleccionar todas las horas
+                                        unavailableHours =
+                                            List<String>.from(timeSlots);
+                                      } else {
+                                        // Deseleccionar todas las horas
+                                        unavailableHours.clear();
+                                      }
+                                      timeFilters[day] = unavailableHours;
+                                    });
+                                  },
+                                ),
+                                SizedBox(
+                                  width: 400,
+                                  height: 100,
+                                  child: GridView.count(
+                                    crossAxisCount: 4,
+                                    childAspectRatio: 3,
+                                    children: timeSlots.map((time) {
+                                      bool isSelected =
+                                          unavailableHours.contains(time);
+                                      return FilterChip(
+                                        label: Text(time,
+                                            style: TextStyle(color: textColor)),
+                                        selected: isSelected,
+                                        selectedColor: accentColor,
+                                        backgroundColor: isDarkMode
+                                            ? Colors.grey[800]
+                                            : Colors.grey[300],
+                                        onSelected: (selected) {
+                                          setState(() {
+                                            if (selected) {
+                                              unavailableHours.add(time);
+                                            } else {
+                                              unavailableHours.remove(time);
+                                            }
+                                            timeFilters[day] = unavailableHours;
+                                          });
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ],
+                      ),
                     ),
-                    child: ExpansionTile(
-                      leading: Icon(Icons.sort, color: textColor),
-                      title: Text('Opciones de Optimización',
-                          style: TextStyle(color: textColor)),
-                      children: [
-                        SwitchListTile(
-                          activeColor: accentColor,
-                          title: Text('Optimizar Horas (Menos huecos)',
-                              style: TextStyle(color: textColor)),
-                          value: optimizeGaps,
-                          onChanged: (value) {
-                            setState(() {
-                              optimizeGaps = value;
-                            });
-                          },
-                        ),
-                        SwitchListTile(
-                          activeColor: accentColor,
-                          title: Text(
-                              'Optimizar Días Libres (Más días libres primero)',
-                              style: TextStyle(color: textColor)),
-                          value: optimizeFreeDays,
-                          onChanged: (value) {
-                            setState(() {
-                              optimizeFreeDays = value;
-                            });
-                          },
-                        ),
-                      ],
+                    const SizedBox(height: 10),
+                    // Opciones de Optimización
+                    Theme(
+                      data: Theme.of(context).copyWith(
+                        dividerColor: Colors.transparent,
+                        unselectedWidgetColor: textColor,
+                        colorScheme: Theme.of(context).colorScheme.copyWith(
+                              secondary: accentColor,
+                            ),
+                      ),
+                      child: ExpansionTile(
+                        leading: Icon(Icons.sort, color: textColor),
+                        title: Text('Opciones de Optimización',
+                            style: TextStyle(color: textColor)),
+                        children: [
+                          SwitchListTile(
+                            activeColor: accentColor,
+                            title: Text('Optimizar Horas (Menos huecos)',
+                                style: TextStyle(color: textColor)),
+                            value: optimizeGaps,
+                            onChanged: (value) {
+                              setState(() {
+                                optimizeGaps = value;
+                              });
+                            },
+                          ),
+                          SwitchListTile(
+                            activeColor: accentColor,
+                            title: Text(
+                                'Optimizar Días Libres (Más días libres primero)',
+                                style: TextStyle(color: textColor)),
+                            value: optimizeFreeDays,
+                            onChanged: (value) {
+                              setState(() {
+                                optimizeFreeDays = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             // Botones
