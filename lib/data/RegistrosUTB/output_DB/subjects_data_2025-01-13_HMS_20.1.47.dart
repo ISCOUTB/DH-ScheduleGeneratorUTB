@@ -78,7 +78,7 @@ List<Subject> subjects = [
         subjectName: 'Creatividad y emprendimiento',
         type: 'Teórico',
         credits: 3,
-        professor: 'Lina Margarita Marrugo Salas',
+        professor: 'Luis Carlos Arraut Camargo',
         nrc: '2119',
         groupId: 3,
         schedules: [
@@ -130,7 +130,7 @@ List<Subject> subjects = [
         subjectName: 'Creatividad y emprendimiento',
         type: 'Teórico',
         credits: 3,
-        professor: 'Luis Carlos Arraut Camargo',
+        professor: 'Lina Margarita Marrugo Salas',
         nrc: '2126',
         groupId: 7,
         schedules: [
@@ -156,7 +156,7 @@ List<Subject> subjects = [
         subjectName: 'Creatividad y emprendimiento',
         type: 'Teórico',
         credits: 3,
-        professor: 'NA',
+        professor: 'Lina Margarita Marrugo Salas',
         nrc: '2129',
         groupId: 9,
         schedules: [
@@ -169,7 +169,7 @@ List<Subject> subjects = [
         subjectName: 'Creatividad y emprendimiento',
         type: 'Teórico',
         credits: 3,
-        professor: 'Lina Margarita Marrugo Salas',
+        professor: 'Javier Marquez Orozco',
         nrc: '2130',
         groupId: 10,
         schedules: [
@@ -1987,14 +1987,12 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'D02A',
-    name:
-        'Programación para ciencia de datos programación para ciencia de datos',
+    name: 'Programación para ciencia de datos programación para ciencia de datos',
     credits: 3,
     classOptions: [
       ClassOption(
         subjectCode: 'D02A',
-        subjectName:
-            'Programación para ciencia de datos programación para ciencia de datos',
+        subjectName: 'Programación para ciencia de datos programación para ciencia de datos',
         type: 'Teórico',
         credits: 3,
         professor: 'David Sierra Porta',
@@ -2669,9 +2667,23 @@ List<Subject> subjects = [
         subjectName: 'Estadística y probabilidad',
         type: 'Teórico',
         credits: 3,
+        professor: 'Cecilia Paillier Gonzalez',
+        nrc: '1085',
+        groupId: 6,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 14:50'),
+          Schedule(day: 'Viernes', time: '14:00 - 14:50'),
+          Schedule(day: 'Viernes', time: '15:00 - 15:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'E01A',
+        subjectName: 'Estadística y probabilidad',
+        type: 'Teórico',
+        credits: 3,
         professor: 'Julio Seferino Hurtado Marquez',
         nrc: '1136',
-        groupId: 6,
+        groupId: 7,
         schedules: [
           Schedule(day: 'Jueves', time: '07:00 - 08:50'),
           Schedule(day: 'Lunes', time: '09:00 - 09:50'),
@@ -2876,8 +2888,7 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'E04A',
-        subjectName:
-            'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Roberto Enrique Gomez Fernandez',
@@ -2891,8 +2902,7 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName:
-            'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Jorge Luis Villalba Acevedo',
@@ -2906,8 +2916,7 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName:
-            'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Julio Seferino Hurtado Marquez',
@@ -2921,8 +2930,7 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName:
-            'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Jorge Luis Villalba Acevedo',
@@ -2936,8 +2944,7 @@ List<Subject> subjects = [
       ),
       ClassOption(
         subjectCode: 'E04A',
-        subjectName:
-            'Estadística ii (facultad ciencias sociales y humanidades)',
+        subjectName: 'Estadística ii (facultad ciencias sociales y humanidades)',
         type: 'Teórico',
         credits: 3,
         professor: 'Jorge Luis Villalba Acevedo',
@@ -5521,7 +5528,7 @@ List<Subject> subjects = [
         subjectName: 'Costos para la toma de decisio',
         type: 'Teórico',
         credits: 3,
-        professor: 'NA',
+        professor: 'Ana Susana Cantillo Orozco',
         nrc: '2283',
         groupId: 2,
         schedules: [
@@ -5547,7 +5554,7 @@ List<Subject> subjects = [
         subjectName: 'Costos para la toma de decisio',
         type: 'Teórico',
         credits: 3,
-        professor: 'Ana Susana Cantillo Orozco',
+        professor: 'NA',
         nrc: '2292',
         groupId: 4,
         schedules: [
@@ -5580,7 +5587,7 @@ List<Subject> subjects = [
         subjectName: 'Fundamentos de costos',
         type: 'Teórico',
         credits: 3,
-        professor: 'NA',
+        professor: 'Ana Susana Cantillo Orozco',
         nrc: '2284',
         groupId: 2,
         schedules: [
@@ -5606,7 +5613,7 @@ List<Subject> subjects = [
         subjectName: 'Fundamentos de costos',
         type: 'Teórico',
         credits: 3,
-        professor: 'Ana Susana Cantillo Orozco',
+        professor: 'NA',
         nrc: '2293',
         groupId: 4,
         schedules: [
@@ -5626,7 +5633,7 @@ List<Subject> subjects = [
         subjectName: 'Costos modernos',
         type: 'Teórico',
         credits: 3,
-        professor: 'Ana Susana Cantillo Orozco',
+        professor: 'NA',
         nrc: '2325',
         groupId: 1,
         schedules: [
@@ -5783,7 +5790,7 @@ List<Subject> subjects = [
         subjectName: 'Derecho empresarial y laboral',
         type: 'Teórico',
         credits: 3,
-        professor: 'Carmen Edith Moscote Bustamante',
+        professor: 'NA',
         nrc: '2315',
         groupId: 1,
         schedules: [
@@ -5796,7 +5803,7 @@ List<Subject> subjects = [
         subjectName: 'Derecho empresarial y laboral',
         type: 'Teórico',
         credits: 3,
-        professor: 'Carmen Edith Moscote Bustamante',
+        professor: 'NA',
         nrc: '2316',
         groupId: 2,
         schedules: [
@@ -5876,7 +5883,7 @@ List<Subject> subjects = [
         subjectName: 'Costos modernos',
         type: 'Teórico',
         credits: 3,
-        professor: 'Ana Susana Cantillo Orozco',
+        professor: 'NA',
         nrc: '2326',
         groupId: 1,
         schedules: [
@@ -7104,7 +7111,7 @@ List<Subject> subjects = [
         subjectName: 'Macroeconomía iii',
         type: 'Teórico',
         credits: 3,
-        professor: 'Augusto Andres Alean Romero',
+        professor: 'NA',
         nrc: '2247',
         groupId: 1,
         schedules: [
@@ -9826,7 +9833,7 @@ List<Subject> subjects = [
         subjectName: 'Ingles ii',
         type: 'Teórico',
         credits: 2,
-        professor: 'NA',
+        professor: 'Stefania Arias Cifuentes',
         nrc: '2552',
         groupId: 11,
         schedules: [
@@ -10250,8 +10257,7 @@ List<Subject> subjects = [
     classOptions: [
       ClassOption(
         subjectCode: 'I03A',
-        subjectName:
-            'Ingles iii programa de arquitectura (presencial - remoto)',
+        subjectName: 'Ingles iii programa de arquitectura (presencial - remoto)',
         type: 'Teórico',
         credits: 2,
         professor: 'Lorena Bermejo Banquez',
@@ -12229,26 +12235,6 @@ List<Subject> subjects = [
     ],
   ),
   Subject(
-    code: 'A16A',
-    name: 'Estructuras metálicas',
-    credits: 3,
-    classOptions: [
-      ClassOption(
-        subjectCode: 'A16A',
-        subjectName: 'Estructuras metálicas',
-        type: 'Teórico',
-        credits: 3,
-        professor: 'Sergio Villar Salinas',
-        nrc: '2535',
-        groupId: 1,
-        schedules: [
-          Schedule(day: 'Martes', time: '11:00 - 12:50'),
-          Schedule(day: 'Viernes', time: '13:00 - 13:50'),
-        ],
-      ),
-    ],
-  ),
-  Subject(
     code: 'A17A',
     name: 'Estabilidad de taludes y obras',
     credits: 3,
@@ -12310,14 +12296,12 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'A22A',
-    name:
-        'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
+    name: 'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
     credits: 3,
     classOptions: [
       ClassOption(
         subjectCode: 'A22A',
-        subjectName:
-            'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
+        subjectName: 'Soluciones de infraestructura basadas en ecosistemas para adaptación al cambio climático',
         type: 'Teórico',
         credits: 3,
         professor: 'Mauro Antonio Maza Chamorro',
@@ -12483,42 +12467,6 @@ List<Subject> subjects = [
         groupId: 1,
         schedules: [
           Schedule(day: 'Jueves', time: '14:00 - 14:50'),
-        ],
-      ),
-      ClassOption(
-        subjectCode: 'B03A',
-        subjectName: 'Geomática',
-        type: 'Teórico',
-        credits: 3,
-        professor: 'Milton Cesar Guerrero Pajaro',
-        nrc: '2609',
-        groupId: 2,
-        schedules: [
-          Schedule(day: 'Lunes', time: '12:00 - 13:50'),
-        ],
-      ),
-      ClassOption(
-        subjectCode: 'B03A',
-        subjectName: 'Geomática',
-        type: 'Laboratorio',
-        credits: 3,
-        professor: 'Milton Cesar Guerrero Pajaro',
-        nrc: '2610',
-        groupId: 2,
-        schedules: [
-          Schedule(day: 'Miércoles', time: '15:00 - 15:50'),
-        ],
-      ),
-      ClassOption(
-        subjectCode: 'B03A',
-        subjectName: 'Geomática',
-        type: 'Laboratorio',
-        credits: 3,
-        professor: 'Milton Cesar Guerrero Pajaro',
-        nrc: '2611',
-        groupId: 2,
-        schedules: [
-          Schedule(day: 'Viernes', time: '09:00 - 09:50'),
         ],
       ),
     ],
@@ -13183,7 +13131,7 @@ List<Subject> subjects = [
         subjectName: 'Instrumentación eléct y electr',
         type: 'Teórico',
         credits: 3,
-        professor: 'Yina Paola Cabarcas Mena',
+        professor: 'Enrique Vanegas Casadiego',
         nrc: '1988',
         groupId: 1,
         schedules: [
@@ -13328,7 +13276,7 @@ List<Subject> subjects = [
         subjectName: 'Instrumentación electrónica',
         type: 'Teórico',
         credits: 3,
-        professor: 'Yina Paola Cabarcas Mena',
+        professor: 'Enrique Vanegas Casadiego',
         nrc: '1989',
         groupId: 1,
         schedules: [
@@ -14861,11 +14809,11 @@ List<Subject> subjects = [
         subjectName: 'Mecánica de fluidos',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Veronica Jesus Abuchar Soto',
+        professor: 'Erick Campo Rojas',
         nrc: '1841',
         groupId: 1,
         schedules: [
-          Schedule(day: 'Viernes', time: '08:00 - 08:50'),
+          Schedule(day: 'Martes', time: '14:00 - 14:50'),
         ],
       ),
       ClassOption(
@@ -14873,11 +14821,11 @@ List<Subject> subjects = [
         subjectName: 'Mecánica de fluidos',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Veronica Jesus Abuchar Soto',
+        professor: 'Andrea Carolina Mendoza Zabaleta',
         nrc: '1842',
         groupId: 1,
         schedules: [
-          Schedule(day: 'Viernes', time: '09:00 - 09:50'),
+          Schedule(day: 'Martes', time: '10:00 - 10:50'),
         ],
       ),
       ClassOption(
@@ -14909,11 +14857,11 @@ List<Subject> subjects = [
         subjectName: 'Mecánica de fluidos',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Veronica Jesus Abuchar Soto',
+        professor: 'NA',
         nrc: '1845',
         groupId: 1,
         schedules: [
-          Schedule(day: 'Viernes', time: '14:00 - 14:50'),
+          Schedule(day: 'Miércoles', time: '12:00 - 12:50'),
         ],
       ),
       ClassOption(
@@ -14970,7 +14918,7 @@ List<Subject> subjects = [
         subjectName: 'Mecánica de fluidos',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Andrea Carolina Mendoza Zabaleta',
+        professor: 'Erick Campo Rojas',
         nrc: '1950',
         groupId: 2,
         schedules: [
@@ -14982,7 +14930,7 @@ List<Subject> subjects = [
         subjectName: 'Mecánica de fluidos',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Andrea Carolina Mendoza Zabaleta',
+        professor: 'Erick Campo Rojas',
         nrc: '1951',
         groupId: 2,
         schedules: [
@@ -15041,7 +14989,7 @@ List<Subject> subjects = [
         subjectName: 'Termodinámica ii',
         type: 'Teórico',
         credits: 3,
-        professor: 'Juan Gabriel Fajardo Cuadro',
+        professor: 'Deibys David Barreto Ponton',
         nrc: '1882',
         groupId: 1,
         schedules: [
@@ -15154,7 +15102,7 @@ List<Subject> subjects = [
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Daniel Andres Montoya Espinosa',
+        professor: 'Yira Patricia Alcazar Oviedo',
         nrc: '1199',
         groupId: 1,
         schedules: [
@@ -15178,7 +15126,7 @@ List<Subject> subjects = [
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Deibys David Barreto Ponton',
+        professor: 'Yira Patricia Alcazar Oviedo',
         nrc: '1201',
         groupId: 1,
         schedules: [
@@ -15215,7 +15163,7 @@ List<Subject> subjects = [
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Daniel Andres Montoya Espinosa',
+        professor: 'Yira Patricia Alcazar Oviedo',
         nrc: '1379',
         groupId: 2,
         schedules: [
@@ -15227,7 +15175,7 @@ List<Subject> subjects = [
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Alexander Jose Narvaez Cruz',
+        professor: 'Yira Patricia Alcazar Oviedo',
         nrc: '1380',
         groupId: 2,
         schedules: [
@@ -15251,7 +15199,7 @@ List<Subject> subjects = [
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Walberto Marrugo Orozco',
+        professor: 'Yira Patricia Alcazar Oviedo',
         nrc: '1382',
         groupId: 2,
         schedules: [
@@ -15276,7 +15224,7 @@ List<Subject> subjects = [
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Walberto Marrugo Orozco',
+        professor: 'Yira Patricia Alcazar Oviedo',
         nrc: '2594',
         groupId: 3,
         schedules: [
@@ -15328,8 +15276,8 @@ List<Subject> subjects = [
         nrc: '2673',
         groupId: 4,
         schedules: [
-          Schedule(day: 'Lunes', time: '17:00 - 17:50'),
-          Schedule(day: 'Jueves', time: '17:00 - 18:50'),
+          Schedule(day: 'Jueves', time: '07:00 - 07:50'),
+          Schedule(day: 'Miércoles', time: '11:00 - 12:50'),
         ],
       ),
       ClassOption(
@@ -15349,7 +15297,7 @@ List<Subject> subjects = [
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Alexander Jose Narvaez Cruz',
+        professor: 'Yira Patricia Alcazar Oviedo',
         nrc: '2591',
         groupId: 4,
         schedules: [
@@ -15373,7 +15321,7 @@ List<Subject> subjects = [
         subjectName: 'Materiales i',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'Deibys David Barreto Ponton',
+        professor: 'Yira Patricia Alcazar Oviedo',
         nrc: '2592',
         groupId: 4,
         schedules: [
@@ -15763,7 +15711,7 @@ List<Subject> subjects = [
         subjectName: 'Sist mecatrónicos programables',
         type: 'Teórico',
         credits: 3,
-        professor: 'George Washington Archbold Taylor',
+        professor: 'Harold Alberto Rodriguez Arias',
         nrc: '2427',
         groupId: 1,
         schedules: [
@@ -15776,7 +15724,7 @@ List<Subject> subjects = [
         subjectName: 'Sist mecatrónicos programables',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'George Washington Archbold Taylor',
+        professor: 'Harold Alberto Rodriguez Arias',
         nrc: '2428',
         groupId: 1,
         schedules: [
@@ -15788,7 +15736,7 @@ List<Subject> subjects = [
         subjectName: 'Sist mecatrónicos programables',
         type: 'Laboratorio',
         credits: 3,
-        professor: 'George Washington Archbold Taylor',
+        professor: 'Harold Alberto Rodriguez Arias',
         nrc: '2606',
         groupId: 1,
         schedules: [
@@ -16646,7 +16594,7 @@ List<Subject> subjects = [
         subjectName: 'Sistemas de imágenes médicas',
         type: 'Teórico',
         credits: 3,
-        professor: 'Caleb David Romero Mercado',
+        professor: 'Raul Andres Vargas Ramirez',
         nrc: '2577',
         groupId: 1,
         schedules: [
@@ -16686,7 +16634,7 @@ List<Subject> subjects = [
         subjectName: 'Base de datos',
         type: 'Teórico',
         credits: 3,
-        professor: 'Aisner Jose Marrugo Juliao',
+        professor: 'NA',
         nrc: '2305',
         groupId: 1,
         schedules: [
@@ -16699,7 +16647,7 @@ List<Subject> subjects = [
         subjectName: 'Base de datos',
         type: 'Teórico',
         credits: 3,
-        professor: 'Aisner Jose Marrugo Juliao',
+        professor: 'NA',
         nrc: '2317',
         groupId: 2,
         schedules: [
@@ -17054,7 +17002,7 @@ List<Subject> subjects = [
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
-        professor: 'Sergio Arturo Medina Castillo',
+        professor: 'Oscar Pablo Porto Solano',
         nrc: '1134',
         groupId: 2,
         schedules: [
@@ -17080,7 +17028,7 @@ List<Subject> subjects = [
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
-        professor: 'Carlos Ernesto Botero Pareja',
+        professor: 'Maria Eugenia Rincon Socha',
         nrc: '1147',
         groupId: 4,
         schedules: [
@@ -17106,7 +17054,7 @@ List<Subject> subjects = [
         subjectName: 'Programación',
         type: 'Teórico',
         credits: 3,
-        professor: 'NA',
+        professor: 'Sergio Arturo Medina Castillo',
         nrc: '1684',
         groupId: 6,
         schedules: [
@@ -17126,7 +17074,7 @@ List<Subject> subjects = [
         subjectName: 'Programación orientada a objet',
         type: 'Teórico',
         credits: 3,
-        professor: 'Yuranis Henriquez Nuñez',
+        professor: 'Carlos Ernesto Botero Pareja',
         nrc: '2123',
         groupId: 1,
         schedules: [
@@ -17139,7 +17087,7 @@ List<Subject> subjects = [
         subjectName: 'Programación orientada a objet',
         type: 'Teórico',
         credits: 3,
-        professor: 'Yuranis Henriquez Nuñez',
+        professor: 'Carlos Ernesto Botero Pareja',
         nrc: '2198',
         groupId: 2,
         schedules: [
@@ -17165,7 +17113,7 @@ List<Subject> subjects = [
         subjectName: 'Programación orientada a objet',
         type: 'Teórico',
         credits: 3,
-        professor: 'Yuranis Henriquez Nuñez',
+        professor: 'Carlos Ernesto Botero Pareja',
         nrc: '2236',
         groupId: 4,
         schedules: [
@@ -17178,7 +17126,7 @@ List<Subject> subjects = [
         subjectName: 'Programación orientada a objet',
         type: 'Teórico',
         credits: 3,
-        professor: 'Yuranis Henriquez Nuñez',
+        professor: 'Carlos Ernesto Botero Pareja',
         nrc: '2265',
         groupId: 5,
         schedules: [
@@ -17231,11 +17179,11 @@ List<Subject> subjects = [
         subjectName: 'Matemática discreta',
         type: 'Teórico',
         credits: 3,
-        professor: 'NA',
+        professor: 'Maria Fernanda Medina Reyes',
         nrc: '1021',
         groupId: 1,
         schedules: [
-          Schedule(day: 'Jueves', time: '13:00 - 13:50'),
+          Schedule(day: 'Viernes', time: '08:00 - 08:50'),
           Schedule(day: 'Martes', time: '15:00 - 16:50'),
         ],
       ),
@@ -17244,7 +17192,7 @@ List<Subject> subjects = [
         subjectName: 'Matemática discreta',
         type: 'Teórico',
         credits: 3,
-        professor: 'NA',
+        professor: 'Maria Fernanda Medina Reyes',
         nrc: '1028',
         groupId: 2,
         schedules: [
@@ -17303,7 +17251,7 @@ List<Subject> subjects = [
         subjectName: 'Procesamiento numérico',
         type: 'Teórico',
         credits: 3,
-        professor: 'Juan Carlos Mantilla Gomez',
+        professor: 'NA',
         nrc: '1348',
         groupId: 4,
         schedules: [
@@ -17935,14 +17883,12 @@ List<Subject> subjects = [
   ),
   Subject(
     code: 'E04A',
-    name:
-        'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
+    name: 'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
     credits: 3,
     classOptions: [
       ClassOption(
         subjectCode: 'E04A',
-        subjectName:
-            'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
+        subjectName: 'Sexualidad humana sexualidad humana sexualidad humana sexualidad humana sexualidad humana',
         type: 'Teórico',
         credits: 3,
         professor: 'Marlyn Patricia Conde Gutierrez',
@@ -18562,6 +18508,30 @@ List<Subject> subjects = [
         groupId: 1,
         schedules: [
           Schedule(day: 'Jueves', time: '11:00 - 12:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'S19A',
+        subjectName: 'Aprendizaje y memoria',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Everly Marcela Garcia De La Ossa',
+        nrc: '1639',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '14:00 - 14:50'),
+        ],
+      ),
+      ClassOption(
+        subjectCode: 'S19A',
+        subjectName: 'Aprendizaje y memoria',
+        type: 'Laboratorio',
+        credits: 3,
+        professor: 'Everly Marcela Garcia De La Ossa',
+        nrc: '1640',
+        groupId: 1,
+        schedules: [
+          Schedule(day: 'Martes', time: '13:00 - 13:50'),
         ],
       ),
       ClassOption(
