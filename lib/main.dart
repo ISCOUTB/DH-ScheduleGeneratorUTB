@@ -35,9 +35,14 @@ class MyApp extends StatelessWidget {
     );
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Generador de Horarios UTB',
       theme: theme,
-      home: const MyHomePage(title: 'Generador de Horarios UTB'),
+      home: Center(
+        child: const MyHomePage(
+          title: "Generador de horarios UTB",
+        ),
+      ),
     );
   }
 }
@@ -218,23 +223,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   backgroundColor: Colors.transparent,
                   elevation: 0,
                 ),
-      bottomNavigationBar: mobile && orientation == Orientation.portrait
-          ? BottomAppBar(
-              color: Colors.indigo,
-              child: Container(
-                height: kToolbarHeight,
-                alignment: Alignment.center,
-                child: Text(
-                  widget.title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            )
-          : null,
-      body: Container(
+
+          body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Colors.indigo.shade900, Colors.indigo.shade500],
@@ -257,15 +247,91 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               )
             else
-              Row(
+              Column(
                 children: [
-                  // Menú lateral personalizado
+                  // Instrucciones en la parte superior
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      color: Colors.indigo, // Fondo opcional para destacar las instrucciones
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: const Text(
+                              '¡Bienvenido al Generador de Horarios UTB!',
+                              style: TextStyle(fontSize: 24, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Align(
+                            alignment: Alignment.center,
+                            child: const Text(
+                              'Instrucciones:',
+                              style: TextStyle(fontSize: 20, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.center,
+                            child: const Text(
+                              '1. Para buscar y agregar materias.',
+                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.center,
+                            child: const Text(
+                              '2. Puedes revisar materias previamente seleccionadas.',
+                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.center,
+                            child: const Text(
+                              '3. Opcionalmente, puedes aplicar filtros haciendo clic en el ícono de filtro.',
+                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.center,
+                            child: const Text(
+                              '4. Para generar los horarios posibles.',
+                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Align(
+                            alignment: Alignment.center,
+                            child: const Text(
+                              '5. Los horarios generados aparecerán en la pantalla. Puedes presionar sobre ellos para ver los detalles de las materias.',
+                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Menú desplegable inferior
                   Container(
-                    width: 60,
-                    color: Colors.indigo,
-                    child: Column(
+                    color: Colors.indigo[800],
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        const SizedBox(height: 20),
                         // Botón de búsqueda
                         MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -281,7 +347,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
                         // Botón de materias seleccionadas
                         MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -297,7 +362,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
                         // Botón de filtros
                         MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -309,12 +373,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             },
                             child: const Tooltip(
                               message: 'Filtrar Horarios',
-                              child:
-                                  Icon(Icons.filter_list, color: Colors.white),
+                              child: Icon(Icons.filter_list, color: Colors.white),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 20),
                         // Botón para limpiar horarios generados
                         MouseRegion(
                           cursor: SystemMouseCursors.click,
@@ -324,111 +386,29 @@ class _MyHomePageState extends State<MyHomePage> {
                             },
                             child: const Tooltip(
                               message: 'Limpiar Horarios Generados',
-                              child: Icon(Icons.delete_outline,
-                                  color: Colors.white),
+                              child: Icon(Icons.delete_outline, color: Colors.white),
                             ),
                           ),
                         ),
-                        const Spacer(),
                         // Botón de generar horarios
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.amber,
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(16),
-                            ),
-                            onPressed: generateSchedule,
-                            child: const Tooltip(
-                              message: 'Generar Horarios',
-                              child: Icon(Icons.calendar_today,
-                                  color: Colors.white),
-                            ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.amber,
+                            shape: const CircleBorder(),
+                            padding: const EdgeInsets.all(16),
+                          ),
+                          onPressed: generateSchedule,
+                          child: const Tooltip(
+                            message: 'Generar Horarios',
+                            child: Icon(Icons.calendar_today, color: Colors.white),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  // Contenido principal
-                  Expanded(
-                    child: Center(
-                      child: allSchedules.isEmpty
-                          ? SingleChildScrollView(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    '¡Bienvenido al Generador de Horarios UTB!',
-                                    style: TextStyle(
-                                        fontSize: 24, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  const Text(
-                                    'Instrucciones:',
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '1. Haz clic en el ícono de búsqueda en la barra lateral izquierda para buscar y agregar materias.',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '2. Una vez agregadas las materias, puedes revisar las materias seleccionadas haciendo clic en el ícono de lista.',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '3. Opcionalmente, puedes aplicar filtros haciendo clic en el ícono de filtro.',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '4. Para generar los horarios posibles, haz clic en el botón amarillo con el ícono de calendario en la parte inferior de la barra lateral.',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '5. Los horarios generados aparecerán en la pantalla. Puedes presionar sobre ellos para ver los detalles de las materias.',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '6. Para limpiar los horarios generados, haz clic en el ícono de la papelera en la barra lateral.',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            )
-                          : ScheduleGridWidget(
-                              allSchedules: allSchedules,
-                              onScheduleTap: (index) {
-                                setState(() {
-                                  selectedScheduleIndex = index;
-                                });
-                              },
-                            ),
-                    ),
-                  ),
                 ],
               ),
+
             // Ventana emergente de búsqueda de materias
             if (isSearchOpen)
               GestureDetector(

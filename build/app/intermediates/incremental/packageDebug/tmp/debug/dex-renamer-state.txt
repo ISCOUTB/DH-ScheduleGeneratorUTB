@@ -1,9 +1,9 @@
-#Wed Nov 13 10:49:49 COT 2024
-base.0=C\:\\Users\\gabri\\OneDrive\\Documentos\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
-base.1=C\:\\Users\\gabri\\OneDrive\\Documentos\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
-base.2=C\:\\Users\\gabri\\OneDrive\\Documentos\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
-base.3=C\:\\Users\\gabri\\OneDrive\\Documentos\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
-base.4=C\:\\Users\\gabri\\OneDrive\\Documentos\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\4\\classes.dex
+#Sat Jan 18 22:33:13 COT 2025
+base.0=C\:\\Users\\diego\\Documents\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+base.1=C\:\\Users\\diego\\Documents\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
+base.2=C\:\\Users\\diego\\Documents\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.3=C\:\\Users\\diego\\Documents\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
+base.4=C\:\\Users\\diego\\Documents\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\4\\classes.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.2=0/classes.dex

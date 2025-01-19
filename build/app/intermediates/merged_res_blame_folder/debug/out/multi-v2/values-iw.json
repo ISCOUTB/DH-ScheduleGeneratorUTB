@@ -4,7 +4,7 @@
             "outputFile": "com.example.try_2_schedule.app-mergeDebugResources-28:/values-iw/values-iw.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\gabri\\.gradle\\caches\\transforms-3\\c666c258fca39b3353b46678a6b928ab\\transformed\\core-1.13.1\\res\\values-iw\\values-iw.xml",
+                    "source": "C:\\Users\\diego\\.gradle\\caches\\transforms-3\\bb3172c823fb58e565079496c53b8a96\\transformed\\core-1.13.1\\res\\values-iw\\values-iw.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\gabri\\.gradle\\caches\\transforms-3\\8b51bb040b32a2abc8f296afdae29f34\\transformed\\appcompat-1.6.1\\res\\values-iw\\values-iw.xml",
+                    "source": "C:\\Users\\diego\\.gradle\\caches\\transforms-3\\68bd05df00a0ae4e1052bc2fc2e24e60\\transformed\\appcompat-1.6.1\\res\\values-iw\\values-iw.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
