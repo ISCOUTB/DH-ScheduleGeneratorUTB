@@ -360,7 +360,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   const Text(
-                                    '¡Bienvenido al Generador de Horarios UTB!',
+                                    '¡Bienvenido al Generador de Horarios UTB! (Actualizado 18/01/2025)',
                                     style: TextStyle(
                                         fontSize: 24, color: Colors.white),
                                     textAlign: TextAlign.center,
