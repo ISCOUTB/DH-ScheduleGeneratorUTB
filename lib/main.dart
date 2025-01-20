@@ -277,47 +277,47 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           const SizedBox(height: 10),
                           Align(
-                            alignment: Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: const Text(
                               '1. Para buscar y agregar materias.',
                               style: TextStyle(fontSize: 16, color: Colors.white),
-                              textAlign: TextAlign.center,
+                              textAlign: TextAlign.left,
                             ),
                           ),
                           const SizedBox(height: 10),
                           Align(
-                            alignment: Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: const Text(
                               '2. Puedes revisar materias previamente seleccionadas.',
                               style: TextStyle(fontSize: 16, color: Colors.white),
-                              textAlign: TextAlign.center,
+                              textAlign: TextAlign.left,
                             ),
                           ),
                           const SizedBox(height: 10),
                           Align(
-                            alignment: Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: const Text(
                               '3. Opcionalmente, puedes aplicar filtros haciendo clic en el ícono de filtro.',
                               style: TextStyle(fontSize: 16, color: Colors.white),
-                              textAlign: TextAlign.center,
+                              textAlign: TextAlign.left,
                             ),
                           ),
                           const SizedBox(height: 10),
                           Align(
-                            alignment: Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: const Text(
                               '4. Para generar los horarios posibles.',
                               style: TextStyle(fontSize: 16, color: Colors.white),
-                              textAlign: TextAlign.center,
+                              textAlign: TextAlign.left,
                             ),
                           ),
                           const SizedBox(height: 10),
                           Align(
-                            alignment: Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: const Text(
                               '5. Los horarios generados aparecerán en la pantalla. Puedes presionar sobre ellos para ver los detalles de las materias.',
                               style: TextStyle(fontSize: 16, color: Colors.white),
-                              textAlign: TextAlign.center,
+                              textAlign: TextAlign.left,
                             ),
                           ),
                           const SizedBox(height: 10),

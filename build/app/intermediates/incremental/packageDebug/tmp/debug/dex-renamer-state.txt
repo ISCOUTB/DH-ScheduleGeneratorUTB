@@ -1,4 +1,4 @@
-#Sat Jan 18 22:33:13 COT 2025
+#Sun Jan 19 22:33:41 COT 2025
 base.0=C\:\\Users\\diego\\Documents\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
 base.1=C\:\\Users\\diego\\Documents\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeLibDexDebug\\0\\classes.dex
 base.2=C\:\\Users\\diego\\Documents\\GitHub\\DH-ScheduleGeneratorUTB\\build\\app\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
