@@ -120,15 +120,13 @@ if __name__ == "__main__":
         # Inicializar el contador de groupIds y el diccionario de NRCs ligados
         group_id_counter = 1
         ligados_nrc_to_groupid = {}
-
-        
-        for i in range (1, 22):
+        for i in range(21):
             ele = wait.until(ec.element_to_be_clickable((By.CSS_SELECTOR, "button[title='Siguiente']")))
             ele.click()
-            time.sleep(3)  # Esperar para garantizar que cargue la página siguiente
+            time.sleep(5)  # Esperar para garantizar que cargue la página siguiente
             limpiar()
 
-        for page_index in range(2):  # Recorro las páginas
+        for page_index in range(PAGINAS):  # Recorro las páginas
             # Espero a que aparezca el primer elemento
             parada = wait.until(ec.element_to_be_clickable((By.CSS_SELECTOR, "tr[data-id]")))
             time.sleep(5)
