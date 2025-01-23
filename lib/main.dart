@@ -259,54 +259,85 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
+
                           children: [
-                            const Text(
-                              '¡Bienvenido al Generador de Horarios UTB!',
-                              style: TextStyle(
-                                  fontSize: 24, color: Colors.white),
-                              textAlign: TextAlign.center,
+                            // Texto 1 con ícono de búsqueda
+                            Row(
+                              children: const [
+                                Icon(Icons.search, color: Colors.white), // Ícono de búsqueda
+                                SizedBox(width: 10), // Espacio entre el ícono y el texto
+                                Expanded(
+                                  child: Text(
+                                    'Para buscar y agregar materias.',
+                                    style: TextStyle(fontSize: 16, color: Colors.white),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 20),
-                            const Text(
-                              'Instrucciones:',
-                              style: TextStyle(
-                                  fontSize: 20, color: Colors.white),
-                              textAlign: TextAlign.center,
+                            const SizedBox(height: 10), // Espacio entre elementos
+
+                            // Texto 2 con ícono de lista (materias seleccionadas)
+                            Row(
+                              children: const [
+                                Icon(Icons.list, color: Colors.white), // Ícono de lista
+                                SizedBox(width: 10), // Espacio entre el ícono y el texto
+                                Expanded(
+                                  child: Text(
+                                    'Revisar materias previamente seleccionadas.',
+                                    style: TextStyle(fontSize: 16, color: Colors.white),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 10),
-                            const Text(
-                              '1. Para buscar y agregar materias.',
-                              style: TextStyle(
-                                  fontSize: 16, color: Colors.white),
-                              textAlign: TextAlign.left,
+                            const SizedBox(height: 10), // Espacio entre elementos
+
+                            // Texto 3 con ícono de filtros
+                            Row(
+                              children: const [
+                                Icon(Icons.filter_list, color: Colors.white), // Ícono de filtros
+                                SizedBox(width: 10), // Espacio entre el ícono y el texto
+                                Expanded(
+                                  child: Text(
+                                    'Aplicar filtros.',
+                                    style: TextStyle(fontSize: 16, color: Colors.white),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 10),
-                            const Text(
-                              '2. Puedes revisar materias previamente seleccionadas.',
-                              style: TextStyle(
-                                  fontSize: 16, color: Colors.white),
-                              textAlign: TextAlign.left,
+                            const SizedBox(height: 10), // Espacio entre elementos
+
+                            // Texto 4 con ícono de papelera (caneca de basura)
+                            Row(
+                              children: const [
+                                Icon(Icons.delete_outline, color: Colors.white), // Ícono de papelera
+                                SizedBox(width: 10), // Espacio entre el ícono y el texto
+                                Expanded(
+                                  child: Text(
+                                    'Borrar horarios previamente generados.',
+                                    style: TextStyle(fontSize: 16, color: Colors.white),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 10),
-                            const Text(
-                              '3. Opcionalmente, puedes aplicar filtros haciendo clic en el ícono de filtro.',
-                              style: TextStyle(
-                                  fontSize: 16, color: Colors.white),
-                              textAlign: TextAlign.left,
-                            ),
-                            const SizedBox(height: 10),
-                            const Text(
-                              '4. Para generar los horarios posibles.',
-                              style: TextStyle(
-                                  fontSize: 16, color: Colors.white),
-                              textAlign: TextAlign.left,
-                            ),
-                            const SizedBox(height: 10),
-                            const Text(
-                              '5. Los horarios generados aparecerán en la pantalla. Puedes presionar sobre ellos para ver los detalles de las materias.',
-                              style: TextStyle(
-                                  fontSize: 16, color: Colors.white),
-                              textAlign: TextAlign.left,
+                            const SizedBox(height: 10), // Espacio entre elementos
+
+                            // Texto 5 con ícono de horarios (calendario)
+                            Row(
+                              children: const [
+                                Icon(Icons.calendar_today, color: Colors.yellow), // Ícono de calendario
+                                SizedBox(width: 10), // Espacio entre el ícono y el texto
+                                Expanded(
+                                  child: Text(
+                                    '¡Generar horarios! Puedes pulsar sobre ellos para ver los detalles de las materias.',
+                                    style: TextStyle(fontSize: 16, color: Colors.white),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
