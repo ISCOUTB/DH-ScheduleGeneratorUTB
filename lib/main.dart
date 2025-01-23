@@ -162,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     List<List<ClassOption>> horariosValidos =
-        obtenerHorariosValidos(addedSubjects, appliedFilters);
+    obtenerHorariosValidos(addedSubjects, appliedFilters);
 
     if (horariosValidos.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -175,11 +175,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
         // Si estamos en móvil y en modo vertical, mostrar mensaje
         if (isMobile() &&
-            MediaQuery.of(context).orientation == Orientation.portrait) {
+            MediaQuery
+                .of(context)
+                .orientation == Orientation.portrait) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content:
-                  Text('Por favor, gira tu dispositivo para ver los horarios'),
+              Text('Por favor, gira tu dispositivo para ver los horarios'),
             ),
           );
         }
@@ -201,30 +203,31 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     bool mobile = isMobile();
-    var orientation = MediaQuery.of(context).orientation;
+    var orientation = MediaQuery
+        .of(context)
+        .orientation;
 
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: mobile && orientation == Orientation.portrait
           ? null
           : (mobile && orientation == Orientation.landscape)
-              ? null
-              : AppBar(
-                  title: Text(widget.title),
-                  flexibleSpace: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.indigo, Colors.purple],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                  ),
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                ),
-
-          body: Container(
+          ? null
+          : AppBar(
+        title: Text(widget.title),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.indigo, Colors.purple],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Colors.indigo.shade900, Colors.indigo.shade500],
@@ -235,10 +238,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Stack(
           children: [
             // Si estamos en móvil y en modo vertical, y hay horarios generados, mostrar mensaje
-            if (mobile &&
-                orientation == Orientation.portrait &&
+            if (mobile && orientation == Orientation.portrait &&
                 allSchedules.isNotEmpty)
-              // Mostrar mensaje solicitando girar el dispositivo
+            // Mostrar mensaje solicitando girar el dispositivo
               Center(
                 child: Text(
                   'Por favor, gira tu dispositivo para ver los horarios',
@@ -249,83 +251,77 @@ class _MyHomePageState extends State<MyHomePage> {
             else
               Column(
                 children: [
-                  // Instrucciones en la parte superior
+                  // Contenido principal (instrucciones o horarios generados)
                   Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      color: Colors.indigo, // Fondo opcional para destacar las instrucciones
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Align(
-                            alignment: Alignment.center,
-                            child: const Text(
+                    child: Center(
+                      child: allSchedules.isEmpty
+                          ? SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
                               '¡Bienvenido al Generador de Horarios UTB!',
-                              style: TextStyle(fontSize: 24, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 24, color: Colors.white),
                               textAlign: TextAlign.center,
                             ),
-                          ),
-                          const SizedBox(height: 20),
-                          Align(
-                            alignment: Alignment.center,
-                            child: const Text(
+                            const SizedBox(height: 20),
+                            const Text(
                               'Instrucciones:',
-                              style: TextStyle(fontSize: 20, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 20, color: Colors.white),
                               textAlign: TextAlign.center,
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: const Text(
+                            const SizedBox(height: 10),
+                            const Text(
                               '1. Para buscar y agregar materias.',
-                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.white),
                               textAlign: TextAlign.left,
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: const Text(
+                            const SizedBox(height: 10),
+                            const Text(
                               '2. Puedes revisar materias previamente seleccionadas.',
-                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.white),
                               textAlign: TextAlign.left,
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: const Text(
+                            const SizedBox(height: 10),
+                            const Text(
                               '3. Opcionalmente, puedes aplicar filtros haciendo clic en el ícono de filtro.',
-                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.white),
                               textAlign: TextAlign.left,
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: const Text(
+                            const SizedBox(height: 10),
+                            const Text(
                               '4. Para generar los horarios posibles.',
-                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.white),
                               textAlign: TextAlign.left,
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: const Text(
+                            const SizedBox(height: 10),
+                            const Text(
                               '5. Los horarios generados aparecerán en la pantalla. Puedes presionar sobre ellos para ver los detalles de las materias.',
-                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.white),
                               textAlign: TextAlign.left,
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                        ],
+                          ],
+                        ),
+                      )
+                          : ScheduleGridWidget(
+                        allSchedules: allSchedules,
+                        onScheduleTap: (index) {
+                          setState(() {
+                            selectedScheduleIndex = index;
+                          });
+                        },
                       ),
                     ),
                   ),
-                  // Menú desplegable inferior
+                  // Barra inferior con botones
                   Container(
                     color: Colors.indigo[800],
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -373,7 +369,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             },
                             child: const Tooltip(
                               message: 'Filtrar Horarios',
-                              child: Icon(Icons.filter_list, color: Colors.white),
+                              child: Icon(
+                                  Icons.filter_list, color: Colors.white),
                             ),
                           ),
                         ),
@@ -386,7 +383,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             },
                             child: const Tooltip(
                               message: 'Limpiar Horarios Generados',
-                              child: Icon(Icons.delete_outline, color: Colors.white),
+                              child: Icon(
+                                  Icons.delete_outline, color: Colors.white),
                             ),
                           ),
                         ),
@@ -400,7 +398,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           onPressed: generateSchedule,
                           child: const Tooltip(
                             message: 'Generar Horarios',
-                            child: Icon(Icons.calendar_today, color: Colors.white),
+                            child: Icon(Icons.calendar_today,
+                                color: Colors.white),
                           ),
                         ),
                       ],
@@ -421,8 +420,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Colors.black54,
                   child: Center(
                     child: GestureDetector(
-                      onTap:
-                          () {}, // Para evitar que se cierre cuando se toca dentro del widget
+                      onTap: () {},
+                      // Para evitar que se cierre cuando se toca dentro del widget
                       child: SearchSubjectsWidget(
                         subjectController: subjectController,
                         allSubjects: subjects,
@@ -517,8 +516,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         selectedScheduleIndex = selectedScheduleIndex! - 1;
                       });
                       return KeyEventResult.handled;
-                    } else if (event.logicalKey ==
-                            LogicalKeyboardKey.arrowRight &&
+                    } else
+                    if (event.logicalKey == LogicalKeyboardKey.arrowRight &&
                         selectedScheduleIndex! < allSchedules.length - 1) {
                       setState(() {
                         selectedScheduleIndex = selectedScheduleIndex! + 1;
@@ -540,8 +539,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Stack(
                         children: [
                           GestureDetector(
-                            onTap:
-                                () {}, // Evita que se cierre cuando se toca dentro
+                            onTap: () {},
+                            // Evita que se cierre cuando se toca dentro
                             child: ScheduleOverviewWidget(
                               schedule: allSchedules[selectedScheduleIndex!],
                               onClose: () {
@@ -555,10 +554,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           if (selectedScheduleIndex! > 0)
                             Positioned(
                               left: 10,
-                              top: MediaQuery.of(context).size.height / 2 - 30,
+                              top: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height / 2 - 30,
                               child: IconButton(
-                                icon: const Icon(Icons.arrow_left,
-                                    size: 50, color: Colors.white),
+                                icon: const Icon(Icons.arrow_left, size: 50,
+                                    color: Colors.white),
                                 onPressed: () {
                                   setState(() {
                                     selectedScheduleIndex =
@@ -571,10 +573,13 @@ class _MyHomePageState extends State<MyHomePage> {
                           if (selectedScheduleIndex! < allSchedules.length - 1)
                             Positioned(
                               right: 10,
-                              top: MediaQuery.of(context).size.height / 2 - 30,
+                              top: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height / 2 - 30,
                               child: IconButton(
-                                icon: const Icon(Icons.arrow_right,
-                                    size: 50, color: Colors.white),
+                                icon: const Icon(Icons.arrow_right, size: 50,
+                                    color: Colors.white),
                                 onPressed: () {
                                   setState(() {
                                     selectedScheduleIndex =
@@ -592,11 +597,12 @@ class _MyHomePageState extends State<MyHomePage> {
             // Contador de horarios generados
             if (allSchedules.isNotEmpty)
               Positioned(
-                bottom: 20,
+                bottom: 80,
+                // Ajusta la posición para no solapar con la barra inferior
                 right: 20,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(10),
