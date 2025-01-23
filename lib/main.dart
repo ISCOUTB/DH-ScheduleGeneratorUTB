@@ -106,10 +106,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void addSubject(Subject subject) {
     // Verificar si la materia ya fue agregada
-    if (addedSubjects
-        .any((s) => s.code == subject.code && s.name == subject.name)) {
+    if (addedSubjects.any((s) => s.code == subject.code && s.name == subject.name)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('La materia ya ha sido agregada')),
+        SnackBar(
+          content: const Text('La materia ya ha sido agregada'),
+          behavior: SnackBarBehavior.floating, // Hace que el SnackBar flote
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 100, // Ajusta la posición
+            left: 20,
+            right: 20,
+          ),
+        ),
       );
       return;
     }
@@ -119,7 +126,15 @@ class _MyHomePageState extends State<MyHomePage> {
     // Verificar el límite de créditos
     if (newTotalCredits > creditLimit) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Límite de créditos alcanzado')),
+        SnackBar(
+          content: const Text('Límite de créditos alcanzado'),
+          behavior: SnackBarBehavior.floating, // Hace que el SnackBar flote
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 100, // Ajusta la posición
+            left: 20,
+            right: 20,
+          ),
+        ),
       );
       return;
     }
@@ -130,13 +145,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
       if (usedCredits > 18) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Advertencia: Ha excedido los 18 créditos')),
+          SnackBar(
+            content: const Text('Advertencia: Ha excedido los 18 créditos'),
+            behavior: SnackBarBehavior.floating, // Hace que el SnackBar flote
+            margin: EdgeInsets.only(
+              bottom: MediaQuery.of(context).size.height - 100, // Ajusta la posición
+              left: 20,
+              right: 20,
+            ),
+          ),
         );
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Materia agregada: ${subject.name}')),
+        SnackBar(
+          content: Text('Materia agregada: ${subject.name}'),
+          behavior: SnackBarBehavior.floating, // Hace que el SnackBar flote
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 100, // Ajusta la posición
+            left: 20,
+            right: 20,
+          ),
+        ),
       );
     });
   }
@@ -148,7 +178,14 @@ class _MyHomePageState extends State<MyHomePage> {
       usedCredits -= subject.credits;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Materia eliminada: ${subject.name}')),
+        SnackBar(content: Text('Materia eliminada: ${subject.name}'),
+          behavior: SnackBarBehavior.floating, // Hace que el SnackBar flote
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 100, // Ajusta la posición
+            left: 20,
+            right: 20,
+          ),
+        ),
       );
     });
   }
@@ -156,7 +193,14 @@ class _MyHomePageState extends State<MyHomePage> {
   void generateSchedule() {
     if (addedSubjects.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No hay materias seleccionadas')),
+         SnackBar(content: Text('No hay materias seleccionadas'),
+          behavior: SnackBarBehavior.floating, // Hace que el SnackBar flote
+          margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height - 100, // Ajusta la posición
+            left: 20,
+            right: 20,
+          ),
+        ),
       );
       return;
     }
@@ -196,7 +240,14 @@ class _MyHomePageState extends State<MyHomePage> {
       selectedScheduleIndex = null;
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Horarios generados eliminados')),
+       SnackBar(content: Text('Horarios generados eliminados'),
+        behavior: SnackBarBehavior.floating, // Hace que el SnackBar flote
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).size.height - 100, // Ajusta la posición
+          left: 20,
+          right: 20,
+        ),
+      ),
     );
   }
 
