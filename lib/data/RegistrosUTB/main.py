@@ -70,7 +70,7 @@ if __name__ == "__main__":
     driver.get(url)
 
     # Creación del archivo txt
-    output_dir = r"C:\Users\gabri\OneDrive\Documentos\Proyectos\schedule_generator\DH-ScheduleGeneratorUTB\lib\data\RegistrosUTB\output_DB"
+    output_dir = r"C:\Users\gabri\Documentos\GitHub\DH-ScheduleGeneratorUTB\lib\data\RegistrosUTB\output_DB"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     filename = f"BD_REGISTROS_BANNER_{today}_HMS_{now.hour}.{now.minute}.{now.second}.txt"
