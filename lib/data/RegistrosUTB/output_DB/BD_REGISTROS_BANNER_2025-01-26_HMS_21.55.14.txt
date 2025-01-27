@@ -1,0 +1,128 @@
+Fundamentos de administracion;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Adriana Paulina Argumedo Bossio;Martes 13:00 - 13:50/Jueves 13:00 - 14:50;;4;NA
+Fundamentos de administracion;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Adriana Paulina Argumedo Bossio;Martes 11:00 - 11:50/Miércoles 15:00 - 16:50;;3;NA
+Seminario gerencial i;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Ricardo Andres Abreo Rodriguez;Miércoles 17:00 - 17:50;;30;NA
+Historia empresarial;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Maria Teresa Ripoll De Lemaitre;Martes 09:00 - 10:50/Jueves 09:00 - 09:50;;33;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Gabriel Roman Melendez;Viernes 13:00 - 14:50/Miércoles 16:00 - 16:50;;33;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Lina Margarita Marrugo Salas;Martes 08:00 - 09:50/Viernes 13:00 - 13:50;;27;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Gabriel Roman Melendez;Viernes 10:00 - 11:50/Jueves 13:00 - 13:50;;26;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Luis Carlos Arraut Camargo;Martes 14:00 - 15:50/Jueves 16:00 - 16:50;;10;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Oriana Susana Martinez Palomino;Lunes 14:00 - 14:50/Miércoles 14:00 - 15:50;;5;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Luis Carlos Arraut Camargo;Jueves 09:00 - 09:50/Viernes 13:00 - 14:50;;16;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;;;;;NA;Martes 13:00 - 13:50/Jueves 13:00 - 14:50;;25;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Lina Margarita Marrugo Salas;Lunes 10:00 - 11:50/Viernes 17:00 - 17:50;;31;NA
+Organizaciones i;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Rita Cecilia De La Hoz Del Villar;Lunes 07:00 - 07:50/Martes 10:00 - 11:50;;38;NA
+Organizaciones i;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Rita Cecilia De La Hoz Del Villar;Martes 09:00 - 09:50/Jueves 10:00 - 11:50;;32;NA
+Organizaciones ii;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Rita Cecilia De La Hoz Del Villar;Jueves 13:00 - 13:50/Viernes 15:00 - 16:50;;29;NA
+Direccion estrategica;Clase virtual;ADMINISTRACION DE EMPRESAS;;;;;Martha Patricia Castro Porto;Ninguno;;18;NA
+Seminario gerencial ii;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Ricardo Andres Abreo Rodriguez;Lunes 14:00 - 14:50;;31;NA
+Responsabilidad social;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Lina Margarita Marrugo Salas;Jueves 07:00 - 07:50/Lunes 15:00 - 16:50;;34;NA
+Gestion del talento humano;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Javier Marquez Orozco;Lunes 13:00 - 13:50/Miércoles 13:00 - 14:50;;32;NA
+Innovacion;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Oriana Susana Martinez Palomino;Jueves 15:00 - 16:50/Lunes 16:00 - 16:50;;35;NA
+Innovacion;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Oriana Susana Martinez Palomino;Viernes 11:00 - 11:50/Martes 15:00 - 16:50;;31;NA
+Consultoria empresarial;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Ricardo Andres Abreo Rodriguez;Lunes 17:00 - 18:50;;24;NA
+Seminario gerencial iii;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Ricardo Andres Abreo Rodriguez;Miércoles 18:00 - 18:50;;23;NA
+Juego gerencial;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Ricardo Andres Abreo Rodriguez;Martes 17:00 - 18:50;;34;NA
+Fundamentos de mercadeo;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Hernan Saulo Torres Cuello;Martes 08:00 - 09:50/Lunes 13:00 - 13:50;;22;NA
+Fundamentos de mercadeo;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Hernan Saulo Torres Cuello;Miércoles 14:00 - 15:50/Jueves 16:00 - 16:50;;18;NA
+Investigacion de mercados;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Javier Marquez Orozco;Martes 14:00 - 15:50/Viernes 14:00 - 14:50;;4;NA
+Admon del conocimiento e innov;Clase virtual;ADMINISTRACION DE EMPRESAS;;;;;Martha Patricia Castro Porto;Ninguno;;11;NA
+Negocios inclusivos;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Gabriel Roman Melendez;Lunes 07:00 - 08:50/Miércoles 08:00 - 08:50;;33;NA
+Empresas sostenibles;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Sammir Montemiranda Pajaro;Jueves 18:00 - 19:50/Martes 19:00 - 19:50;;24;NA
+Empresas sostenibles;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Sammir Montemiranda Pajaro;Martes 18:00 - 18:50/Miércoles 18:00 - 19:50;;38;NA
+Skills for digital transformation 4.0;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Oriana Susana Martinez Palomino;Viernes 08:00 - 09:50/Lunes 15:00 - 15:50;;32;NA
+Opcion de grado;Clase virtual;ADMINISTRACION DE EMPRESAS;;;;;Benjamin De Jesus Garcia Garcerant;Ninguno;;27;NA
+Seminario integrador fen;Clase virtual;ADMINISTRACION DE EMPRESAS;;;;;Dayana Maria Sanchez Monterrosa;Ninguno;;COMPLETO: 0;NA
+Práctica profesional;Laboratorio;ADMINISTRACION DE EMPRESAS;;;;;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50/Lunes 14:00 - 16:50/Martes 14:00 - 16:50/Miércoles 14:00 - 16:50/Jueves 14:00 - 16:50/Viernes 14:00 - 16:50;;31;NA
+Calidad y operaciones;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Carlos Alberto Diaz Wright;Miércoles 17:00 - 18:50/Jueves 18:00 - 18:50;;35;NA
+Gestion de procesos y tecnolog;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Carlos Alberto Diaz Wright;Martes 17:00 - 18:50/Miércoles 19:00 - 19:50;;30;NA
+Taller de diseño i;Teorico-practico;ARQUITECTURA;;;;;Rosa Esther Barreto Oliveros;Martes 08:00 - 11:50/Viernes 08:00 - 11:50;;3;NA
+Taller de diseño i;Teorico-practico;ARQUITECTURA;;;;;Beatriz Elena Jimenez Charris;Lunes 13:00 - 16:50/Miércoles 13:00 - 16:50;;2;NA
+Taller de diseño i;Teorico-practico;ARQUITECTURA;;;;;Estefania Pulido Garcia;Sábado 07:00 - 10:50/Jueves 12:00 - 15:50;;1;NA
+Taller de diseño i;Teorico-practico;ARQUITECTURA;;;;;NA;Martes 08:00 - 11:50/Jueves 08:00 - 11:50;;3;NA
+Taller de diseño i;Teorico-practico;ARQUITECTURA;;;;;NA;Martes 12:00 - 15:50/Viernes 12:00 - 15:50;;2;NA
+Taller de diseño ii;Teorico-practico;ARQUITECTURA;;;;;Roy Dario Bozzi Duran;Lunes 13:00 - 16:50/Miércoles 13:00 - 16:50;;10;NA
+Taller de diseño iii (manga-ternera);Teorico-practico;ARQUITECTURA;;;;;Claudia Beatriz Del Socorro Ochoa Pardo;Sábado 09:00 - 12:50/Miércoles 13:00 - 16:50;;4;NA
+Taller de diseño iii (manga-ternera);Teorico-practico;ARQUITECTURA;;;;;Fabrizio Milano Londoño;Lunes 08:00 - 11:50/Viernes 13:00 - 16:50;;1;NA
+Taller de diseño iv;Teorico-practico;ARQUITECTURA;;;;;Luis Eduardo Grondona Vergara;Lunes 08:00 - 11:50/Miércoles 08:00 - 11:50;;7;NA
+Taller de diseño iv;Teorico-practico;ARQUITECTURA;;;;;Roberto Enrique Jose Benavente Riquelme;Lunes 13:00 - 16:50/Miércoles 13:00 - 16:50;;8;NA
+Taller de diseño v;Teorico-practico;ARQUITECTURA;;;;;Pedro Jose Ibarra Jimenez;Lunes 14:00 - 17:50/Miércoles 14:00 - 17:50;;6;NA
+Taller de diseño v;Teorico-practico;ARQUITECTURA;;;;;NA;Lunes 14:00 - 17:50/Miércoles 14:00 - 17:50;;4;NA
+Taller de diseño v;Teorico-practico;ARQUITECTURA;;;;;Alexander Niebles Villarreal;Lunes 14:00 - 17:50/Miércoles 15:00 - 18:50;;1;NA
+Taller de diseño vi;Teorico-practico;ARQUITECTURA;;;;;Fabian Guillermo Amaya Valdivieso;Lunes 13:00 - 16:50/Miércoles 13:00 - 16:50;;9;NA
+Taller de diseño vii;Teorico-practico;ARQUITECTURA;;;;;Antonio Rafael Nieves Gonzalez;Viernes 12:00 - 15:50/Martes 13:00 - 16:50;;10;NA
+Taller de diseño vii;Teorico-practico;ARQUITECTURA;;;;;Ausberto Coneo Caicedo;Lunes 13:00 - 16:50/Miércoles 13:00 - 16:50;;5;NA
+Taller de diseño viii;Teorico-practico;ARQUITECTURA;;;;;Luis Eduardo Garcia Pacheco;Miércoles 09:00 - 12:50/Lunes 13:00 - 16:50;;7;NA
+Expresión grafica i;Teorico-practico;ARQUITECTURA;;;;;Cesar Anibal Duran Ruge;Sábado 09:00 - 10:50;;3;NA
+Expresión grafica i;Teorico-practico;ARQUITECTURA;;;;;Ivan Enrique Quintero Oyola;Jueves 08:00 - 09:50;;2;NA
+Expresión grafica ii;Teorico-practico;ARQUITECTURA;;;;;Claudia Beatriz Del Socorro Ochoa Pardo;Miércoles 10:00 - 11:50;;9;NA
+Expresión grafica iii;Laboratorio;ARQUITECTURA;;;;;NA;Viernes 14:00 - 15:50;;8;NA
+Expresión grafica iii;Laboratorio;ARQUITECTURA;;;;;NA;Viernes 08:00 - 09:50;;7;NA
+Expresión gráfica iv;Laboratorio;ARQUITECTURA;;;;;Raul Ernesto Lopez Gomez;Martes 12:00 - 13:50;;10;NA
+Expresión gráfica iv;Laboratorio;ARQUITECTURA;;;;;Raul Ernesto Lopez Gomez;Jueves 12:00 - 13:50;;6;NA
+Expresión gráfica v;Laboratorio;ARQUITECTURA;;;;;Virginia Milena Escamilla Angulo;Martes 10:00 - 11:50;;2;NA
+Expresión gráfica v;Laboratorio;ARQUITECTURA;;;;;Raul Ernesto Lopez Gomez;Viernes 12:00 - 13:50;;9;NA
+Photoshop para arquitectos;Teorico-practico;ARQUITECTURA;;;;;Antonio Rafael Nieves Gonzalez;Viernes 16:00 - 17:50/Martes 17:00 - 17:50;;3;NA
+Teoria e historia i;Teórico;ARQUITECTURA;;;;;Estefania Pulido Garcia;Viernes 14:00 - 15:50;;2;NA
+Teoria e historia i;Teórico;ARQUITECTURA;;;;;Cesar Anibal Duran Ruge;Sábado 11:00 - 12:50;;5;NA
+Teoria e historia ii;Teórico;ARQUITECTURA;;;;;Joel Alexander Samper Lopez;Martes 10:00 - 11:50;;15;NA
+Teoria e historia iii;Teórico;ARQUITECTURA;;;;;Howard De Jesus Villareal Molina;Lunes 15:00 - 16:50;;11;NA
+Teoria e historia iv;Teórico;ARQUITECTURA;;;;;Luis Eduardo Garcia Pacheco;Viernes 14:00 - 15:50;;21;NA
+Teoria e historia v;Teórico;ARQUITECTURA;;;;;Joel Alexander Samper Lopez;Martes 13:00 - 14:50;;14;NA
+Teoria e historia v;Teórico;ARQUITECTURA;;;;;Joel Alexander Samper Lopez;Jueves 14:00 - 15:50;;10;NA
+Teoria e historia vi;Teórico;ARQUITECTURA;;;;;Joel Alexander Samper Lopez;Jueves 10:00 - 11:50;;20;NA
+Práctica profeional i;Laboratorio;ARQUITECTURA;;;;;Fabian Guillermo Amaya Valdivieso;Lunes,Martes,Miércoles,Jueves,Viernes 08:00 - 12:50;;6;NA
+Práctica profesional ii;Laboratorio;ARQUITECTURA;;;;;Fabian Guillermo Amaya Valdivieso;Lunes,Martes,Miércoles,Jueves,Viernes 14:00 - 16:50;;6;NA
+Seminario trabajo de grado;Teórico;ARQUITECTURA;;;;;Claudia Beatriz Del Socorro Ochoa Pardo;Sábado 07:00 - 08:50;;4;NA
+Tecnología i;Teórico;ARQUITECTURA;;;;;Brenda Cristina Pacheco Perna;Martes 12:00 - 13:50;;7;NA
+Tecnología i;Teórico;ARQUITECTURA;;;;;Brenda Cristina Pacheco Perna;Jueves 12:00 - 13:50;;5;NA
+Tecnología ii;Teórico;ARQUITECTURA;;;;;Fabian Guillermo Amaya Valdivieso;Jueves 10:00 - 11:50;;14;NA
+Tecnología iii;Teórico;ARQUITECTURA;;;;;Brenda Cristina Pacheco Perna;Viernes 12:00 - 13:50/Martes 17:00 - 17:50;;20;NA
+Tecnología iv (laboratorio de suelos -ternera);Teórico;ARQUITECTURA;;;;;Raul Ernesto Lopez Gomez;Viernes 10:00 - 11:50;;19;NA
+Tecnologia v;Teórico;ARQUITECTURA;;;;;Ariel Perez Garcia;Jueves 09:00 - 09:50/Martes 10:00 - 11:50;;2;NA
+Tecnologia v;Teórico;ARQUITECTURA;;;;;NA;Viernes 11:00 - 12:50/Martes 12:00 - 12:50;;13;NA
+Tecnología vi;Teórico;ARQUITECTURA;;;;;NA;Jueves 13:00 - 13:50/Martes 14:00 - 15:50;;20;NA
+Tecnologia vii;Teórico;ARQUITECTURA;;;;;Andres Felipe Camargo Bocanegra;Jueves 17:00 - 18:50;;17;NA
+Tecnologia viii;Teórico;ARQUITECTURA;;;;;Andres Felipe Camargo Bocanegra;Lunes 17:00 - 18:50/Miércoles 17:00 - 17:50;;16;NA
+Urbanismo y ambiente i;Teórico;ARQUITECTURA;;;;;Howard De Jesus Villareal Molina;Lunes 17:00 - 18:50;;18;NA
+Urbanismo y ambiente ii;Teórico;ARQUITECTURA;;;;;Alexander Niebles Villarreal;Viernes 08:00 - 09:50;;7;NA
+Urbanismo y ambiente ii (manga-ternera);Teórico;ARQUITECTURA;;;;;Alexander Niebles Villarreal;Miércoles 13:00 - 14:50;;9;NA
+Urbanismo y ambiente iii;Teórico;ARQUITECTURA;;;;;Fabrizio Milano Londoño;Miércoles 17:00 - 18:50;;21;NA
+Urbanismo y ambiente iv;Teórico;ARQUITECTURA;;;;;Ausberto Coneo Caicedo;Lunes 10:00 - 11:50;;11;NA
+Urbanismo y ambiente iv;Teórico;ARQUITECTURA;;;;;Ausberto Coneo Caicedo;Miércoles 10:00 - 11:50;;7;NA
+Urbanismo y ambiente v;Teórico;ARQUITECTURA;;;;;Ramon Raul Perez Yepez;Miércoles 17:00 - 18:50;;20;NA
+Urbanismo y ambiente vi;Teórico;ARQUITECTURA;;;;;Ramon Raul Perez Yepez;Miércoles 12:00 - 12:50/Lunes 17:00 - 18:50;;18;NA
+Urbanismo y ambiente vii;Teórico;ARQUITECTURA;;;;;Antonio Rafael Nieves Gonzalez;Miércoles 07:00 - 08:50;;17;NA
+Cátedra cartagena;Teórico;ARQUITECTURA;;;;;Eduardo Jose Gonzalez Sanchez;Sábado 10:00 - 11:50/Jueves 17:00 - 17:50;;8;NA
+Introducción a la ciencia de datos introducción a la ciencia de datos;Laboratorio;CIENCIA DE DATOS;;;;;David Sierra Porta;Jueves 15:00 - 16:50;;2;NA
+Programación para ciencia de datos programación para ciencia de datos;Teórico;CIENCIA DE DATOS;;;;;David Sierra Porta;Miércoles 07:00 - 08:50/Lunes 08:00 - 08:50;;10;NA
+Seguridad internacional y conf;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Diandra Jireth Payares Mendoza;Jueves 09:00 - 10:50/Martes 11:00 - 11:50;;13;NA
+Enfoques para el análisis polí;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Marlon Jose Marquez Guardo;Jueves 11:00 - 11:50/Miércoles 15:00 - 16:50;;3;NA
+Gran historia;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Pablo Gustavo Abitbol Piñeiro;Martes 13:00 - 14:50;;5;NA
+Filosofía política;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Pablo Gustavo Abitbol Piñeiro;Miércoles 13:00 - 14:50/Jueves 13:00 - 13:50;;7;NA
+Teo de la democracia y desarro;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Pablo Gustavo Abitbol Piñeiro;Viernes 07:00 - 07:50/Miércoles 08:00 - 09:50;;26;NA
+Nueva economía política;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Pablo Gustavo Abitbol Piñeiro;Viernes 14:00 - 15:50/Miércoles 16:00 - 16:50;;10;NA
+Cult y comport polít en el car;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Marlon Jose Marquez Guardo;Martes 13:00 - 13:50/Jueves 13:00 - 14:50;;13;NA
+Ana d conflicto y proce de paz;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Armando Jose Mercado Vega;Martes 07:00 - 07:50/Lunes 10:00 - 11:50;;14;NA
+Política comparada;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Armando Jose Mercado Vega;Lunes 08:00 - 08:50/Martes 08:00 - 09:50;;24;NA
+Partidos políticos y sist elec;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Alfredo Luis Jr. Mendoza Diaz;Jueves 17:00 - 18:50/Martes 18:00 - 18:50;;19;NA
+Form de proy para el desarroll;Teorico-practico;CIENCIA POLITICA Y RELA INTERN;;;;;Jhonnatan Ballestas Avilez;Jueves 07:00 - 08:50/Martes 09:00 - 09:50;;13;NA
+Inv. cuanti en ciencia politic;Teorico-practico;CIENCIA POLITICA Y RELA INTERN;;;;;Laura Rueda Sierra;Sábado 08:00 - 09:50/Martes 12:00 - 12:50;;22;NA
+Inv. cuali en ciencia politic;Teorico-practico;CIENCIA POLITICA Y RELA INTERN;;;;;Armando Jose Mercado Vega;Lunes 13:00 - 14:50/Jueves 16:00 - 16:50;;9;NA
+Práctica profesionales;Laboratorio;CIENCIA POLITICA Y RELA INTERN;;;;;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50/Lunes 14:00 - 16:50/Martes 14:00 - 16:50/Miércoles 14:00 - 16:50/Jueves 14:00 - 16:50/Viernes 14:00 - 16:50;;26;NA
+Historia y geografía internaci;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Diandra Jireth Payares Mendoza;Lunes 08:00 - 09:50/Jueves 08:00 - 08:50;;4;NA
+Sistema político internacional;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Diandra Jireth Payares Mendoza;Miércoles 10:00 - 11:50/Jueves 11:00 - 11:50;;20;NA
+Herramientas de política inter;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Diandra Jireth Payares Mendoza;Martes 09:00 - 10:50;;9;NA
+Análisis de política internaci;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Marlon Jose Marquez Guardo;Jueves 17:00 - 18:50/Lunes 18:00 - 18:50;;28;NA
+Introduccion a la ciencia poli;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Alfredo Luis Jr. Mendoza Diaz;Martes 15:00 - 16:50/Jueves 15:00 - 15:50;;5;NA
+Cons y sist politico colombian;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Marlon Jose Marquez Guardo;Jueves 16:00 - 16:50/Martes 17:00 - 18:50;;20;NA
+Politica colombiana siglo xix;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Armando Jose Mercado Vega;Jueves 07:00 - 07:50/Martes 14:00 - 15:50;;15;NA
+Estado, poder y derecho;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Luisa Fernanda Guerra Carrera;Lunes 07:00 - 08:50/Miércoles 07:00 - 07:50;;28;NA
+Investigacion mixta aplicada;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Jhonnatan Ballestas Avilez;Martes 10:00 - 10:50/Jueves 10:00 - 11:50;;13;NA
+Historia de las ideas política;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Pablo Gustavo Abitbol Piñeiro;Viernes 08:00 - 09:50/Martes 15:00 - 16:50;;21;NA
+Ana y dis de políticas pública;Teórico;CIENCIA POLITICA Y RELA INTERN;;;;;Laura Rueda Sierra;Sábado 10:00 - 11:50/Jueves 12:00 - 12:50;;28;NA
+Biología humana;Teórico;CIENCIAS BASICAS;;;;;Edisson Chavarro Mesa;Viernes 14:00 - 15:50;;1;NA
+Biología celular;Teórico;CIENCIAS BASICAS;;;;;Angela Patricia Bertel Sevilla;Miércoles 10:00 - 11:50;;19;2496/2495
+Biología celular;Laboratorio;CIENCIAS BASICAS;;;;;Angela Patricia Bertel Sevilla;Lunes 10:00 - 11:50;;12;2494
+Biología celular;Laboratorio;CIENCIAS BASICAS;;;;;Angela Patricia Bertel Sevilla;Lunes 10:00 - 11:50;;7;2494
+Biorremediación;Teórico;CIENCIAS BASICAS;;;;;Diana Carolina Rubiano Labrador;Jueves 09:00 - 09:50/Martes 10:00 - 11:50;;24;NA
+Biología molecular;Teórico;CIENCIAS BASICAS;;;;;Diana Carolina Rubiano Labrador;Lunes 13:00 - 13:50/Jueves 13:00 - 14:50;;14;1279
