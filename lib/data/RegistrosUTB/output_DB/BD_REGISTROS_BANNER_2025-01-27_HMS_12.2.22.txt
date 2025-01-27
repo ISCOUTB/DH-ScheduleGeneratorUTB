@@ -1,0 +1,50 @@
+Fundamentos de administracion;Teórico;ADMINISTRACION DE EMPRESAS;G01A;D;3;1570;Adriana Paulina Argumedo Bossio;Martes 13:00 - 13:50/Jueves 13:00 - 14:50;CAMPUS TECNOLOGICO;8;NA
+Fundamentos de administracion;Teórico;ADMINISTRACION DE EMPRESAS;G01A;F;3;2269;Adriana Paulina Argumedo Bossio;Martes 11:00 - 11:50/Miércoles 15:00 - 16:50;CAMPUS TECNOLOGICO;3;NA
+Seminario gerencial i;Teórico;ADMINISTRACION DE EMPRESAS;G02A;A;1;1527;Ricardo Andres Abreo Rodriguez;Miércoles 17:00 - 17:50;CAMPUS TECNOLOGICO;25;NA
+Historia empresarial;Teórico;ADMINISTRACION DE EMPRESAS;G03A;A;3;1528;Maria Teresa Ripoll De Lemaitre;Martes 09:00 - 10:50/Jueves 09:00 - 09:50;CAMPUS TECNOLOGICO;29;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;G04A;H;3;2117;Gabriel Roman Melendez;Viernes 13:00 - 14:50/Miércoles 16:00 - 16:50;CAMPUS TECNOLOGICO;31;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;G04A;I;3;2119;Lina Margarita Marrugo Salas;Martes 08:00 - 09:50/Viernes 13:00 - 13:50;CAMPUS TECNOLOGICO;20;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;G04A;J;3;2121;Gabriel Roman Melendez;Viernes 10:00 - 11:50/Jueves 13:00 - 13:50;CAMPUS TECNOLOGICO;14;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;G04A;M;3;2126;Luis Carlos Arraut Camargo;Jueves 09:00 - 09:50/Viernes 13:00 - 14:50;CAMPUS TECNOLOGICO;6;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;G04A;Q;3;2129;NA;Martes 13:00 - 13:50/Jueves 13:00 - 14:50;CAMPUS TECNOLOGICO;14;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;G04A;R;3;2130;Lina Margarita Marrugo Salas;Lunes 10:00 - 11:50/Viernes 17:00 - 17:50;CAMPUS TECNOLOGICO;27;NA
+Organizaciones i;Teórico;ADMINISTRACION DE EMPRESAS;G05A;A;3;1529;Rita Cecilia De La Hoz Del Villar;Lunes 07:00 - 07:50/Martes 10:00 - 11:50;CAMPUS TECNOLOGICO;36;NA
+Organizaciones i;Teórico;ADMINISTRACION DE EMPRESAS;G05A;B;3;1531;Rita Cecilia De La Hoz Del Villar;Martes 09:00 - 09:50/Jueves 10:00 - 11:50;CAMPUS TECNOLOGICO;30;NA
+Organizaciones ii;Teórico;ADMINISTRACION DE EMPRESAS;G06A;A;3;1533;Rita Cecilia De La Hoz Del Villar;Jueves 13:00 - 13:50/Viernes 15:00 - 16:50;CAMPUS TECNOLOGICO;21;NA
+Direccion estrategica;Clase virtual;ADMINISTRACION DE EMPRESAS;G07A;A;3;1541;Martha Patricia Castro Porto;Ninguno;CAMPUS TECNOLOGICO;15;NA
+Seminario gerencial ii;Teórico;ADMINISTRACION DE EMPRESAS;G08A;A;1;1542;Ricardo Andres Abreo Rodriguez;Lunes 14:00 - 14:50;CAMPUS TECNOLOGICO;29;NA
+Responsabilidad social;Teórico;ADMINISTRACION DE EMPRESAS;G09A;A;3;1543;Lina Margarita Marrugo Salas;Jueves 07:00 - 07:50/Lunes 15:00 - 16:50;CAMPUS TECNOLOGICO;30;NA
+Gestion del talento humano;Teórico;ADMINISTRACION DE EMPRESAS;G10A;A;3;1545;Javier Marquez Orozco;Lunes 13:00 - 13:50/Miércoles 13:00 - 14:50;CAMPUS TECNOLOGICO;27;NA
+Innovacion;Teórico;ADMINISTRACION DE EMPRESAS;G11A;G;3;2335;Oriana Susana Martinez Palomino;Jueves 15:00 - 16:50/Lunes 16:00 - 16:50;CAMPUS TECNOLOGICO;32;NA
+Innovacion;Teórico;ADMINISTRACION DE EMPRESAS;G11A;H;3;2336;Oriana Susana Martinez Palomino;Viernes 11:00 - 11:50/Martes 15:00 - 16:50;CAMPUS TECNOLOGICO;24;NA
+Consultoria empresarial;Teórico;ADMINISTRACION DE EMPRESAS;G12A;A;2;1553;Ricardo Andres Abreo Rodriguez;Lunes 17:00 - 18:50;CAMPUS TECNOLOGICO;18;NA
+Seminario gerencial iii;Teórico;ADMINISTRACION DE EMPRESAS;G13A;A;1;1707;Ricardo Andres Abreo Rodriguez;Miércoles 18:00 - 18:50;CAMPUS TECNOLOGICO;17;NA
+Juego gerencial;Teórico;ADMINISTRACION DE EMPRESAS;G14A;A;2;1709;Ricardo Andres Abreo Rodriguez;Martes 17:00 - 18:50;CAMPUS TECNOLOGICO;30;NA
+Fundamentos de mercadeo;Teórico;ADMINISTRACION DE EMPRESAS;M01A;A;3;2264;Hernan Saulo Torres Cuello;Martes 08:00 - 09:50/Lunes 13:00 - 13:50;CAMPUS TECNOLOGICO;11;NA
+Fundamentos de mercadeo;Teórico;ADMINISTRACION DE EMPRESAS;M01A;B;3;2507;Hernan Saulo Torres Cuello;Miércoles 14:00 - 15:50/Jueves 16:00 - 16:50;CAMPUS TECNOLOGICO;4;NA
+Investigacion de mercados;Teórico;ADMINISTRACION DE EMPRESAS;M02A;A;3;1537;Javier Marquez Orozco;Martes 14:00 - 15:50/Viernes 14:00 - 14:50;CAMPUS TECNOLOGICO;2;NA
+Negocios inclusivos;Teórico;ADMINISTRACION DE EMPRESAS;O06A;G;3;1131;Gabriel Roman Melendez;Lunes 07:00 - 08:50/Miércoles 08:00 - 08:50;CAMPUS TECNOLOGICO;28;NA
+Empresas sostenibles;Teórico;ADMINISTRACION DE EMPRESAS;O07A;G;3;1510;Sammir Montemiranda Pajaro;Jueves 18:00 - 19:50/Martes 19:00 - 19:50;CAMPUS TECNOLOGICO;20;NA
+Empresas sostenibles;Teórico;ADMINISTRACION DE EMPRESAS;O07A;H;3;1511;Sammir Montemiranda Pajaro;Martes 18:00 - 18:50/Miércoles 18:00 - 19:50;CAMPUS TECNOLOGICO;36;NA
+Skills for digital transformation 4.0;Teórico;ADMINISTRACION DE EMPRESAS;O27A;A;3;1517;Oriana Susana Martinez Palomino;Viernes 08:00 - 09:50/Lunes 15:00 - 15:50;CAMPUS TECNOLOGICO;30;NA
+Opcion de grado;Clase virtual;ADMINISTRACION DE EMPRESAS;P01A;A;2;1704;Benjamin De Jesus Garcia Garcerant;Ninguno;CAMPUS TECNOLOGICO;25;NA
+Seminario integrador fen;Clase virtual;ADMINISTRACION DE EMPRESAS;P02A;A;0;1708;Dayana Maria Sanchez Monterrosa;Ninguno;CAMPUS TECNOLOGICO;COMPLETO: 0;NA
+Práctica profesional;Laboratorio;ADMINISTRACION DE EMPRESAS;P03A;A;9;1549;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50/Lunes 14:00 - 16:50/Martes 14:00 - 16:50/Miércoles 14:00 - 16:50/Jueves 14:00 - 16:50/Viernes 14:00 - 16:50;CAMPUS TECNOLOGICO;29;NA
+Calidad y operaciones;Teórico;ADMINISTRACION DE EMPRESAS;R01A;A;3;1535;Carlos Alberto Diaz Wright;Miércoles 17:00 - 18:50/Jueves 18:00 - 18:50;CAMPUS TECNOLOGICO;29;NA
+Gestion de procesos y tecnolog;Teórico;ADMINISTRACION DE EMPRESAS;R02A;A;3;1548;Carlos Alberto Diaz Wright;Martes 17:00 - 18:50/Miércoles 19:00 - 19:50;CAMPUS TECNOLOGICO;24;NA
+Taller de diseño i;Teorico-practico;ARQUITECTURA;D01A;R;6;1815;Rosa Esther Barreto Oliveros;Martes 08:00 - 11:50/Viernes 08:00 - 11:50;CAMPUS TECNOLOGICO;8;NA
+Taller de diseño i;Teorico-practico;ARQUITECTURA;D01A;T;6;1812;Beatriz Elena Jimenez Charris;Lunes 13:00 - 16:50/Miércoles 13:00 - 16:50;CAMPUS TECNOLOGICO;2;NA
+Taller de diseño i;Teorico-practico;ARQUITECTURA;D01A;TB;6;1823;NA;Martes 08:00 - 11:50/Jueves 08:00 - 11:50;CAMPUS TECNOLOGICO;3;NA
+Taller de diseño i;Teorico-practico;ARQUITECTURA;D01A;TD;6;1940;NA;Martes 12:00 - 15:50/Viernes 12:00 - 15:50;CAMPUS TECNOLOGICO;2;NA
+Taller de diseño ii;Teorico-practico;ARQUITECTURA;D02A;T;6;1839;Roy Dario Bozzi Duran;Lunes 13:00 - 16:50/Miércoles 13:00 - 16:50;CAMPUS CASA LEMAITRE;9;NA
+Taller de diseño iii (manga-ternera);Teorico-practico;ARQUITECTURA;D03A;R;6;1962;Claudia Beatriz Del Socorro Ochoa Pardo;Sábado 09:00 - 12:50/Miércoles 13:00 - 16:50;CAMPUS TECNOLOGICO;2;NA
+Taller de diseño iv;Teorico-practico;ARQUITECTURA;D04A;R;6;2445;Luis Eduardo Grondona Vergara;Lunes 08:00 - 11:50/Miércoles 08:00 - 11:50;CAMPUS CASA LEMAITRE;4;NA
+Taller de diseño iv;Teorico-practico;ARQUITECTURA;D04A;T;6;2444;Roberto Enrique Jose Benavente Riquelme;Lunes 13:00 - 16:50/Miércoles 13:00 - 16:50;CAMPUS CASA LEMAITRE;7;NA
+Taller de diseño v;Teorico-practico;ARQUITECTURA;D05A;T;6;2460;Pedro Jose Ibarra Jimenez;Lunes 14:00 - 17:50/Miércoles 14:00 - 17:50;CAMPUS CASA LEMAITRE;6;NA
+Taller de diseño vi;Teorico-practico;ARQUITECTURA;D06A;T;6;2465;Fabian Guillermo Amaya Valdivieso;Lunes 13:00 - 16:50/Miércoles 13:00 - 16:50;CAMPUS CASA LEMAITRE;8;NA
+Taller de diseño vii;Teorico-practico;ARQUITECTURA;D07A;R;6;2470;Antonio Rafael Nieves Gonzalez;Viernes 12:00 - 15:50/Martes 13:00 - 16:50;CAMPUS TECNOLOGICO;7;NA
+Taller de diseño viii;Teorico-practico;ARQUITECTURA;D08A;T;6;1431;Luis Eduardo Garcia Pacheco;Miércoles 09:00 - 12:50/Lunes 13:00 - 16:50;CAMPUS CASA LEMAITRE;6;NA
+Expresión grafica i;Teorico-practico;ARQUITECTURA;E01A;T;2;1683;Cesar Anibal Duran Ruge;Sábado 07:00 - 08:50;CAMPUS TECNOLOGICO;2;NA
+Expresión grafica i;Teorico-practico;ARQUITECTURA;E01A;TA;2;1803;Cesar Anibal Duran Ruge;Sábado 09:00 - 10:50;CAMPUS TECNOLOGICO;8;NA
+Expresión grafica i;Teorico-practico;ARQUITECTURA;E01A;TC;2;1808;Ivan Enrique Quintero Oyola;Jueves 08:00 - 09:50;CAMPUS TECNOLOGICO;2;NA
+Expresión grafica ii;Teorico-practico;ARQUITECTURA;E02A;R;2;1833;Claudia Beatriz Del Socorro Ochoa Pardo;Miércoles 10:00 - 11:50;CAMPUS CASA LEMAITRE;7;NA
