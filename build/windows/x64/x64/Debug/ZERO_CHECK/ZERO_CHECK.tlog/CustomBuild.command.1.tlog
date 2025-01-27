@@ -1,0 +1,10 @@
+^C:\USERS\GABRI\DOCUMENTOS\GITHUB\DH-SCHEDULEGENERATORUTB\BUILD\WINDOWS\X64\CMAKEFILES\9E2DAFF508C3A42D2EDC9841E45F745A\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/gabri/Documentos/GitHub/DH-ScheduleGeneratorUTB/windows -BC:/Users/gabri/Documentos/GitHub/DH-ScheduleGeneratorUTB/build/windows/x64 --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/gabri/Documentos/GitHub/DH-ScheduleGeneratorUTB/build/windows/x64/try_2_schedule.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
