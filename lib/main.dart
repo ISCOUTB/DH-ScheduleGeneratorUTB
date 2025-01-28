@@ -362,57 +362,216 @@ class _MyHomePageState extends State<MyHomePage> {
                                   const Text(
                                     '¡Bienvenido al Generador de Horarios UTB! (Actualizado 27/01/2025 06:30 PM)',
                                     style: TextStyle(
-                                        fontSize: 24, color: Colors.white),
+                                      fontSize:
+                                          26, // Tamaño ligeramente más grande
+                                      color:
+                                          Colors.white, // Color blanco clásico
+                                      fontFamily:
+                                          "Futura", // Fuente personalizada
+                                      fontWeight: FontWeight
+                                          .w500, // Grosor medio para un toque elegante
+                                      letterSpacing:
+                                          1.5, // Espaciado entre letras
+                                      shadows: [
+                                        Shadow(
+                                          offset:
+                                              Offset(1, 1), // Sombras sutiles
+                                          blurRadius: 3,
+                                          color: Colors
+                                              .black45, // Sombras en tono gris
+                                        ),
+                                      ],
+                                    ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 60),
                                   const Text(
-                                    'Instrucciones:',
+                                    'A tu izquierda encontraras una barra de botones con las siguientes funciones:',
                                     style: TextStyle(
-                                        fontSize: 20, color: Colors.white),
+                                      fontSize:
+                                          20, // Tamaño adecuado para mantener legibilidad
+                                      color: Colors
+                                          .white, // Color blanco para contraste
+                                      fontWeight: FontWeight
+                                          .w400, // Grosor regular para un look elegante
+                                      letterSpacing:
+                                          1.2, // Espaciado sutil entre letras
+                                      fontFamily:
+                                          "Futura", // Fuente personalizada
+                                      shadows: [
+                                        Shadow(
+                                          offset: Offset(1, 1), // Sombra suave
+                                          blurRadius: 2,
+                                          color: Colors
+                                              .black38, // Tono gris oscuro para mayor sutileza
+                                        ),
+                                      ],
+                                    ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '1. Haz clic en el ícono de búsqueda en la barra lateral izquierda para buscar y agregar materias.',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '2. Una vez agregadas las materias, puedes revisar las materias seleccionadas haciendo clic en el ícono de lista.',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '3. Opcionalmente, puedes aplicar filtros haciendo clic en el ícono de filtro.',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '4. Para generar los horarios posibles, haz clic en el botón amarillo con el ícono de calendario en la parte inferior de la barra lateral.',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '5. Los horarios generados aparecerán en la pantalla. Puedes presionar sobre ellos para ver los detalles de las materias.',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    '6. Para limpiar los horarios generados, haz clic en el ícono de la papelera en la barra lateral.\n Autores: Gabriel Mantilla y Diego Peña',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                    textAlign: TextAlign.center,
+                                  const SizedBox(height: 35),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal:
+                                                400), // Espacio horizontal
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize
+                                              .min, // Limita el ancho del Row al contenido
+                                          children: const [
+                                            Icon(Icons.search,
+                                                color: Colors
+                                                    .white), // Ícono de búsqueda
+                                            SizedBox(
+                                                width:
+                                                    10), // Espacio entre el ícono y el texto
+                                            Expanded(
+                                              child: Text(
+                                                'Para buscar y agregar materias.',
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                          height:
+                                              10), // Espacio entre elementos
+
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal:
+                                                400), // Espacio horizontal
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: const [
+                                            Icon(Icons.list,
+                                                color: Colors
+                                                    .white), // Ícono de lista
+                                            SizedBox(
+                                                width:
+                                                    10), // Espacio entre el ícono y el texto
+                                            Expanded(
+                                              child: Text(
+                                                'Revisar materias previamente seleccionadas.',
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                          height:
+                                              10), // Espacio entre elementos
+
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal:
+                                                400), // Espacio horizontal
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: const [
+                                            Icon(Icons.filter_list,
+                                                color: Colors
+                                                    .white), // Ícono de filtros
+                                            SizedBox(
+                                                width:
+                                                    10), // Espacio entre el ícono y el texto
+                                            Expanded(
+                                              child: Text(
+                                                'Aplicar filtros (evitar días, profesores, etc.).',
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                          height:
+                                              10), // Espacio entre elementos
+
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal:
+                                                400), // Espacio horizontal
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: const [
+                                            Icon(Icons.delete_outline,
+                                                color: Colors
+                                                    .white), // Ícono de papelera
+                                            SizedBox(
+                                                width:
+                                                    10), // Espacio entre el ícono y el texto
+                                            Expanded(
+                                              child: Text(
+                                                'Borrar horarios previamente generados.',
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                          height:
+                                              10), // Espacio entre elementos
+
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal:
+                                                400), // Espacio horizontal
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: const [
+                                            Icon(Icons.calendar_today,
+                                                color: Colors
+                                                    .yellow), // Ícono de calendario
+                                            SizedBox(
+                                                width:
+                                                    10), // Espacio entre el ícono y el texto
+                                            Expanded(
+                                              child: Text(
+                                                '¡Generar horarios! Puedes pulsar sobre ellos para ver los detalles de las materias.',
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white),
+                                                textAlign: TextAlign.left,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                          height:
+                                              30), // Espacio antes de la firma
+
+                                      // Widget de texto para la firma de los autores
+                                      const Text(
+                                        'Autores: Gabriel Mantilla y Diego Peña',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
