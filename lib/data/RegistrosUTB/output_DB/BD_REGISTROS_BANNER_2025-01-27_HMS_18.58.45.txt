@@ -1,0 +1,214 @@
+Materiales i;Teórico;ING. MECANICA;M01A;Z;3;2673;David Enrique Ramirez Brewer;Lunes 17:00 - 17:50/Jueves 17:00 - 18:50;CAMPUS TECNOLOGICO;36;2591/2590/2593/2592
+Materiales i;Laboratorio;ING. MECANICA;M01A;Z1;3;2590;Alexander Jose Narvaez Cruz;Martes 11:00 - 11:50;CAMPUS TECNOLOGICO;12;2673
+Materiales i;Laboratorio;ING. MECANICA;M01A;Z2;3;2591;Alexander Jose Narvaez Cruz;Viernes 13:00 - 13:50;CAMPUS TECNOLOGICO;11;2673
+Materiales i;Laboratorio;ING. MECANICA;M01A;Z3;3;2593;Erick Campo Rojas;Martes 16:00 - 16:50;CAMPUS TECNOLOGICO;10;2673
+Materiales i;Laboratorio;ING. MECANICA;M01A;Z4;3;2592;Deibys David Barreto Ponton;Lunes 15:00 - 15:50;CAMPUS TECNOLOGICO;11;2673
+Materiales ii;Teórico;ING. MECANICA;M02A;G;3;2116;Darling Perea Cabarcas;Miércoles 11:00 - 12:50/Lunes 12:00 - 12:50;CAMPUS TECNOLOGICO;17;NA
+Tecnologías de fabricación;Teórico;ING. MECANICA;M03A;G;3;1351;Alexander Jose Narvaez Cruz;Martes 13:00 - 14:50/Viernes 16:00 - 16:50;CAMPUS TECNOLOGICO;32;1352/1353
+Tecnologías de fabricación;Laboratorio;ING. MECANICA;M03A;G1;3;1352;Daniel Andres Montoya Espinosa;Lunes 10:00 - 10:50;CAMPUS TECNOLOGICO;6;1351
+Tecnologías de fabricación;Laboratorio;ING. MECANICA;M03A;G2;3;1353;Daniel Andres Montoya Espinosa;Jueves 08:00 - 08:50;CAMPUS TECNOLOGICO;10;1351
+Tecnologías de fabricación;Teórico;ING. MECANICA;M03A;H;3;2416;Daniel Andres Montoya Espinosa;Jueves 07:00 - 07:50/Martes 15:00 - 16:50;CAMPUS TECNOLOGICO;24;2417/2418
+Tecnologías de fabricación;Laboratorio;ING. MECANICA;M03A;H1;3;2417;Alexander Jose Narvaez Cruz;Viernes 15:00 - 15:50;CAMPUS TECNOLOGICO;9;2416
+Tecnologías de fabricación;Laboratorio;ING. MECANICA;M03A;H2;3;2418;Alexander Jose Narvaez Cruz;Miércoles 15:00 - 15:50;CAMPUS TECNOLOGICO;9;2416
+Corrosión;Teórico;ING. MECANICA;M04A;G;3;2184;Darling Perea Cabarcas;Lunes 18:00 - 19:50;CAMPUS TECNOLOGICO;15;2670/2671
+Corrosión;Laboratorio;ING. MECANICA;M04A;G1;3;2670;Darling Perea Cabarcas;Miércoles 07:00 - 07:50;CAMPUS TECNOLOGICO;3;2184
+Máquinas y herramientas cnc;Teórico;ING. MECANICA;M05A;G;3;1523;David Jesus Barros Chaparro;Sábado 07:00 - 08:50;CAMPUS TECNOLOGICO;30;2599/1524
+Máquinas y herramientas cnc;Laboratorio;ING. MECANICA;M05A;G1;3;1524;David Jesus Barros Chaparro;Viernes 09:00 - 09:50;CAMPUS TECNOLOGICO;7;1523
+Máquinas y herramientas cnc;Laboratorio;ING. MECANICA;M05A;G2;3;2599;David Jesus Barros Chaparro;Viernes 10:00 - 10:50;CAMPUS TECNOLOGICO;7;1523
+Proyecto de ingeniería i;Teórico;ING. MECANICA;P01A;G;3;1276;Edgardo William Arrieta Ortiz;Lunes 07:00 - 07:50/Miércoles 15:00 - 16:50;CAMPUS TECNOLOGICO;15;NA
+Proyecto de ingeniería ii;Teórico;ING. MECANICA;P02A;G;3;1277;Edgardo William Arrieta Ortiz;Jueves 09:00 - 09:50/Martes 15:00 - 16:50;CAMPUS TECNOLOGICO;14;NA
+Práctica profesional;Laboratorio;ING. MECANICA;P03A;G;9;1281;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50/Lunes 14:00 - 16:50/Martes 14:00 - 16:50/Miércoles 14:00 - 16:50/Jueves 14:00 - 16:50/Viernes 14:00 - 16:50;CAMPUS TECNOLOGICO;34;NA
+Conversión de energía;Teórico;ING. MECANICA;Z01A;G;3;2104;Ana Margarita Buelvas Hernandez;Miércoles 10:00 - 11:50/Jueves 15:00 - 16:50;CAMPUS TECNOLOGICO;40;NA
+Práctica profesional;Laboratorio;ING. MECANICA;Z04A;G;9;1282;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50/Lunes 14:00 - 16:50/Martes 14:00 - 16:50/Miércoles 14:00 - 16:50/Jueves 14:00 - 16:50/Viernes 14:00 - 16:50;CAMPUS TECNOLOGICO;34;NA
+Sensores e instrumentación;Teórico;ING. MECATRONICA;A01A;G;3;2419;Camilo Andres Naufal Salas;Viernes 12:00 - 12:50/Martes 17:00 - 18:50;CAMPUS TECNOLOGICO;11;2421/2423
+Sensores e instrumentación;Laboratorio;ING. MECATRONICA;A01A;G1;3;2421;Camilo Andres Naufal Salas;Miércoles 10:00 - 11:50;CAMPUS TECNOLOGICO;2;2419
+Sensores e instrumentación;Laboratorio;ING. MECATRONICA;A01A;G2;3;2423;Camilo Andres Naufal Salas;Miércoles 13:00 - 14:50;CAMPUS TECNOLOGICO;9;2419
+Sist automáticos de producción;Teórico;ING. MECATRONICA;A02A;G;3;2425;Malorys Mercedes Elles Fang;Miércoles 08:00 - 09:50/Lunes 13:00 - 14:50;CAMPUS TECNOLOGICO;20;NA
+Robótica;Teórico;ING. MECATRONICA;A03A;G;3;2429;Harold Alberto Rodriguez Arias;Lunes 15:00 - 16:50/Jueves 15:00 - 16:50;CAMPUS TECNOLOGICO;21;NA
+Control inteligente;Teórico;ING. MECATRONICA;A04A;G;3;2434;Yira Patricia Alcazar Oviedo;Miércoles 11:00 - 12:50/Jueves 11:00 - 12:50;CAMPUS TECNOLOGICO;13;NA
+Domotica;Teórico;ING. MECATRONICA;A07A;G;3;2139;George Washington Archbold Taylor;Martes 09:00 - 09:50/Lunes 15:00 - 16:50;CAMPUS TECNOLOGICO;15;NA
+Visión artificial;Teórico;ING. MECATRONICA;A08A;G;3;2171;Fernando Jose Quintero Vasquez;Martes 13:00 - 13:50/Viernes 15:00 - 16:50;CAMPUS TECNOLOGICO;16;NA
+Seminario de ing. mecatrónica;Teórico;ING. MECATRONICA;B01A;G;1;1287;George Washington Archbold Taylor;Viernes 10:00 - 11:50;CAMPUS TECNOLOGICO;9;NA
+Seminario de ing. mecatrónica;Teórico;ING. MECATRONICA;B01A;H;1;1289;Manuel Alejandro Salina Casseres;Viernes 10:00 - 11:50;CAMPUS TECNOLOGICO;24;NA
+Sist mecatrónicos programables;Teórico;ING. MECATRONICA;C01A;G;3;2427;George Washington Archbold Taylor;Martes 10:00 - 11:50/Jueves 14:00 - 14:50;CAMPUS TECNOLOGICO;1;2428/2606
+Sist mecatrónicos programables;Laboratorio;ING. MECATRONICA;C01A;G2;3;2606;George Washington Archbold Taylor;Lunes 07:00 - 07:50;CAMPUS TECNOLOGICO;1;2427
+Diseño concurrente;Teórico;ING. MECATRONICA;C02A;G;3;1505;Luis Miguel Perez Pertuz;Lunes 17:00 - 17:50/Jueves 17:00 - 18:50;CAMPUS TECNOLOGICO;26;NA
+Diseño mecatrónico;Teórico;ING. MECATRONICA;D01A;G;3;2432;Harold Alberto Rodriguez Arias;Miércoles 08:00 - 09:50/Jueves 08:00 - 09:50;CAMPUS TECNOLOGICO;12;NA
+Taller de mecatrónica;Teórico;ING. MECATRONICA;M01A;G;1;1301;Manuel Alejandro Salina Casseres;Miércoles 17:00 - 17:50;CAMPUS TECNOLOGICO;6;1302
+Taller de mecatrónica;Laboratorio;ING. MECATRONICA;M01A;G1;1;1302;Manuel Alejandro Salina Casseres;Jueves 16:00 - 16:50;CAMPUS TECNOLOGICO;6;1301
+Taller de mecatrónica;Teórico;ING. MECATRONICA;M01A;H;1;2228;Manuel Alejandro Salina Casseres;Martes 17:00 - 17:50;CAMPUS TECNOLOGICO;12;2229
+Taller de mecatrónica;Laboratorio;ING. MECATRONICA;M01A;H1;1;2229;Manuel Alejandro Salina Casseres;Jueves 15:00 - 15:50;CAMPUS TECNOLOGICO;12;2228
+Proyecto de ingeniería i;Teórico;ING. MECATRONICA;P01A;G;3;2430;Harold Alberto Rodriguez Arias;Jueves 07:00 - 07:50/Martes 15:00 - 16:50;CAMPUS TECNOLOGICO;32;NA
+Proyecto de ingeniería ii;Teórico;ING. MECATRONICA;P02A;G;3;1499;Harold Alberto Rodriguez Arias;Viernes 08:00 - 09:50/Lunes 11:00 - 11:50;CAMPUS TECNOLOGICO;27;NA
+Proyecto de ingeniería ii;Teórico;ING. MECATRONICA;P02A;Z;3;2569;Harold Alberto Rodriguez Arias;Viernes 07:00 - 07:50/Miércoles 14:00 - 15:50;CAMPUS TECNOLOGICO;29;NA
+Práctica profesional;Laboratorio;ING. MECATRONICA;P03A;G;9;2435;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50/Lunes 14:00 - 16:50/Martes 14:00 - 16:50/Miércoles 14:00 - 16:50/Jueves 14:00 - 16:50/Viernes 14:00 - 16:50;CAMPUS TECNOLOGICO;30;NA
+Manejo de sólidos;Teórico;ING. QUIMICA;A01A;G;4;2499;Yulanderson Salguero Rodriguez;Martes 07:00 - 07:50/Jueves 08:00 - 09:50;CAMPUS TECNOLOGICO;29;2500
+Manejo de sólidos;Laboratorio;ING. QUIMICA;A01A;G1;4;2500;Yulanderson Salguero Rodriguez;Lunes 10:00 - 11:50;CAMPUS TECNOLOGICO;29;2499
+Control de procesos;Teórico;ING. QUIMICA;A02A;G;3;2502;Deyler Rafael Castilla Caballero;Miércoles 07:00 - 08:50;CAMPUS TECNOLOGICO;17;2503
+Control de procesos;Laboratorio;ING. QUIMICA;A02A;G1;3;2503;Deyler Rafael Castilla Caballero;Jueves 13:00 - 14:50;CAMPUS TECNOLOGICO;14;2502
+Ingeniería de las reacciones;Teórico;ING. QUIMICA;A03A;G;3;1967;Deyler Rafael Castilla Caballero;Martes 07:00 - 08:50;CAMPUS TECNOLOGICO;31;1968
+Ingeniería de las reacciones;Laboratorio;ING. QUIMICA;A03A;G1;3;1968;Deyler Rafael Castilla Caballero;Lunes 10:00 - 11:50;CAMPUS TECNOLOGICO;2;1967
+Operaciones unitarias;Teórico;ING. QUIMICA;A04A;G;3;2504;Alexander De Jesus Leyton Coneo;Jueves 17:00 - 18:50;CAMPUS TECNOLOGICO;33;2505
+Operaciones unitarias;Laboratorio;ING. QUIMICA;A04A;G1;3;2505;Elizabeth Moreno Bohorquez;Martes 10:00 - 11:50;CAMPUS TECNOLOGICO;4;2504
+Procesos de separación;Teórico;ING. QUIMICA;A05A;G;4;1965;Alexander De Jesus Leyton Coneo;Miércoles 11:00 - 12:50/Lunes 12:00 - 12:50;CAMPUS TECNOLOGICO;16;1966
+Procesos de separación;Laboratorio;ING. QUIMICA;A05A;G1;4;1966;Elizabeth Moreno Bohorquez;Jueves 10:00 - 11:50;CAMPUS TECNOLOGICO;4;1965
+Ingeniería de procesos;Teórico;ING. QUIMICA;A06A;G;3;1971;Yulanderson Salguero Rodriguez;Miércoles 08:00 - 09:50;CAMPUS TECNOLOGICO;27;1972
+Ingeniería de procesos;Laboratorio;ING. QUIMICA;A06A;G1;3;1972;Yulanderson Salguero Rodriguez;Jueves 11:00 - 12:50;CAMPUS TECNOLOGICO;27;1971
+Modelamiento y simulación;Teórico;ING. QUIMICA;A07A;G;0 TO 3;2003;Yulanderson Salguero Rodriguez;Viernes 07:00 - 08:50;CAMPUS TECNOLOGICO;26;NA
+Diseño y optimización de proce;Teórico;ING. QUIMICA;A08A;G;3;1969;Yulanderson Salguero Rodriguez;Martes 15:00 - 16:50;CAMPUS TECNOLOGICO;26;1970
+Diseño y optimización de proce;Laboratorio;ING. QUIMICA;A08A;G1;3;1970;Yulanderson Salguero Rodriguez;Viernes 12:00 - 13:50;CAMPUS TECNOLOGICO;26;1969
+Diseño de plantas de procesos;Teórico;ING. QUIMICA;A09A;G;3;1975;Deyler Rafael Castilla Caballero;Martes 14:00 - 15:50;CAMPUS TECNOLOGICO;15;1977
+Diseño de plantas de procesos;Laboratorio;ING. QUIMICA;A09A;G1;3;1977;Deyler Rafael Castilla Caballero;Viernes 14:00 - 15:50;CAMPUS TECNOLOGICO;9;1975
+Fundamentos de seguridad de procesos industriales;Teórico;ING. QUIMICA;A14A;A;3;1621;Alexander De Jesus Leyton Coneo;Jueves 11:00 - 12:50/Lunes 18:00 - 18:50;CAMPUS TECNOLOGICO;20;NA
+Seminario de ing. química;Teórico;ING. QUIMICA;B01A;G;1;2485;Mary Judith Arias Tapia;Viernes 10:00 - 11:50;CAMPUS TECNOLOGICO;18;NA
+Balance de materia y energía;Teórico;ING. QUIMICA;B02A;G;3;2490;Elizabeth Moreno Bohorquez;Lunes 12:00 - 12:50/Miércoles 16:00 - 17:50;CAMPUS TECNOLOGICO;35;NA
+Termodínamica i;Laboratorio;ING. QUIMICA;B03A;E;3;2699;NA;Miércoles 15:00 - 16:50;CAMPUS TECNOLOGICO;1;1481
+Termodínamica i;Teórico;ING. QUIMICA;B03A;G;3;1481;Deyler Rafael Castilla Caballero;Martes 10:00 - 11:50;CAMPUS TECNOLOGICO;4;2612/2699
+Fenómenos de transporte;Teórico;ING. QUIMICA;B04A;G;3;2501;Yulanderson Salguero Rodriguez;Martes 08:00 - 09:50/Lunes 12:00 - 12:50;CAMPUS TECNOLOGICO;37;NA
+Termodinámica ii;Teórico;ING. QUIMICA;B05A;G;3;2497;Elizabeth Moreno Bohorquez;Martes 12:00 - 13:50;CAMPUS TECNOLOGICO;26;2498
+Termodinámica ii;Laboratorio;ING. QUIMICA;B05A;G1;3;2498;Elizabeth Moreno Bohorquez;Miércoles 13:00 - 14:50;CAMPUS TECNOLOGICO;7;2497
+Proyecto de ingeniería i;Teórico;ING. QUIMICA;P01A;G;3;1973;Mary Judith Arias Tapia;Martes 09:00 - 11:50;CAMPUS TECNOLOGICO;16;NA
+Proyecto de ingeniería ii;Teórico;ING. QUIMICA;P02A;G;3;1974;Mary Judith Arias Tapia;Jueves 07:00 - 09:50;CAMPUS TECNOLOGICO;26;NA
+Práctica profesional;Laboratorio;ING. QUIMICA;P03A;Z;9;2534;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50/Lunes 14:00 - 16:50/Martes 14:00 - 16:50/Miércoles 14:00 - 16:50/Jueves 14:00 - 16:50/Viernes 14:00 - 16:50;CAMPUS TECNOLOGICO;16;NA
+Control y sim. de procesos ii;Teórico;ING. QUIMICA;Z12A;G;0 TO 3;2002;Yulanderson Salguero Rodriguez;Viernes 07:00 - 08:50;CAMPUS TECNOLOGICO;26;NA
+Diseño de plantas;Teórico;ING. QUIMICA;Z18A;G;3;1976;Deyler Rafael Castilla Caballero;Martes 14:00 - 15:50;CAMPUS TECNOLOGICO;15;1978
+Diseño de plantas;Laboratorio;ING. QUIMICA;Z18A;G1;3;1978;Deyler Rafael Castilla Caballero;Viernes 14:00 - 15:50;CAMPUS TECNOLOGICO;9;1976
+Práctica profesional;Laboratorio;ING. QUIMICA;Z19A;G;9;2004;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50/Lunes 14:00 - 16:50/Martes 14:00 - 16:50/Miércoles 14:00 - 16:50/Jueves 14:00 - 16:50/Viernes 14:00 - 16:50;CAMPUS TECNOLOGICO;39;NA
+Bioquímica;Teórico;INGENIERIA BIOMEDICA;B01A;G;3;1261;Juan Alberto Rebollo Perez;Lunes 15:00 - 16:50/Jueves 15:00 - 15:50;CAMPUS TECNOLOGICO;13;1262
+Bioquímica;Laboratorio;INGENIERIA BIOMEDICA;B01A;G1;3;1262;Juan Alberto Rebollo Perez;Viernes 15:00 - 16:50;CAMPUS TECNOLOGICO;15;1261
+Sem. de ingeniería biomédica;Teórico;INGENIERIA BIOMEDICA;F01A;G;1;2067;Raul Andres Vargas Ramirez;Viernes 10:00 - 11:50;CAMPUS TECNOLOGICO;16;NA
+Taller de ingeniería biomédica;Teorico-practico;INGENIERIA BIOMEDICA;F02A;G;1;1015;NA;Martes 09:00 - 10:50;CAMPUS TECNOLOGICO;18;NA
+Taller de ingeniería biomédica;Teorico-practico;INGENIERIA BIOMEDICA;F02A;H;1;1881;NA;Martes 12:00 - 13:50;CAMPUS TECNOLOGICO;16;NA
+Anatomía y fisiología humana;Teórico;INGENIERIA BIOMEDICA;F03A;G;4;1095;Juan Alberto Rebollo Perez;Jueves 16:00 - 17:50/Lunes 17:00 - 18:50;CAMPUS TECNOLOGICO;4;1096
+Anatomía y fisiología humana;Laboratorio;INGENIERIA BIOMEDICA;F03A;G1;4;1096;Juan Alberto Rebollo Perez;Miércoles 15:00 - 16:50;CAMPUS TECNOLOGICO;4;1095
+Bioderecho;Teórico;INGENIERIA BIOMEDICA;F04A;G;3;1885;NA;Viernes 12:00 - 12:50/Martes 17:00 - 18:50;CAMPUS TECNOLOGICO;18;NA
+Biofísica;Teórico;INGENIERIA BIOMEDICA;F05A;G;3;1253;Erick Campo Rojas;Jueves 12:00 - 12:50/Lunes 17:00 - 18:50;CAMPUS TECNOLOGICO;15;1254
+Biofísica;Laboratorio;INGENIERIA BIOMEDICA;F05A;G1;3;1254;NA;Miércoles 07:00 - 08:50;CAMPUS TECNOLOGICO;15;1253
+Instrumentación biomédica;Teórico;INGENIERIA BIOMEDICA;I01A;G;4;1774;Sonia Helena Contreras Ortiz;Lunes 08:00 - 09:50/Miércoles 15:00 - 16:50;CAMPUS TECNOLOGICO;10;1775
+Instrumentación biomédica;Laboratorio;INGENIERIA BIOMEDICA;I01A;G1;4;1775;Sonia Helena Contreras Ortiz;Martes 08:00 - 09:50;CAMPUS TECNOLOGICO;8;1774
+Biomecánica;Teórico;INGENIERIA BIOMEDICA;M01A;G;4;1283;Malorys Mercedes Elles Fang;Viernes 07:00 - 08:50/Lunes 17:00 - 18:50;CAMPUS TECNOLOGICO;3;1284
+Biomecánica;Laboratorio;INGENIERIA BIOMEDICA;M01A;G1;4;1284;Caleb David Romero Mercado;Jueves 11:00 - 12:50;CAMPUS TECNOLOGICO;3;1283
+Bioinformática;Teórico;INGENIERIA BIOMEDICA;O02A;G;3;1306;Edisson Chavarro Mesa;Lunes 11:00 - 12:50/Jueves 15:00 - 15:50;CAMPUS TECNOLOGICO;2;1307
+Bioinformática;Laboratorio;INGENIERIA BIOMEDICA;O02A;G1;3;1307;Edisson Chavarro Mesa;Viernes 09:00 - 10:50;CAMPUS TECNOLOGICO;2;1306
+Proyecto de ingeniería i;Teórico;INGENIERIA BIOMEDICA;P01A;G;3;1895;Caleb David Romero Mercado;Viernes 17:00 - 19:50;CAMPUS TECNOLOGICO;13;NA
+Proyecto de ingeniería ii;Teórico;INGENIERIA BIOMEDICA;P02A;G;3;1303;Raul Andres Vargas Ramirez;Martes 17:00 - 19:50;CAMPUS TECNOLOGICO;7;NA
+Prácticas profesionales;Laboratorio;INGENIERIA BIOMEDICA;P03A;G;9;1547;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50;CAMPUS TECNOLOGICO;38;NA
+Sistemas de imágenes médicas;Teórico;INGENIERIA BIOMEDICA;P04A;Z;3;2577;Caleb David Romero Mercado;Jueves 08:00 - 09:50/Lunes 15:00 - 15:50;CAMPUS TECNOLOGICO;26;NA
+Ingeniería clínica y gestión de tecnología biomédica;Teórico;INGENIERIA BIOMEDICA;P08A;Z;3;2533;Jose David Pineda Arregoces;Martes 11:00 - 12:50/Miércoles 11:00 - 11:50;CAMPUS TECNOLOGICO;11;NA
+Base de datos;Teórico;INGENIERIA DE SISTEMAS Y COMPU;A01A;H;3;2317;Aisner Jose Marrugo Juliao;Martes 17:00 - 17:50/Miércoles 18:00 - 19:50;CAMPUS TECNOLOGICO;11;NA
+Desarrollo de software;Teórico;INGENIERIA DE SISTEMAS Y COMPU;A02A;G;3;2277;Jairo Enrique Serrano Castañeda;Jueves 13:00 - 13:50;CAMPUS TECNOLOGICO;2;2278
+Desarrollo de software;Laboratorio;INGENIERIA DE SISTEMAS Y COMPU;A02A;G1;3;2278;Jairo Enrique Serrano Castañeda;Viernes 10:00 - 11:50;CAMPUS TECNOLOGICO;2;2277
+Desarrollo de software;Teórico;INGENIERIA DE SISTEMAS Y COMPU;A02A;H;3;2281;Edwin Alexander Puertas Del Castillo;Lunes 13:00 - 13:50;CAMPUS TECNOLOGICO;13;2282
+Desarrollo de software;Laboratorio;INGENIERIA DE SISTEMAS Y COMPU;A02A;H1;3;2282;Edwin Alexander Puertas Del Castillo;Jueves 15:00 - 16:50;CAMPUS TECNOLOGICO;13;2281
+Algoritmos y complejidad;Teórico;INGENIERIA DE SISTEMAS Y COMPU;A03A;G;3;2286;Carlos Arturo Cortes Fuentes;Jueves 17:00 - 17:50;CAMPUS TECNOLOGICO;14;2287
+Algoritmos y complejidad;Laboratorio;INGENIERIA DE SISTEMAS Y COMPU;A03A;G1;3;2287;Carlos Arturo Cortes Fuentes;Lunes 17:00 - 18:50;CAMPUS TECNOLOGICO;12;2286
+Algoritmos y complejidad;Teórico;INGENIERIA DE SISTEMAS Y COMPU;A03A;H;3;2294;Gloria Isabel Bautista Lasprilla;Martes 10:00 - 10:50;CAMPUS TECNOLOGICO;6;2295
+Algoritmos y complejidad;Laboratorio;INGENIERIA DE SISTEMAS Y COMPU;A03A;H1;3;2295;Gloria Isabel Bautista Lasprilla;Miércoles 08:00 - 09:50;CAMPUS TECNOLOGICO;6;2294
+Arquitectura de software;Teórico;INGENIERIA DE SISTEMAS Y COMPU;A04A;G;3;1033;Jairo Enrique Serrano Castañeda;Lunes 13:00 - 13:50;CAMPUS TECNOLOGICO;15;1034
+Arquitectura de software;Laboratorio;INGENIERIA DE SISTEMAS Y COMPU;A04A;G1;3;1034;Jairo Enrique Serrano Castañeda;Jueves 07:00 - 08:50;CAMPUS TECNOLOGICO;15;1033
+Arquitectura de software;Teórico;INGENIERIA DE SISTEMAS Y COMPU;A04A;H;3;1187;Jairo Enrique Serrano Castañeda;Viernes 15:00 - 15:50;CAMPUS TECNOLOGICO;18;1188
+Arquitectura de software;Laboratorio;INGENIERIA DE SISTEMAS Y COMPU;A04A;H1;3;1188;Jairo Enrique Serrano Castañeda;Martes 13:00 - 14:50;CAMPUS TECNOLOGICO;18;1187
+Arquitectura de software;Teórico;INGENIERIA DE SISTEMAS Y COMPU;A04A;I;3;2348;Jairo Enrique Serrano Castañeda;Jueves 11:00 - 11:50;CAMPUS TECNOLOGICO;21;2349
+Arquitectura de software;Laboratorio;INGENIERIA DE SISTEMAS Y COMPU;A04A;I1;3;2349;Jairo Enrique Serrano Castañeda;Viernes 13:00 - 14:50;CAMPUS TECNOLOGICO;21;2348
+Inteligencia artificial;Teórico;INGENIERIA DE SISTEMAS Y COMPU;A06A;G;3;1501;Edwin Alexander Puertas Del Castillo;Lunes 10:00 - 11:50/Miércoles 15:00 - 15:50;CAMPUS TECNOLOGICO;8;NA
+Infraestructura para ti;Teórico;INGENIERIA DE SISTEMAS Y COMPU;A07A;G;3;1100;Rafael Enrique Monterroza Barrios;Martes 17:00 - 17:50;CAMPUS TECNOLOGICO;12;1101
+Infraestructura para ti;Laboratorio;INGENIERIA DE SISTEMAS Y COMPU;A07A;G1;3;1101;Rafael Enrique Monterroza Barrios;Martes 18:00 - 19:50;CAMPUS TECNOLOGICO;12;1100
+Sem. ing. de sistema y computa;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C01A;G;1;1126;NA;Viernes 10:00 - 11:50;CAMPUS TECNOLOGICO;7;NA
+Sem. ing. de sistema y computa;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C01A;H;1;1426;Isaac Zuñiga Silgado;Viernes 10:00 - 11:50;CAMPUS TECNOLOGICO;5;NA
+Sem. ing. de sistema y computa;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C01A;I;1;1428;NA;Viernes 10:00 - 11:50;CAMPUS TECNOLOGICO;9;NA
+Fundamentos de programación;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C02A;GB;3;2016;Misorly Del Carmen Soto Acevedo;Miércoles 07:00 - 07:50/Viernes 13:00 - 14:50;CAMPUS TECNOLOGICO;4;NA
+Fundamentos de programación;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C02A;GC;3;2085;Yuranis Henriquez Nuñez;Jueves 07:00 - 08:50/Viernes 07:00 - 07:50;CAMPUS TECNOLOGICO;2;NA
+Fundamentos de programación;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C02A;H;3;1250;Humberto Manuel Marbello Peña;Viernes 08:00 - 09:50/Martes 15:00 - 15:50;CAMPUS TECNOLOGICO;3;NA
+Fundamentos de programación;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C02A;M;3;1993;NA;Jueves 07:00 - 08:50/Lunes 09:00 - 09:50;CAMPUS TECNOLOGICO;2;NA
+Fundamentos de programación;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C02A;U;3;2012;Maria Eugenia Rincon Socha;Miércoles 09:00 - 10:50/Viernes 13:00 - 13:50;CAMPUS TECNOLOGICO;2;NA
+Fundamentos de programación;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C02A;V;3;2013;Julio Cesar Gamarra Cabarcas;Miércoles 09:00 - 09:50/Lunes 10:00 - 11:50;CAMPUS TECNOLOGICO;5;NA
+Programación;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C03A;J;3;1147;Carlos Ernesto Botero Pareja;Lunes 13:00 - 13:50/Miércoles 16:00 - 17:50;CAMPUS TECNOLOGICO;27;NA
+Programación;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C03A;K;3;1661;Julio Cesar Gamarra Cabarcas;Viernes 11:00 - 12:50/Martes 12:00 - 12:50;CAMPUS TECNOLOGICO;10;NA
+Programación;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C03A;L;3;1684;Carlos Ernesto Botero Pareja;Lunes 14:00 - 15:50/Jueves 17:00 - 17:50;CAMPUS TECNOLOGICO;21;NA
+Programación orientada a objet;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C04A;G;3;2123;Yuranis Henriquez Nuñez;Jueves 09:00 - 10:50/Martes 11:00 - 11:50;CAMPUS TECNOLOGICO;16;NA
+Programación orientada a objet;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C04A;I;3;2221;Carlos Ernesto Botero Pareja;Miércoles 13:00 - 14:50/Jueves 16:00 - 16:50;CAMPUS TECNOLOGICO;10;NA
+Programación orientada a objet;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C04A;J;3;2236;Yuranis Henriquez Nuñez;Lunes 07:00 - 07:50/Viernes 08:00 - 09:50;CAMPUS TECNOLOGICO;27;NA
+Estructura de datos;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C05A;G;3;1590;Rafael Enrique Monterroza Barrios;Miércoles 17:00 - 18:50/Jueves 19:00 - 19:50;CAMPUS TECNOLOGICO;15;NA
+Estructura de datos;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C05A;H;3;1591;Rafael Enrique Monterroza Barrios;Jueves 17:00 - 18:50/Miércoles 19:00 - 19:50;CAMPUS TECNOLOGICO;17;NA
+Matemática discreta;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C06A;G;3;1021;NA;Jueves 13:00 - 13:50/Martes 15:00 - 16:50;CAMPUS TECNOLOGICO;22;NA
+Matemática discreta;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C06A;H;3;1028;NA;Lunes 11:00 - 11:50/Jueves 14:00 - 15:50;CAMPUS TECNOLOGICO;14;NA
+Procesamiento numérico;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C07A;I;3;1345;Moises Ramon Quintana Alvarez;Martes 08:00 - 09:50/Lunes 09:00 - 09:50;CAMPUS TECNOLOGICO;9;NA
+Procesamiento numérico;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C07A;K;3;1904;Moises Ramon Quintana Alvarez;Viernes 07:00 - 08:50/Lunes 08:00 - 08:50;CAMPUS TECNOLOGICO;18;NA
+Comunicaciones y redes;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C08A;G;3;1404;Isaac Zuñiga Silgado;Miércoles 08:00 - 08:50/Jueves 10:00 - 11:50;CAMPUS TECNOLOGICO;17;NA
+Sistemas y modelos;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C10A;G;3;1592;Isaac Zuñiga Silgado;Miércoles 07:00 - 07:50/Viernes 07:00 - 08:50;CAMPUS TECNOLOGICO;12;NA
+Tóp espe de ciencias computaci;Teórico;INGENIERIA DE SISTEMAS Y COMPU;C12A;G;3;1111;Carlos Arturo Cortes Fuentes;Jueves 18:00 - 19:50/Miércoles 19:00 - 19:50;CAMPUS TECNOLOGICO;12;NA
+Proyecto de ingeniería i;Teórico;INGENIERIA DE SISTEMAS Y COMPU;P01A;G;3;1492;Aisner Jose Marrugo Juliao;Jueves 17:00 - 19:50;CAMPUS TECNOLOGICO;2;NA
+Proyecto de ingeniería ii;Teórico;INGENIERIA DE SISTEMAS Y COMPU;P02A;G;3;1114;Rafael Enrique Monterroza Barrios;Lunes 17:00 - 19:50;CAMPUS TECNOLOGICO;1;NA
+Prácticas profesionales;Laboratorio;INGENIERIA DE SISTEMAS Y COMPU;P03A;G;9;1116;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50/Lunes 14:00 - 16:50/Martes 14:00 - 16:50/Miércoles 14:00 - 16:50/Jueves 14:00 - 16:50/Viernes 14:00 - 16:50;CAMPUS TECNOLOGICO;28;NA
+Resistencia y propulsion;Teórico;INGENIERIA NAVAL;A01A;G;3;2480;Oscar David Acosta Lopera;Jueves 13:00 - 13:50/Lunes 15:00 - 16:50;CAMPUS TECNOLOGICO;15;NA
+Seminario de ingenieria naval;Teórico;INGENIERIA NAVAL;B01A;G;1;2436;Oscar David Acosta Lopera;Viernes 10:00 - 11:50;CAMPUS TECNOLOGICO;20;NA
+Introduccion a la ing naval;Teórico;INGENIERIA NAVAL;B02A;G;3;2437;Oscar David Acosta Lopera;Miércoles 08:00 - 09:50/Jueves 10:00 - 11:50;CAMPUS TECNOLOGICO;25;NA
+Proyecto naval;Teórico;INGENIERIA NAVAL;C01A;G;3;2483;Jairo Humberto Cabrera Tovar;Martes 18:00 - 19:50/Jueves 18:00 - 19:50;CAMPUS TECNOLOGICO;22;NA
+Arquitectura naval;Teórico;INGENIERIA NAVAL;D01A;G;3;2471;Ricardo Alfonso Mejia Correa;Jueves 15:00 - 16:50/Martes 16:00 - 17:50;CAMPUS TECNOLOGICO;7;NA
+Estructuras navales i;Teórico;INGENIERIA NAVAL;D02A;G;3;2476;Jairo Humberto Cabrera Tovar;Miércoles 13:00 - 14:50/Lunes 14:00 - 15:50;CAMPUS TECNOLOGICO;11;NA
+Metodologia de diseño naval;Teórico;INGENIERIA NAVAL;D03A;G;3;2475;Ricardo Alfonso Mejia Correa;Jueves 17:00 - 18:50/Martes 18:00 - 19:50;CAMPUS TECNOLOGICO;33;NA
+Estructuras navales ii;Teórico;INGENIERIA NAVAL;D04A;G;3;2479;Juan Carlos Galindo Orozco;Miércoles 08:00 - 08:50/Lunes 18:00 - 19:50;CAMPUS TECNOLOGICO;2;NA
+Hidrodinamica naval;Teórico;INGENIERIA NAVAL;D05A;G;3;2477;Oscar David Acosta Lopera;Jueves 09:00 - 09:50/Lunes 13:00 - 14:50;CAMPUS TECNOLOGICO;22;NA
+Log del trans marit y fluvial;Teórico;INGENIERIA NAVAL;D06A;G;3;2481;Fernando Salazar Arrieta;Lunes 18:00 - 19:50/Miércoles 18:00 - 19:50;CAMPUS TECNOLOGICO;23;NA
+Arquitectura de sistema offshore;Teórico;INGENIERIA NAVAL;E01A;Z;3;2538;Jairo Humberto Cabrera Tovar;Martes 14:00 - 14:50/Miércoles 15:00 - 16:50;CAMPUS TECNOLOGICO;8;NA
+Tecnología de embarcaciones menores;Teórico;INGENIERIA NAVAL;E02A;G;3;2260;Ricardo Alfonso Mejia Correa;Jueves 13:00 - 14:50/Martes 15:00 - 15:50;CAMPUS TECNOLOGICO;12;NA
+Construccion naval;Teórico;INGENIERIA NAVAL;L01A;G;4;2478;Carlos Andres Delgado Agudelo;Martes 18:00 - 19:50/Jueves 18:00 - 19:50;CAMPUS TECNOLOGICO;27;NA
+Proyecto de ingeniería i;Teórico;INGENIERIA NAVAL;P01A;G;3;2482;Oscar David Acosta Lopera;Lunes 17:00 - 19:50;CAMPUS TECNOLOGICO;11;NA
+Proyecto de ingeniería ii;Teórico;INGENIERIA NAVAL;P02A;G;3;2484;Oscar David Acosta Lopera;Miércoles 17:00 - 19:50;CAMPUS TECNOLOGICO;8;NA
+Práctica profesional;Laboratorio;INGENIERIA NAVAL;P03A;G;9;1702;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50/Lunes 14:00 - 16:50/Martes 14:00 - 16:50/Miércoles 14:00 - 16:50/Jueves 14:00 - 16:50/Viernes 14:00 - 16:50;CAMPUS TECNOLOGICO;32;NA
+Fundamentos de marketing;Teórico;MARKETING Y TRANSFORMACION DIG;D01A;A;3;2556;Hernan Saulo Torres Cuello;Viernes 09:00 - 10:50/Lunes 11:00 - 11:50;CAMPUS TECNOLOGICO;3;NA
+Psicología clínica - malla 2016;Teórico;PSICOLOGIA;A04A;S;3;2192;Jeimer David Ortiz Marimon;Viernes 07:00 - 07:50/Jueves 10:00 - 11:50;CAMPUS TECNOLOGICO;3;NA
+Psicología educativa;Teórico;PSICOLOGIA;A05A;P;3;1913;NA;Sábado 07:00 - 08:50/Lunes 16:00 - 16:50;CAMPUS TECNOLOGICO;16;NA
+Psicología social comunitaria;Teórico;PSICOLOGIA;A07A;P;3;1450;Yina Margarita Alcala Barrios;Martes 08:00 - 08:50/Sábado 10:00 - 11:50;CAMPUS TECNOLOGICO;15;NA
+Psicología organizacional;Teórico;PSICOLOGIA;A08A;P;3;1246;Yuly Patricia Fang Alandette;Lunes 15:00 - 15:50/Jueves 15:00 - 16:50;CAMPUS TECNOLOGICO;7;NA
+Gestión del talento humano - malla 2016;Teórico;PSICOLOGIA;A12A;P;3;2168;Yacira Isabel Luna Zuñiga;Viernes 17:00 - 18:50/Miércoles 18:00 - 18:50;CAMPUS TECNOLOGICO;9;NA
+Estrategias de int en psi edu;Teórico;PSICOLOGIA;A16A;P;3;1858;NA;Sábado 09:00 - 10:50/Lunes 17:00 - 17:50;CAMPUS TECNOLOGICO;16;NA
+Estrategias de intervencion cl;Teórico;PSICOLOGIA;A20A;P;3;2098;Elias Rafael Geney Castro;Viernes 14:00 - 14:50/Miércoles 16:00 - 17:50;CAMPUS TECNOLOGICO;10;NA
+Psicología clínica y de la sal - malla 2021;Teórico;PSICOLOGIA;A22A;S;3;2191;Jeimer David Ortiz Marimon;Viernes 07:00 - 07:50/Jueves 10:00 - 11:50;CAMPUS TECNOLOGICO;3;NA
+Introducción a la psicología;Teórico;PSICOLOGIA;B01A;P;3;2387;Jose Alexander Estrada Hernandez;Martes 07:00 - 08:50/Viernes 07:00 - 07:50;CAMPUS TECNOLOGICO;35;NA
+Introducción a la psicología;Teórico;PSICOLOGIA;B01A;S;3;2384;Yuly Patricia Fang Alandette;Miércoles 07:00 - 08:50/Lunes 13:00 - 13:50;CAMPUS TECNOLOGICO;1;NA
+Seminario de autoformación i;Teórico;PSICOLOGIA;B04A;P;3;2394;Elsy Mercedes Dominguez De La Ossa;Lunes 10:00 - 11:50/Jueves 10:00 - 10:50;CAMPUS TECNOLOGICO;2;NA
+Seminario de autoformación i;Teórico;PSICOLOGIA;B04A;S;3;2393;Elsy Mercedes Dominguez De La Ossa;Martes 15:00 - 16:50/Jueves 15:00 - 15:50;CAMPUS TECNOLOGICO;35;NA
+Seminario de autoformación ii;Teórico;PSICOLOGIA;C01A;S;3;1587;NA;Lunes 14:00 - 15:50/Viernes 16:00 - 16:50;CAMPUS TECNOLOGICO;12;NA
+Evaluación neuropsic en adults - malla 2021;Teórico;PSICOLOGIA;E07A;P;3;1980;Karol Patricia Gutierrez Ruiz;Lunes 11:00 - 12:50/Jueves 13:00 - 13:50;CAMPUS TECNOLOGICO;15;NA
+Neuropsicología humana;Teórico;PSICOLOGIA;G01A;P;3;1538;Karol Patricia Gutierrez Ruiz;Jueves 10:00 - 11:50;CAMPUS TECNOLOGICO;2;1540/1539/2543
+Neuropsicología humana;Laboratorio;PSICOLOGIA;G01A;P3;0 TO 3;2543;Karol Patricia Gutierrez Ruiz;Martes 15:00 - 15:50;CAMPUS TECNOLOGICO;2;1538
+Neuropsicología humana;Teórico;PSICOLOGIA;G01A;S;3;1723;Karol Patricia Gutierrez Ruiz;Martes 13:00 - 14:50;CAMPUS TECNOLOGICO;12;1724/1725
+Neuropsicología humana;Laboratorio;PSICOLOGIA;G01A;S1;3;1724;Karol Patricia Gutierrez Ruiz;Jueves 15:00 - 15:50;CAMPUS TECNOLOGICO;5;1723
+Neuropsicología humana;Laboratorio;PSICOLOGIA;G01A;S2;3;1725;Karol Patricia Gutierrez Ruiz;Lunes 08:00 - 08:50;CAMPUS TECNOLOGICO;7;1723
+Psicología y gestión humana - malla 2021;Teórico;PSICOLOGIA;I02A;P;3;2661;Yacira Isabel Luna Zuñiga;Viernes 17:00 - 18:50/Miércoles 18:00 - 18:50;CAMPUS TECNOLOGICO;21;NA
+Psicometría;Teórico;PSICOLOGIA;M03A;S;3;1685;David Javier Fortich Perez;Lunes 13:00 - 14:50;CAMPUS TECNOLOGICO;10;1687/1686
+Psicometría;Laboratorio;PSICOLOGIA;M03A;S1;3;1686;David Javier Fortich Perez;Jueves 16:00 - 16:50;CAMPUS TECNOLOGICO;5;1685
+Psicometría;Laboratorio;PSICOLOGIA;M03A;S2;3;1687;David Javier Fortich Perez;Miércoles 09:00 - 09:50;CAMPUS TECNOLOGICO;5;1685
+Fundamentos de investigación;Teórico;PSICOLOGIA;M04A;S;3;1608;Pedro Vazquez Miraz;Martes 08:00 - 09:50/Viernes 09:00 - 09:50;CAMPUS TECNOLOGICO;3;NA
+Investigación cuantitativa;Teórico;PSICOLOGIA;M05A;S;3;2341;Pedro Vazquez Miraz;Jueves 07:00 - 07:50/Martes 14:00 - 15:50;CAMPUS TECNOLOGICO;16;NA
+Investigación cualitativa;Teórico;PSICOLOGIA;M06A;P;3;2157;Elsy Mercedes Dominguez De La Ossa;Jueves 08:00 - 09:50/Lunes 09:00 - 09:50;CAMPUS TECNOLOGICO;25;NA
+Investigación cualitativa;Teórico;PSICOLOGIA;M06A;S;3;2355;Elsy Mercedes Dominguez De La Ossa;Miércoles 07:00 - 08:50/Jueves 07:00 - 07:50;CAMPUS TECNOLOGICO;2;NA
+Práctica profesional i;Laboratorio;PSICOLOGIA;P01A;P;6;1981;NA;Lunes 08:00 - 11:50/Martes 08:00 - 11:50/Miércoles 08:00 - 11:50/Jueves 08:00 - 11:50/Viernes 08:00 - 11:50;CAMPUS TECNOLOGICO;40;NA
+Práctica profesional ii;Laboratorio;PSICOLOGIA;P02A;P;12;1982;NA;Lunes 08:00 - 12:50/Martes 08:00 - 12:50/Miércoles 08:00 - 12:50/Jueves 08:00 - 12:50/Viernes 08:00 - 12:50/Lunes 14:00 - 16:50/Martes 14:00 - 16:50/Miércoles 14:00 - 16:50/Jueves 14:00 - 16:50/Viernes 14:00 - 16:50;CAMPUS TECNOLOGICO;19;NA
+Práctica profesional i. psic clín y salud;Laboratorio;PSICOLOGIA;P03A;P;6;1536;NA;Lunes 08:00 - 11:50/Martes 08:00 - 11:50/Miércoles 08:00 - 11:50/Jueves 08:00 - 11:50/Viernes 08:00 - 11:50;CAMPUS TECNOLOGICO;25;NA
+Evaluación psicológica - malla 2021;Teórico;PSICOLOGIA;R01A;S;3;2173;NA;Lunes 09:00 - 10:50/Martes 15:00 - 16:50;CAMPUS TECNOLOGICO;4;NA
+Seminario de trabajo de grado i - malla 2021;Teórico;PSICOLOGIA;R02A;S;2;1512;Jeison David Neira Salas;Miércoles 14:00 - 15:50;CAMPUS TECNOLOGICO;2;NA
+Seminario de trabajo de grado ii;Teórico;PSICOLOGIA;R03A;P;2;1933;Jeison David Neira Salas;Sábado 09:00 - 10:50;CAMPUS TECNOLOGICO;11;NA
+Motivación y emoción;Teórico;PSICOLOGIA;S07A;O;3;1112;Yacira Isabel Luna Zuñiga;Lunes 17:00 - 18:50/Miércoles 17:00 - 17:50;CAMPUS TECNOLOGICO;8;NA
+Sensación y percepción;Teórico;PSICOLOGIA;S08A;O;3;1025;Jeison David Neira Salas;Miércoles 11:00 - 12:50;CAMPUS TECNOLOGICO;1;1026/2669/1027
+Sensación y percepción;Laboratorio;PSICOLOGIA;S08A;O3;3;2669;Jeison David Neira Salas;Lunes 11:00 - 11:50;CAMPUS TECNOLOGICO;1;1025
+Psicología de la personalidad - malla 2016;Teórico;PSICOLOGIA;S11A;P;3;1653;Marlyn Patricia Conde Gutierrez;Sábado 09:00 - 10:50/Jueves 16:00 - 16:50;CAMPUS TECNOLOGICO;5;NA
+Prob fundamen de la psic social - malla 2016;Teórico;PSICOLOGIA;S12A;P;3;2180;Yina Margarita Alcala Barrios;Sábado 08:00 - 09:50/Martes 09:00 - 09:50;CAMPUS TECNOLOGICO;4;NA
+Psicopatología;Teórico;PSICOLOGIA;S13A;S;3;2054;NA;Jueves 10:00 - 11:50/Martes 11:00 - 11:50;CAMPUS TECNOLOGICO;6;NA
+Neurociencias y comportamiento;Teórico;PSICOLOGIA;S14A;P;3;1601;Jose Alexander Estrada Hernandez;Sábado 08:00 - 09:50;CAMPUS TECNOLOGICO;17;2668/1602/2667/1603
+Neurociencias y comportamiento;Laboratorio;PSICOLOGIA;S14A;P3;3;2667;Jose Alexander Estrada Hernandez;Viernes 08:00 - 08:50;CAMPUS TECNOLOGICO;7;1601
+Neurociencias y comportamiento;Laboratorio;PSICOLOGIA;S14A;P4;3;2668;Jose Alexander Estrada Hernandez;Viernes 10:00 - 10:50;CAMPUS TECNOLOGICO;10;1601
+Teoriás y sistemas psicológicos i;Teórico;PSICOLOGIA;S15A;P;3;2378;NA;Jueves 13:00 - 13:50/Miércoles 14:00 - 15:50;CAMPUS TECNOLOGICO;1;NA
+Teoriás y sistemas psicológicos i;Teórico;PSICOLOGIA;S15A;S;3;2379;NA;Miércoles 13:00 - 13:50/Lunes 14:00 - 15:50;CAMPUS TECNOLOGICO;35;NA
+Teoriás y sistemas psicológicos ii;Teórico;PSICOLOGIA;S16A;S;3;1607;NA;Jueves 15:00 - 16:50/Miércoles 17:00 - 17:50;CAMPUS TECNOLOGICO;15;NA
+Fundamentos en psicología social - malla 2021;Teórico;PSICOLOGIA;S17A;P;3;2179;Yina Margarita Alcala Barrios;Sábado 08:00 - 09:50/Martes 09:00 - 09:50;CAMPUS TECNOLOGICO;5;NA
+Teorias de la personalidad - malla 2021;Teórico;PSICOLOGIA;S18A;P;3;1652;Marlyn Patricia Conde Gutierrez;Sábado 09:00 - 10:50/Jueves 16:00 - 16:50;CAMPUS TECNOLOGICO;2;NA
+Aprendizaje y memoria;Teórico;PSICOLOGIA;S19A;S;3;2665;Everly Marcela Garcia De La Ossa;Lunes 15:00 - 16:50;CAMPUS TECNOLOGICO;2;1646/1647
+Aprendizaje y memoria;Laboratorio;PSICOLOGIA;S19A;S2;3;1646;Everly Marcela Garcia De La Ossa;Miércoles 15:00 - 15:50;CAMPUS TECNOLOGICO;4;2665
+Aprendizaje y memoria;Laboratorio;PSICOLOGIA;S19A;S3;3;1647;Everly Marcela Garcia De La Ossa;Viernes 13:00 - 13:50;CAMPUS TECNOLOGICO;8;2665
+Desarrollo del ciclo de vida i;Teórico;PSICOLOGIA;S20A;S;3;1660;Prisca Espinosa Acevedo;Lunes 12:00 - 12:50/Martes 17:00 - 18:50;CAMPUS TECNOLOGICO;9;NA
+Desarrollo del ciclo de vida ii;Teórico;PSICOLOGIA;S21A;P;3;2350;NA;Viernes 14:00 - 15:50/Lunes 16:00 - 16:50;CAMPUS TECNOLOGICO;22;NA
+Pensamiento y lenguaje;Teórico;PSICOLOGIA;S22A;A;3;2244;Jose Alexander Estrada Hernandez;Viernes 11:00 - 12:50/Martes 12:00 - 12:50;CAMPUS TECNOLOGICO;14;NA
+Evaluación psicológica - malla 2016;Teórico;PSICOLOGIA;V01A;S;3;2174;NA;Lunes 09:00 - 10:50/Martes 15:00 - 16:50;CAMPUS TECNOLOGICO;5;NA
+Entrevista psicológica - malla 2016;Teórico;PSICOLOGIA;V02A;P;3;1979;Karol Patricia Gutierrez Ruiz;Lunes 11:00 - 12:50/Jueves 13:00 - 13:50;CAMPUS TECNOLOGICO;5;NA

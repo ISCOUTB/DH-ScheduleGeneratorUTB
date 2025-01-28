@@ -360,7 +360,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   const Text(
-                                    '¡Bienvenido al Generador de Horarios UTB! (Actualizado 27/01/2025 12:50 PM)\n Autores: Gabriel Mantilla y Diego Peña',
+                                    '¡Bienvenido al Generador de Horarios UTB! (Actualizado 27/01/2025 06:30 PM)',
                                     style: TextStyle(
                                         fontSize: 24, color: Colors.white),
                                     textAlign: TextAlign.center,
@@ -409,7 +409,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                   const SizedBox(height: 10),
                                   const Text(
-                                    '6. Para limpiar los horarios generados, haz clic en el ícono de la papelera en la barra lateral.',
+                                    '6. Para limpiar los horarios generados, haz clic en el ícono de la papelera en la barra lateral.\n Autores: Gabriel Mantilla y Diego Peña',
                                     style: TextStyle(
                                         fontSize: 16, color: Colors.white),
                                     textAlign: TextAlign.center,
