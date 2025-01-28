@@ -17,6 +17,14 @@ void main() {
   runApp(const MyApp());
 }
 
+class WebScrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child; // Desactiva el efecto de desplazamiento nativo en la web.
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -36,6 +44,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Generador de Horarios UTB',
+      scrollBehavior: WebScrollBehavior(),
       theme: theme,
       home: const MyHomePage(title: 'Generador de Horarios UTB'),
     );
@@ -356,6 +365,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: allSchedules.isEmpty
                           ? SingleChildScrollView(
                               padding: const EdgeInsets.all(16),
+                              physics:
+                                  const BouncingScrollPhysics(), // O `ClampingScrollPhysics()`
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
