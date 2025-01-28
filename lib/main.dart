@@ -416,9 +416,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                         CrossAxisAlignment.center,
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal:
-                                                400), // Espacio horizontal
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2, // 20% del anch
+                                        ), // Espacio horizontal
                                         child: Row(
                                           mainAxisSize: MainAxisSize
                                               .min, // Limita el ancho del Row al contenido
@@ -446,9 +449,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                               10), // Espacio entre elementos
 
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal:
-                                                400), // Espacio horizontal
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2, // 20% del anch
+                                        ), // Espacio horizontal
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: const [
@@ -475,9 +481,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                               10), // Espacio entre elementos
 
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal:
-                                                400), // Espacio horizontal
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2, // 20% del anch
+                                        ), // Espacio horizontal
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: const [
@@ -504,9 +513,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                               10), // Espacio entre elementos
 
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal:
-                                                400), // Espacio horizontal
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2, // 20% del anch
+                                        ), // Espacio horizontal
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: const [
@@ -533,9 +545,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                               10), // Espacio entre elementos
 
                                       Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal:
-                                                400), // Espacio horizontal
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.2, // 20% del anch
+                                        ), // Espacio horizontal
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: const [
