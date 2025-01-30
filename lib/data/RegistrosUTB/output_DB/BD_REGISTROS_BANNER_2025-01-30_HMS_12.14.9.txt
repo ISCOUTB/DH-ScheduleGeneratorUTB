@@ -1,0 +1,16 @@
+Fundamentos de administracion;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Adriana Paulina Argumedo Bossio;Martes 15:00 - 15:50/Viernes 15:00 - 16:50;;1;NA
+Fundamentos de administracion;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Adriana Paulina Argumedo Bossio;Martes 13:00 - 13:50/Jueves 13:00 - 14:50;;3;NA
+Seminario gerencial i;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Ricardo Andres Abreo Rodriguez;Miércoles 17:00 - 17:50;;14;NA
+Historia empresarial;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Maria Teresa Ripoll De Lemaitre;Martes 09:00 - 10:50/Jueves 09:00 - 09:50;;20;NA
+Creatividad y emprendimiento;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Sammir Montemiranda Pajaro;Miércoles 17:00 - 17:50/Lunes 18:00 - 19:50;;29;NA
+Organizaciones i;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Rita Cecilia De La Hoz Del Villar;Lunes 07:00 - 07:50/Martes 10:00 - 11:50;;29;NA
+Organizaciones i;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Rita Cecilia De La Hoz Del Villar;Martes 09:00 - 09:50/Jueves 10:00 - 11:50;;10;NA
+Direccion estrategica;Clase virtual;ADMINISTRACION DE EMPRESAS;;;;;Martha Patricia Castro Porto;Ninguno;;8;NA
+Seminario gerencial ii;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Ricardo Andres Abreo Rodriguez;Lunes 14:00 - 14:50;;16;NA
+Responsabilidad social;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Lina Margarita Marrugo Salas;Jueves 07:00 - 07:50/Lunes 15:00 - 16:50;;22;NA
+Gestion del talento humano;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Javier Marquez Orozco;Lunes 13:00 - 13:50/Miércoles 13:00 - 14:50;;15;NA
+Innovacion;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Oriana Susana Martinez Palomino;Jueves 15:00 - 16:50/Lunes 16:00 - 16:50;;4;NA
+Innovacion;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Oriana Susana Martinez Palomino;Viernes 11:00 - 11:50/Martes 15:00 - 16:50;;4;NA
+Consultoria empresarial;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Ricardo Andres Abreo Rodriguez;Lunes 17:00 - 18:50;;7;NA
+Seminario gerencial iii;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Ricardo Andres Abreo Rodriguez;Miércoles 18:00 - 18:50;;13;NA
+Juego gerencial;Teórico;ADMINISTRACION DE EMPRESAS;;;;;Ricardo Andres Abreo Rodriguez;Martes 17:00 - 18:50;;27;NA
