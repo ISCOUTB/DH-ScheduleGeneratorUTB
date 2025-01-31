@@ -121,11 +121,11 @@ if __name__ == "__main__":
         group_id_counter = 1
         ligados_nrc_to_groupid = {}
 
-        #for i in range (17):
-            #ele = wait.until(ec.element_to_be_clickable((By.CSS_SELECTOR, "button[title='Siguiente']")))
-            #ele.click()
-            #time.sleep(5)  # Esperar para garantizar que cargue la página siguiente
-            #limpiar()
+        for i in range (14):
+            ele = wait.until(ec.element_to_be_clickable((By.CSS_SELECTOR, "button[title='Siguiente']")))
+            ele.click()
+            time.sleep(5)  # Esperar para garantizar que cargue la página siguiente
+            limpiar()
 
         for page_index in range(PAGINAS):  # Recorro las páginas
             # Espero a que aparezca el primer elemento
@@ -192,7 +192,7 @@ if __name__ == "__main__":
                 nrc = per.find_element(By.CSS_SELECTOR, "td[data-property='courseReferenceNumber']").text
 
                 # ====== NUEVO BLOQUE PARA OMITIR VARIOS NRCs PROBLEMÁTICOS ======
-                nrcs_a_omitir = {"2604", "2672", "2594", "2595", "2596", "2597"}
+                nrcs_a_omitir = {"2604", "2672", "2594", "2595", "2596", "2597", "2717"}
                 if nrc in nrcs_a_omitir:
                     print(f"Omitimos la clase con NRC {nrc} por error en la página.")
                     idx += 1
