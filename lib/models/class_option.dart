@@ -2,13 +2,13 @@
 import 'schedule.dart';
 
 class ClassOption {
-  final String subjectName; // Nombre de la materia
-  final String subjectCode; // Añadido: código de la materia
-  final String type; // 'Teórico' o 'Laboratorio'
+  final String subjectName;
+  final String subjectCode;
+  final String type;
   final List<Schedule> schedules;
   final String professor;
   final String nrc;
-  final int groupId; // Para agrupar clases
+  final int groupId;
   final int credits;
 
   ClassOption({
@@ -21,4 +21,18 @@ class ClassOption {
     required this.groupId,
     required this.credits,
   });
+
+  factory ClassOption.fromJson(Map<String, dynamic> json) {
+    return ClassOption(
+      subjectName: json['subjectName'],
+      subjectCode: json['subjectCode'],
+      type: json['type'],
+      schedules:
+          (json['schedules'] as List).map((e) => Schedule.fromJson(e)).toList(),
+      professor: json['professor'],
+      nrc: json['nrc'],
+      groupId: json['groupId'],
+      credits: json['credits'],
+    );
+  }
 }

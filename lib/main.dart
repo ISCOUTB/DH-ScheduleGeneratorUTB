@@ -62,6 +62,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Subject> addedSubjects = [];
+  late Future<List<Subject>> futureSubjects;
   int usedCredits = 0;
   final int creditLimit = 20;
 
@@ -100,6 +101,9 @@ class _MyHomePageState extends State<MyHomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
+
+    //Se cargan las materias
+    futureSubjects = fetchSubjectsFromApi();
   }
 
   @override
@@ -628,25 +632,42 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: GestureDetector(
                       onTap:
                           () {}, // Para evitar que se cierre cuando se toca dentro del widget
-                      child: SearchSubjectsWidget(
-                        subjectController: subjectController,
-                        allSubjects: subjects,
-                        onSubjectSelected: (subject) {
-                          addSubject(subject);
-                          subjectController.clear();
-                          // Deja el widget abierto para permitir más selecciones
-                        },
-                        closeWindow: () {
-                          setState(() {
-                            isSearchOpen = false;
-                          });
+                      child: FutureBuilder<List<Subject>>(
+                        future: futureSubjects,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          }
+
+                          if (snapshot.hasError) {
+                            return Text(
+                                'Error al cargar materias: ${snapshot.error}');
+                          }
+
+                          final subjects = snapshot.data!;
+
+                          return SearchSubjectsWidget(
+                            subjectController: subjectController,
+                            allSubjects: subjects,
+                            onSubjectSelected: (subject) {
+                              addSubject(subject);
+                              subjectController.clear();
+                              // El widget sigue abierto
+                            },
+                            closeWindow: () {
+                              setState(() {
+                                isSearchOpen = false;
+                              });
+                            },
+                          );
                         },
                       ),
                     ),
                   ),
                 ),
               ),
-            // Ventana emergente de materias seleccionadas
+// Ventana emergente de materias seleccionadas
             if (isAddedSubjectsOpen)
               GestureDetector(
                 onTap: () {
