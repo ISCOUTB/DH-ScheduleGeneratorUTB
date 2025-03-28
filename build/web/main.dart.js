@@ -8177,7 +8177,7 @@ _.f=!1},
 aBL(){var s=0,r=A.a_(t.kH),q,p,o
 var $async$aBL=A.W(function(a,b){if(a===1)return A.X(b,r)
 while(true)switch(s){case 0:s=3
-return A.a7(A.b4g(A.jG("http://20.255.98.63:8000/subjects")),$async$aBL)
+return A.a7(A.b4g(A.jG("https://utb-schedule.site/subjects")),$async$aBL)
 case 3:p=b
 o=p.b
 if(o===200){o=J.id(B.fM.Xl(0,A.b3T(A.b1r(p.e).c.a.h(0,"charset")).cL(0,p.w),null),new A.aBM(),t.b_)
