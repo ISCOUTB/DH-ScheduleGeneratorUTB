@@ -4,4 +4,11 @@ class Schedule {
   final String time;
 
   Schedule({required this.day, required this.time});
+
+  factory Schedule.fromJson(Map<String, dynamic> json) {
+    return Schedule(
+      day: json['day'],
+      time: json['time'],
+    );
+  }
 }
