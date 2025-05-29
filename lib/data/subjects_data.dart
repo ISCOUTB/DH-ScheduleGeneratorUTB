@@ -5,7 +5,7 @@ import '../models/subject.dart';
 
 Future<List<Subject>> fetchSubjectsFromApi() async {
   final response =
-      await http.get(Uri.parse('http://20.255.98.63:8000/subjects'));
+      await http.get(Uri.parse('https://utb-schedule.site/subjects'));
 
   if (response.statusCode == 200) {
     final List<dynamic> jsonList = jsonDecode(response.body);

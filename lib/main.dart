@@ -1,6 +1,6 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart'; // Para kIsWeb y defaultTargetPlatform
+import 'package:flutter/foundation.dart';
 import 'data/subjects_data.dart';
 import 'models/subject.dart';
 import 'models/class_option.dart';
@@ -9,8 +9,7 @@ import 'widgets/added_subjects_widgets.dart';
 import 'widgets/schedule_grid_widget.dart';
 import 'widgets/schedule_overview_widget.dart';
 import 'widgets/filter_widget.dart';
-import 'utils/schedule_generator.dart'; // Importamos el archivo con las funciones de generación
-import 'package:flutter/services.dart'; // Import para manejar eventos de teclado
+import 'utils/schedule_generator.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,29 +18,26 @@ void main() {
 
 class WebScrollBehavior extends ScrollBehavior {
   @override
-  Widget buildViewportChrome(
-      BuildContext context, Widget child, AxisDirection axisDirection) {
-    return child; // Desactiva el efecto de desplazamiento nativo en la web.
+  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = ThemeData(
       primarySwatch: Colors.indigo,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       fontFamily: 'Roboto',
       visualDensity: VisualDensity.adaptivePlatformDensity,
       colorScheme: ColorScheme.fromSwatch(
         primarySwatch: Colors.indigo,
         accentColor: Colors.amber,
-        brightness: Brightness.dark,
+        brightness: Brightness.light,
       ),
     );
-
     return MaterialApp(
       title: 'Generador de Horarios UTB',
       scrollBehavior: WebScrollBehavior(),
@@ -53,9 +49,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
   final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -65,7 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
   late Future<List<Subject>> futureSubjects;
   int usedCredits = 0;
   final int creditLimit = 20;
-
   final TextEditingController subjectController = TextEditingController();
 
   List<List<ClassOption>> allSchedules = [];
@@ -73,13 +66,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Controladores para manejar el estado de las ventanas emergentes
   bool isSearchOpen = false;
-  bool isAddedSubjectsOpen = false;
   bool isFilterOpen = false;
+  bool isOverviewOpen = false;
 
-  // Aquí declara `appliedFilters`
   Map<String, dynamic> appliedFilters = {};
 
-  // FocusNode para capturar los eventos del teclado
   late FocusNode _focusNode;
 
   bool isMobile() {
@@ -91,18 +82,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    // Inicialización de variables de estado
-    isSearchOpen = false;
-    isAddedSubjectsOpen = false;
-    isFilterOpen = false;
-
-    // Inicializar el FocusNode
     _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
-
-    //Se cargan las materias
     futureSubjects = fetchSubjectsFromApi();
   }
 
@@ -116,9 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // Verificar si la materia ya fue agregada
     if (addedSubjects
         .any((s) => s.code == subject.code && s.name == subject.name)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('La materia ya ha sido agregada')),
-      );
+      showCustomNotification(context, 'La materia ya ha sido agregada', icon: Icons.info, color: Colors.green);;
       return;
     }
 
@@ -126,9 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // Verificar el límite de créditos
     if (newTotalCredits > creditLimit) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Límite de créditos alcanzado')),
-      );
+      showCustomNotification(context, 'Limite de creditos alcanzados', icon: Icons.info, color: Colors.red);
       return;
     }
 
@@ -137,10 +116,7 @@ class _MyHomePageState extends State<MyHomePage> {
       addedSubjects.add(subject);
 
       if (usedCredits > 18) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Advertencia: Ha excedido los 18 créditos')),
-        );
+        showCustomNotification(context, 'Advertencia: Ha excedido los 18 creditos', icon: Icons.info, color: Colors.green);
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -163,9 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void generateSchedule() {
     if (addedSubjects.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No hay materias seleccionadas')),
-      );
+      showCustomNotification(context, 'No hay materias seleccionadas', icon: Icons.error, color: Colors.red);
       return;
     }
 
@@ -173,9 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
         obtenerHorariosValidos(addedSubjects, appliedFilters);
 
     if (horariosValidos.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No se encontraron horarios válidos')),
-      );
+      showCustomNotification(context, 'No se encontraron horarios validos', icon: Icons.info, color: Colors.red);
     } else {
       setState(() {
         allSchedules = horariosValidos;
@@ -201,641 +173,332 @@ class _MyHomePageState extends State<MyHomePage> {
       allSchedules.clear();
       selectedScheduleIndex = null;
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Horarios generados eliminados')),
-    );
+    showCustomNotification(context, 'Horarios generados eliminados', icon: Icons.info, color: Colors.green);
+  }
+
+  void applyFilters(Map<String, dynamic> filters) {
+    setState(() {
+      appliedFilters = filters;
+      isFilterOpen = false;
+    });
+  }
+
+  void openScheduleOverview(int index) {
+    setState(() {
+      selectedScheduleIndex = index;
+      isOverviewOpen = true;
+    });
+  }
+
+  void closeScheduleOverview() {
+    setState(() {
+      isOverviewOpen = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    bool mobile = isMobile();
-    var orientation = MediaQuery.of(context).orientation;
-
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: mobile && orientation == Orientation.portrait
-          ? null
-          : (mobile && orientation == Orientation.landscape)
-              ? null
-              : AppBar(
-                  title: Text(widget.title),
-                  flexibleSpace: Container(
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.indigo, Colors.purple],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
+    return Stack(
+      children: [
+        Scaffold(
+          backgroundColor: const Color(0xFFF5F7FA),
+          appBar: AppBar(
+            backgroundColor: const Color.fromARGB(255, 0, 94, 255),
+            elevation: 0,
+            title: Row(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF69F0AE),
+                    shape: BoxShape.circle,
                   ),
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
+                  padding: const EdgeInsets.all(8),
+                  child: const Icon(Icons.calendar_today, color: Colors.white, size: 28),
                 ),
-      bottomNavigationBar: mobile && orientation == Orientation.portrait
-          ? BottomAppBar(
-              color: Colors.indigo,
-              child: Container(
-                height: kToolbarHeight,
-                alignment: Alignment.center,
-                child: Text(
-                  widget.title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
+                const SizedBox(width: 12),
+                const Text(
+                  "Generador de Horarios",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
-              ),
-            )
-          : null,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.indigo.shade900, Colors.indigo.shade500],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+              ],
+            ),
           ),
-        ),
-        child: Stack(
-          children: [
-            // Si estamos en móvil y en modo vertical, y hay horarios generados, mostrar mensaje
-            if (mobile &&
-                orientation == Orientation.portrait &&
-                allSchedules.isNotEmpty)
-              // Mostrar mensaje solicitando girar el dispositivo
-              Center(
-                child: Text(
-                  'Por favor, gira tu dispositivo para ver los horarios',
-                  style: const TextStyle(fontSize: 20, color: Colors.white),
-                  textAlign: TextAlign.center,
+          body: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Zona central expandida
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Fila de botones grandes
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _MainCardButton(
+                              color: const Color.fromARGB(255, 0, 94, 255),
+                              icon: Icons.search,
+                              label: "Buscar materia",
+                              onTap: () => setState(() => isSearchOpen = true),
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: _MainCardButton(
+                              color: const Color.fromARGB(255, 0, 94, 255),
+                              icon: Icons.filter_alt,
+                              label: "Realizar filtro",
+                              onTap: () => setState(() => isFilterOpen = true),
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: _MainCardButton(
+                              color: const Color.fromARGB(255, 255, 0, 0),
+                              icon: Icons.delete_outline,
+                              label: "Limpiar Horarios",
+                              onTap: clearSchedules,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 28),
+                      // Botón Generar
+                      SizedBox(
+                        height: 60,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(255, 90, 244, 142),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                          onPressed: generateSchedule,
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Generar",
+                                style: TextStyle(fontSize: 24, color: Colors.black, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(width: 10),
+                              Icon(Icons.calendar_month, color: Colors.black),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+                      // Vista previa del horario o grilla de horarios generados
+                      Expanded(
+                        child: allSchedules.isEmpty
+                            ? Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF5F7FA),
+                                  borderRadius: BorderRadius.circular(18),
+                                  border: Border.all(
+                                    color: Colors.grey.shade400,
+                                    style: BorderStyle.solid,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Vista previa del horario",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.grey.shade600,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : ScheduleGridWidget(
+                                allSchedules: allSchedules,
+                                onScheduleTap: openScheduleOverview,
+                              ),
+                      ),
+                    ],
+                  ),
                 ),
-              )
-            else
-              Row(
-                children: [
-                  // Menú lateral personalizado
-                  Container(
-                    width: 60,
-                    color: Colors.indigo,
+                const SizedBox(width: 32),
+                // Panel lateral de materias seleccionadas
+                SizedBox(
+                  width: 340,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(20),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 20),
-                        // Botón de búsqueda
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isSearchOpen = true;
-                              });
-                            },
-                            child: const Tooltip(
-                              message: 'Buscar Materias',
-                              child: Icon(Icons.search, color: Colors.white),
-                            ),
+                        const Text(
+                          "Materias seleccionadas",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF2979FF),
                           ),
                         ),
-                        const SizedBox(height: 20),
-                        // Botón de materias seleccionadas
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isAddedSubjectsOpen = true;
-                              });
-                            },
-                            child: const Tooltip(
-                              message: 'Materias Seleccionadas',
-                              child: Icon(Icons.list, color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // Botón de filtros
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isFilterOpen = true;
-                              });
-                            },
-                            child: const Tooltip(
-                              message: 'Filtrar Horarios',
-                              child:
-                                  Icon(Icons.filter_list, color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        // Botón para limpiar horarios generados
-                        MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: GestureDetector(
-                            onTap: () {
-                              clearSchedules();
-                            },
-                            child: const Tooltip(
-                              message: 'Limpiar Horarios Generados',
-                              child: Icon(Icons.delete_outline,
-                                  color: Colors.white),
-                            ),
-                          ),
+                        const SizedBox(height: 18),
+                        ...addedSubjects.map((subject) => Card(
+                              margin: const EdgeInsets.symmetric(vertical: 6),
+                              child: ListTile(
+                                title: Text(subject.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.remove, color: Colors.red),
+                                  onPressed: () => removeSubject(subject),
+                                ),
+                              ),
+                            )),
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          onPressed: () => setState(() => isSearchOpen = true),
+                          icon: const Icon(Icons.add),
+                          label: const Text("Agregar materia"),
                         ),
                         const Spacer(),
-                        // Botón de generar horarios
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.amber,
-                              shape: const CircleBorder(),
-                              padding: const EdgeInsets.all(16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              "Créditos: ",
+                              style: TextStyle(fontSize: 16, color: Colors.grey[800]),
                             ),
-                            onPressed: generateSchedule,
-                            child: const Tooltip(
-                              message: 'Generar Horarios',
-                              child: Icon(Icons.calendar_today,
-                                  color: Colors.white),
+                            Text(
+                              "$usedCredits/$creditLimit",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: usedCredits > creditLimit ? Colors.red : const Color(0xFF2979FF),
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                  // Contenido principal
-                  Expanded(
-                    child: Center(
-                      child: allSchedules.isEmpty
-                          ? SingleChildScrollView(
-                              padding: const EdgeInsets.all(16),
-                              physics:
-                                  const BouncingScrollPhysics(), // O `ClampingScrollPhysics()`
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    '¡Bienvenido al Generador de Horarios UTB! (Actualizado 30/01/2025 12:30 PM)',
-                                    style: TextStyle(
-                                      fontSize:
-                                          26, // Tamaño ligeramente más grande
-                                      color:
-                                          Colors.white, // Color blanco clásico
-                                      fontFamily:
-                                          "Futura", // Fuente personalizada
-                                      fontWeight: FontWeight
-                                          .w500, // Grosor medio para un toque elegante
-                                      letterSpacing:
-                                          1.5, // Espaciado entre letras
-                                      shadows: [
-                                        Shadow(
-                                          offset:
-                                              Offset(1, 1), // Sombras sutiles
-                                          blurRadius: 3,
-                                          color: Colors
-                                              .black45, // Sombras en tono gris
-                                        ),
-                                      ],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 60),
-                                  const Text(
-                                    'A tu izquierda encontraras una barra de botones con las siguientes funciones:',
-                                    style: TextStyle(
-                                      fontSize:
-                                          20, // Tamaño adecuado para mantener legibilidad
-                                      color: Colors
-                                          .white, // Color blanco para contraste
-                                      fontWeight: FontWeight
-                                          .w400, // Grosor regular para un look elegante
-                                      letterSpacing:
-                                          1.2, // Espaciado sutil entre letras
-                                      fontFamily:
-                                          "Futura", // Fuente personalizada
-                                      shadows: [
-                                        Shadow(
-                                          offset: Offset(1, 1), // Sombra suave
-                                          blurRadius: 2,
-                                          color: Colors
-                                              .black38, // Tono gris oscuro para mayor sutileza
-                                        ),
-                                      ],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 35),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2, // 20% del anch
-                                        ), // Espacio horizontal
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize
-                                              .min, // Limita el ancho del Row al contenido
-                                          children: const [
-                                            Icon(Icons.search,
-                                                color: Colors
-                                                    .white), // Ícono de búsqueda
-                                            SizedBox(
-                                                width:
-                                                    10), // Espacio entre el ícono y el texto
-                                            Expanded(
-                                              child: Text(
-                                                'Para buscar y agregar materias.',
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          height:
-                                              10), // Espacio entre elementos
-
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2, // 20% del anch
-                                        ), // Espacio horizontal
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: const [
-                                            Icon(Icons.list,
-                                                color: Colors
-                                                    .white), // Ícono de lista
-                                            SizedBox(
-                                                width:
-                                                    10), // Espacio entre el ícono y el texto
-                                            Expanded(
-                                              child: Text(
-                                                'Revisar materias previamente seleccionadas.',
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          height:
-                                              10), // Espacio entre elementos
-
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2, // 20% del anch
-                                        ), // Espacio horizontal
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: const [
-                                            Icon(Icons.filter_list,
-                                                color: Colors
-                                                    .white), // Ícono de filtros
-                                            SizedBox(
-                                                width:
-                                                    10), // Espacio entre el ícono y el texto
-                                            Expanded(
-                                              child: Text(
-                                                'Aplicar filtros (evitar días, profesores, etc.).',
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          height:
-                                              10), // Espacio entre elementos
-
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2, // 20% del anch
-                                        ), // Espacio horizontal
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: const [
-                                            Icon(Icons.delete_outline,
-                                                color: Colors
-                                                    .white), // Ícono de papelera
-                                            SizedBox(
-                                                width:
-                                                    10), // Espacio entre el ícono y el texto
-                                            Expanded(
-                                              child: Text(
-                                                'Borrar horarios previamente generados.',
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          height:
-                                              10), // Espacio entre elementos
-
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.2, // 20% del anch
-                                        ), // Espacio horizontal
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: const [
-                                            Icon(Icons.calendar_today,
-                                                color: Colors
-                                                    .yellow), // Ícono de calendario
-                                            SizedBox(
-                                                width:
-                                                    10), // Espacio entre el ícono y el texto
-                                            Expanded(
-                                              child: Text(
-                                                '¡Generar horarios! Puedes pulsar sobre ellos para ver los detalles de las materias.',
-                                                style: TextStyle(
-                                                    fontSize: 18,
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.left,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                          height:
-                                              30), // Espacio antes de la firma
-
-                                      // Widget de texto para la firma de los autores
-                                      const Text(
-                                        'Autores: Gabriel Mantilla y Diego Peña',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                          fontStyle: FontStyle.italic,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            )
-                          : ScheduleGridWidget(
-                              allSchedules: allSchedules,
-                              onScheduleTap: (index) {
-                                setState(() {
-                                  selectedScheduleIndex = index;
-                                });
-                              },
-                            ),
-                    ),
-                  ),
-                ],
-              ),
-            // Ventana emergente de búsqueda de materias
-            if (isSearchOpen)
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isSearchOpen = false;
-                  });
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Diálogo de búsqueda de materias
+        if (isSearchOpen)
+          FutureBuilder<List<Subject>>(
+            future: futureSubjects,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return SearchSubjectsWidget(
+                subjectController: subjectController,
+                allSubjects: snapshot.data!,
+                onSubjectSelected: (subject) {
+                  addSubject(subject);
+                  setState(() => isSearchOpen = false);
                 },
-                child: Container(
-                  color: Colors.black54,
-                  child: Center(
-                    child: GestureDetector(
-                      onTap:
-                          () {}, // Para evitar que se cierre cuando se toca dentro del widget
-                      child: FutureBuilder<List<Subject>>(
-                        future: futureSubjects,
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          }
+                closeWindow: () => setState(() => isSearchOpen = false),
+              );
+            },
+          ),
+        // Diálogo de filtro
+        if (isFilterOpen)
+          FilterWidget(
+            closeWindow: () => setState(() => isFilterOpen = false),
+            onApplyFilters: applyFilters,
+            currentFilters: appliedFilters,
+            addedSubjects: addedSubjects,
+          ),
+        // Diálogo de vista de horario seleccionado
+        if (isOverviewOpen && selectedScheduleIndex != null)
+          ScheduleOverviewWidget(
+            schedule: allSchedules[selectedScheduleIndex!],
+            onClose: closeScheduleOverview,
+          ),
+      ],
+    );
+  }
+}
 
-                          if (snapshot.hasError) {
-                            return Text(
-                                'Error al cargar materias: ${snapshot.error}');
-                          }
+// Widget auxiliar para los botones grandes
+class _MainCardButton extends StatelessWidget {
+  final Color color;
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
 
-                          final subjects = snapshot.data!;
+  const _MainCardButton({
+    required this.color,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    super.key,
+  });
 
-                          return SearchSubjectsWidget(
-                            subjectController: subjectController,
-                            allSubjects: subjects,
-                            onSubjectSelected: (subject) {
-                              addSubject(subject);
-                              subjectController.clear();
-                              // El widget sigue abierto
-                            },
-                            closeWindow: () {
-                              setState(() {
-                                isSearchOpen = false;
-                              });
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ),
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 100,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: Colors.white, size: 36),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600),
               ),
-// Ventana emergente de materias seleccionadas
-            if (isAddedSubjectsOpen)
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isAddedSubjectsOpen = false;
-                  });
-                },
-                child: Container(
-                  color: Colors.black54,
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () {}, // Evita que se cierre cuando se toca dentro
-                      child: AddedSubjectsWidget(
-                        addedSubjects: addedSubjects,
-                        usedCredits: usedCredits,
-                        creditLimit: creditLimit,
-                        closeWindow: () {
-                          setState(() {
-                            isAddedSubjectsOpen = false;
-                          });
-                        },
-                        onRemoveSubject: (subject) {
-                          removeSubject(subject);
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            // Ventana emergente de filtros
-            if (isFilterOpen)
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isFilterOpen = false;
-                  });
-                },
-                child: Container(
-                  color: Colors.black54,
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () {}, // Evita que se cierre al hacer clic dentro
-                      child: FilterWidget(
-                        closeWindow: () {
-                          setState(() {
-                            isFilterOpen = false;
-                          });
-                        },
-                        onApplyFilters: (filters) {
-                          setState(() {
-                            appliedFilters = filters;
-                            isFilterOpen = false;
-                          });
-                          generateSchedule(); // Regenerar horarios con los filtros aplicados
-                        },
-                        currentFilters: appliedFilters,
-                        addedSubjects: addedSubjects,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            // Mostrar horario seleccionado con navegación
-            if (selectedScheduleIndex != null)
-              Focus(
-                focusNode: _focusNode,
-                autofocus: true,
-                onKey: (FocusNode node, RawKeyEvent event) {
-                  if (event is RawKeyDownEvent) {
-                    if (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
-                        selectedScheduleIndex! > 0) {
-                      setState(() {
-                        selectedScheduleIndex = selectedScheduleIndex! - 1;
-                      });
-                      return KeyEventResult.handled;
-                    } else if (event.logicalKey ==
-                            LogicalKeyboardKey.arrowRight &&
-                        selectedScheduleIndex! < allSchedules.length - 1) {
-                      setState(() {
-                        selectedScheduleIndex = selectedScheduleIndex! + 1;
-                      });
-                      return KeyEventResult.handled;
-                    }
-                  }
-                  return KeyEventResult.ignored;
-                },
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedScheduleIndex = null;
-                    });
-                  },
-                  child: Container(
-                    color: Colors.black54,
-                    child: Center(
-                      child: Stack(
-                        children: [
-                          GestureDetector(
-                            onTap:
-                                () {}, // Evita que se cierre cuando se toca dentro
-                            child: ScheduleOverviewWidget(
-                              schedule: allSchedules[selectedScheduleIndex!],
-                              onClose: () {
-                                setState(() {
-                                  selectedScheduleIndex = null;
-                                });
-                              },
-                            ),
-                          ),
-                          // Flecha izquierda
-                          if (selectedScheduleIndex! > 0)
-                            Positioned(
-                              left: 10,
-                              top: MediaQuery.of(context).size.height / 2 - 30,
-                              child: IconButton(
-                                icon: const Icon(Icons.arrow_left,
-                                    size: 50, color: Colors.white),
-                                onPressed: () {
-                                  setState(() {
-                                    selectedScheduleIndex =
-                                        selectedScheduleIndex! - 1;
-                                  });
-                                },
-                              ),
-                            ),
-                          // Flecha derecha
-                          if (selectedScheduleIndex! < allSchedules.length - 1)
-                            Positioned(
-                              right: 10,
-                              top: MediaQuery.of(context).size.height / 2 - 30,
-                              child: IconButton(
-                                icon: const Icon(Icons.arrow_right,
-                                    size: 50, color: Colors.white),
-                                onPressed: () {
-                                  setState(() {
-                                    selectedScheduleIndex =
-                                        selectedScheduleIndex! + 1;
-                                  });
-                                },
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            // Contador de horarios generados
-            if (allSchedules.isNotEmpty)
-              Positioned(
-                bottom: 20,
-                right: 20,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    '${allSchedules.length} horarios generados',
-                    style: const TextStyle(fontSize: 16, color: Colors.black),
-                  ),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+void showCustomNotification(BuildContext context, String message, {IconData? icon, Color? color}) {
+  showDialog(
+    context: context,
+    builder: (context) => Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      backgroundColor: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null)
+              Icon(icon, color: color ?? Color(0xFF1ABC7B), size: 32),
+            if (icon != null) SizedBox(width: 16),
+            Flexible(
+              child: Text(
+                message,
+                style: TextStyle(fontSize: 18, color: Colors.black87),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+

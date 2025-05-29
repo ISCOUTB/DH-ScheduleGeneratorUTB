@@ -53,6 +53,33 @@ class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              // Encabezado
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1ABC7B), // Verde principal
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Row(
+                  children: [
+                    const Icon(Icons.menu_book, color: Colors.white),
+                    const SizedBox(width: 10),
+                    const Text(
+                      'Buscar Materia',
+                      style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: widget.closeWindow,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
               // Campo de búsqueda con autocompletado
               TextField(
                 controller: widget.subjectController,
