@@ -432,39 +432,63 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 // Widget auxiliar para los botones grandes
-class _MainCardButton extends StatelessWidget {
+class _MainCardButton extends StatefulWidget {
   final Color color;
   final IconData icon;
   final String label;
   final VoidCallback onTap;
 
   const _MainCardButton({
+    Key? key,
     required this.color,
     required this.icon,
     required this.label,
     required this.onTap,
-    super.key,
-  });
+  }) : super(key: key);
+
+  @override
+  State<_MainCardButton> createState() => _MainCardButtonState();
+}
+
+class _MainCardButtonState extends State<_MainCardButton> {
+  bool _isHovered = false;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 100,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Center(
+    // Oscurece el color al hacer hover (usando opacity o conBlend)
+    final Color hoverColor = widget.color.withOpacity(0.8); // Cambia el 0.8 para más o menos opacidad
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          decoration: BoxDecoration(
+            color: _isHovered ? hoverColor : widget.color,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: _isHovered
+                ? [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                    ),
+                  ]
+                : [],
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: Colors.white, size: 36),
+              Icon(widget.icon, color: Colors.white, size: 30),
               const SizedBox(height: 8),
               Text(
-                label,
-                style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.w600),
+                widget.label,
+                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
