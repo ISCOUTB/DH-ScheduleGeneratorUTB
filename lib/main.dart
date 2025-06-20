@@ -39,10 +39,10 @@ class MyApp extends StatelessWidget {
       ),
     );
     return MaterialApp(
-      title: 'Generador de Horarios UTB',
+      title: 'Gene de Horarios UTB',
       scrollBehavior: WebScrollBehavior(),
       theme: theme,
-      home: const MyHomePage(title: 'Generador de Horarios UTB'),
+      home: const MyHomePage(title: 'Gene de Horarios UTB'),
     );
   }
 }
@@ -278,7 +278,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Generar",
+                                "Generar Horarios",
                                 style: TextStyle(fontSize: 24, color: Colors.black, fontWeight: FontWeight.bold),
                               ),
                               SizedBox(width: 10),
@@ -346,7 +346,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF2979FF),
+                            color: Color.fromARGB(255, 0, 0, 0),
                           ),
                         ),
                         const SizedBox(height: 18),
