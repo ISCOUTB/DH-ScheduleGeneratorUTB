@@ -64,13 +64,12 @@ class _MyHomePageState extends State<MyHomePage> {
   List<List<ClassOption>> allSchedules = [];
   int? selectedScheduleIndex;
 
-  // Controladores para manejar el estado de las ventanas emergentes
   bool isSearchOpen = false;
   bool isFilterOpen = false;
   bool isOverviewOpen = false;
+  bool isExpandedView = false;
 
   Map<String, dynamic> appliedFilters = {};
-
   late FocusNode _focusNode;
 
   bool isMobile() {
@@ -96,16 +95,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void addSubject(Subject subject) {
-    // Verificar si la materia ya fue agregada
-    if (addedSubjects
-        .any((s) => s.code == subject.code && s.name == subject.name)) {
-      showCustomNotification(context, 'La materia ya ha sido agregada', icon: Icons.info, color: Colors.green);;
+    if (addedSubjects.any((s) => s.code == subject.code && s.name == subject.name)) {
+      showCustomNotification(context, 'La materia ya ha sido agregada', icon: Icons.info, color: Colors.green);
       return;
     }
 
     int newTotalCredits = usedCredits + subject.credits;
-
-    // Verificar el límite de créditos
     if (newTotalCredits > creditLimit) {
       showCustomNotification(context, 'Limite de creditos alcanzados', icon: Icons.info, color: Colors.red);
       return;
@@ -127,8 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void removeSubject(Subject subject) {
     setState(() {
-      addedSubjects
-          .removeWhere((s) => s.code == subject.code && s.name == subject.name);
+      addedSubjects.removeWhere((s) => s.code == subject.code && s.name == subject.name);
       usedCredits -= subject.credits;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -143,8 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
-    List<List<ClassOption>> horariosValidos =
-        obtenerHorariosValidos(addedSubjects, appliedFilters);
+    List<List<ClassOption>> horariosValidos = obtenerHorariosValidos(addedSubjects, appliedFilters);
 
     if (horariosValidos.isEmpty) {
       showCustomNotification(context, 'No se encontraron horarios validos', icon: Icons.info, color: Colors.red);
@@ -153,21 +146,15 @@ class _MyHomePageState extends State<MyHomePage> {
         allSchedules = horariosValidos;
         selectedScheduleIndex = null;
 
-        // Si estamos en móvil y en modo vertical, mostrar mensaje
-        if (isMobile() &&
-            MediaQuery.of(context).orientation == Orientation.portrait) {
+        if (isMobile() && MediaQuery.of(context).orientation == Orientation.portrait) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content:
-                  Text('Por favor, gira tu dispositivo para ver los horarios'),
-            ),
+            const SnackBar(content: Text('Por favor, gira tu dispositivo para ver los horarios')),
           );
         }
       });
     }
   }
 
-  // Nueva función para limpiar los horarios generados
   void clearSchedules() {
     setState(() {
       allSchedules.clear();
@@ -208,18 +195,12 @@ class _MyHomePageState extends State<MyHomePage> {
             title: Row(
               children: [
                 Container(
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF69F0AE),
-                    shape: BoxShape.circle,
-                  ),
+                  decoration: const BoxDecoration(color: Color(0xFF69F0AE), shape: BoxShape.circle),
                   padding: const EdgeInsets.all(8),
                   child: const Icon(Icons.calendar_today, color: Colors.white, size: 28),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  "Generador de Horarios",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
+                const Text("Generador de Horarios", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
               ],
             ),
           ),
@@ -228,159 +209,110 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Zona central expandida
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Fila de botones grandes
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _MainCardButton(
-                              color: const Color.fromARGB(255, 0, 94, 255),
-                              icon: Icons.search,
-                              label: "Buscar materia",
-                              onTap: () => setState(() => isSearchOpen = true),
+                      if (!isExpandedView) ...[
+                        Row(
+                          children: [
+                            Expanded(child: _MainCardButton(color: Colors.blue, icon: Icons.search, label: "Buscar materia", onTap: () => setState(() => isSearchOpen = true))),
+                            const SizedBox(width: 20),
+                            Expanded(child: _MainCardButton(color: Colors.blue, icon: Icons.filter_alt, label: "Realizar filtro", onTap: () => setState(() => isFilterOpen = true))),
+                            const SizedBox(width: 20),
+                            Expanded(child: _MainCardButton(color: Colors.red, icon: Icons.delete_outline, label: "Limpiar Horarios", onTap: clearSchedules)),
+                          ],
+                        ),
+                        const SizedBox(height: 28),
+                        SizedBox(
+                          height: 60,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5AF48E), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+                            onPressed: generateSchedule,
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("Generar Horarios", style: TextStyle(fontSize: 24, color: Colors.black, fontWeight: FontWeight.bold)),
+                                SizedBox(width: 10),
+                                Icon(Icons.calendar_month, color: Colors.black),
+                              ],
                             ),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: _MainCardButton(
-                              color: const Color.fromARGB(255, 0, 94, 255),
-                              icon: Icons.filter_alt,
-                              label: "Realizar filtro",
-                              onTap: () => setState(() => isFilterOpen = true),
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: _MainCardButton(
-                              color: const Color.fromARGB(255, 255, 0, 0),
-                              icon: Icons.delete_outline,
-                              label: "Limpiar Horarios",
-                              onTap: clearSchedules,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 28),
-                      // Botón Generar
-                      SizedBox(
-                        height: 60,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 90, 244, 142),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          ),
-                          onPressed: generateSchedule,
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Generar Horarios",
-                                style: TextStyle(fontSize: 24, color: Colors.black, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(width: 10),
-                              Icon(Icons.calendar_month, color: Colors.black),
-                            ],
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 28),
-                      // Vista previa del horario o grilla de horarios generados
+                        const SizedBox(height: 28),
+                      ],
                       Expanded(
                         child: allSchedules.isEmpty
                             ? Container(
                                 width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF5F7FA),
-                                  borderRadius: BorderRadius.circular(18),
-                                  border: Border.all(
-                                    color: Colors.grey.shade400,
-                                    style: BorderStyle.solid,
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Vista previa del horario",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.grey.shade600,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
+                                decoration: BoxDecoration(color: const Color(0xFFF5F7FA), borderRadius: BorderRadius.circular(18), border: Border.all(color: Colors.grey.shade400, width: 2)),
+                                child: Center(child: Text("Vista previa del horario", style: TextStyle(fontSize: 20, color: Colors.grey.shade600, fontWeight: FontWeight.w500))),
                               )
-                            : ScheduleGridWidget(
-                                allSchedules: allSchedules,
-                                onScheduleTap: openScheduleOverview,
-                              ),
+                            : ScheduleGridWidget(allSchedules: allSchedules, onScheduleTap: openScheduleOverview),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(width: 32),
-                // Panel lateral de materias seleccionadas
                 SizedBox(
                   width: 340,
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 8,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2))]),
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Materias seleccionadas",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 0, 0, 0),
+                        const Text("Materias seleccionadas", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
+                        const SizedBox(height: 18),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                ...addedSubjects.map((subject) => Card(
+                                      margin: const EdgeInsets.symmetric(vertical: 6),
+                                      child: ListTile(
+                                        title: Text(subject.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                        trailing: IconButton(icon: const Icon(Icons.remove, color: Colors.red), onPressed: () => removeSubject(subject)),
+                                      ),
+                                    )),
+                                const SizedBox(height: 12),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: OutlinedButton.icon(
+                                    onPressed: () => setState(() => isSearchOpen = true),
+                                    icon: const Icon(Icons.add),
+                                    label: const Text("Agregar materia"),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 18),
-                        ...addedSubjects.map((subject) => Card(
-                              margin: const EdgeInsets.symmetric(vertical: 6),
-                              child: ListTile(
-                                title: Text(subject.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.remove, color: Colors.red),
-                                  onPressed: () => removeSubject(subject),
-                                ),
-                              ),
-                            )),
                         const SizedBox(height: 12),
-                        OutlinedButton.icon(
-                          onPressed: () => setState(() => isSearchOpen = true),
-                          icon: const Icon(Icons.add),
-                          label: const Text("Agregar materia"),
-                        ),
-                        const Spacer(),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              "Créditos: ",
-                              style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+                            OutlinedButton.icon(
+                              onPressed: () => setState(() => isExpandedView = !isExpandedView),
+                              icon: Icon(isExpandedView ? Icons.fullscreen_exit : Icons.fullscreen),
+                              label: Text(isExpandedView ? "Vista Normal" : "Expandir Vista"),
                             ),
-                            Text(
-                              "$usedCredits/$creditLimit",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: usedCredits > creditLimit ? Colors.red : const Color(0xFF2979FF),
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline,
+                            Text.rich(
+                              TextSpan(
+                                children: [
+                                  const TextSpan(
+                                    text: "Créditos: ",
+                                    style: TextStyle(fontSize: 16, color: Colors.black),
+                                  ),
+                                  TextSpan(
+                                    text: "$usedCredits/$creditLimit",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF2979FF), // Azul y en negrilla
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -393,7 +325,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        // Diálogo de búsqueda de materias
         if (isSearchOpen)
           FutureBuilder<List<Subject>>(
             future: futureSubjects,
@@ -412,7 +343,6 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             },
           ),
-        // Diálogo de filtro
         if (isFilterOpen)
           FilterWidget(
             closeWindow: () => setState(() => isFilterOpen = false),
@@ -420,7 +350,6 @@ class _MyHomePageState extends State<MyHomePage> {
             currentFilters: appliedFilters,
             addedSubjects: addedSubjects,
           ),
-        // Diálogo de vista de horario seleccionado
         if (isOverviewOpen && selectedScheduleIndex != null)
           ScheduleOverviewWidget(
             schedule: allSchedules[selectedScheduleIndex!],
@@ -431,20 +360,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// Widget auxiliar para los botones grandes
 class _MainCardButton extends StatefulWidget {
   final Color color;
   final IconData icon;
   final String label;
   final VoidCallback onTap;
 
-  const _MainCardButton({
-    Key? key,
-    required this.color,
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  }) : super(key: key);
+  const _MainCardButton({super.key, required this.color, required this.icon, required this.label, required this.onTap});
 
   @override
   State<_MainCardButton> createState() => _MainCardButtonState();
@@ -455,8 +377,7 @@ class _MainCardButtonState extends State<_MainCardButton> {
 
   @override
   Widget build(BuildContext context) {
-    // Oscurece el color al hacer hover (usando opacity o conBlend)
-    final Color hoverColor = widget.color.withOpacity(0.8); // Cambia el 0.8 para más o menos opacidad
+    final Color hoverColor = widget.color.withOpacity(0.8);
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
@@ -470,26 +391,14 @@ class _MainCardButtonState extends State<_MainCardButton> {
           decoration: BoxDecoration(
             color: _isHovered ? hoverColor : widget.color,
             borderRadius: BorderRadius.circular(16),
-            boxShadow: _isHovered
-                ? [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 8,
-                      offset: Offset(0, 4),
-                    ),
-                  ]
-                : [],
+            boxShadow: _isHovered ? [BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4))] : [],
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(widget.icon, color: Colors.white, size: 30),
               const SizedBox(height: 8),
-              Text(
-                widget.label,
-                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center,
-              ),
+              Text(widget.label, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
             ],
           ),
         ),
@@ -509,20 +418,12 @@ void showCustomNotification(BuildContext context, String message, {IconData? ico
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null)
-              Icon(icon, color: color ?? Color(0xFF1ABC7B), size: 32),
-            if (icon != null) SizedBox(width: 16),
-            Flexible(
-              child: Text(
-                message,
-                style: TextStyle(fontSize: 18, color: Colors.black87),
-              ),
-            ),
+            if (icon != null) Icon(icon, color: color ?? const Color(0xFF1ABC7B), size: 32),
+            if (icon != null) const SizedBox(width: 16),
+            Flexible(child: Text(message, style: const TextStyle(fontSize: 18, color: Colors.black87))),
           ],
         ),
       ),
     ),
   );
 }
-
-
