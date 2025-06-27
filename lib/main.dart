@@ -55,6 +55,28 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  // Paleta de colores igual a la del horario
+  final List<Color> subjectColors = [
+    Colors.redAccent,
+    Colors.blueAccent,
+    Colors.greenAccent,
+    Colors.orangeAccent,
+    Colors.purpleAccent,
+    Colors.cyanAccent,
+    Colors.amberAccent,
+    Colors.tealAccent,
+    Colors.indigoAccent,
+    Colors.pinkAccent,
+    Colors.limeAccent,
+    Colors.deepOrangeAccent,
+    Colors.lightBlueAccent,
+    Colors.lightGreenAccent,
+    Colors.deepPurpleAccent,
+  ];
+
+  Color getSubjectColor(int index) {
+    return subjectColors[index % subjectColors.length];
+  }
   List<Subject> addedSubjects = [];
   late Future<List<Subject>> futureSubjects;
   int usedCredits = 0;
@@ -268,13 +290,28 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: SingleChildScrollView(
                             child: Column(
                               children: [
-                                ...addedSubjects.map((subject) => Card(
-                                      margin: const EdgeInsets.symmetric(vertical: 6),
-                                      child: ListTile(
-                                        title: Text(subject.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                                        trailing: IconButton(icon: const Icon(Icons.remove, color: Colors.red), onPressed: () => removeSubject(subject)),
+                                ...addedSubjects.asMap().entries.map((entry) {
+                                  final idx = entry.key;
+                                  final subject = entry.value;
+                                  return Card(
+                                    margin: const EdgeInsets.symmetric(vertical: 6),
+                                    child: ListTile(
+                                      leading: Container(
+                                        width: 14,
+                                        height: 14,
+                                        decoration: BoxDecoration(
+                                          color: getSubjectColor(idx),
+                                          shape: BoxShape.circle,
+                                        ),
                                       ),
-                                    )),
+                                      title: Text(subject.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                      trailing: IconButton(
+                                        icon: const Icon(Icons.remove, color: Colors.red),
+                                        onPressed: () => removeSubject(subject),
+                                      ),
+                                    ),
+                                  );
+                                }),
                                 const SizedBox(height: 12),
                                 Align(
                                   alignment: Alignment.centerLeft,
