@@ -90,6 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isFilterOpen = false;
   bool isOverviewOpen = false;
   bool isExpandedView = false;
+  bool isFullExpandedView = false;
 
   Map<String, dynamic> appliedFilters = {};
   late FocusNode _focusNode;
@@ -275,122 +276,193 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
+                // Panel lateral: modo normal o encogido
                 const SizedBox(width: 32),
-                SizedBox(
-                  width: 340,
+                Container(
+                  width: isFullExpandedView ? 60 : 340,
                   child: Container(
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18), boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2))]),
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("Materias seleccionadas", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
-                        const SizedBox(height: 18),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                ...addedSubjects.asMap().entries.map((entry) {
-                                  final idx = entry.key;
-                                  final subject = entry.value;
-                                  return Card(
-                                    margin: const EdgeInsets.symmetric(vertical: 6),
-                                    child: ListTile(
-                                      leading: Container(
-                                        width: 14,
-                                        height: 14,
-                                        decoration: BoxDecoration(
-                                          color: getSubjectColor(idx),
-                                          shape: BoxShape.circle,
-                                        ),
-                                      ),
-                                      title: Text(subject.name, style: const TextStyle(fontWeight: FontWeight.w600)),
-                                      trailing: IconButton(
-                                        icon: const Icon(Icons.remove, color: Colors.red),
-                                        onPressed: () => removeSubject(subject),
-                                      ),
-                                    ),
-                                  );
-                                }),
-                                const SizedBox(height: 12),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: OutlinedButton.icon(
-                                    onPressed: () => setState(() => isSearchOpen = true),
-                                    icon: const Icon(Icons.add),
-                                    label: const Text("Agregar materia"),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2))],
+                    ),
+                    padding: isFullExpandedView ? const EdgeInsets.only(top: 12) : const EdgeInsets.all(20),
+                    child: isFullExpandedView
+                        ? Column(
+                            children: [
+                              const SizedBox(height: 4),
+                              Center(
+                                child: Tooltip(
+                                  message: "Mostrar panel",
+                                  child: IconButton(
+                                    icon: const Icon(Icons.chevron_left, size: 32, color: Colors.black54),
+                                    onPressed: () {
+                                      setState(() {
+                                        isFullExpandedView = false;
+                                      });
+                                    },
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            OutlinedButton.icon(
-                              onPressed: () => setState(() => isExpandedView = !isExpandedView),
-                              icon: Icon(isExpandedView ? Icons.fullscreen_exit : Icons.fullscreen),
-                              label: Text(isExpandedView ? "Vista Normal" : "Expandir Vista"),
-                            ),
-                            Text.rich(
-                              TextSpan(
+                              ),
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Título y botón de expansión
+                              Row(
                                 children: [
-                                  const TextSpan(
-                                    text: "Créditos: ",
-                                    style: TextStyle(fontSize: 16, color: Colors.black),
+                                  const Text("Materias seleccionadas", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
+                                  const SizedBox(width: 8),
+                                  IconButton(
+                                    tooltip: "Encoger panel",
+                                    icon: const Icon(Icons.chevron_right, size: 32, color: Colors.black54),
+                                    onPressed: () {
+                                      setState(() {
+                                        isFullExpandedView = true;
+                                      });
+                                    },
                                   ),
-                                  TextSpan(
-                                    text: "$usedCredits/$creditLimit",
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF2979FF), // Azul y en negrilla
+                                ],
+                              ),
+                              const SizedBox(height: 18),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      ...addedSubjects.asMap().entries.map((entry) {
+                                        final idx = entry.key;
+                                        final subject = entry.value;
+                                        return Card(
+                                          margin: const EdgeInsets.symmetric(vertical: 6),
+                                          child: ListTile(
+                                            leading: Container(
+                                              width: 14,
+                                              height: 14,
+                                              decoration: BoxDecoration(
+                                                color: getSubjectColor(idx),
+                                                shape: BoxShape.circle,
+                                              ),
+                                            ),
+                                            title: Text(subject.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                            trailing: IconButton(
+                                              icon: const Icon(Icons.remove, color: Colors.red),
+                                              onPressed: () => removeSubject(subject),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                      const SizedBox(height: 12),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: OutlinedButton.icon(
+                                          onPressed: () => setState(() => isSearchOpen = true),
+                                          icon: const Icon(Icons.add),
+                                          label: const Text("Agregar materia"),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  OutlinedButton.icon(
+                                    onPressed: () => setState(() => isExpandedView = !isExpandedView),
+                                    icon: Icon(isExpandedView ? Icons.fullscreen_exit : Icons.fullscreen),
+                                    label: Text(isExpandedView ? "Vista Normal" : "Expandir Vista"),
+                                  ),
+                                  Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        const TextSpan(
+                                          text: "Créditos: ",
+                                          style: TextStyle(fontSize: 16, color: Colors.black),
+                                        ),
+                                        TextSpan(
+                                          text: "$usedCredits/$creditLimit",
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFF2979FF), // Azul y en negrilla
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                            ],
+                          ),
                   ),
                 ),
               ],
             ),
           ),
         ),
+        // --- Buscar materia ---
         if (isSearchOpen)
-          FutureBuilder<List<Subject>>(
-            future: futureSubjects,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              return SearchSubjectsWidget(
-                subjectController: subjectController,
-                allSubjects: snapshot.data!,
-                onSubjectSelected: (subject) {
-                  addSubject(subject);
-                  setState(() => isSearchOpen = false);
+          Stack(
+            children: [
+              const ModalBarrier(dismissible: false, color: Colors.black45),
+              AbsorbPointer(
+                absorbing: true,
+                child: Container(color: Colors.black45),
+              ),
+              FutureBuilder<List<Subject>>(
+                future: futureSubjects,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return SearchSubjectsWidget(
+                    subjectController: subjectController,
+                    allSubjects: snapshot.data!,
+                    onSubjectSelected: (subject) {
+                      addSubject(subject);
+                      setState(() => isSearchOpen = false);
+                    },
+                    closeWindow: () => setState(() => isSearchOpen = false),
+                  );
                 },
-                closeWindow: () => setState(() => isSearchOpen = false),
-              );
-            },
+              ),
+            ],
           ),
+
+        // --- Filtro ---
         if (isFilterOpen)
-          FilterWidget(
-            closeWindow: () => setState(() => isFilterOpen = false),
-            onApplyFilters: applyFilters,
-            currentFilters: appliedFilters,
-            addedSubjects: addedSubjects,
+          Stack(
+            children: [
+              const ModalBarrier(dismissible: false, color: Colors.black45),
+              AbsorbPointer(
+                absorbing: true,
+                child: Container(color: Colors.black45),
+              ),
+              FilterWidget(
+                closeWindow: () => setState(() => isFilterOpen = false),
+                onApplyFilters: applyFilters,
+                currentFilters: appliedFilters,
+                addedSubjects: addedSubjects,
+              ),
+            ],
           ),
+
+        // --- Vista de Horario ---
         if (isOverviewOpen && selectedScheduleIndex != null)
-          ScheduleOverviewWidget(
-            schedule: allSchedules[selectedScheduleIndex!],
-            onClose: closeScheduleOverview,
+          Stack(
+            children: [
+              const ModalBarrier(dismissible: false, color: Colors.black45),
+              AbsorbPointer(
+                absorbing: true,
+                child: Container(color: Colors.black45),
+              ),
+              ScheduleOverviewWidget(
+                schedule: allSchedules[selectedScheduleIndex!],
+                onClose: closeScheduleOverview,
+              ),
+            ],
           ),
       ],
     );

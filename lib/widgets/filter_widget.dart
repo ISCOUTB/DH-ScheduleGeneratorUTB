@@ -147,7 +147,6 @@ class _FilterWidgetState extends State<FilterWidget> {
                                       ),
                             ),
                             child: ExpansionTile(
-                              leading: Icon(Icons.book, color: textColor),
                               title: Text(subject.name,
                                   style: TextStyle(color: textColor)),
                               children: [
@@ -346,6 +345,22 @@ class _FilterWidgetState extends State<FilterWidget> {
                         children: [
                           SwitchListTile(
                             activeColor: accentColor,
+                            trackColor: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return accentColor.withOpacity(0.5); // visible en activo
+                                }
+                                return Colors.grey.shade400; // visible en inactivo
+                              },
+                            ),
+                            thumbColor: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return Colors.white;
+                                }
+                                return Colors.grey.shade200;
+                              },
+                            ),
                             title: Text('Optimizar Horas (Menos huecos)',
                                 style: TextStyle(color: textColor)),
                             value: optimizeGaps,
@@ -357,6 +372,22 @@ class _FilterWidgetState extends State<FilterWidget> {
                           ),
                           SwitchListTile(
                             activeColor: accentColor,
+                            trackColor: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return accentColor.withOpacity(0.5); // visible en activo
+                                }
+                                return Colors.grey.shade400; // visible en inactivo
+                              },
+                            ),
+                            thumbColor: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.selected)) {
+                                  return Colors.white;
+                                }
+                                return Colors.grey.shade200;
+                              },
+                            ),
                             title: Text(
                                 'Optimizar Días Libres (Más días libres primero)',
                                 style: TextStyle(color: textColor)),

@@ -96,6 +96,7 @@ class ScheduleGridWidget extends StatelessWidget {
       'Jue',
       'Vie',
       'Sáb',
+      'Dom', 
     ];
 
     // Crear una matriz para almacenar la información de las clases

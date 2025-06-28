@@ -54,6 +54,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     'Jueves',
     'Viernes',
     'Sábado',
+    'Domingo',
   ];
 
   @override
