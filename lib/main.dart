@@ -39,10 +39,10 @@ class MyApp extends StatelessWidget {
       ),
     );
     return MaterialApp(
-      title: 'Gene de Horarios UTB',
+      title: 'Generador de Horarios UTB',
       scrollBehavior: WebScrollBehavior(),
       theme: theme,
-      home: const MyHomePage(title: 'Gene de Horarios UTB'),
+      home: const MyHomePage(title: 'Generador de Horarios UTB'),
     );
   }
 }
