@@ -38,6 +38,29 @@
     <link rel="manifest" href="manifest.json" />
   </head>
   <body>
+    <!-- ESTE SCRIPT SE EJECUTA ANTES QUE FLUTTER -->
+    <script>
+      (function () {
+        // Solo nos interesa la ruta de callback de autenticación
+        if (window.location.pathname === "/auth") {
+          const hash = window.location.hash;
+          if (hash.includes("id_token=")) {
+            // Extraemos el token del fragmento de la URL
+            const idToken = hash.split("id_token=")[1].split("&")[0];
+            if (idToken) {
+              console.log(
+                "JS Interceptor: Token encontrado y guardado en localStorage."
+              );
+              // Guardamos el token donde Flutter pueda encontrarlo
+              localStorage.setItem("id_token", idToken);
+              // Redirigimos a la raíz de la app. Flutter ahora se iniciará
+              // en la página principal y encontrará el token.
+              window.location.href = "/";
+            }
+          }
+        }
+      })();
+    </script>
     <script src="flutter_bootstrap.js" async></script>
   </body>
 </html>
