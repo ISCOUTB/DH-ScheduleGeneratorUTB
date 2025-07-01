@@ -10,21 +10,28 @@ import 'widgets/schedule_grid_widget.dart';
 import 'widgets/schedule_overview_widget.dart';
 import 'widgets/filter_widget.dart';
 import 'utils/schedule_generator.dart';
+import 'pages/auth_callback_page.dart';
+import 'dart:html' as html;
+import 'dart:convert';
+import 'package:url_strategy/url_strategy.dart';
 
 void main() {
+  setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
 class WebScrollBehavior extends ScrollBehavior {
   @override
-  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
     return child;
   }
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = ThemeData(
@@ -38,11 +45,15 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
       ),
     );
+
     return MaterialApp(
       title: 'Generador de Horarios UTB',
       scrollBehavior: WebScrollBehavior(),
       theme: theme,
-      home: const MyHomePage(title: 'Generador de Horarios UTB'),
+      routes: {
+        '/': (context) => const MyHomePage(title: 'Generador de Horarios UTB'),
+        '/auth': (context) => const AuthCallbackPage(),
+      },
     );
   }
 }
@@ -74,9 +85,27 @@ class _MyHomePageState extends State<MyHomePage> {
     Colors.deepPurpleAccent,
   ];
 
+  // Función para obtener el nombre de usuario del token JWT almacenado en localStorage
+  String? getUserNameFromToken() {
+    final token = html.window.localStorage['id_token'];
+    if (token == null) return null;
+
+    final parts = token.split('.');
+    if (parts.length != 3) return null;
+
+    final payload = parts[1];
+    final normalized = base64.normalize(payload);
+    final decoded = utf8.decode(base64.decode(normalized));
+    final payloadMap = json.decode(decoded);
+
+    return payloadMap['name'] ?? payloadMap['preferred_username'];
+  }
+
+  // Función para obtener el color de una materia según su índice
   Color getSubjectColor(int index) {
     return subjectColors[index % subjectColors.length];
   }
+
   List<Subject> addedSubjects = [];
   late Future<List<Subject>> futureSubjects;
   int usedCredits = 0;
@@ -104,11 +133,41 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
+    // Verifica si el token ya está almacenado en localStorage
+    print('TOKEN AL ENTRAR A HOME: ${html.window.localStorage['id_token']}');
+
+    // Comprobamos si hay sesión activa
+    final token = html.window.localStorage['id_token'];
+    if (token == null) {
+      _redirectToMicrosoftLogin(); // redirige automáticamente si no hay sesión
+      return; // evita que siga ejecutando el resto del initState
+    }
+
+    // Si hay token, continúa con lo demás como siempre
     _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
     futureSubjects = fetchSubjectsFromApi();
+  }
+
+  void _redirectToMicrosoftLogin() {
+    const tenantId = '1ae0c106-3b63-42fd-9149-52d736399d5a';
+    const clientId = 'de6b5a9b-9cdf-4484-ba51-aa45bf431e52';
+    const redirectUri = 'http://localhost:5173/auth';
+
+    final authUrl =
+        'https://login.microsoftonline.com/$tenantId/oauth2/v2.0/authorize'
+        '?client_id=$clientId'
+        '&response_type=id_token'
+        '&redirect_uri=$redirectUri'
+        '&response_mode=fragment'
+        '&scope=openid email profile'
+        '&nonce=abc123'
+        '&state=xyz456';
+
+    html.window.location.href = authUrl;
   }
 
   @override
@@ -118,14 +177,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void addSubject(Subject subject) {
-    if (addedSubjects.any((s) => s.code == subject.code && s.name == subject.name)) {
-      showCustomNotification(context, 'La materia ya ha sido agregada', icon: Icons.info, color: Colors.green);
+    if (addedSubjects
+        .any((s) => s.code == subject.code && s.name == subject.name)) {
+      showCustomNotification(context, 'La materia ya ha sido agregada',
+          icon: Icons.info, color: Colors.green);
       return;
     }
 
     int newTotalCredits = usedCredits + subject.credits;
     if (newTotalCredits > creditLimit) {
-      showCustomNotification(context, 'Limite de creditos alcanzados', icon: Icons.info, color: Colors.red);
+      showCustomNotification(context, 'Limite de creditos alcanzados',
+          icon: Icons.info, color: Colors.red);
       return;
     }
 
@@ -134,7 +196,9 @@ class _MyHomePageState extends State<MyHomePage> {
       addedSubjects.add(subject);
 
       if (usedCredits > 18) {
-        showCustomNotification(context, 'Advertencia: Ha excedido los 18 creditos', icon: Icons.info, color: Colors.green);
+        showCustomNotification(
+            context, 'Advertencia: Ha excedido los 18 creditos',
+            icon: Icons.info, color: Colors.green);
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -145,7 +209,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void removeSubject(Subject subject) {
     setState(() {
-      addedSubjects.removeWhere((s) => s.code == subject.code && s.name == subject.name);
+      addedSubjects
+          .removeWhere((s) => s.code == subject.code && s.name == subject.name);
       usedCredits -= subject.credits;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -156,22 +221,28 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void generateSchedule() {
     if (addedSubjects.isEmpty) {
-      showCustomNotification(context, 'No hay materias seleccionadas', icon: Icons.error, color: Colors.red);
+      showCustomNotification(context, 'No hay materias seleccionadas',
+          icon: Icons.error, color: Colors.red);
       return;
     }
 
-    List<List<ClassOption>> horariosValidos = obtenerHorariosValidos(addedSubjects, appliedFilters);
+    List<List<ClassOption>> horariosValidos =
+        obtenerHorariosValidos(addedSubjects, appliedFilters);
 
     if (horariosValidos.isEmpty) {
-      showCustomNotification(context, 'No se encontraron horarios validos', icon: Icons.info, color: Colors.red);
+      showCustomNotification(context, 'No se encontraron horarios validos',
+          icon: Icons.info, color: Colors.red);
     } else {
       setState(() {
         allSchedules = horariosValidos;
         selectedScheduleIndex = null;
 
-        if (isMobile() && MediaQuery.of(context).orientation == Orientation.portrait) {
+        if (isMobile() &&
+            MediaQuery.of(context).orientation == Orientation.portrait) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Por favor, gira tu dispositivo para ver los horarios')),
+            const SnackBar(
+                content: Text(
+                    'Por favor, gira tu dispositivo para ver los horarios')),
           );
         }
       });
@@ -183,7 +254,8 @@ class _MyHomePageState extends State<MyHomePage> {
       allSchedules.clear();
       selectedScheduleIndex = null;
     });
-    showCustomNotification(context, 'Horarios generados eliminados', icon: Icons.info, color: Colors.green);
+    showCustomNotification(context, 'Horarios generados eliminados',
+        icon: Icons.info, color: Colors.green);
   }
 
   void applyFilters(Map<String, dynamic> filters) {
@@ -208,6 +280,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final userName = getUserNameFromToken();
     return Stack(
       children: [
         Scaffold(
@@ -218,12 +291,18 @@ class _MyHomePageState extends State<MyHomePage> {
             title: Row(
               children: [
                 Container(
-                  decoration: const BoxDecoration(color: Color(0xFF69F0AE), shape: BoxShape.circle),
+                  decoration: const BoxDecoration(
+                      color: Color(0xFF69F0AE), shape: BoxShape.circle),
                   padding: const EdgeInsets.all(8),
-                  child: const Icon(Icons.calendar_today, color: Colors.white, size: 28),
+                  child: const Icon(Icons.calendar_today,
+                      color: Colors.white, size: 28),
                 ),
                 const SizedBox(width: 12),
-                const Text("Generador de Horarios", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white)),
+                const Text("Generador de Horarios",
+                    style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white)),
               ],
             ),
           ),
@@ -239,23 +318,47 @@ class _MyHomePageState extends State<MyHomePage> {
                       if (!isExpandedView) ...[
                         Row(
                           children: [
-                            Expanded(child: _MainCardButton(color: Colors.blue, icon: Icons.search, label: "Buscar materia", onTap: () => setState(() => isSearchOpen = true))),
+                            Expanded(
+                                child: _MainCardButton(
+                                    color: Colors.blue,
+                                    icon: Icons.search,
+                                    label: "Buscar materia",
+                                    onTap: () =>
+                                        setState(() => isSearchOpen = true))),
                             const SizedBox(width: 20),
-                            Expanded(child: _MainCardButton(color: Colors.blue, icon: Icons.filter_alt, label: "Realizar filtro", onTap: () => setState(() => isFilterOpen = true))),
+                            Expanded(
+                                child: _MainCardButton(
+                                    color: Colors.blue,
+                                    icon: Icons.filter_alt,
+                                    label: "Realizar filtro",
+                                    onTap: () =>
+                                        setState(() => isFilterOpen = true))),
                             const SizedBox(width: 20),
-                            Expanded(child: _MainCardButton(color: Colors.red, icon: Icons.delete_outline, label: "Limpiar Horarios", onTap: clearSchedules)),
+                            Expanded(
+                                child: _MainCardButton(
+                                    color: Colors.red,
+                                    icon: Icons.delete_outline,
+                                    label: "Limpiar Horarios",
+                                    onTap: clearSchedules)),
                           ],
                         ),
                         const SizedBox(height: 28),
                         SizedBox(
                           height: 60,
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF5AF48E), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF5AF48E),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16))),
                             onPressed: generateSchedule,
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text("Generar Horarios", style: TextStyle(fontSize: 24, color: Colors.black, fontWeight: FontWeight.bold)),
+                                Text("Generar Horarios",
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold)),
                                 SizedBox(width: 10),
                                 Icon(Icons.calendar_month, color: Colors.black),
                               ],
@@ -268,10 +371,21 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: allSchedules.isEmpty
                             ? Container(
                                 width: double.infinity,
-                                decoration: BoxDecoration(color: const Color(0xFFF5F7FA), borderRadius: BorderRadius.circular(18), border: Border.all(color: Colors.grey.shade400, width: 2)),
-                                child: Center(child: Text("Vista previa del horario", style: TextStyle(fontSize: 20, color: Colors.grey.shade600, fontWeight: FontWeight.w500))),
+                                decoration: BoxDecoration(
+                                    color: const Color(0xFFF5F7FA),
+                                    borderRadius: BorderRadius.circular(18),
+                                    border: Border.all(
+                                        color: Colors.grey.shade400, width: 2)),
+                                child: Center(
+                                    child: Text("Vista previa del horario",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            color: Colors.grey.shade600,
+                                            fontWeight: FontWeight.w500))),
                               )
-                            : ScheduleGridWidget(allSchedules: allSchedules, onScheduleTap: openScheduleOverview),
+                            : ScheduleGridWidget(
+                                allSchedules: allSchedules,
+                                onScheduleTap: openScheduleOverview),
                       ),
                     ],
                   ),
@@ -284,9 +398,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(18),
-                      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2))],
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 8,
+                            offset: Offset(0, 2))
+                      ],
                     ),
-                    padding: isFullExpandedView ? const EdgeInsets.only(top: 12) : const EdgeInsets.all(20),
+                    padding: isFullExpandedView
+                        ? const EdgeInsets.only(top: 12)
+                        : const EdgeInsets.all(20),
                     child: isFullExpandedView
                         ? Column(
                             children: [
@@ -295,7 +416,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: Tooltip(
                                   message: "Mostrar panel",
                                   child: IconButton(
-                                    icon: const Icon(Icons.chevron_left, size: 32, color: Colors.black54),
+                                    icon: const Icon(Icons.chevron_left,
+                                        size: 32, color: Colors.black54),
                                     onPressed: () {
                                       setState(() {
                                         isFullExpandedView = false;
@@ -312,11 +434,16 @@ class _MyHomePageState extends State<MyHomePage> {
                               // Título y botón de expansión
                               Row(
                                 children: [
-                                  const Text("Materias seleccionadas", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black)),
+                                  const Text("Materias seleccionadas",
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black)),
                                   const SizedBox(width: 8),
                                   IconButton(
                                     tooltip: "Encoger panel",
-                                    icon: const Icon(Icons.chevron_right, size: 32, color: Colors.black54),
+                                    icon: const Icon(Icons.chevron_right,
+                                        size: 32, color: Colors.black54),
                                     onPressed: () {
                                       setState(() {
                                         isFullExpandedView = true;
@@ -330,11 +457,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: SingleChildScrollView(
                                   child: Column(
                                     children: [
-                                      ...addedSubjects.asMap().entries.map((entry) {
+                                      ...addedSubjects
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
                                         final idx = entry.key;
                                         final subject = entry.value;
                                         return Card(
-                                          margin: const EdgeInsets.symmetric(vertical: 6),
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 6),
                                           child: ListTile(
                                             leading: Container(
                                               width: 14,
@@ -344,10 +475,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 shape: BoxShape.circle,
                                               ),
                                             ),
-                                            title: Text(subject.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                                            title: Text(subject.name,
+                                                style: const TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.w600)),
                                             trailing: IconButton(
-                                              icon: const Icon(Icons.remove, color: Colors.red),
-                                              onPressed: () => removeSubject(subject),
+                                              icon: const Icon(Icons.remove,
+                                                  color: Colors.red),
+                                              onPressed: () =>
+                                                  removeSubject(subject),
                                             ),
                                           ),
                                         );
@@ -356,7 +492,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                       Align(
                                         alignment: Alignment.centerLeft,
                                         child: OutlinedButton.icon(
-                                          onPressed: () => setState(() => isSearchOpen = true),
+                                          onPressed: () => setState(
+                                              () => isSearchOpen = true),
                                           icon: const Icon(Icons.add),
                                           label: const Text("Agregar materia"),
                                         ),
@@ -367,26 +504,35 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                               const SizedBox(height: 12),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   OutlinedButton.icon(
-                                    onPressed: () => setState(() => isExpandedView = !isExpandedView),
-                                    icon: Icon(isExpandedView ? Icons.fullscreen_exit : Icons.fullscreen),
-                                    label: Text(isExpandedView ? "Vista Normal" : "Expandir Vista"),
+                                    onPressed: () => setState(
+                                        () => isExpandedView = !isExpandedView),
+                                    icon: Icon(isExpandedView
+                                        ? Icons.fullscreen_exit
+                                        : Icons.fullscreen),
+                                    label: Text(isExpandedView
+                                        ? "Vista Normal"
+                                        : "Expandir Vista"),
                                   ),
                                   Text.rich(
                                     TextSpan(
                                       children: [
                                         const TextSpan(
                                           text: "Créditos: ",
-                                          style: TextStyle(fontSize: 16, color: Colors.black),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.black),
                                         ),
                                         TextSpan(
                                           text: "$usedCredits/$creditLimit",
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
-                                            color: Color(0xFF2979FF), // Azul y en negrilla
+                                            color: Color(
+                                                0xFF2979FF), // Azul y en negrilla
                                           ),
                                         ),
                                       ],
@@ -475,7 +621,12 @@ class _MainCardButton extends StatefulWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _MainCardButton({super.key, required this.color, required this.icon, required this.label, required this.onTap});
+  const _MainCardButton(
+      {super.key,
+      required this.color,
+      required this.icon,
+      required this.label,
+      required this.onTap});
 
   @override
   State<_MainCardButton> createState() => _MainCardButtonState();
@@ -500,14 +651,26 @@ class _MainCardButtonState extends State<_MainCardButton> {
           decoration: BoxDecoration(
             color: _isHovered ? hoverColor : widget.color,
             borderRadius: BorderRadius.circular(16),
-            boxShadow: _isHovered ? [BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4))] : [],
+            boxShadow: _isHovered
+                ? [
+                    BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 8,
+                        offset: Offset(0, 4))
+                  ]
+                : [],
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(widget.icon, color: Colors.white, size: 30),
               const SizedBox(height: 8),
-              Text(widget.label, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+              Text(widget.label,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.center),
             ],
           ),
         ),
@@ -516,7 +679,8 @@ class _MainCardButtonState extends State<_MainCardButton> {
   }
 }
 
-void showCustomNotification(BuildContext context, String message, {IconData? icon, Color? color}) {
+void showCustomNotification(BuildContext context, String message,
+    {IconData? icon, Color? color}) {
   showDialog(
     context: context,
     builder: (context) => Dialog(
@@ -527,9 +691,13 @@ void showCustomNotification(BuildContext context, String message, {IconData? ico
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) Icon(icon, color: color ?? const Color(0xFF1ABC7B), size: 32),
+            if (icon != null)
+              Icon(icon, color: color ?? const Color(0xFF1ABC7B), size: 32),
             if (icon != null) const SizedBox(width: 16),
-            Flexible(child: Text(message, style: const TextStyle(fontSize: 18, color: Colors.black87))),
+            Flexible(
+                child: Text(message,
+                    style:
+                        const TextStyle(fontSize: 18, color: Colors.black87))),
           ],
         ),
       ),
