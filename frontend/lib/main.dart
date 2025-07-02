@@ -14,6 +14,7 @@ import 'pages/auth_callback_page.dart';
 import 'dart:html' as html;
 import 'dart:convert';
 import 'package:url_strategy/url_strategy.dart';
+import 'widgets/user_menu_button.dart';
 
 void main() {
   setPathUrlStrategy();
@@ -170,6 +171,11 @@ class _MyHomePageState extends State<MyHomePage> {
     html.window.location.href = authUrl;
   }
 
+  void _logout() {
+    html.window.localStorage.remove('id_token');
+    _redirectToMicrosoftLogin();
+  }
+
   @override
   void dispose() {
     _focusNode.dispose();
@@ -286,21 +292,15 @@ class _MyHomePageState extends State<MyHomePage> {
         Scaffold(
           backgroundColor: const Color(0xFFF5F7FA),
           appBar: AppBar(
-            backgroundColor: const Color.fromARGB(255, 0, 94, 255),
+            backgroundColor: const Color(0xFF0051FF),
             elevation: 0,
             title: Row(
               children: [
-                Container(
-                  decoration: const BoxDecoration(
-                      color: Color(0xFF69F0AE), shape: BoxShape.circle),
-                  padding: const EdgeInsets.all(8),
-                  child: const Icon(Icons.calendar_today,
-                      color: Colors.white, size: 28),
-                ),
+                UserMenuButton(userName: userName, onLogout: _logout),
                 const SizedBox(width: 12),
                 const Text("Generador de Horarios",
                     style: TextStyle(
-                        fontSize: 28,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Colors.white)),
               ],
@@ -320,7 +320,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           children: [
                             Expanded(
                                 child: _MainCardButton(
-                                    color: Colors.blue,
+                                    color: const Color(0xFF0051FF),
                                     icon: Icons.search,
                                     label: "Buscar materia",
                                     onTap: () =>
@@ -328,7 +328,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             const SizedBox(width: 20),
                             Expanded(
                                 child: _MainCardButton(
-                                    color: Colors.blue,
+                                    color: const Color(0xFF0051FF),
                                     icon: Icons.filter_alt,
                                     label: "Realizar filtro",
                                     onTap: () =>
@@ -336,7 +336,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             const SizedBox(width: 20),
                             Expanded(
                                 child: _MainCardButton(
-                                    color: Colors.red,
+                                    color: const Color(0xFFFF2F2F),
                                     icon: Icons.delete_outline,
                                     label: "Limpiar Horarios",
                                     onTap: clearSchedules)),
@@ -347,7 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           height: 60,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF5AF48E),
+                                backgroundColor: const Color(0xFF8CFF62),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16))),
                             onPressed: generateSchedule,
@@ -356,7 +356,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               children: [
                                 Text("Generar Horarios",
                                     style: TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 20,
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold)),
                                 SizedBox(width: 10),
