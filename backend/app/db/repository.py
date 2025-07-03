@@ -3,7 +3,7 @@ import psycopg.rows
 import os
 from dotenv import load_dotenv
 from typing import List, Dict, Any
-from ..models import ClassOption, Schedule
+from ..models import ClassOption, Schedule, Subject
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
@@ -131,6 +131,81 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
                 combinations_per_subject.append(combinations)
             
     return combinations_per_subject
+
+# --- NUEVA FUNCIÓN ---
+def get_subject_by_code(subject_code: str) -> Subject | None:
+    """
+    Obtiene los detalles completos de una materia específica desde la base de datos,
+    incluyendo todas sus classOptions.
+    """
+    conn = psycopg.connect(
+        dbname=db_name, user=db_user, password=db_password, host=db_host, port=db_port
+    )
+    cursor = conn.cursor()
+
+    query = """
+        SELECT 
+            m.CodigoMateria, m.Nombre AS NombreMateria, m.Creditos,
+            c.NRC, c.Tipo, c.GroupID, p.Nombre AS NombreProfesor,
+            cl.Dia, cl.HoraInicio, cl.HoraFinal
+        FROM Materia m
+        JOIN Curso c ON m.CodigoMateria = c.CodigoMateria
+        LEFT JOIN Profesor p ON c.ProfesorID = p.BannerID
+        LEFT JOIN Clase cl ON cl.NRC = c.NRC
+        WHERE m.CodigoMateria = %s
+        ORDER BY c.GroupID, c.NRC, cl.Dia, cl.HoraInicio;
+    """
+    
+    cursor.execute(query, (subject_code,))
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    if not rows:
+        return None
+
+    # Procesar las filas para construir el objeto Subject
+    subject_details: Dict[str, Any] = {}
+    subject_details = {
+        "code": rows[0][0],
+        "name": rows[0][1],
+        "credits": rows[0][2],
+        "classOptions": []
+    }
+    class_options_dict: Dict[str, ClassOption] = {}
+
+    for row in rows:
+        (
+            code, name, credits, nrc_val, tipo, group_id,
+            profesor, dia, hora_inicio, hora_final
+        ) = row
+        
+        nrc = str(nrc_val)
+
+        if nrc not in class_options_dict:
+            new_option = ClassOption(
+                subjectName=name,
+                subjectCode=code,
+                type=tipo,
+                schedules=[],
+                professor=profesor or "Por Asignar",
+                nrc=nrc,
+                groupId=group_id,
+                credits=credits
+            )
+            class_options_dict[nrc] = new_option
+
+        if dia and hora_inicio and hora_final:
+            hora_inicio_str = hora_inicio.strftime("%H:%M")
+            hora_final_str = hora_final.strftime("%H:%M")
+            class_options_dict[nrc].schedules.append(
+                Schedule(day=dia, time=f"{hora_inicio_str} - {hora_final_str}")
+            )
+    
+    subject_details["classOptions"] = list(class_options_dict.values())
+    
+    return Subject(**subject_details)
+
 
 # SOLUCIÓN: Eliminar 'async' y especificar el tipo de retorno del diccionario
 def get_all_subjects_summary() -> List[Dict[str, Any]]:

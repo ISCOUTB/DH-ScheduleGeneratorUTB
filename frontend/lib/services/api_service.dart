@@ -31,6 +31,25 @@ class ApiService {
     }
   }
 
+  // --- NUEVO MÉTODO PARA OBTENER DETALLES DE UNA MATERIA ---
+  Future<Subject> getSubjectDetails(String subjectCode) async {
+    final url = Uri.parse('$_baseUrl/api/subjects/$subjectCode');
+    try {
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(utf8.decode(response.bodyBytes));
+        return Subject.fromJson(data);
+      } else {
+        throw Exception(
+            'Error del servidor al obtener detalles: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error en la petición a la API de detalles: $e');
+      throw Exception('No se pudo obtener los detalles de la materia.');
+    }
+  }
+
   Future<List<List<ClassOption>>> generateSchedules({
     required List<Subject> subjects,
     required Map<String, dynamic> filters,

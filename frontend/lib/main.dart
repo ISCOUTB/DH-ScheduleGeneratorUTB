@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'models/subject.dart';
-import 'models/subject_summary.dart'; 
+import 'models/subject_summary.dart';
 import 'models/class_option.dart';
 import 'widgets/search_widget.dart';
 import 'widgets/schedule_grid_widget.dart';
@@ -11,7 +11,7 @@ import 'pages/auth_callback_page.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'widgets/user_menu_button.dart';
 import 'services/api_service.dart';
-import 'services/auth_service.dart'; 
+import 'services/auth_service.dart';
 import 'widgets/subjects_panel.dart';
 import 'widgets/main_actions_panel.dart';
 import 'widgets/schedule_overview_widget.dart';
@@ -114,6 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isLoading = false;
 
   Map<String, dynamic> appliedFilters = {};
+  Map<String, dynamic> apiFiltersForGeneration = {}; // NUEVA VARIABLE DE ESTADO
   late FocusNode _focusNode;
 
   bool isMobile() {
@@ -208,58 +209,76 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void generateSchedule() async {
-    if (addedSubjects.isEmpty) {
-      showCustomNotification(context, 'No hay materias seleccionadas',
-          icon: Icons.error, color: Colors.red);
-      return;
-    }
-
-    setState(() {
-      _isLoading = true; // Inicia la carga
-    });
-
-    try {
-      final apiService = ApiService();
-      final horariosValidos = await apiService.generateSchedules(
-        subjects: addedSubjects,
-        filters: appliedFilters,
-        creditLimit: creditLimit,
-      );
-
-      if (horariosValidos.isEmpty) {
-        showCustomNotification(context, 'No se encontraron horarios válidos',
-            icon: Icons.info, color: Colors.red);
-      } else {
-        setState(() {
-          allSchedules = horariosValidos;
-          selectedScheduleIndex = null;
-        });
-      }
-    } catch (e) {
-      showCustomNotification(context, 'Error: ${e.toString()}',
-          icon: Icons.error, color: Colors.red);
-    } finally {
-      setState(() {
-        _isLoading = false; // Finaliza la carga
-      });
-    }
-  }
-
+  // --- FUNCIÓN CORREGIDA PARA LIMPIAR SOLO HORARIOS ---
   void clearSchedules() {
     setState(() {
       allSchedules.clear();
       selectedScheduleIndex = null;
     });
-    showCustomNotification(context, 'Horarios generados eliminados',
+    showCustomNotification(
+        context, 'Los horarios generados han sido limpiados.',
         icon: Icons.info, color: Colors.green);
   }
 
-  void applyFilters(Map<String, dynamic> filters) {
+  // --- FUNCIÓN MODIFICADA PARA GUARDAR AMBOS TIPOS DE FILTROS ---
+  void applyFilters(
+      Map<String, dynamic> stateFilters, Map<String, dynamic> apiFilters) {
     setState(() {
-      appliedFilters = filters;
+      // Guardamos los filtros para mantener el estado de la UI
+      appliedFilters = stateFilters;
+      // Guardamos los filtros formateados para la API
+      apiFiltersForGeneration = apiFilters;
       isFilterOpen = false;
     });
+
+    // Si hay materias, generamos el horario con los filtros listos para la API
+    if (addedSubjects.isNotEmpty) {
+      generateSchedule(); // Ya no se necesita pasar el parámetro
+    }
+  }
+
+  // --- MÉTODO 'generateSchedule' AÑADIDO ---
+  Future<void> generateSchedule() async {
+    if (addedSubjects.isEmpty) {
+      showCustomNotification(context, 'Por favor, agrega al menos una materia.',
+          icon: Icons.warning, color: Colors.orange);
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // --- LLAMADA CORREGIDA ---
+      // Ahora coincide con la firma de ApiService
+      final schedules = await _apiService.generateSchedules(
+        subjects: addedSubjects, // Corregido
+        filters: apiFiltersForGeneration,
+        creditLimit: creditLimit, // Corregido
+      );
+
+      if (mounted) {
+        setState(() {
+          allSchedules = schedules;
+          _isLoading = false;
+        });
+        if (schedules.isEmpty) {
+          showCustomNotification(
+              context, 'No se encontraron horarios con los filtros aplicados.',
+              icon: Icons.info, color: Colors.orange);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        showCustomNotification(
+            context, 'Error al generar horarios: ${e.toString()}',
+            icon: Icons.error, color: Colors.red);
+      }
+    }
   }
 
   void openScheduleOverview(int index) {
@@ -313,7 +332,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           onSearch: () => setState(() => isSearchOpen = true),
                           onFilter: () => setState(() => isFilterOpen = true),
                           onClear: clearSchedules,
-                          onGenerate: generateSchedule,
+                          onGenerate:
+                              generateSchedule, // Esto ahora es correcto
                         ),
                       Expanded(
                         child: allSchedules.isEmpty
@@ -392,16 +412,31 @@ class _MyHomePageState extends State<MyHomePage> {
                         subjectController: subjectController,
                         allSubjects:
                             _allSubjectsList, // Pasamos la lista de resúmenes
-                        onSubjectSelected: (subjectSummary) {
-                          // 3. Al seleccionar, creamos un objeto Subject completo
-                          final subjectToAdd = Subject(
-                            code: subjectSummary.code,
-                            name: subjectSummary.name,
-                            credits: subjectSummary.credits,
-                            classOptions: [], // Lista vacía, no se necesita aquí
-                          );
-                          addSubject(subjectToAdd);
-                          setState(() => isSearchOpen = false);
+                        onSubjectSelected: (subjectSummary) async {
+                          // --- LÓGICA MODIFICADA Y CORRECTA ---
+                          setState(() {
+                            isSearchOpen =
+                                false; // Cierra la búsqueda inmediatamente
+                            _isLoading = true; // Muestra el indicador de carga
+                          });
+
+                          try {
+                            // 1. Llama a la API para obtener los detalles completos
+                            final fullSubject = await _apiService
+                                .getSubjectDetails(subjectSummary.code);
+
+                            // 2. Llama a la función addSubject original con el objeto completo
+                            addSubject(fullSubject);
+                          } catch (e) {
+                            showCustomNotification(context,
+                                'Error al cargar detalles: ${e.toString()}',
+                                icon: Icons.error, color: Colors.red);
+                          } finally {
+                            setState(() {
+                              _isLoading =
+                                  false; // Oculta el indicador de carga
+                            });
+                          }
                         },
                         closeWindow: () => setState(() => isSearchOpen = false),
                       )
@@ -423,6 +458,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FilterWidget(
                 closeWindow: () => setState(() => isFilterOpen = false),
+                // --- ACTUALIZAR LA LLAMADA PARA QUE COINCIDA ---
                 onApplyFilters: applyFilters,
                 currentFilters: appliedFilters,
                 addedSubjects: addedSubjects,

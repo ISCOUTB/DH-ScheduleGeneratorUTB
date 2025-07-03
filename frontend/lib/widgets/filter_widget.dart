@@ -5,7 +5,10 @@ import 'professor_filter_widget.dart';
 
 class FilterWidget extends StatefulWidget {
   final VoidCallback closeWindow;
-  final Function(Map<String, dynamic>) onApplyFilters;
+  // --- CAMBIO EN LA FIRMA DE LA FUNCIÓN ---
+  final Function(
+          Map<String, dynamic> stateFilters, Map<String, dynamic> apiFilters)
+      onApplyFilters;
   final Map<String, dynamic> currentFilters;
   final List<Subject> addedSubjects;
 
@@ -22,10 +25,10 @@ class FilterWidget extends StatefulWidget {
 }
 
 class _FilterWidgetState extends State<FilterWidget> {
-  late Map<String, dynamic> professorsFilters;
-  late Map<String, dynamic> timeFilters;
-  bool optimizeGaps = false;
-  bool optimizeFreeDays = false;
+  late Map<String, dynamic> _professorsFilters;
+  late Map<String, dynamic> _timeFilters;
+  late bool _optimizeGaps;
+  late bool _optimizeFreeDays;
 
   // Días de la semana en orden
   final List<String> days = [
@@ -34,7 +37,8 @@ class _FilterWidgetState extends State<FilterWidget> {
     'Miércoles',
     'Jueves',
     'Viernes',
-    'Sábado'
+    'Sábado',
+    'Domingo'
   ];
 
   // Horas disponibles (en formato de 24 horas)
@@ -59,12 +63,13 @@ class _FilterWidgetState extends State<FilterWidget> {
   @override
   void initState() {
     super.initState();
-    professorsFilters =
+    // Clonamos los filtros actuales para poder modificarlos localmente
+    _professorsFilters =
         Map<String, dynamic>.from(widget.currentFilters['professors'] ?? {});
-    timeFilters =
+    _timeFilters =
         Map<String, dynamic>.from(widget.currentFilters['timeFilters'] ?? {});
-    optimizeGaps = widget.currentFilters['optimizeGaps'] ?? false;
-    optimizeFreeDays = widget.currentFilters['optimizeFreeDays'] ?? false;
+    _optimizeGaps = widget.currentFilters['optimizeGaps'] ?? false;
+    _optimizeFreeDays = widget.currentFilters['optimizeFreeDays'] ?? false;
   }
 
   @override
@@ -130,12 +135,15 @@ class _FilterWidgetState extends State<FilterWidget> {
                             style: TextStyle(color: textColor)),
                         children: widget.addedSubjects.map((subject) {
                           String subjectCode = subject.code;
+                          // Aseguramos que el filtro para la materia exista
+                          if (_professorsFilters[subjectCode] == null) {
+                            _professorsFilters[subjectCode] = {
+                              'filterType': 'include',
+                              'professors': <String>[]
+                            };
+                          }
                           Map<String, dynamic> subjectFilter =
-                              professorsFilters[subjectCode] ??
-                                  {
-                                    'filterType': 'include',
-                                    'professors': <String>[]
-                                  };
+                              _professorsFilters[subjectCode];
 
                           return Theme(
                             data: Theme.of(context).copyWith(
@@ -163,7 +171,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                       onChanged: (value) {
                                         setState(() {
                                           subjectFilter['filterType'] = value!;
-                                          professorsFilters[subjectCode] =
+                                          _professorsFilters[subjectCode] =
                                               subjectFilter;
                                         });
                                       },
@@ -178,7 +186,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                       onChanged: (value) {
                                         setState(() {
                                           subjectFilter['filterType'] = value!;
-                                          professorsFilters[subjectCode] =
+                                          _professorsFilters[subjectCode] =
                                               subjectFilter;
                                         });
                                       },
@@ -194,9 +202,11 @@ class _FilterWidgetState extends State<FilterWidget> {
                                     selectedProfessors: List<String>.from(
                                         subjectFilter['professors']),
                                     onSelectionChanged: (selectedProfessors) {
+                                      // No necesitamos setState aquí porque el estado se maneja en ProfessorFilterWidget
+                                      // y los datos se leen al aplicar.
                                       subjectFilter['professors'] =
                                           selectedProfessors;
-                                      professorsFilters[subjectCode] =
+                                      _professorsFilters[subjectCode] =
                                           subjectFilter;
                                     },
                                   ),
@@ -227,7 +237,8 @@ class _FilterWidgetState extends State<FilterWidget> {
                             spacing: 8,
                             runSpacing: 8,
                             children: days.map((day) {
-                              bool isDaySelected = timeFilters.containsKey(day);
+                              bool isDaySelected =
+                                  _timeFilters.containsKey(day);
                               return FilterChip(
                                 label: Text(day,
                                     style: TextStyle(color: textColor)),
@@ -240,10 +251,10 @@ class _FilterWidgetState extends State<FilterWidget> {
                                   setState(() {
                                     if (selected) {
                                       // Agregar el día con horas no disponibles vacías inicialmente
-                                      timeFilters[day] = <String>[];
+                                      _timeFilters[day] = <String>[];
                                     } else {
                                       // Remover el día
-                                      timeFilters.remove(day);
+                                      _timeFilters.remove(day);
                                     }
                                   });
                                 },
@@ -253,10 +264,10 @@ class _FilterWidgetState extends State<FilterWidget> {
                           const SizedBox(height: 10),
                           // Para cada día seleccionado, mostrar las horas en orden
                           ...days
-                              .where((day) => timeFilters.containsKey(day))
+                              .where((day) => _timeFilters.containsKey(day))
                               .map((day) {
                             List<String> unavailableHours =
-                                List<String>.from(timeFilters[day] ?? []);
+                                List<String>.from(_timeFilters[day] ?? []);
 
                             // Verificar si todas las horas están seleccionadas
                             bool allHoursSelected =
@@ -287,7 +298,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                         // Deseleccionar todas las horas
                                         unavailableHours.clear();
                                       }
-                                      timeFilters[day] = unavailableHours;
+                                      _timeFilters[day] = unavailableHours;
                                     });
                                   },
                                 ),
@@ -315,7 +326,8 @@ class _FilterWidgetState extends State<FilterWidget> {
                                             } else {
                                               unavailableHours.remove(time);
                                             }
-                                            timeFilters[day] = unavailableHours;
+                                            _timeFilters[day] =
+                                                unavailableHours;
                                           });
                                         },
                                       );
@@ -345,15 +357,19 @@ class _FilterWidgetState extends State<FilterWidget> {
                         children: [
                           SwitchListTile(
                             activeColor: accentColor,
-                            trackColor: MaterialStateProperty.resolveWith<Color?>(
+                            trackColor:
+                                MaterialStateProperty.resolveWith<Color?>(
                               (Set<MaterialState> states) {
                                 if (states.contains(MaterialState.selected)) {
-                                  return accentColor.withOpacity(0.5); // visible en activo
+                                  return accentColor
+                                      .withOpacity(0.5); // visible en activo
                                 }
-                                return Colors.grey.shade400; // visible en inactivo
+                                return Colors
+                                    .grey.shade400; // visible en inactivo
                               },
                             ),
-                            thumbColor: MaterialStateProperty.resolveWith<Color?>(
+                            thumbColor:
+                                MaterialStateProperty.resolveWith<Color?>(
                               (Set<MaterialState> states) {
                                 if (states.contains(MaterialState.selected)) {
                                   return Colors.white;
@@ -363,24 +379,28 @@ class _FilterWidgetState extends State<FilterWidget> {
                             ),
                             title: Text('Optimizar Horas (Menos huecos)',
                                 style: TextStyle(color: textColor)),
-                            value: optimizeGaps,
+                            value: _optimizeGaps,
                             onChanged: (value) {
                               setState(() {
-                                optimizeGaps = value;
+                                _optimizeGaps = value;
                               });
                             },
                           ),
                           SwitchListTile(
                             activeColor: accentColor,
-                            trackColor: MaterialStateProperty.resolveWith<Color?>(
+                            trackColor:
+                                MaterialStateProperty.resolveWith<Color?>(
                               (Set<MaterialState> states) {
                                 if (states.contains(MaterialState.selected)) {
-                                  return accentColor.withOpacity(0.5); // visible en activo
+                                  return accentColor
+                                      .withOpacity(0.5); // visible en activo
                                 }
-                                return Colors.grey.shade400; // visible en inactivo
+                                return Colors
+                                    .grey.shade400; // visible en inactivo
                               },
                             ),
-                            thumbColor: MaterialStateProperty.resolveWith<Color?>(
+                            thumbColor:
+                                MaterialStateProperty.resolveWith<Color?>(
                               (Set<MaterialState> states) {
                                 if (states.contains(MaterialState.selected)) {
                                   return Colors.white;
@@ -391,10 +411,10 @@ class _FilterWidgetState extends State<FilterWidget> {
                             title: Text(
                                 'Optimizar Días Libres (Más días libres primero)',
                                 style: TextStyle(color: textColor)),
-                            value: optimizeFreeDays,
+                            value: _optimizeFreeDays,
                             onChanged: (value) {
                               setState(() {
-                                optimizeFreeDays = value;
+                                _optimizeFreeDays = value;
                               });
                             },
                           ),
@@ -418,9 +438,9 @@ class _FilterWidgetState extends State<FilterWidget> {
                     backgroundColor: accentColor,
                   ),
                   onPressed: () {
-                    // --- LÓGICA DE FILTROS MODIFICADA ---
-                    Map<String, dynamic> finalProfessorFilters = {};
-                    professorsFilters.forEach((subjectCode, filterData) {
+                    // --- LÓGICA DE FILTROS MODIFICADA PARA PERSISTENCIA ---
+                    Map<String, dynamic> finalProfessorFiltersForApi = {};
+                    _professorsFilters.forEach((subjectCode, filterData) {
                       String filterType = filterData['filterType'];
                       List<String> professors =
                           List<String>.from(filterData['professors']);
@@ -429,21 +449,38 @@ class _FilterWidgetState extends State<FilterWidget> {
                         String key = filterType == 'include'
                             ? 'include_professors'
                             : 'exclude_professors';
-                        if (finalProfessorFilters[key] == null) {
-                          finalProfessorFilters[key] = {};
+                        if (finalProfessorFiltersForApi[key] == null) {
+                          finalProfessorFiltersForApi[key] = {};
                         }
-                        finalProfessorFilters[key][subjectCode] = professors;
+                        finalProfessorFiltersForApi[key][subjectCode] =
+                            professors;
                       }
                     });
 
-                    Map<String, dynamic> filters = {
-                      ...finalProfessorFilters, // Añade include_professors o exclude_professors
-                      'unavailable_slots':
-                          timeFilters, // Renombrado para coincidir con el backend
-                      'optimizeGaps': optimizeGaps,
-                      'optimizeFreeDays': optimizeFreeDays,
+                    // Construimos el objeto de filtros que se enviará a la API
+                    Map<String, dynamic> filtersForApi = {
+                      ...finalProfessorFiltersForApi,
+                      'unavailable_slots': _timeFilters,
+                      'optimizeGaps': _optimizeGaps,
+                      'optimizeFreeDays': _optimizeFreeDays,
                     };
-                    widget.onApplyFilters(filters);
+
+                    // Construimos el objeto de filtros que se guardará en el estado local
+                    // ESTA ES LA PARTE CLAVE: Guardamos la estructura completa
+                    Map<String, dynamic> filtersForState = {
+                      'professors':
+                          _professorsFilters, // Guarda el estado interno de los profesores
+                      'timeFilters':
+                          _timeFilters, // Guarda el estado interno de las horas
+                      'optimizeGaps': _optimizeGaps,
+                      'optimizeFreeDays': _optimizeFreeDays,
+                    };
+
+                    // --- CAMBIO EN LA LLAMADA A LA FUNCIÓN ---
+                    // Llamamos a la función de aplicar filtros con ambos mapas
+                    widget.onApplyFilters(filtersForState, filtersForApi);
+
+                    widget.closeWindow();
                   },
                   child: const Text('Aplicar filtros'),
                 ),

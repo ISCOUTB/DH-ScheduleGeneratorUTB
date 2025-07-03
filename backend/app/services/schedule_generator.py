@@ -108,6 +108,14 @@ def find_valid_schedules(
                         
         merged_schedules.append(base_schedule)
             
+    # --- PASO DE OPTIMIZACIÓN Y ORDENAMIENTO ---
+    # Aplica los filtros de optimización si están activados.
+    if filters.get('optimizeGaps', False) or filters.get('optimizeFreeDays', False):
+        merged_schedules.sort(
+            key=lambda s: _calculate_schedule_score(s, filters),
+            reverse=True  # Mayor puntuación es mejor
+        )
+
     return merged_schedules
 
 
@@ -124,6 +132,54 @@ def _has_conflict(current_schedule: List[ClassOption], new_option_group: List[Cl
                     if _schedules_overlap(s1, s2):
                         return True
     return False
+
+
+def _calculate_schedule_score(schedule: List[ClassOption], filters: Dict[str, Any]) -> Tuple[float, float]:
+    """
+    Calcula una puntuación para un horario. Mayor puntuación es mejor.
+    La puntuación es una tupla para ordenar por múltiples criterios.
+    """
+    score_free_days = 0.0
+    score_gaps = 0.0
+
+    # --- 1. Puntuación por Días Libres ---
+    if filters.get('optimizeFreeDays', False):
+        days_with_classes = {s.day.lower() for opt in schedule for s in opt.schedules}
+        # Más días libres = mayor puntuación. 7 días total - días con clase.
+        score_free_days = 7 - len(days_with_classes)
+
+    # --- 2. Puntuación por Huecos (Gaps) ---
+    if filters.get('optimizeGaps', False):
+        total_gap_hours = 0
+        schedule_by_day: Dict[str, List[Tuple[time, time]]] = {}
+        
+        for option in schedule:
+            for s in option.schedules:
+                day = s.day.lower()
+                time_range = _parse_time_range(s.time)
+                schedule_by_day.setdefault(day, []).append(time_range)
+        
+        for day, times in schedule_by_day.items():
+            if len(times) > 1:
+                # Ordenar clases por hora de inicio
+                sorted_times = sorted(times, key=lambda x: x[0])
+                for i in range(len(sorted_times) - 1):
+                    end_of_class1 = sorted_times[i][1]
+                    start_of_class2 = sorted_times[i+1][0]
+                    
+                    # Calcular la diferencia en minutos
+                    gap_minutes = (start_of_class2.hour * 60 + start_of_class2.minute) - \
+                                  (end_of_class1.hour * 60 + end_of_class1.minute)
+                    
+                    if gap_minutes > 0:
+                        total_gap_hours += gap_minutes / 60
+        
+        # Puntuación inversa: menos huecos = mayor puntuación.
+        # Se usa un número grande para restar, así un total_gap_hours más pequeño da un resultado mayor.
+        score_gaps = 100 - total_gap_hours
+
+    # Se prioriza días libres, luego huecos.
+    return (score_free_days, score_gaps)
 
 
 def _meets_filters(schedule: List[ClassOption], filters: Dict[str, Any]) -> bool:

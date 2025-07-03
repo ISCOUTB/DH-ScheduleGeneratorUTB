@@ -20,6 +20,7 @@ class ProfessorFilterWidget extends StatefulWidget {
 }
 
 class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
+  // --- ESTADO SIMPLIFICADO A LA VERSIÓN ORIGINAL ---
   List<String> allProfessors = [];
   List<String> filteredProfessors = [];
   List<String> selectedProfessors = [];
@@ -29,35 +30,42 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
   @override
   void initState() {
     super.initState();
-    allProfessors = obtenerProfesoresDeLaMateria(widget.subject);
-    filteredProfessors = allProfessors;
+    _extractAllProfessors(widget.subject);
+    filterProfessors(''); // Inicializa la lista filtrada
     selectedProfessors = List.from(widget.selectedProfessors);
   }
 
-  List<String> obtenerProfesoresDeLaMateria(Subject subject) {
-    Set<String> professorsSet = {};
+  // --- FUNCIÓN PARA EXTRAER TODOS LOS PROFESORES EN UNA SOLA LISTA ---
+  void _extractAllProfessors(Subject subject) {
+    final professorSet = <String>{};
 
     for (var classOption in subject.classOptions) {
-      if (classOption.professor.isNotEmpty) {
-        professorsSet.add(classOption.professor);
+      if (classOption.professor.isNotEmpty &&
+          classOption.professor != "Por Asignar") {
+        professorSet.add(classOption.professor);
       }
     }
-
-    List<String> professorsList = professorsSet.toList();
-    professorsList.sort();
-    return professorsList;
+    allProfessors = professorSet.toList()..sort();
+    filteredProfessors = List.from(allProfessors);
   }
 
   void filterProfessors(String query) {
     setState(() {
       String normalizedQuery = removeDiacritics(query.toLowerCase());
-      filteredProfessors = allProfessors.where((professor) {
-        String normalizedProfessor = removeDiacritics(professor.toLowerCase());
-        return normalizedProfessor.contains(normalizedQuery);
-      }).toList();
+
+      if (normalizedQuery.isEmpty) {
+        filteredProfessors = List.from(allProfessors);
+      } else {
+        filteredProfessors = allProfessors.where((professor) {
+          String normalizedProfessor =
+              removeDiacritics(professor.toLowerCase());
+          return normalizedProfessor.contains(normalizedQuery);
+        }).toList();
+      }
     });
   }
 
+  // --- SELECCIÓN SIMPLIFICADA ---
   void toggleSelection(String professor) {
     setState(() {
       if (selectedProfessors.contains(professor)) {
@@ -72,46 +80,42 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // Campo de búsqueda
-        TextField(
-          controller: searchController,
-          decoration: const InputDecoration(
-            labelText: 'Buscar Profesor',
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+          child: TextField(
+            controller: searchController,
+            decoration: InputDecoration(
+              labelText: 'Buscar Profesor',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 10),
+            ),
+            onChanged: filterProfessors,
           ),
-          onChanged: filterProfessors,
         ),
-        const SizedBox(height: 10),
-        // Lista de profesores
         Expanded(
           child: filteredProfessors.isEmpty
-              ? const Center(child: Text('No hay resultados'))
+              ? Center(
+                  child: Text(searchController.text.isNotEmpty
+                      ? 'No hay resultados para la búsqueda'
+                      : 'No hay profesores asignados para esta materia'),
+                )
               : ListView.builder(
-                  primary: false,
-                  shrinkWrap: true,
-                  physics: const ClampingScrollPhysics(),
                   itemCount: filteredProfessors.length,
                   itemBuilder: (context, index) {
-                    String professor = filteredProfessors[index];
-                    bool isSelected = selectedProfessors.contains(professor);
-
-                    return ListTile(
-                      title: Text(
-                        professor,
-                        style: TextStyle(
-                            fontSize:
-                                14), // Reducir tamaño de fuente si es necesario
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(
-                          isSelected
-                              ? Icons.check_box
-                              : Icons.check_box_outline_blank,
-                          color: isSelected ? Colors.blue : null,
-                        ),
-                        onPressed: () => toggleSelection(professor),
-                      ),
-                      onTap: () => toggleSelection(professor),
+                    final professor = filteredProfessors[index];
+                    final isSelected = selectedProfessors.contains(professor);
+                    return CheckboxListTile(
+                      title:
+                          Text(professor, style: const TextStyle(fontSize: 14)),
+                      value: isSelected,
+                      onChanged: (_) => toggleSelection(professor),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      dense: true,
                     );
                   },
                 ),

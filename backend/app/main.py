@@ -9,6 +9,7 @@ import os
 from .models import GenerateScheduleRequest, ClassOption
 from .db import repository
 from .services import schedule_generator
+from .routes import subject_routes
 
 app = FastAPI(
     title="DH Schedule Generator API",
@@ -24,6 +25,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --- AÑADIR ESTA LÍNEA PARA INCLUIR LAS NUEVAS RUTAS ---
+app.include_router(subject_routes.router)
+
 
 @app.get("/api/subjects", summary="Obtener lista de todas las materias")
 def get_subjects_list():
