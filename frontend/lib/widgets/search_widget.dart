@@ -1,20 +1,22 @@
 // lib/widgets/search_widget.dart
 import 'package:flutter/material.dart';
-import '../models/subject.dart';
-import 'package:diacritic/diacritic.dart'; //paquete para manejar tildes y diacríticos
+import '../models/subject_summary.dart'; // 1. Importar el nuevo modelo
+import 'package:diacritic/diacritic.dart';
 
 class SearchSubjectsWidget extends StatefulWidget {
   final TextEditingController subjectController;
-  final List<Subject> allSubjects;
-  final Function(Subject) onSubjectSelected;
+  // Cambiamos el tipo de la función para que use SubjectSummary
+  // Ahora la función recibe un SubjectSummary en lugar de un Subject.
+  final Function(SubjectSummary) onSubjectSelected;
   final VoidCallback closeWindow;
+  final List<SubjectSummary> allSubjects;
 
   const SearchSubjectsWidget({
     Key? key,
     required this.subjectController,
-    required this.allSubjects,
     required this.onSubjectSelected,
     required this.closeWindow,
+    required this.allSubjects,
   }) : super(key: key);
 
   @override
@@ -22,22 +24,36 @@ class SearchSubjectsWidget extends StatefulWidget {
 }
 
 class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
-  List<Subject> filteredSubjects = [];
+  // La lista filtrada ahora es de tipo SubjectSummary
+  List<SubjectSummary> _filteredSubjects = [];
 
   @override
   void initState() {
     super.initState();
-    // Inicializar filteredSubjects con todas las materias
-    filteredSubjects = widget.allSubjects;
+    // La lista filtrada es, al inicio, la lista completa que nos pasan.
+    _filteredSubjects = widget.allSubjects;
+    widget.subjectController.addListener(_filterListener);
+  }
+
+  void _filterListener() {
+    filterSubjects(widget.subjectController.text);
+  }
+
+  @override
+  void dispose() {
+    widget.subjectController.removeListener(_filterListener);
+    super.dispose();
   }
 
   void filterSubjects(String query) {
     setState(() {
       String normalizedQuery = removeDiacritics(query.toLowerCase());
-      filteredSubjects = widget.allSubjects.where((subject) {
+      // Filtra desde la lista original que viene en el widget.
+      _filteredSubjects = widget.allSubjects.where((subject) {
         String subjectName = removeDiacritics(subject.name.toLowerCase());
         String subjectCode = removeDiacritics(subject.code.toLowerCase());
-        return subjectName.contains(normalizedQuery) || subjectCode.contains(normalizedQuery);
+        return subjectName.contains(normalizedQuery) ||
+            subjectCode.contains(normalizedQuery);
       }).toList();
     });
   }
@@ -62,14 +78,18 @@ class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
                     topRight: Radius.circular(12),
                   ),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 child: Row(
                   children: [
                     const Icon(Icons.menu_book, color: Colors.white),
                     const SizedBox(width: 10),
                     const Text(
                       'Buscar Materia',
-                      style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
                     IconButton(
@@ -83,6 +103,7 @@ class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
               // Campo de búsqueda con autocompletado
               TextField(
                 controller: widget.subjectController,
+                autofocus: true,
                 decoration: const InputDecoration(
                   labelText: 'Buscar Materia',
                 ),
@@ -91,12 +112,14 @@ class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
               const SizedBox(height: 10),
               // Lista de sugerencias
               Expanded(
-                child: filteredSubjects.isEmpty
+                child: _filteredSubjects.isEmpty &&
+                        widget.subjectController.text.isNotEmpty
                     ? const Center(child: Text('No hay resultados'))
                     : ListView.builder(
-                        itemCount: filteredSubjects.length,
+                        itemCount: _filteredSubjects.length,
                         itemBuilder: (context, index) {
-                          var subject = filteredSubjects[index];
+                          var subject = _filteredSubjects[
+                              index]; // Ahora es SubjectSummary
                           return ListTile(
                             title: Text(subject.name),
                             subtitle: Text(
@@ -105,8 +128,6 @@ class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
                             ),
                             onTap: () {
                               widget.onSubjectSelected(subject);
-                              // Actualizar la lista de materias filtradas
-                              filterSubjects(widget.subjectController.text);
                             },
                           );
                         },

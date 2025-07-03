@@ -1,20 +1,20 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'data/subjects_data.dart';
 import 'models/subject.dart';
+import 'models/subject_summary.dart'; 
 import 'models/class_option.dart';
 import 'widgets/search_widget.dart';
-import 'widgets/added_subjects_widgets.dart';
 import 'widgets/schedule_grid_widget.dart';
-import 'widgets/schedule_overview_widget.dart';
 import 'widgets/filter_widget.dart';
-import 'utils/schedule_generator.dart';
 import 'pages/auth_callback_page.dart';
-import 'dart:html' as html;
-import 'dart:convert';
 import 'package:url_strategy/url_strategy.dart';
 import 'widgets/user_menu_button.dart';
+import 'services/api_service.dart';
+import 'services/auth_service.dart'; 
+import 'widgets/subjects_panel.dart';
+import 'widgets/main_actions_panel.dart';
+import 'widgets/schedule_overview_widget.dart';
 
 void main() {
   setPathUrlStrategy();
@@ -67,6 +67,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final AuthService _authService = AuthService();
+  final ApiService _apiService = ApiService(); // Instancia de ApiService
+
   // Paleta de colores igual a la del horario
   final List<Color> subjectColors = [
     Colors.redAccent,
@@ -86,32 +89,19 @@ class _MyHomePageState extends State<MyHomePage> {
     Colors.deepPurpleAccent,
   ];
 
-  // Función para obtener el nombre de usuario del token JWT almacenado en localStorage
-  String? getUserNameFromToken() {
-    final token = html.window.localStorage['id_token'];
-    if (token == null) return null;
-
-    final parts = token.split('.');
-    if (parts.length != 3) return null;
-
-    final payload = parts[1];
-    final normalized = base64.normalize(payload);
-    final decoded = utf8.decode(base64.decode(normalized));
-    final payloadMap = json.decode(decoded);
-
-    return payloadMap['name'] ?? payloadMap['preferred_username'];
-  }
-
   // Función para obtener el color de una materia según su índice
   Color getSubjectColor(int index) {
     return subjectColors[index % subjectColors.length];
   }
 
   List<Subject> addedSubjects = [];
-  late Future<List<Subject>> futureSubjects;
   int usedCredits = 0;
   final int creditLimit = 20;
   final TextEditingController subjectController = TextEditingController();
+
+  // --- ESTADO PARA ALMACENAR LA LISTA DE MATERIAS ---
+  List<SubjectSummary> _allSubjectsList = [];
+  bool _areSubjectsLoaded = false;
 
   List<List<ClassOption>> allSchedules = [];
   int? selectedScheduleIndex;
@@ -121,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isOverviewOpen = false;
   bool isExpandedView = false;
   bool isFullExpandedView = false;
+  bool _isLoading = false;
 
   Map<String, dynamic> appliedFilters = {};
   late FocusNode _focusNode;
@@ -135,45 +126,37 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    // Verifica si el token ya está almacenado en localStorage
-    print('TOKEN AL ENTRAR A HOME: ${html.window.localStorage['id_token']}');
-
-    // Comprobamos si hay sesión activa
-    final token = html.window.localStorage['id_token'];
-    if (token == null) {
-      _redirectToMicrosoftLogin(); // redirige automáticamente si no hay sesión
-      return; // evita que siga ejecutando el resto del initState
+    if (!_authService.isUserLoggedIn()) {
+      _authService.login();
+      return;
     }
 
-    // Si hay token, continúa con lo demás como siempre
+    // --- CARGAMOS LAS MATERIAS AL INICIAR LA PÁGINA ---
+    _loadAllSubjects();
+
     _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
     });
-    futureSubjects = fetchSubjectsFromApi();
   }
 
-  void _redirectToMicrosoftLogin() {
-    const tenantId = '1ae0c106-3b63-42fd-9149-52d736399d5a';
-    const clientId = 'de6b5a9b-9cdf-4484-ba51-aa45bf431e52';
-    const redirectUri = 'http://localhost:5173/auth';
-
-    final authUrl =
-        'https://login.microsoftonline.com/$tenantId/oauth2/v2.0/authorize'
-        '?client_id=$clientId'
-        '&response_type=id_token'
-        '&redirect_uri=$redirectUri'
-        '&response_mode=fragment'
-        '&scope=openid email profile'
-        '&nonce=abc123'
-        '&state=xyz456';
-
-    html.window.location.href = authUrl;
-  }
-
-  void _logout() {
-    html.window.localStorage.remove('id_token');
-    _redirectToMicrosoftLogin();
+  // --- FUNCIÓN PARA CARGAR LAS MATERIAS UNA SOLA VEZ ---
+  void _loadAllSubjects() async {
+    try {
+      final subjects = await _apiService.getAllSubjects();
+      if (mounted) {
+        setState(() {
+          _allSubjectsList = subjects;
+          _areSubjectsLoaded = true;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        showCustomNotification(
+            context, 'Error al cargar la lista de materias: ${e.toString()}',
+            icon: Icons.error, color: Colors.red);
+      }
+    }
   }
 
   @override
@@ -225,32 +208,40 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void generateSchedule() {
+  void generateSchedule() async {
     if (addedSubjects.isEmpty) {
       showCustomNotification(context, 'No hay materias seleccionadas',
           icon: Icons.error, color: Colors.red);
       return;
     }
 
-    List<List<ClassOption>> horariosValidos =
-        obtenerHorariosValidos(addedSubjects, appliedFilters);
+    setState(() {
+      _isLoading = true; // Inicia la carga
+    });
 
-    if (horariosValidos.isEmpty) {
-      showCustomNotification(context, 'No se encontraron horarios validos',
-          icon: Icons.info, color: Colors.red);
-    } else {
+    try {
+      final apiService = ApiService();
+      final horariosValidos = await apiService.generateSchedules(
+        subjects: addedSubjects,
+        filters: appliedFilters,
+        creditLimit: creditLimit,
+      );
+
+      if (horariosValidos.isEmpty) {
+        showCustomNotification(context, 'No se encontraron horarios válidos',
+            icon: Icons.info, color: Colors.red);
+      } else {
+        setState(() {
+          allSchedules = horariosValidos;
+          selectedScheduleIndex = null;
+        });
+      }
+    } catch (e) {
+      showCustomNotification(context, 'Error: ${e.toString()}',
+          icon: Icons.error, color: Colors.red);
+    } finally {
       setState(() {
-        allSchedules = horariosValidos;
-        selectedScheduleIndex = null;
-
-        if (isMobile() &&
-            MediaQuery.of(context).orientation == Orientation.portrait) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(
-                    'Por favor, gira tu dispositivo para ver los horarios')),
-          );
-        }
+        _isLoading = false; // Finaliza la carga
       });
     }
   }
@@ -286,7 +277,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final userName = getUserNameFromToken();
+    final userName = _authService.getUserNameFromToken();
     return Stack(
       children: [
         Scaffold(
@@ -296,7 +287,9 @@ class _MyHomePageState extends State<MyHomePage> {
             elevation: 0,
             title: Row(
               children: [
-                UserMenuButton(userName: userName, onLogout: _logout),
+                UserMenuButton(
+                    userName: userName,
+                    onLogout: _authService.logout), // Usa el servicio
                 const SizedBox(width: 12),
                 const Text("Generador de Horarios",
                     style: TextStyle(
@@ -315,58 +308,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      if (!isExpandedView) ...[
-                        Row(
-                          children: [
-                            Expanded(
-                                child: _MainCardButton(
-                                    color: const Color(0xFF0051FF),
-                                    icon: Icons.search,
-                                    label: "Buscar materia",
-                                    onTap: () =>
-                                        setState(() => isSearchOpen = true))),
-                            const SizedBox(width: 20),
-                            Expanded(
-                                child: _MainCardButton(
-                                    color: const Color(0xFF0051FF),
-                                    icon: Icons.filter_alt,
-                                    label: "Realizar filtro",
-                                    onTap: () =>
-                                        setState(() => isFilterOpen = true))),
-                            const SizedBox(width: 20),
-                            Expanded(
-                                child: _MainCardButton(
-                                    color: const Color(0xFFFF2F2F),
-                                    icon: Icons.delete_outline,
-                                    label: "Limpiar Horarios",
-                                    onTap: clearSchedules)),
-                          ],
+                      if (!isExpandedView)
+                        MainActionsPanel(
+                          onSearch: () => setState(() => isSearchOpen = true),
+                          onFilter: () => setState(() => isFilterOpen = true),
+                          onClear: clearSchedules,
+                          onGenerate: generateSchedule,
                         ),
-                        const SizedBox(height: 28),
-                        SizedBox(
-                          height: 60,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF8CFF62),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16))),
-                            onPressed: generateSchedule,
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("Generar Horarios",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold)),
-                                SizedBox(width: 10),
-                                Icon(Icons.calendar_month, color: Colors.black),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 28),
-                      ],
                       Expanded(
                         child: allSchedules.isEmpty
                             ? Container(
@@ -392,187 +340,74 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 // Panel lateral: modo normal o encogido
                 const SizedBox(width: 32),
-                Container(
-                  width: isFullExpandedView ? 60 : 340,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 8,
-                            offset: Offset(0, 2))
-                      ],
-                    ),
-                    padding: isFullExpandedView
-                        ? const EdgeInsets.only(top: 12)
-                        : const EdgeInsets.all(20),
-                    child: isFullExpandedView
-                        ? Column(
-                            children: [
-                              const SizedBox(height: 4),
-                              Center(
-                                child: Tooltip(
-                                  message: "Mostrar panel",
-                                  child: IconButton(
-                                    icon: const Icon(Icons.chevron_left,
-                                        size: 32, color: Colors.black54),
-                                    onPressed: () {
-                                      setState(() {
-                                        isFullExpandedView = false;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Título y botón de expansión
-                              Row(
-                                children: [
-                                  const Text("Materias seleccionadas",
-                                      style: TextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black)),
-                                  const SizedBox(width: 8),
-                                  IconButton(
-                                    tooltip: "Encoger panel",
-                                    icon: const Icon(Icons.chevron_right,
-                                        size: 32, color: Colors.black54),
-                                    onPressed: () {
-                                      setState(() {
-                                        isFullExpandedView = true;
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 18),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      ...addedSubjects
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                        final idx = entry.key;
-                                        final subject = entry.value;
-                                        return Card(
-                                          margin: const EdgeInsets.symmetric(
-                                              vertical: 6),
-                                          child: ListTile(
-                                            leading: Container(
-                                              width: 14,
-                                              height: 14,
-                                              decoration: BoxDecoration(
-                                                color: getSubjectColor(idx),
-                                                shape: BoxShape.circle,
-                                              ),
-                                            ),
-                                            title: Text(subject.name,
-                                                style: const TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w600)),
-                                            trailing: IconButton(
-                                              icon: const Icon(Icons.remove,
-                                                  color: Colors.red),
-                                              onPressed: () =>
-                                                  removeSubject(subject),
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                      const SizedBox(height: 12),
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: OutlinedButton.icon(
-                                          onPressed: () => setState(
-                                              () => isSearchOpen = true),
-                                          icon: const Icon(Icons.add),
-                                          label: const Text("Agregar materia"),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  OutlinedButton.icon(
-                                    onPressed: () => setState(
-                                        () => isExpandedView = !isExpandedView),
-                                    icon: Icon(isExpandedView
-                                        ? Icons.fullscreen_exit
-                                        : Icons.fullscreen),
-                                    label: Text(isExpandedView
-                                        ? "Vista Normal"
-                                        : "Expandir Vista"),
-                                  ),
-                                  Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        const TextSpan(
-                                          text: "Créditos: ",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black),
-                                        ),
-                                        TextSpan(
-                                          text: "$usedCredits/$creditLimit",
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(
-                                                0xFF2979FF), // Azul y en negrilla
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                  ),
+                SubjectsPanel(
+                  isFullExpandedView: isFullExpandedView,
+                  addedSubjects: addedSubjects,
+                  usedCredits: usedCredits,
+                  creditLimit: creditLimit,
+                  getSubjectColor: getSubjectColor,
+                  onShowPanel: () => setState(() => isFullExpandedView = false),
+                  onHidePanel: () => setState(() => isFullExpandedView = true),
+                  onAddSubject: () => setState(() => isSearchOpen = true),
+                  onToggleExpandView: () =>
+                      setState(() => isExpandedView = !isExpandedView),
+                  onRemoveSubject: removeSubject,
+                  isExpandedView: isExpandedView,
                 ),
               ],
             ),
           ),
         ),
+        // --- Overlay de Carga ---
+        if (_isLoading)
+          Container(
+            color: Colors.black.withOpacity(0.5),
+            child: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: Colors.white),
+                  SizedBox(height: 20),
+                  Text(
+                    'Generando horarios...',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
         // --- Buscar materia ---
         if (isSearchOpen)
           Stack(
             children: [
               const ModalBarrier(dismissible: false, color: Colors.black45),
-              AbsorbPointer(
-                absorbing: true,
-                child: Container(color: Colors.black45),
-              ),
-              FutureBuilder<List<Subject>>(
-                future: futureSubjects,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  return SearchSubjectsWidget(
-                    subjectController: subjectController,
-                    allSubjects: snapshot.data!,
-                    onSubjectSelected: (subject) {
-                      addSubject(subject);
-                      setState(() => isSearchOpen = false);
-                    },
-                    closeWindow: () => setState(() => isSearchOpen = false),
-                  );
-                },
+              Center(
+                child: _areSubjectsLoaded
+                    ? SearchSubjectsWidget(
+                        subjectController: subjectController,
+                        allSubjects:
+                            _allSubjectsList, // Pasamos la lista de resúmenes
+                        onSubjectSelected: (subjectSummary) {
+                          // 3. Al seleccionar, creamos un objeto Subject completo
+                          final subjectToAdd = Subject(
+                            code: subjectSummary.code,
+                            name: subjectSummary.name,
+                            credits: subjectSummary.credits,
+                            classOptions: [], // Lista vacía, no se necesita aquí
+                          );
+                          addSubject(subjectToAdd);
+                          setState(() => isSearchOpen = false);
+                        },
+                        closeWindow: () => setState(() => isSearchOpen = false),
+                      )
+                    : const Center(
+                        child: CircularProgressIndicator(color: Colors.white),
+                      ),
               ),
             ],
           ),
@@ -600,81 +435,15 @@ class _MyHomePageState extends State<MyHomePage> {
           Stack(
             children: [
               const ModalBarrier(dismissible: false, color: Colors.black45),
-              AbsorbPointer(
-                absorbing: true,
-                child: Container(color: Colors.black45),
-              ),
-              ScheduleOverviewWidget(
-                schedule: allSchedules[selectedScheduleIndex!],
-                onClose: closeScheduleOverview,
+              Center(
+                child: ScheduleOverviewWidget(
+                  schedule: allSchedules[selectedScheduleIndex!],
+                  onClose: closeScheduleOverview,
+                ),
               ),
             ],
           ),
       ],
-    );
-  }
-}
-
-class _MainCardButton extends StatefulWidget {
-  final Color color;
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _MainCardButton(
-      {super.key,
-      required this.color,
-      required this.icon,
-      required this.label,
-      required this.onTap});
-
-  @override
-  State<_MainCardButton> createState() => _MainCardButtonState();
-}
-
-class _MainCardButtonState extends State<_MainCardButton> {
-  bool _isHovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final Color hoverColor = widget.color.withOpacity(0.8);
-
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          decoration: BoxDecoration(
-            color: _isHovered ? hoverColor : widget.color,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: _isHovered
-                ? [
-                    BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8,
-                        offset: Offset(0, 4))
-                  ]
-                : [],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(widget.icon, color: Colors.white, size: 30),
-              const SizedBox(height: 8),
-              Text(widget.label,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

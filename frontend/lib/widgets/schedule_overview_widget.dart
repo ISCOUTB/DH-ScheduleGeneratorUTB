@@ -1,14 +1,13 @@
 // lib/widgets/schedule_overview_widget.dart
 import 'package:flutter/material.dart';
 import '../models/class_option.dart';
-import 'package:excel/excel.dart';
+import 'package:excel/excel.dart' as excel; 
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart'; // Para kIsWeb
-import '../utils/file_utils.dart'; // Importamos nuestra utilidad de archivos
-import '../utils/schedule_generator.dart';
+import '../utils/file_utils.dart';
 
 class ScheduleOverviewWidget extends StatefulWidget {
   final List<ClassOption> schedule;
@@ -67,48 +66,47 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   @override
   Widget build(BuildContext context) {
     // Agrupar las materias y sus opciones
-    Map<String, List<ClassOption>> groupedSubjects = {};
-
-    for (var classOption in widget.schedule) {
-      String subjectName = classOption.subjectName;
-      if (!groupedSubjects.containsKey(subjectName)) {
-        groupedSubjects[subjectName] = [];
-      }
-      groupedSubjects[subjectName]!.add(classOption);
-    }
+    final Map<String, List<ClassOption>> groupedSubjects =
+        groupBy(widget.schedule, (ClassOption option) => option.subjectName);
 
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.circular(10), // Esquinas redondeadas del diálogo
+        borderRadius: BorderRadius.circular(12),
       ),
+      // Aumentamos el ancho para acomodar el diseño de dos columnas
       child: Container(
-        width: 600,
-        padding: const EdgeInsets.all(16),
+        width: 1100,
+        height: MediaQuery.of(context).size.height * 0.85,
+        padding: const EdgeInsets.all(20),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Ajustar el tamaño al contenido
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Detalles del horario',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                const Text(
+                  'Detalles del Horario',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 Row(
                   children: [
-                    IconButton(
-                      icon: Icon(Icons.picture_as_pdf),
-                      tooltip: 'Descargar PDF',
-                      onPressed: downloadScheduleAsPDF,
+                    Tooltip(
+                      message: 'Descargar PDF',
+                      child: IconButton(
+                        icon: const Icon(Icons.picture_as_pdf_outlined),
+                        onPressed: downloadScheduleAsPDF,
+                      ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.table_chart),
-                      tooltip: 'Descargar Excel',
-                      onPressed: downloadScheduleAsExcel,
+                    Tooltip(
+                      message: 'Descargar Excel',
+                      child: IconButton(
+                        icon: const Icon(Icons.table_chart_outlined),
+                        onPressed: downloadScheduleAsExcel,
+                      ),
                     ),
+                    const SizedBox(width: 10),
                     IconButton(
-                      icon: Icon(Icons.close),
+                      icon: const Icon(Icons.close),
                       tooltip: 'Cerrar',
                       onPressed: widget.onClose,
                     ),
@@ -116,63 +114,225 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
-            // Botones de materias con ícono de información
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: groupedSubjects.entries.map((entry) {
-                String subjectName = entry.key;
-                List<ClassOption> classOptions = entry.value;
+            const Divider(height: 24),
 
-                return ElevatedButton.icon(
-                  onPressed: () {
-                    // Mostrar información de la materia
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text(subjectName),
-                          content: SingleChildScrollView(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: classOptions.map((classOption) {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Tipo: ${classOption.type}'),
-                                    Text('Profesor: ${classOption.professor}'),
-                                    Text(
-                                      'Horario: ${classOption.schedules.map((s) => s.day + ' ' + s.time).join(', ')}',
-                                    ),
-                                    Text('NRC: ${classOption.nrc}'),
-                                    Text(
-                                        'Número de créditos: ${classOption.credits}'),
-                                    SizedBox(height: 8),
-                                  ],
-                                );
-                              }).toList(),
+            // --- DIVIDIR EL ESPACIO EN DOS COLUMNAS ---
+            // Usamos un Row con Expanded para dividir el espacio en dos columnas
+            Expanded(
+              child: Row(
+                children: [
+                  // --- COLUMNA IZQUIERDA: VISTA DE LA CUADRÍCULA DEL HORARIO ---
+                  Expanded(
+                    flex: 3, // Ocupa 3/5 del espacio
+                    child: _buildScheduleGrid(),
+                  ),
+
+                  const VerticalDivider(width: 24),
+
+                  // --- COLUMNA DERECHA: DETALLES DESPLEGABLES ---
+                  Expanded(
+                    flex: 2, // Ocupa 2/5 del espacio
+                    child: ListView.builder(
+                      itemCount: groupedSubjects.length,
+                      itemBuilder: (context, index) {
+                        final subjectName =
+                            groupedSubjects.keys.elementAt(index);
+                        final classOptions = groupedSubjects[subjectName]!;
+                        final color = subjectColors[subjectName] ?? Colors.grey;
+
+                        // ExpansionTile para el efecto desplegable
+                        return ExpansionTile(
+                          leading: Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
                             ),
                           ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: Text('Cerrar'),
+                          title: Text(
+                            subjectName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
                             ),
-                          ],
+                          ),
+                          // Contenido que se muestra al expandir
+                          children: classOptions.map((option) {
+                            return ListTile(
+                              contentPadding: const EdgeInsets.only(
+                                  left: 40, right: 16, bottom: 8),
+                              title: Text('${option.type} (NRC: ${option.nrc})',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600)),
+                              subtitle: Text(
+                                'Profesor: ${option.professor}\n'
+                                'Horario: ${option.schedules.map((s) => '${s.day} ${s.time}').join(" | ")}\n'
+                                'Créditos: ${option.credits}',
+                              ),
+                            );
+                          }).toList(),
                         );
                       },
-                    );
-                  },
-                  icon: Icon(Icons.info),
-                  label: Text(subjectName),
-                );
-              }).toList(),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  // --- WIDGET DE CUADRÍCULA VISUAL (REESTRUCTURADO PARA AJUSTE AUTOMÁTICO) ---
+  Widget _buildScheduleGrid() {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black, width: 1.0),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(7.0),
+        child: Column(
+          children: [
+            // Fila de encabezado de días (fija)
+            SizedBox(
+              height: 30,
+              child: Row(
+                children: [
+                  const SizedBox(width: 50), // Espacio para la columna de hora
+                  ...days.map((day) => Expanded(
+                        child: Center(
+                          child: Text(day.substring(0, 3),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      )),
+                ],
+              ),
+            ),
+            // Cuadrícula principal (se expande para llenar el espacio)
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Calcula la altura de la fila dinámicamente para que no haya scroll
+                  final double hourRowHeight =
+                      constraints.maxHeight / timeSlots.length;
+                  final double dayColumnWidth =
+                      (constraints.maxWidth - 50) / days.length;
+                  final double gridHeight = constraints.maxHeight;
+
+                  return Stack(
+                    children: [
+                      // Fondo de la cuadrícula con horas y líneas
+                      SizedBox(
+                        height: gridHeight,
+                        child: Column(
+                          children: timeSlots.map((time) {
+                            return Container(
+                              height: hourRowHeight, // Usa la altura dinámica
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  top: BorderSide(
+                                      color: Colors.grey.shade300, width: 1),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 50,
+                                    child: Center(
+                                      child: Text(
+                                        time,
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                  ),
+                                  ...days.map((day) => Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              left: BorderSide(
+                                                  color: Colors.grey.shade200,
+                                                  width: 1),
+                                            ),
+                                          ),
+                                        ),
+                                      )),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      // Bloques de clases superpuestos
+                      SizedBox(
+                        height: gridHeight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 50.0),
+                          child: Stack(
+                            children: _buildClassBlocks(
+                                hourRowHeight, dayColumnWidth),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Construir los bloques de clases superpuestos
+  // Esta función crea los widgets que representan las clases en la cuadrícula.
+  List<Widget> _buildClassBlocks(double hourRowHeight, double dayColumnWidth) {
+    List<Widget> blocks = [];
+    for (var classOption in widget.schedule) {
+      final color = subjectColors[classOption.subjectName] ?? Colors.grey;
+      for (var scheduleItem in classOption.schedules) {
+        final dayIndex = days.indexOf(scheduleItem.day);
+        if (dayIndex == -1) continue;
+
+        final timeRange = parseTimeRange(scheduleItem.time);
+        final startHour = timeRange.start.hour + timeRange.start.minute / 60.0;
+        final endHour = timeRange.end.hour + timeRange.end.minute / 60.0;
+
+        final top = (startHour - 7) * hourRowHeight;
+        final height = (endHour - startHour) * hourRowHeight;
+        final left = dayIndex * dayColumnWidth;
+
+        if (top >= 0 && height > 0) {
+          blocks.add(
+            Positioned(
+              top: top,
+              left: left,
+              width: dayColumnWidth - 2, // Pequeño margen
+              height: height,
+              child: Container(
+                margin: const EdgeInsets.all(1),
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  classOption.subjectName,
+                  style: const TextStyle(color: Colors.white, fontSize: 10),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
+              ),
+            ),
+          );
+        }
+      }
+    }
+    return blocks;
   }
 
   // Generar un mapa de colores para las materias
@@ -261,8 +421,9 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     List<String> timeSlots = params['timeSlots'];
     List<String> days = params['days'];
 
-    var excel = Excel.createExcel();
-    Sheet sheetObject = excel['Horario'];
+    // Crear un nuevo archivo Excel
+    var excelFile = excel.Excel.createExcel();
+    excel.Sheet sheetObject = excelFile['Horario'];
 
     // Encabezados
     sheetObject.appendRow(['Horario', ...days]);
@@ -290,7 +451,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     }
 
     // Codifica el archivo Excel en bytes
-    List<int>? excelBytes = excel.encode();
+    List<int>? excelBytes = excelFile.encode();
 
     // Retorna los bytes como Uint8List
     return Uint8List.fromList(excelBytes!);
@@ -349,19 +510,16 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   // Funciones auxiliares
 
   //Función isTimeWithinRange
-  bool isTimeWithinRange(TimeOfDay time, TimeOfDayRange range) {
-    final timeMinutes = time.hour * 60 + time.minute;
-    final startMinutes = range.start.hour * 60 + range.start.minute;
-    final endMinutes = range.end.hour * 60 + range.end.minute;
-
-    return timeMinutes >= startMinutes && timeMinutes < endMinutes;
-  }
+  bool isTimeWithinRange(TimeOfDay time, TimeOfDayRange range) =>
+      (time.hour * 60 + time.minute) >=
+          (range.start.hour * 60 + range.start.minute) &&
+      (time.hour * 60 + time.minute) < (range.end.hour * 60 + range.end.minute);
 
   // Funciones para parsear los horarios
   TimeOfDayRange parseTimeRange(String timeRange) {
-    List<String> parts = timeRange.split(' - ');
-    TimeOfDay start = parseTimeOfDay(parts[0].trim());
-    TimeOfDay end = parseTimeOfDay(parts[1].trim());
+    final List<String> parts = timeRange.split(' - ');
+    final TimeOfDay start = parseTimeOfDay(parts[0].trim());
+    final TimeOfDay end = parseTimeOfDay(parts[1].trim());
     return TimeOfDayRange(start, end);
   }
 
@@ -370,25 +528,34 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     timeString = timeString.trim().toUpperCase();
 
     // Verificar si contiene 'AM' o 'PM'
-    bool isPM = timeString.contains('PM');
-    bool isAM = timeString.contains('AM');
+    final bool isPM = timeString.contains('PM');
+    final bool isAM = timeString.contains('AM');
 
     // Eliminar 'AM' y 'PM' si están presentes
     timeString = timeString.replaceAll('AM', '').replaceAll('PM', '').trim();
 
     // Separar horas y minutos
-    List<String> timeParts = timeString.split(':');
+    final List<String> timeParts = timeString.split(':');
     int hour = int.parse(timeParts[0]);
-    int minute = timeParts.length > 1 ? int.parse(timeParts[1]) : 0;
+    final int minute = timeParts.length > 1 ? int.parse(timeParts[1]) : 0;
 
     // Convertir a formato de 24 horas si es necesario
     if (isPM && hour < 12) {
       hour += 12;
     }
     if (isAM && hour == 12) {
+      // Medianoche (12 AM) es la hora 0
       hour = 0;
     }
 
     return TimeOfDay(hour: hour, minute: minute);
   }
+}
+
+// Definición de TimeOfDayRange
+class TimeOfDayRange {
+  final TimeOfDay start;
+  final TimeOfDay end;
+
+  TimeOfDayRange(this.start, this.end);
 }
