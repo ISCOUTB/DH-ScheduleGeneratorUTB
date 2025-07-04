@@ -35,47 +35,56 @@ class ScheduleGridWidget extends StatelessWidget {
     // Genera un mapa de colores único para cada materia.
     Map<String, Color> subjectColors = _generateSubjectColors();
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Ajusta la relación de aspecto para una mejor visualización en móviles.
-        double childAspectRatio = mobile ? 2.5 : 1.5; // Mayor ratio en móvil
-
-        return GridView.builder(
-          itemCount: allSchedules.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            childAspectRatio: childAspectRatio,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-          ),
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () => onScheduleTap(index),
-              child: Card(
-                elevation: 2,
-                margin: const EdgeInsets.all(8),
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10), // Esquinas redondeadas
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(10), // Esquinas redondeadas
-                    border: Border.all(
-                      color: Colors.white, // Color del borde
-                      width: 2, // Ancho del borde
+    // SOLUCIÓN: Envolver con ScrollConfiguration para ocultar la barra de scroll.
+    return ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Ajusta la relación de aspecto para una mejor visualización en móviles.
+          double childAspectRatio = mobile ? 2.5 : 1.5; // Mayor ratio en móvil
+  
+          return GridView.builder(
+            physics: const ClampingScrollPhysics(),
+            itemCount: allSchedules.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: childAspectRatio,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemBuilder: (context, index) {
+              // El MouseRegion para el cursor de mano ya está correcto.
+              return MouseRegion(
+                cursor: SystemMouseCursors.click, // Esto muestra la "manita".
+                child: GestureDetector(
+                  onTap: () => onScheduleTap(index),
+                  child: Card(
+                    elevation: 2,
+                    margin: const EdgeInsets.all(8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(10), // Esquinas redondeadas
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.circular(10), // Esquinas redondeadas
+                        border: Border.all(
+                          color: Colors.white, // Color del borde
+                          width: 2, // Ancho del borde
+                        ),
+                      ),
+                      // Construye la vista previa visual del horario.
+                      child:
+                          buildSchedulePreview(allSchedules[index], subjectColors),
                     ),
                   ),
-                  // Construye la vista previa visual del horario.
-                  child:
-                      buildSchedulePreview(allSchedules[index], subjectColors),
                 ),
-              ),
-            );
-          },
-        );
-      },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 

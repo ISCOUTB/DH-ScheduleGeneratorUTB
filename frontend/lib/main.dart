@@ -360,24 +360,53 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       // Muestra la grilla de horarios o un mensaje de vista previa.
                       Expanded(
-                        child: allSchedules.isEmpty
-                            ? Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                    color: const Color(0xFFF5F7FA),
-                                    borderRadius: BorderRadius.circular(18),
-                                    border: Border.all(
-                                        color: Colors.grey.shade400, width: 2)),
-                                child: Center(
-                                    child: Text("Vista previa del horario",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.grey.shade600,
-                                            fontWeight: FontWeight.w500))),
-                              )
-                            : ScheduleGridWidget(
-                                allSchedules: allSchedules,
-                                onScheduleTap: openScheduleOverview),
+                        //Envolver con un Stack para superponer el contador.
+                        child: Stack(
+                          children: [
+                            allSchedules.isEmpty
+                                ? Container(
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFFF5F7FA),
+                                        borderRadius: BorderRadius.circular(18),
+                                        border: Border.all(
+                                            color: Colors.grey.shade400,
+                                            width: 2)),
+                                    child: Center(
+                                        child: Text("Vista previa del horario",
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.grey.shade600,
+                                                fontWeight: FontWeight.w500))),
+                                  )
+                                : ScheduleGridWidget(
+                                    allSchedules: allSchedules,
+                                    onScheduleTap: openScheduleOverview),
+                            
+                            // Widget para mostrar el contador de horarios generados.
+                            if (allSchedules.isNotEmpty)
+                              Positioned(
+                                bottom: 16,
+                                left: 16,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.6),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    '${allSchedules.length} ${allSchedules.length == 1 ? "horario generado" : "horarios generados"}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -439,7 +468,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         allSubjects:
                             _allSubjectsList, // Pasamos la lista de resúmenes
                         onSubjectSelected: (subjectSummary) async {
-                          // --- LÓGICA MODIFICADA Y CORRECTA ---
+                          subjectController.clear(); // Limpia el campo de texto.
                           setState(() {
                             isSearchOpen =
                                 false; // Cierra la búsqueda inmediatamente
@@ -464,7 +493,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             });
                           }
                         },
-                        closeWindow: () => setState(() => isSearchOpen = false),
+                        closeWindow: () {
+                          subjectController.clear(); // Limpia el campo de texto también al cerrar.
+                          setState(() => isSearchOpen = false);
+                        },
                       )
                     : const Center(
                         child: CircularProgressIndicator(color: Colors.white),
