@@ -2,12 +2,22 @@
 import 'package:flutter/material.dart';
 import '../models/subject.dart';
 
+/// Un widget que muestra una lista de materias seleccionadas en un diálogo.
 class AddedSubjectsWidget extends StatelessWidget {
+  /// La lista de materias que han sido agregadas.
   final List<Subject> addedSubjects;
+
+  /// El número de créditos actualmente en uso.
   final int usedCredits;
+
+  /// El límite total de créditos permitido.
   final int creditLimit;
+
+  /// Callback para cerrar el diálogo.
   final VoidCallback closeWindow;
-  final Function(Subject subject) onRemoveSubject; // Nueva función para manejar la eliminación
+
+  /// Callback que se ejecuta al eliminar una materia de la lista.
+  final Function(Subject subject) onRemoveSubject;
 
   const AddedSubjectsWidget({
     Key? key,
@@ -20,6 +30,7 @@ class AddedSubjectsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Construye la interfaz del diálogo.
     return Dialog(
       child: Container(
         width: 500,
@@ -47,13 +58,14 @@ class AddedSubjectsWidget extends StatelessWidget {
                     trailing: IconButton(
                       icon: const Icon(Icons.remove_circle, color: Colors.red),
                       onPressed: () {
-                        onRemoveSubject(subject); // Llamar a la función para eliminar la materia
+                        onRemoveSubject(subject); // Llama a la función para eliminar la materia
                       },
                     ),
                   );
                 },
               ),
             ),
+            // Muestra el contador de créditos.
             Text('Créditos utilizados: $usedCredits / $creditLimit'),
             // Botón de cerrar
             Align(

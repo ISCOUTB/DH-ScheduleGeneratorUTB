@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 
+/// Un panel que contiene los botones de acción principales de la aplicación.
+///
+/// Incluye acciones para buscar materias, aplicar filtros, limpiar la selección
+/// y generar los horarios.
 class MainActionsPanel extends StatelessWidget {
+  /// Callback para la acción de buscar materia.
   final VoidCallback onSearch;
+
+  /// Callback para la acción de filtrar.
   final VoidCallback onFilter;
+
+  /// Callback para la acción de limpiar.
   final VoidCallback onClear;
+
+  /// Callback para la acción de generar horarios.
   final VoidCallback onGenerate;
 
   const MainActionsPanel({
@@ -20,6 +31,7 @@ class MainActionsPanel extends StatelessWidget {
       children: [
         Row(
           children: [
+            // Botón para buscar materia.
             Expanded(
                 child: _MainCardButton(
                     color: const Color(0xFF0051FF),
@@ -27,6 +39,7 @@ class MainActionsPanel extends StatelessWidget {
                     label: "Buscar materia",
                     onTap: onSearch)),
             const SizedBox(width: 20),
+            // Botón para realizar filtro.
             Expanded(
                 child: _MainCardButton(
                     color: const Color(0xFF0051FF),
@@ -34,6 +47,7 @@ class MainActionsPanel extends StatelessWidget {
                     label: "Realizar filtro",
                     onTap: onFilter)),
             const SizedBox(width: 20),
+            // Botón para limpiar horarios.
             Expanded(
                 child: _MainCardButton(
                     color: const Color(0xFFFF2F2F),
@@ -43,6 +57,7 @@ class MainActionsPanel extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 28),
+        // Botón principal para generar horarios.
         SizedBox(
           height: 60,
           child: ElevatedButton(
@@ -71,10 +86,18 @@ class MainActionsPanel extends StatelessWidget {
   }
 }
 
+/// Un botón de tarjeta personalizado con efecto hover para el panel de acciones.
 class _MainCardButton extends StatefulWidget {
+  /// Color de fondo del botón.
   final Color color;
+
+  /// Ícono que se muestra en el botón.
   final IconData icon;
+
+  /// Etiqueta de texto del botón.
   final String label;
+
+  /// Callback que se ejecuta al tocar el botón.
   final VoidCallback onTap;
 
   const _MainCardButton(
@@ -88,6 +111,7 @@ class _MainCardButton extends StatefulWidget {
 }
 
 class _MainCardButtonState extends State<_MainCardButton> {
+  /// Controla si el cursor está sobre el botón para el efecto visual.
   bool _isHovered = false;
 
   @override
@@ -106,6 +130,7 @@ class _MainCardButtonState extends State<_MainCardButton> {
           decoration: BoxDecoration(
             color: _isHovered ? hoverColor : widget.color,
             borderRadius: BorderRadius.circular(16),
+            // Sombra que aparece al pasar el cursor sobre el botón.
             boxShadow: _isHovered
                 ? [
                     BoxShadow(

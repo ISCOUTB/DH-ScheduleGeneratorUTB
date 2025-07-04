@@ -3,9 +3,17 @@ import 'package:flutter/material.dart';
 import '../models/subject.dart';
 import 'package:diacritic/diacritic.dart';
 
+/// Un widget que permite al usuario buscar y seleccionar profesores de una lista.
+///
+/// Se utiliza dentro de `FilterWidget` para filtrar por profesor en una materia específica.
 class ProfessorFilterWidget extends StatefulWidget {
+  /// La materia de la cual se extraerán los profesores.
   final Subject subject;
+
+  /// La lista de profesores actualmente seleccionados.
   final List<String> selectedProfessors;
+
+  /// Callback que se ejecuta cuando la selección de profesores cambia.
   final Function(List<String>) onSelectionChanged;
 
   const ProfessorFilterWidget({
@@ -20,22 +28,28 @@ class ProfessorFilterWidget extends StatefulWidget {
 }
 
 class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
-  // --- ESTADO SIMPLIFICADO A LA VERSIÓN ORIGINAL ---
+  /// Lista completa de todos los profesores únicos para la materia.
   List<String> allProfessors = [];
+
+  /// Lista de profesores que coinciden con el término de búsqueda actual.
   List<String> filteredProfessors = [];
+
+  /// Lista de profesores que han sido seleccionados por el usuario.
   List<String> selectedProfessors = [];
 
+  /// Controlador para el campo de texto de búsqueda.
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    // Extrae los profesores de la materia y los inicializa.
     _extractAllProfessors(widget.subject);
-    filterProfessors(''); // Inicializa la lista filtrada
+    filterProfessors(''); // Inicializa la lista filtrada con todos los profesores.
     selectedProfessors = List.from(widget.selectedProfessors);
   }
 
-  // --- FUNCIÓN PARA EXTRAER TODOS LOS PROFESORES EN UNA SOLA LISTA ---
+  /// Extrae y unifica la lista de profesores de todas las opciones de clase de una materia.
   void _extractAllProfessors(Subject subject) {
     final professorSet = <String>{};
 
@@ -45,10 +59,13 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
         professorSet.add(classOption.professor);
       }
     }
+    // Convierte el Set a una lista ordenada.
     allProfessors = professorSet.toList()..sort();
     filteredProfessors = List.from(allProfessors);
   }
 
+  /// Filtra la lista de profesores basándose en el texto de búsqueda.
+  /// La búsqueda no distingue mayúsculas/minúsculas ni acentos.
   void filterProfessors(String query) {
     setState(() {
       String normalizedQuery = removeDiacritics(query.toLowerCase());
@@ -65,7 +82,7 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
     });
   }
 
-  // --- SELECCIÓN SIMPLIFICADA ---
+  /// Agrega o remueve un profesor de la lista de selección.
   void toggleSelection(String professor) {
     setState(() {
       if (selectedProfessors.contains(professor)) {
@@ -73,6 +90,7 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
       } else {
         selectedProfessors.add(professor);
       }
+      // Notifica al widget padre sobre el cambio en la selección.
       widget.onSelectionChanged(selectedProfessors);
     });
   }
@@ -82,6 +100,7 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Campo de texto para buscar profesores.
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
           child: TextField(
@@ -97,6 +116,7 @@ class _ProfessorFilterWidgetState extends State<ProfessorFilterWidget> {
             onChanged: filterProfessors,
           ),
         ),
+        // Lista de profesores filtrados con checkboxes.
         Expanded(
           child: filteredProfessors.isEmpty
               ? Center(

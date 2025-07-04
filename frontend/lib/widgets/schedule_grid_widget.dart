@@ -3,8 +3,15 @@ import 'package:flutter/material.dart';
 import '../models/class_option.dart';
 import 'package:flutter/foundation.dart'; // Para kIsWeb y defaultTargetPlatform
 
+/// Muestra una cuadrícula de previsiones de horarios generados.
+///
+/// Cada celda de la cuadrícula representa un horario y es interactiva.
+/// El diseño es adaptable para web, escritorio y dispositivos móviles.
 class ScheduleGridWidget extends StatelessWidget {
+  /// La lista de todos los horarios generados, donde cada horario es una lista de clases.
   final List<List<ClassOption>> allSchedules;
+
+  /// Callback que se ejecuta cuando se toca un horario, devolviendo su índice.
   final Function(int) onScheduleTap;
 
   const ScheduleGridWidget({
@@ -13,6 +20,7 @@ class ScheduleGridWidget extends StatelessWidget {
     required this.onScheduleTap,
   }) : super(key: key);
 
+  /// Comprueba si la plataforma actual es móvil (Android o iOS).
   bool isMobile() {
     if (kIsWeb) return false;
     return defaultTargetPlatform == TargetPlatform.android ||
@@ -24,12 +32,12 @@ class ScheduleGridWidget extends StatelessWidget {
     bool mobile = isMobile();
     int crossAxisCount = mobile ? 1 : 2;
 
-    // Generar el mapa de colores para las materias
+    // Genera un mapa de colores único para cada materia.
     Map<String, Color> subjectColors = _generateSubjectColors();
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Ajustar el aspect ratio en móvil
+        // Ajusta la relación de aspecto para una mejor visualización en móviles.
         double childAspectRatio = mobile ? 2.5 : 1.5; // Mayor ratio en móvil
 
         return GridView.builder(
@@ -59,6 +67,7 @@ class ScheduleGridWidget extends StatelessWidget {
                       width: 2, // Ancho del borde
                     ),
                   ),
+                  // Construye la vista previa visual del horario.
                   child:
                       buildSchedulePreview(allSchedules[index], subjectColors),
                 ),
@@ -70,6 +79,7 @@ class ScheduleGridWidget extends StatelessWidget {
     );
   }
 
+  /// Construye la vista previa visual de un único horario en formato de cuadrícula.
   Widget buildSchedulePreview(
       List<ClassOption> schedule, Map<String, Color> subjectColors) {
     final List<String> timeSlots = [
@@ -99,7 +109,7 @@ class ScheduleGridWidget extends StatelessWidget {
       'Dom', 
     ];
 
-    // Crear una matriz para almacenar la información de las clases
+    // Matriz para almacenar las clases organizadas por día y hora.
     Map<String, Map<String, ClassOption?>> scheduleMatrix = {};
 
     for (String time in timeSlots) {
@@ -109,7 +119,7 @@ class ScheduleGridWidget extends StatelessWidget {
       }
     }
 
-    // Llenar la matriz del horario con las clases
+    // Llena la matriz con las clases del horario.
     for (var classOption in schedule) {
       for (var sched in classOption.schedules) {
         TimeOfDayRange range = parseTimeRange(sched.time);
@@ -122,7 +132,7 @@ class ScheduleGridWidget extends StatelessWidget {
 
         for (int i = startIndex; i < endIndex; i++) {
           if (i < timeSlots.length) {
-            // Almacenar la opción de clase
+            // Almacena la opción de clase en la celda correspondiente.
             scheduleMatrix[timeSlots[i]]![day] = classOption;
           }
         }
@@ -131,7 +141,7 @@ class ScheduleGridWidget extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Cálculo de tamaños adaptativos
+        // Calcula tamaños de celda y fuente adaptativos basados en el espacio disponible.
         double totalWidth = constraints.maxWidth;
         double totalHeight = constraints.maxHeight;
 
@@ -145,7 +155,7 @@ class ScheduleGridWidget extends StatelessWidget {
 
         return Column(
           children: [
-            // Encabezado de días
+            // Fila de encabezado con los nombres de los días.
             Row(
               children: [
                 SizedBox(
@@ -167,7 +177,7 @@ class ScheduleGridWidget extends StatelessWidget {
                     )),
               ],
             ),
-            // Horarios
+            // Cuerpo de la cuadrícula con las horas y las clases.
             Expanded(
               child: ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
@@ -176,7 +186,7 @@ class ScheduleGridWidget extends StatelessWidget {
                   String time = timeSlots[rowIndex];
                   return Row(
                     children: [
-                      // Columna de horas
+                      // Columna de horas.
                       SizedBox(
                         width: hourColumnWidth,
                         height: cellHeight,
@@ -191,6 +201,7 @@ class ScheduleGridWidget extends StatelessWidget {
                           ),
                         ),
                       ),
+                      // Celdas para cada día de la semana.
                       ...days.map((day) {
                         ClassOption? classOption = scheduleMatrix[time]![day];
                         Color? subjectColor;
@@ -210,6 +221,7 @@ class ScheduleGridWidget extends StatelessWidget {
                                   : Colors.grey[200],
                               borderRadius: BorderRadius.circular(4),
                             ),
+                            // Muestra el nombre abreviado de la materia.
                             child: classOption != null
                                 ? Center(
                                     child: FittedBox(
@@ -242,7 +254,7 @@ class ScheduleGridWidget extends StatelessWidget {
     );
   }
 
-  // Generar un mapa de colores para las materias
+  /// Genera un mapa de colores único para cada materia en los horarios.
   Map<String, Color> _generateSubjectColors() {
     List<Color> colors = [
       Colors.redAccent,
@@ -265,7 +277,7 @@ class ScheduleGridWidget extends StatelessWidget {
     Map<String, Color> subjectColors = {};
     int colorIndex = 0;
 
-    // Suponiendo que tenemos acceso a todas las materias
+    // Extrae todos los nombres de materias únicos.
     Set<String> allSubjects = {};
     for (var schedule in allSchedules) {
       for (var classOption in schedule) {
@@ -273,6 +285,7 @@ class ScheduleGridWidget extends StatelessWidget {
       }
     }
 
+    // Asigna un color a cada materia.
     for (var subject in allSubjects) {
       subjectColors[subject] = colors[colorIndex % colors.length];
       colorIndex++;
@@ -281,7 +294,7 @@ class ScheduleGridWidget extends StatelessWidget {
     return subjectColors;
   }
 
-  // Funciones auxiliares para parsear y formatear horarios
+  /// Parsea una cadena de rango de tiempo (ej. "07:00 - 09:00") a un objeto TimeOfDayRange.
   TimeOfDayRange parseTimeRange(String timeRange) {
     List<String> parts = timeRange.split(' - ');
     TimeOfDay start = parseTimeOfDay(parts[0]);
@@ -289,6 +302,7 @@ class ScheduleGridWidget extends StatelessWidget {
     return TimeOfDayRange(start, end);
   }
 
+  /// Parsea una cadena de tiempo (ej. "07:00") a un objeto TimeOfDay.
   TimeOfDay parseTimeOfDay(String timeString) {
     timeString = timeString.trim();
 
@@ -299,6 +313,7 @@ class ScheduleGridWidget extends StatelessWidget {
     return TimeOfDay(hour: hour, minute: minute);
   }
 
+  /// Encuentra el índice de una franja horaria correspondiente a una hora específica.
   int getTimeSlotIndex(TimeOfDay time, List<String> timeSlots) {
     int timeMinutes = time.hour * 60 + time.minute;
 
@@ -314,7 +329,7 @@ class ScheduleGridWidget extends StatelessWidget {
   }
 }
 
-// Definición de TimeOfDayRange
+/// Representa un rango de tiempo con una hora de inicio y una de fin.
 class TimeOfDayRange {
   final TimeOfDay start;
   final TimeOfDay end;

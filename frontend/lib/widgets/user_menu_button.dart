@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// Un botón de menú de usuario que muestra un overlay con información y un botón de cierre de sesión.
 class UserMenuButton extends StatefulWidget {
+  /// El nombre del usuario a mostrar en el menú.
   final String? userName;
+
+  /// Callback que se ejecuta cuando el usuario presiona el botón de cerrar sesión.
   final VoidCallback onLogout;
   const UserMenuButton(
       {Key? key, required this.userName, required this.onLogout})
@@ -11,20 +15,27 @@ class UserMenuButton extends StatefulWidget {
   State<UserMenuButton> createState() => _UserMenuButtonState();
 }
 
+/// Estado para el [UserMenuButton].
 class _UserMenuButtonState extends State<UserMenuButton> {
+  /// La entrada del overlay que contiene el menú.
   OverlayEntry? _overlayEntry;
+
+  /// Enlace para posicionar el overlay relativo al botón.
   final LayerLink _layerLink = LayerLink();
 
+  /// Muestra el menú de usuario como un overlay.
   void _showMenu() {
     _overlayEntry = _createOverlayEntry();
     Overlay.of(context, rootOverlay: true).insert(_overlayEntry!);
   }
 
+  /// Oculta el menú de usuario.
   void _hideMenu() {
     _overlayEntry?.remove();
     _overlayEntry = null;
   }
 
+  /// Crea la entrada del overlay para el menú.
   OverlayEntry _createOverlayEntry() {
     RenderBox renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
@@ -57,6 +68,7 @@ class _UserMenuButtonState extends State<UserMenuButton> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Contenedor del mensaje de bienvenida
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                         child: Container(
@@ -92,6 +104,7 @@ class _UserMenuButtonState extends State<UserMenuButton> {
                         ),
                       ),
                       const SizedBox(height: 6),
+                      // Botón para cerrar sesión
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 18),
                         child: SizedBox(
@@ -131,18 +144,20 @@ class _UserMenuButtonState extends State<UserMenuButton> {
 
   @override
   void dispose() {
-    _hideMenu();
+    _hideMenu(); // Asegura que el menú se oculte al destruir el widget.
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    /// Construye el botón circular con un ícono de persona.
     return CompositedTransformTarget(
       link: _layerLink,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: () {
+            // Muestra u oculta el menú al hacer clic.
             if (_overlayEntry == null) {
               _showMenu();
             } else {

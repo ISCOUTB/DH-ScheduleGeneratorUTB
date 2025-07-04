@@ -1,15 +1,29 @@
 // lib/widgets/filter_widget.dart
+
+/// Widget para configurar filtros de profesores, horarios y optimización.
+//
+/// Permite al usuario definir preferencias para la generación de horarios,
+/// incluyendo la selección de profesores, la definición de horas no disponibles
+/// y la configuración de opciones de optimización.
 import 'package:flutter/material.dart';
 import '../models/subject.dart';
 import 'professor_filter_widget.dart';
 
+/// Widget principal que contiene la lógica y la interfaz para los filtros.
 class FilterWidget extends StatefulWidget {
+  /// Cierra el diálogo de filtros.
   final VoidCallback closeWindow;
-  // --- CAMBIO EN LA FIRMA DE LA FUNCIÓN ---
+
+  /// Callback que se ejecuta al aplicar los filtros.
+  /// Devuelve dos mapas: uno para el estado de la UI y otro para la API.
   final Function(
           Map<String, dynamic> stateFilters, Map<String, dynamic> apiFilters)
       onApplyFilters;
+
+  /// Filtros actuales para inicializar el estado del widget.
   final Map<String, dynamic> currentFilters;
+
+  /// Materias agregadas por el usuario para las que se pueden aplicar filtros.
   final List<Subject> addedSubjects;
 
   const FilterWidget({
@@ -25,12 +39,19 @@ class FilterWidget extends StatefulWidget {
 }
 
 class _FilterWidgetState extends State<FilterWidget> {
+  /// Almacena los filtros de profesores por materia (incluir/excluir).
   late Map<String, dynamic> _professorsFilters;
+
+  /// Almacena las horas no disponibles por día.
   late Map<String, dynamic> _timeFilters;
+
+  /// Flag para optimizar y reducir los huecos entre clases.
   late bool _optimizeGaps;
+
+  /// Flag para optimizar y maximizar los días libres.
   late bool _optimizeFreeDays;
 
-  // Días de la semana en orden
+  /// Días de la semana para la selección de filtros de tiempo.
   final List<String> days = [
     'Lunes',
     'Martes',
@@ -41,7 +62,7 @@ class _FilterWidgetState extends State<FilterWidget> {
     'Domingo'
   ];
 
-  // Horas disponibles (en formato de 24 horas)
+  /// Franjas horarias disponibles para la selección de filtros de tiempo.
   final List<String> timeSlots = [
     '07:00',
     '08:00',
@@ -60,6 +81,7 @@ class _FilterWidgetState extends State<FilterWidget> {
     '21:00',
   ];
 
+  /// Inicializa el estado del widget, cargando los filtros actuales.
   @override
   void initState() {
     super.initState();
@@ -72,6 +94,7 @@ class _FilterWidgetState extends State<FilterWidget> {
     _optimizeFreeDays = widget.currentFilters['optimizeFreeDays'] ?? false;
   }
 
+  /// Construye la interfaz de usuario del widget de filtros.
   @override
   Widget build(BuildContext context) {
     // Determinar si estamos en modo oscuro o claro
@@ -94,7 +117,7 @@ class _FilterWidgetState extends State<FilterWidget> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Encabezado
+            // Encabezado con título y botón de cerrar
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -113,13 +136,13 @@ class _FilterWidgetState extends State<FilterWidget> {
               ],
             ),
             const Divider(),
-            // Contenido
+            // Contenido principal con scroll
             Expanded(
               child: SingleChildScrollView(
-                // Barra desplazadora aquí
                 child: Column(
                   children: [
-                    // Filtros por Materia (Profesores)
+                    // Sección: Filtros por Materia (Profesores)
+                    /// Contiene los filtros para incluir o excluir profesores por materia.
                     Theme(
                       data: Theme.of(context).copyWith(
                         dividerColor: Colors.transparent,
@@ -158,7 +181,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                               title: Text(subject.name,
                                   style: TextStyle(color: textColor)),
                               children: [
-                                // Opciones de selección única
+                                // Radio buttons para seleccionar tipo de filtro (incluir/excluir)
                                 Column(
                                   children: [
                                     RadioListTile<String>(
@@ -194,6 +217,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                   ],
                                 ),
                                 const SizedBox(height: 10),
+                                // Widget para la selección de profesores
                                 SizedBox(
                                   width: 400,
                                   height: 200,
@@ -202,8 +226,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                     selectedProfessors: List<String>.from(
                                         subjectFilter['professors']),
                                     onSelectionChanged: (selectedProfessors) {
-                                      // No necesitamos setState aquí porque el estado se maneja en ProfessorFilterWidget
-                                      // y los datos se leen al aplicar.
+                                      // Actualiza la lista de profesores seleccionados
                                       subjectFilter['professors'] =
                                           selectedProfessors;
                                       _professorsFilters[subjectCode] =
@@ -218,7 +241,8 @@ class _FilterWidgetState extends State<FilterWidget> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    // Filtros de Horas Disponibles
+                    // Sección: Filtros de Horas Disponibles
+                    /// Permite al usuario definir las horas en las que no desea tener clases.
                     Theme(
                       data: Theme.of(context).copyWith(
                         dividerColor: Colors.transparent,
@@ -232,7 +256,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                         title: Text('Filtros de Horas Disponibles',
                             style: TextStyle(color: textColor)),
                         children: [
-                          // Mostrar días con checkboxes ordenados
+                          // Chips para seleccionar días de la semana
                           Wrap(
                             spacing: 8,
                             runSpacing: 8,
@@ -262,7 +286,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                             }).toList(),
                           ),
                           const SizedBox(height: 10),
-                          // Para cada día seleccionado, mostrar las horas en orden
+                          // Selección de horas para cada día seleccionado
                           ...days
                               .where((day) => _timeFilters.containsKey(day))
                               .map((day) {
@@ -280,7 +304,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                   '$day - Selecciona las horas que deseas estar libre:',
                                   style: TextStyle(color: textColor),
                                 ),
-                                // Opción de seleccionar todas las horas
+                                // Checkbox para seleccionar/deseleccionar todas las horas del día
                                 CheckboxListTile(
                                   activeColor: accentColor,
                                   title: Text(
@@ -302,6 +326,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                     });
                                   },
                                 ),
+                                // Grid para seleccionar horas específicas
                                 SizedBox(
                                   width: 400,
                                   height: 100,
@@ -341,7 +366,8 @@ class _FilterWidgetState extends State<FilterWidget> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    // Opciones de Optimización
+                    // Sección: Opciones de Optimización
+                    /// Contiene switches para las optimizaciones del generador.
                     Theme(
                       data: Theme.of(context).copyWith(
                         dividerColor: Colors.transparent,
@@ -355,6 +381,8 @@ class _FilterWidgetState extends State<FilterWidget> {
                         title: Text('Opciones de Optimización',
                             style: TextStyle(color: textColor)),
                         children: [
+                          // Switch para optimizar huecos
+                          /// Prioriza horarios con menos huecos entre clases.
                           SwitchListTile(
                             activeColor: accentColor,
                             trackColor:
@@ -386,6 +414,8 @@ class _FilterWidgetState extends State<FilterWidget> {
                               });
                             },
                           ),
+                          // Switch para optimizar días libres
+                          /// Prioriza horarios que maximicen los días libres.
                           SwitchListTile(
                             activeColor: accentColor,
                             trackColor:
@@ -425,20 +455,26 @@ class _FilterWidgetState extends State<FilterWidget> {
                 ),
               ),
             ),
-            // Botones
+            // Botones de acción
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                // Botón Cancelar - cierra el diálogo sin aplicar cambios
                 TextButton(
                   onPressed: widget.closeWindow,
                   child: Text('Cancelar', style: TextStyle(color: accentColor)),
                 ),
+                // Botón para aplicar los filtros configurados
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accentColor,
                   ),
                   onPressed: () {
-                    // --- LÓGICA DE FILTROS MODIFICADA PARA PERSISTENCIA ---
+                    /// Procesa y aplica los filtros, generando dos formatos:
+                    /// 1. Para el estado de la UI (conserva la selección del usuario).
+                    /// 2. Para la API (formato esperado por el backend).
+
+                    // Procesa los filtros de profesores para la API.
                     Map<String, dynamic> finalProfessorFiltersForApi = {};
                     _professorsFilters.forEach((subjectCode, filterData) {
                       String filterType = filterData['filterType'];
@@ -457,7 +493,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                       }
                     });
 
-                    // Construimos el objeto de filtros que se enviará a la API
+                    // Objeto de filtros para la API.
                     Map<String, dynamic> filtersForApi = {
                       ...finalProfessorFiltersForApi,
                       'unavailable_slots': _timeFilters,
@@ -465,21 +501,18 @@ class _FilterWidgetState extends State<FilterWidget> {
                       'optimizeFreeDays': _optimizeFreeDays,
                     };
 
-                    // Construimos el objeto de filtros que se guardará en el estado local
-                    // ESTA ES LA PARTE CLAVE: Guardamos la estructura completa
+                    // Objeto de filtros para el estado de la UI.
                     Map<String, dynamic> filtersForState = {
-                      'professors':
-                          _professorsFilters, // Guarda el estado interno de los profesores
-                      'timeFilters':
-                          _timeFilters, // Guarda el estado interno de las horas
+                      'professors': _professorsFilters,
+                      'timeFilters': _timeFilters,
                       'optimizeGaps': _optimizeGaps,
                       'optimizeFreeDays': _optimizeFreeDays,
                     };
 
-                    // --- CAMBIO EN LA LLAMADA A LA FUNCIÓN ---
-                    // Llamamos a la función de aplicar filtros con ambos mapas
+                    // Llama al callback con ambos mapas de filtros.
                     widget.onApplyFilters(filtersForState, filtersForApi);
 
+                    // Cierra el diálogo.
                     widget.closeWindow();
                   },
                   child: const Text('Aplicar filtros'),

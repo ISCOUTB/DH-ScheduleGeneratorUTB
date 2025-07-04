@@ -9,8 +9,15 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart'; // Para kIsWeb
 import '../utils/file_utils.dart';
 
+/// Un widget que muestra una vista detallada de un horario específico.
+///
+/// Presenta el horario en una cuadrícula visual y una lista detallada de las clases.
+/// También permite exportar el horario a formatos PDF y Excel.
 class ScheduleOverviewWidget extends StatefulWidget {
+  /// El horario a mostrar, compuesto por una lista de opciones de clase.
   final List<ClassOption> schedule;
+
+  /// Callback para cerrar la vista de detalle.
   final VoidCallback onClose;
 
   const ScheduleOverviewWidget({
@@ -24,10 +31,10 @@ class ScheduleOverviewWidget extends StatefulWidget {
 }
 
 class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
-  // Mapa de colores para las materias
+  /// Mapa de colores asignados a cada materia para una fácil identificación visual.
   late Map<String, Color> subjectColors;
 
-  // Definir los horarios y días (en formato de 24 horas)
+  /// Lista de franjas horarias que se muestran en la cuadrícula del horario.
   final List<String> timeSlots = [
     '07:00',
     '08:00',
@@ -46,6 +53,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     '21:00',
   ];
 
+  /// Lista de días de la semana para las columnas de la cuadrícula.
   final List<String> days = [
     'Lunes',
     'Martes',
@@ -59,13 +67,13 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   @override
   void initState() {
     super.initState();
-    // Generar el mapa de colores para las materias
+    // Genera los colores para las materias al iniciar el widget.
     subjectColors = _generateSubjectColors();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Agrupar las materias y sus opciones
+    // Agrupa las clases por nombre de materia para la lista de detalles.
     final Map<String, List<ClassOption>> groupedSubjects =
         groupBy(widget.schedule, (ClassOption option) => option.subjectName);
 
@@ -90,6 +98,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                 ),
                 Row(
                   children: [
+                    // Botón para descargar el horario en formato PDF.
                     Tooltip(
                       message: 'Descargar PDF',
                       child: IconButton(
@@ -97,6 +106,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                         onPressed: downloadScheduleAsPDF,
                       ),
                     ),
+                    // Botón para descargar el horario en formato Excel.
                     Tooltip(
                       message: 'Descargar Excel',
                       child: IconButton(
@@ -105,6 +115,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                       ),
                     ),
                     const SizedBox(width: 10),
+                    // Botón para cerrar la vista de detalle.
                     IconButton(
                       icon: const Icon(Icons.close),
                       tooltip: 'Cerrar',
@@ -116,12 +127,11 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
             ),
             const Divider(height: 24),
 
-            // --- DIVIDIR EL ESPACIO EN DOS COLUMNAS ---
-            // Usamos un Row con Expanded para dividir el espacio en dos columnas
+            // Layout principal de dos columnas: cuadrícula a la izquierda, detalles a la derecha.
             Expanded(
               child: Row(
                 children: [
-                  // --- COLUMNA IZQUIERDA: VISTA DE LA CUADRÍCULA DEL HORARIO ---
+                  // Columna izquierda: Cuadrícula visual del horario.
                   Expanded(
                     flex: 3, // Ocupa 3/5 del espacio
                     child: _buildScheduleGrid(),
@@ -129,7 +139,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
                   const VerticalDivider(width: 24),
 
-                  // --- COLUMNA DERECHA: DETALLES DESPLEGABLES ---
+                  // Columna derecha: Lista desplegable con los detalles de cada materia.
                   Expanded(
                     flex: 2, // Ocupa 2/5 del espacio
                     child: ListView.builder(
@@ -140,7 +150,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                         final classOptions = groupedSubjects[subjectName]!;
                         final color = subjectColors[subjectName] ?? Colors.grey;
 
-                        // ExpansionTile para el efecto desplegable
+                        // Cada materia es un ExpansionTile que muestra los detalles al expandirse.
                         return ExpansionTile(
                           leading: Container(
                             width: 12,
@@ -157,7 +167,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                               fontSize: 16,
                             ),
                           ),
-                          // Contenido que se muestra al expandir
+                          // Muestra los detalles de la clase (NRC, profesor, etc.) al expandir.
                           children: classOptions.map((option) {
                             return ListTile(
                               contentPadding: const EdgeInsets.only(
@@ -185,7 +195,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     );
   }
 
-  // --- WIDGET DE CUADRÍCULA VISUAL (REESTRUCTURADO PARA AJUSTE AUTOMÁTICO) ---
+  /// Construye la cuadrícula visual del horario con sus ejes de tiempo y días.
   Widget _buildScheduleGrid() {
     return Container(
       decoration: BoxDecoration(
@@ -196,7 +206,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         borderRadius: BorderRadius.circular(7.0),
         child: Column(
           children: [
-            // Fila de encabezado de días (fija)
+            // Fila de encabezado con los nombres de los días.
             SizedBox(
               height: 30,
               child: Row(
@@ -212,11 +222,11 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                 ],
               ),
             ),
-            // Cuadrícula principal (se expande para llenar el espacio)
+            // Contenedor principal de la cuadrícula que se ajusta al espacio disponible.
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) {
-                  // Calcula la altura de la fila dinámicamente para que no haya scroll
+                  // Calcula dinámicamente la altura de las filas para evitar el desbordamiento.
                   final double hourRowHeight =
                       constraints.maxHeight / timeSlots.length;
                   final double dayColumnWidth =
@@ -225,7 +235,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
                   return Stack(
                     children: [
-                      // Fondo de la cuadrícula con horas y líneas
+                      // Dibuja el fondo de la cuadrícula con las líneas de hora.
                       SizedBox(
                         height: gridHeight,
                         child: Column(
@@ -266,7 +276,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                           }).toList(),
                         ),
                       ),
-                      // Bloques de clases superpuestos
+                      // Superpone los bloques de clase sobre la cuadrícula.
                       SizedBox(
                         height: gridHeight,
                         child: Padding(
@@ -288,8 +298,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     );
   }
 
-  // Construir los bloques de clases superpuestos
-  // Esta función crea los widgets que representan las clases en la cuadrícula.
+  /// Crea la lista de widgets (bloques) que representan cada clase en la cuadrícula.
   List<Widget> _buildClassBlocks(double hourRowHeight, double dayColumnWidth) {
     List<Widget> blocks = [];
     for (var classOption in widget.schedule) {
@@ -298,6 +307,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         final dayIndex = days.indexOf(scheduleItem.day);
         if (dayIndex == -1) continue;
 
+        // Calcula la posición y el tamaño del bloque en función de la hora y el día.
         final timeRange = parseTimeRange(scheduleItem.time);
         final startHour = timeRange.start.hour + timeRange.start.minute / 60.0;
         final endHour = timeRange.end.hour + timeRange.end.minute / 60.0;
@@ -311,7 +321,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
             Positioned(
               top: top,
               left: left,
-              width: dayColumnWidth - 2, // Pequeño margen
+              width: dayColumnWidth - 2, // Margen para evitar superposición
               height: height,
               child: Container(
                 margin: const EdgeInsets.all(1),
@@ -335,7 +345,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     return blocks;
   }
 
-  // Generar un mapa de colores para las materias
+  /// Genera un mapa de colores único para cada materia del horario.
   Map<String, Color> _generateSubjectColors() {
     List<Color> colors = [
       Colors.red,
@@ -358,12 +368,13 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     Map<String, Color> subjectColors = {};
     int colorIndex = 0;
 
-    // Obtener todas las materias del horario actual
+    // Extrae los nombres de materias únicos del horario actual.
     Set<String> allSubjects = {};
     for (var classOption in widget.schedule) {
       allSubjects.add(classOption.subjectName);
     }
 
+    // Asigna un color a cada materia de forma cíclica.
     for (var subject in allSubjects) {
       subjectColors[subject] = colors[colorIndex % colors.length];
       colorIndex++;
@@ -372,6 +383,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     return subjectColors;
   }
 
+  /// Inicia la descarga del horario en formato Excel.
   Future<void> downloadScheduleAsExcel() async {
     try {
       var bytes = await _generateExcel({
@@ -393,6 +405,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     }
   }
 
+  /// Inicia la descarga del horario en formato PDF.
   Future<void> downloadScheduleAsPDF() async {
     try {
       final bytes = await _generatePDF({
@@ -414,20 +427,22 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     }
   }
 
-  // Funciones auxiliares para generar los archivos
+  // --- Funciones auxiliares para la generación de archivos ---
 
+  /// Genera los bytes de un archivo Excel a partir de los datos del horario.
   Future<Uint8List> _generateExcel(Map<String, dynamic> params) async {
     List<ClassOption> schedule = params['schedule'];
     List<String> timeSlots = params['timeSlots'];
     List<String> days = params['days'];
 
-    // Crear un nuevo archivo Excel
+    // Crea un nuevo archivo y hoja de Excel.
     var excelFile = excel.Excel.createExcel();
     excel.Sheet sheetObject = excelFile['Horario'];
 
-    // Encabezados
+    // Agrega la fila de encabezado.
     sheetObject.appendRow(['Horario', ...days]);
 
+    // Llena cada fila con la materia correspondiente a la hora y día.
     for (var timeSlot in timeSlots) {
       List<String?> row = [timeSlot];
       TimeOfDay timeSlotTime = parseTimeOfDay(timeSlot);
@@ -450,13 +465,14 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       sheetObject.appendRow(row);
     }
 
-    // Codifica el archivo Excel en bytes
+    // Codifica y retorna los bytes del archivo.
     List<int>? excelBytes = excelFile.encode();
 
     // Retorna los bytes como Uint8List
     return Uint8List.fromList(excelBytes!);
   }
 
+  /// Genera los bytes de un archivo PDF a partir de los datos del horario.
   Future<Uint8List> _generatePDF(Map<String, dynamic> params) async {
     List<ClassOption> schedule = params['schedule'];
     List<String> timeSlots = params['timeSlots'];
@@ -464,13 +480,14 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
     final pdf = pw.Document();
 
-    // Cargar la fuente predeterminada
+    // Carga una fuente compatible con PDF.
     final fontData = await rootBundle.load("assets/fonts/Roboto-Regular.ttf");
     final ttf = pw.Font.ttf(fontData.buffer.asByteData());
 
     pdf.addPage(
       pw.Page(
         build: (pw.Context context) {
+          // Crea una tabla con los datos del horario.
           return pw.Table.fromTextArray(
             headers: ['Horario', ...days],
             data: [
@@ -504,18 +521,19 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         },
       ),
     );
+    // Guarda y retorna los bytes del documento PDF.
     return await pdf.save();
   }
 
-  // Funciones auxiliares
+  // --- Funciones auxiliares de utilidad ---
 
-  //Función isTimeWithinRange
+  /// Verifica si una hora específica se encuentra dentro de un rango de tiempo.
   bool isTimeWithinRange(TimeOfDay time, TimeOfDayRange range) =>
       (time.hour * 60 + time.minute) >=
           (range.start.hour * 60 + range.start.minute) &&
       (time.hour * 60 + time.minute) < (range.end.hour * 60 + range.end.minute);
 
-  // Funciones para parsear los horarios
+  /// Parsea una cadena de rango de tiempo (ej. "07:00 - 09:00") a un objeto TimeOfDayRange.
   TimeOfDayRange parseTimeRange(String timeRange) {
     final List<String> parts = timeRange.split(' - ');
     final TimeOfDay start = parseTimeOfDay(parts[0].trim());
@@ -523,6 +541,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     return TimeOfDayRange(start, end);
   }
 
+  /// Parsea una cadena de tiempo (ej. "7:00 AM") a un objeto TimeOfDay en formato de 24 horas.
   TimeOfDay parseTimeOfDay(String timeString) {
     // Eliminar espacios y convertir a mayúsculas
     timeString = timeString.trim().toUpperCase();
@@ -552,7 +571,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   }
 }
 
-// Definición de TimeOfDayRange
+/// Representa un rango de tiempo con una hora de inicio y fin.
 class TimeOfDayRange {
   final TimeOfDay start;
   final TimeOfDay end;

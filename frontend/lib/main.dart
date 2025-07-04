@@ -16,12 +16,14 @@ import 'widgets/subjects_panel.dart';
 import 'widgets/main_actions_panel.dart';
 import 'widgets/schedule_overview_widget.dart';
 
+/// Punto de entrada principal de la aplicación.
 void main() {
-  setPathUrlStrategy();
+  setPathUrlStrategy(); // Configura la estrategia de URL para web, eliminando el #.
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
+/// Comportamiento de scroll personalizado para la web que elimina el "glow" de sobredescroll.
 class WebScrollBehavior extends ScrollBehavior {
   @override
   Widget buildViewportChrome(
@@ -30,11 +32,13 @@ class WebScrollBehavior extends ScrollBehavior {
   }
 }
 
+/// Widget raíz de la aplicación.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Define el tema global de la aplicación.
     final ThemeData theme = ThemeData(
       primarySwatch: Colors.indigo,
       brightness: Brightness.light,
@@ -51,14 +55,17 @@ class MyApp extends StatelessWidget {
       title: 'Generador de Horarios UTB',
       scrollBehavior: WebScrollBehavior(),
       theme: theme,
+      // Define las rutas de navegación de la aplicación.
       routes: {
         '/': (context) => const MyHomePage(title: 'Generador de Horarios UTB'),
-        '/auth': (context) => const AuthCallbackPage(),
+        '/auth': (context) =>
+            const AuthCallbackPage(), // Página de callback para autenticación.
       },
     );
   }
 }
 
+/// Página principal de la aplicación que contiene la lógica y la interfaz de usuario.
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
@@ -66,11 +73,13 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+/// Estado de [MyHomePage]. Contiene toda la lógica de la interfaz.
 class _MyHomePageState extends State<MyHomePage> {
+  // Servicios para la autenticación y la comunicación con la API.
   final AuthService _authService = AuthService();
   final ApiService _apiService = ApiService(); // Instancia de ApiService
 
-  // Paleta de colores igual a la del horario
+  // Paleta de colores para asignar a las materias en el horario.
   final List<Color> subjectColors = [
     Colors.redAccent,
     Colors.blueAccent,
@@ -89,34 +98,41 @@ class _MyHomePageState extends State<MyHomePage> {
     Colors.deepPurpleAccent,
   ];
 
-  // Función para obtener el color de una materia según su índice
+  /// Devuelve un color para una materia basado en su índice.
   Color getSubjectColor(int index) {
     return subjectColors[index % subjectColors.length];
   }
 
+  // --- ESTADO DE LA APLICACIÓN ---
+
+  // Materias seleccionadas por el usuario.
   List<Subject> addedSubjects = [];
   int usedCredits = 0;
   final int creditLimit = 20;
   final TextEditingController subjectController = TextEditingController();
 
-  // --- ESTADO PARA ALMACENAR LA LISTA DE MATERIAS ---
+  // Lista completa de materias disponibles para búsqueda.
   List<SubjectSummary> _allSubjectsList = [];
-  bool _areSubjectsLoaded = false;
+  bool _areSubjectsLoaded = false; // Indica si las materias han sido cargadas.
 
+  // Horarios generados por la API.
   List<List<ClassOption>> allSchedules = [];
-  int? selectedScheduleIndex;
+  int? selectedScheduleIndex; // Índice del horario seleccionado para la vista detallada.
 
+  // Controladores de estado para la visibilidad de los paneles y overlays.
   bool isSearchOpen = false;
   bool isFilterOpen = false;
   bool isOverviewOpen = false;
-  bool isExpandedView = false;
-  bool isFullExpandedView = false;
-  bool _isLoading = false;
+  bool isExpandedView = false; // Controla la vista expandida del panel de materias.
+  bool isFullExpandedView = false; // Controla si el panel lateral está oculto.
+  bool _isLoading = false; // Controla la visibilidad del indicador de carga.
 
-  Map<String, dynamic> appliedFilters = {};
-  Map<String, dynamic> apiFiltersForGeneration = {}; // NUEVA VARIABLE DE ESTADO
+  // Filtros aplicados por el usuario.
+  Map<String, dynamic> appliedFilters = {}; // Para mantener el estado de la UI de filtros.
+  Map<String, dynamic> apiFiltersForGeneration = {}; // Para enviar a la API.
   late FocusNode _focusNode;
 
+  /// Comprueba si la plataforma es móvil.
   bool isMobile() {
     if (kIsWeb) return false;
     return defaultTargetPlatform == TargetPlatform.android ||
@@ -127,12 +143,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
+    // Redirige al login si el usuario no está autenticado.
     if (!_authService.isUserLoggedIn()) {
       _authService.login();
       return;
     }
 
-    // --- CARGAMOS LAS MATERIAS AL INICIAR LA PÁGINA ---
+    // Carga la lista de todas las materias al iniciar.
     _loadAllSubjects();
 
     _focusNode = FocusNode();
@@ -141,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  // --- FUNCIÓN PARA CARGAR LAS MATERIAS UNA SOLA VEZ ---
+  /// Carga la lista de resúmenes de materias desde la API.
   void _loadAllSubjects() async {
     try {
       final subjects = await _apiService.getAllSubjects();
@@ -166,6 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  /// Añade una materia a la lista de seleccionadas, validando créditos y duplicados.
   void addSubject(Subject subject) {
     if (addedSubjects
         .any((s) => s.code == subject.code && s.name == subject.name)) {
@@ -197,6 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  /// Elimina una materia de la lista de seleccionadas.
   void removeSubject(Subject subject) {
     setState(() {
       addedSubjects
@@ -209,7 +228,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  // --- FUNCIÓN CORREGIDA PARA LIMPIAR SOLO HORARIOS ---
+  /// Limpia la lista de horarios generados.
   void clearSchedules() {
     setState(() {
       allSchedules.clear();
@@ -220,7 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
         icon: Icons.info, color: Colors.green);
   }
 
-  // --- FUNCIÓN MODIFICADA PARA GUARDAR AMBOS TIPOS DE FILTROS ---
+  /// Aplica los filtros seleccionados y regenera los horarios si hay materias.
   void applyFilters(
       Map<String, dynamic> stateFilters, Map<String, dynamic> apiFilters) {
     setState(() {
@@ -237,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  // --- MÉTODO 'generateSchedule' AÑADIDO ---
+  /// Llama a la API para generar los horarios con las materias y filtros actuales.
   Future<void> generateSchedule() async {
     if (addedSubjects.isEmpty) {
       showCustomNotification(context, 'Por favor, agrega al menos una materia.',
@@ -281,6 +300,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  /// Abre el overlay con la vista detallada de un horario específico.
   void openScheduleOverview(int index) {
     setState(() {
       selectedScheduleIndex = index;
@@ -288,6 +308,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  /// Cierra el overlay de la vista detallada del horario.
   void closeScheduleOverview() {
     setState(() {
       isOverviewOpen = false;
@@ -297,6 +318,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final userName = _authService.getUserNameFromToken();
+    // Stack principal para poder mostrar overlays sobre la pantalla principal.
     return Stack(
       children: [
         Scaffold(
@@ -323,6 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Contenido principal (acciones y grilla de horario).
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -335,6 +358,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           onGenerate:
                               generateSchedule, // Esto ahora es correcto
                         ),
+                      // Muestra la grilla de horarios o un mensaje de vista previa.
                       Expanded(
                         child: allSchedules.isEmpty
                             ? Container(
@@ -378,7 +402,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        // --- Overlay de Carga ---
+        // --- Overlays ---
+
+        // Overlay de carga mientras se generan los horarios.
         if (_isLoading)
           Container(
             color: Colors.black.withOpacity(0.5),
@@ -401,7 +427,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
 
-        // --- Buscar materia ---
+        // Overlay para buscar y añadir materias.
         if (isSearchOpen)
           Stack(
             children: [
@@ -447,7 +473,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
 
-        // --- Filtro ---
+        // Overlay para configurar los filtros.
         if (isFilterOpen)
           Stack(
             children: [
@@ -466,7 +492,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
 
-        // --- Vista de Horario ---
+        // Overlay para mostrar la vista detallada de un horario.
         if (isOverviewOpen && selectedScheduleIndex != null)
           Stack(
             children: [
@@ -484,6 +510,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+/// Muestra una notificación personalizada en un diálogo.
 void showCustomNotification(BuildContext context, String message,
     {IconData? icon, Color? color}) {
   showDialog(
