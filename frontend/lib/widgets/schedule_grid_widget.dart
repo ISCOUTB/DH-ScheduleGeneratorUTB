@@ -7,7 +7,8 @@ import 'package:flutter/foundation.dart'; // Para kIsWeb y defaultTargetPlatform
 ///
 /// Cada celda de la cuadrícula representa un horario y es interactiva.
 /// El diseño es adaptable para web, escritorio y dispositivos móviles.
-class ScheduleGridWidget extends StatelessWidget {
+/// Implementa paginación para manejar de forma eficiente un gran número de horarios.
+class ScheduleGridWidget extends StatefulWidget {
   /// La lista de todos los horarios generados, donde cada horario es una lista de clases.
   final List<List<ClassOption>> allSchedules;
 
@@ -19,6 +20,78 @@ class ScheduleGridWidget extends StatelessWidget {
     required this.allSchedules,
     required this.onScheduleTap,
   }) : super(key: key);
+
+  @override
+  State<ScheduleGridWidget> createState() => _ScheduleGridWidgetState();
+}
+
+class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
+  final ScrollController _scrollController = ScrollController();
+  List<List<ClassOption>> _displayedSchedules = [];
+  bool _isLoading = false;
+  final int _itemsPerPage = 10; // Número de horarios a cargar cada vez
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInitialSchedules();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void didUpdateWidget(covariant ScheduleGridWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Si la lista de horarios cambia (ej. nueva generación), reinicia la vista.
+    if (widget.allSchedules != oldWidget.allSchedules) {
+      _loadInitialSchedules();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _loadInitialSchedules() {
+    setState(() {
+      _displayedSchedules = widget.allSchedules.take(_itemsPerPage).toList();
+    });
+  }
+
+  void _onScroll() {
+    // Si el usuario está cerca del final de la lista y no estamos cargando, carga más.
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
+        !_isLoading) {
+      _loadMoreSchedules();
+    }
+  }
+
+  void _loadMoreSchedules() {
+    // No hacer nada si ya estamos cargando o si ya se han mostrado todos los horarios.
+    if (_isLoading || _displayedSchedules.length >= widget.allSchedules.length) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Simula una pequeña demora para que el indicador de carga sea visible.
+    Future.delayed(const Duration(milliseconds: 500), () {
+      final int currentLength = _displayedSchedules.length;
+      final List<List<ClassOption>> nextBatch = widget.allSchedules
+          .skip(currentLength)
+          .take(_itemsPerPage)
+          .toList();
+
+      setState(() {
+        _displayedSchedules.addAll(nextBatch);
+        _isLoading = false;
+      });
+    });
+  }
 
   /// Comprueba si la plataforma actual es móvil (Android o iOS).
   bool isMobile() {
@@ -41,8 +114,8 @@ class ScheduleGridWidget extends StatelessWidget {
         double childAspectRatio = mobile ? 2.5 : 1.5; // Mayor ratio en móvil
 
         return GridView.builder(
-          // physics: const ClampingScrollPhysics(), // Puedes cambiar esto si quieres otro efecto de scroll
-          itemCount: allSchedules.length,
+          controller: _scrollController,
+          itemCount: _displayedSchedules.length + (_isLoading ? 1 : 0),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
             childAspectRatio: childAspectRatio,
@@ -50,11 +123,18 @@ class ScheduleGridWidget extends StatelessWidget {
             mainAxisSpacing: 8,
           ),
           itemBuilder: (context, index) {
-            //MouseRegion 
+            // Si es el último item y estamos cargando, muestra un indicador de progreso.
+            if (index == _displayedSchedules.length) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            //MouseRegion
             return MouseRegion(
-              cursor: SystemMouseCursors.click, 
+              cursor: SystemMouseCursors.click,
               child: GestureDetector(
-                onTap: () => onScheduleTap(index),
+                onTap: () => widget.onScheduleTap(index),
                 child: Card(
                   elevation: 2,
                   margin: const EdgeInsets.all(8),
@@ -72,8 +152,8 @@ class ScheduleGridWidget extends StatelessWidget {
                       ),
                     ),
                     // Construye la vista previa visual del horario.
-                    child:
-                        buildSchedulePreview(allSchedules[index], subjectColors),
+                    child: buildSchedulePreview(
+                        _displayedSchedules[index], subjectColors),
                   ),
                 ),
               ),
@@ -84,7 +164,7 @@ class ScheduleGridWidget extends StatelessWidget {
     );
   }
 
-  /// Construye la vista previa visual de un único horario en formato de cuadrícula.
+  // Construye la vista previa visual de un único horario en formato de cuadrícula.
   Widget buildSchedulePreview(
       List<ClassOption> schedule, Map<String, Color> subjectColors) {
     final List<String> timeSlots = [
@@ -111,7 +191,7 @@ class ScheduleGridWidget extends StatelessWidget {
       'Jue',
       'Vie',
       'Sáb',
-      'Dom', 
+      'Dom',
     ];
 
     // Matriz para almacenar las clases organizadas por día y hora.
@@ -285,7 +365,7 @@ class ScheduleGridWidget extends StatelessWidget {
 
     // Extrae todos los nombres de materias únicos.
     Set<String> allSubjects = {};
-    for (var schedule in allSchedules) {
+    for (var schedule in widget.allSchedules) {
       for (var classOption in schedule) {
         allSubjects.add(classOption.subjectName);
       }
