@@ -5,7 +5,8 @@ from typing import List, Dict, Any, Tuple, cast, TypedDict, NotRequired
 from datetime import time
 
 # --- DEFINICIONES DE TIPO PARA LOS CASOS DE PRUEBA ---
-# Para indicarle a Pylance la estructura exacta de nuestros diccionarios.
+# Se utilizan TypedDict para proporcionar estructura y autocompletado a los
+# diccionarios que definen los payloads y casos de prueba.
 
 class FiltersPayload(TypedDict, total=False):
     """Define la estructura del objeto de filtros (todas las claves son opcionales)."""
@@ -30,21 +31,22 @@ class TestCase(TypedDict):
 
 
 # --- Lógica de Verificación (copiada y adaptada del backend) ---
-# Esto es para no tener que importar desde la app y mantener el script independiente.
+# Funciones de utilidad para parsear y comparar rangos de tiempo.
 
 def _parse_time(time_str: str) -> time:
+    """Convierte una cadena 'HH:MM' en un objeto 'datetime.time'."""
     parts = time_str.split(':')
     return time(hour=int(parts[0]), minute=int(parts[1]))
 
 def _parse_time_range(time_range_str: str) -> Tuple[time, time]:
+    """Convierte una cadena 'HH:MM - HH:MM' en una tupla de objetos 'datetime.time'."""
     start_str, end_str = time_range_str.split(' - ')
     return _parse_time(start_str.strip()), _parse_time(end_str.strip())
 
-# SOLUCIÓN: Especificar los tipos de clave y valor para Dict.
 def _schedules_overlap(schedule1: Dict[str, Any], schedule2: Dict[str, Any]) -> bool:
+    """Determina si dos franjas horarias en el mismo día se solapan."""
     if schedule1['day'] != schedule2['day']:
         return False
-    # El 'cast' ayuda al analizador a entender que el valor es un string.
     start1, end1 = _parse_time_range(cast(str, schedule1['time']))
     start2, end2 = _parse_time_range(cast(str, schedule2['time']))
     return start1 < end2 and end1 > start2
@@ -56,15 +58,12 @@ def check_for_conflicts(schedule: List[Dict[str, Any]]) -> bool:
             option1 = schedule[i]
             option2 = schedule[j]
 
-            # --- LÓGICA DE VERIFICACIÓN MEJORADA ---
-            # Replicamos la lógica del backend: si las dos clases son del mismo
-            # grupo y materia, no pueden entrar en conflicto entre sí.
-            # Se asume que el JSON de la API incluye 'subjectCode' y 'groupId'.
+            # Omite la comparación entre componentes de la misma materia y grupo,
+            # ya que por definición no pueden entrar en conflicto.
             if (option1.get('subjectCode') == option2.get('subjectCode') and
                 option1.get('groupId') == option2.get('groupId')):
-                continue # Saltar a la siguiente comparación, no hay conflicto posible aquí.
+                continue
 
-            # El 'cast' ayuda al analizador a entender que el valor es una lista.
             for s1 in cast(List[Dict[str, Any]], option1['schedules']):
                 for s2 in cast(List[Dict[str, Any]], option2['schedules']):
                     if _schedules_overlap(s1, s2):
@@ -72,16 +71,14 @@ def check_for_conflicts(schedule: List[Dict[str, Any]]) -> bool:
                         return True
     return False
 
-# SOLUCIÓN: Especificar los tipos de clave y valor para el diccionario de filtros.
 def check_filters(schedule: List[Dict[str, Any]], filters: Dict[str, Any]) -> bool:
     """Verifica si el horario cumple con los filtros aplicados, de forma insensible a mayúsculas/minúsculas."""
     
-    # --- 1. Agrupar clases por materia para una validación eficiente ---
     schedule_by_subject: Dict[str, List[Dict[str, Any]]] = {}
     for option in schedule:
         schedule_by_subject.setdefault(option['subjectCode'], []).append(option)
 
-    # --- 2. Verificación de EXCLUSIÓN de profesores (Case-Insensitive) ---
+    # Valida que no aparezcan profesores excluidos.
     if 'exclude_professors' in filters:
         exclude_filter = cast(Dict[str, List[str]], filters['exclude_professors'])
         for subject_code, excluded_profs_list in exclude_filter.items():
@@ -93,7 +90,7 @@ def check_filters(schedule: List[Dict[str, Any]], filters: Dict[str, Any]) -> bo
                         print(f"  [ERROR] Filtro de exclusión fallido: El profesor '{option['professor']}' está en el horario (NRC {option['nrc']}).")
                         return False
 
-    # --- 3. Verificación de INCLUSIÓN de profesores (Case-Insensitive) ---
+    # Valida que solo aparezcan los profesores incluidos.
     if 'include_professors' in filters:
         include_filter = cast(Dict[str, List[str]], filters['include_professors'])
         for subject_code, included_profs_list in include_filter.items():
@@ -105,10 +102,9 @@ def check_filters(schedule: List[Dict[str, Any]], filters: Dict[str, Any]) -> bo
                     print(f"  [ERROR] Filtro de inclusión fallido: Ninguno de los profesores deseados para {subject_code} está en el horario.")
                     return False
 
-    # --- 4. Verificación de HORAS NO DISPONIBLES (Case-Insensitive para los días) ---
+    # Valida que ninguna clase ocupe una franja horaria marcada como no disponible.
     if 'unavailable_slots' in filters:
         unavailable_slots = cast(Dict[str, List[str]], filters.get('unavailable_slots', {}))
-        # Normalizamos las claves del filtro (días) a minúsculas
         unavailable_slots_lower = {day.lower(): times for day, times in unavailable_slots.items()}
 
         for option in schedule:
@@ -125,24 +121,20 @@ def check_filters(schedule: List[Dict[str, Any]], filters: Dict[str, Any]) -> bo
     return True
 
 
-# --- NUEVA FUNCIÓN PARA VERIFICAR LA FUSIÓN ---
 def check_fusion(schedule: List[Dict[str, Any]], fusion_config: Dict[str, Any]) -> bool:
     """Verifica si la fusión de NRCs para una materia específica ocurrió como se esperaba."""
     subject_to_check = fusion_config.get("subjectCode")
     if not subject_to_check:
-        return True # No hay nada que verificar
+        return True
 
     classes_for_subject = [opt for opt in schedule if opt.get('subjectCode') == subject_to_check]
     
     if not classes_for_subject:
-        # Si la materia no está en el horario, no podemos verificar la fusión.
-        # Esto puede ser válido si ningún horario la contenía.
         return True
 
-    # Contamos el número total de clases (NRCs) para la materia.
     nrc_count = len(classes_for_subject)
 
-    # Creamos una "huella" para cada franja horaria única.
+    # Crea un conjunto de franjas horarias únicas para la materia.
     time_slots: set[str] = set()
     for option in classes_for_subject:
         for s in cast(List[Dict[str, Any]], option['schedules']):
@@ -155,23 +147,20 @@ def check_fusion(schedule: List[Dict[str, Any]], fusion_config: Dict[str, Any]) 
         print(f"  [OK] Fusión detectada para {subject_to_check}: {nrc_count} NRCs en {unique_slots_count} franjas horarias.")
         return True
     
-    # Si no hay fusión, podría ser porque solo había un lab disponible.
-    # Esta prueba solo confirma que si hay fusión, es correcta.
-    # No falla si no hay fusión, ya que puede ser un escenario válido.
     return True
 
 # --- Casos de Prueba ---
 API_URL = "http://127.0.0.1:8000/api/schedules/generate"
 
-# SOLUCIÓN: Aplicamos el tipo 'TestCase' a nuestra lista de casos de prueba.
+# Lista de escenarios de prueba a ejecutar contra la API.
 test_cases: List[TestCase] = [
     {
         "name": "1. Generación Básica y Verificación de Fusión",
         "payload": {
-            "subjects": ["CBASF02A", "ISCOC04A", "CBASM05A", "CHUMH02A"], # Esta materia tiene labs para fusionar
+            "subjects": ["CBASF02A", "ISCOC04A", "CBASM05A", "CHUMH02A"],
             "filters": {}
         },
-        "fusion_check": {"subjectCode": "CBASF02A"} # Configuración para la verificación de fusión
+        "fusion_check": {"subjectCode": "CBASF02A"}
     },
     {
         "name": "2. Filtro de Exclusión de Profesor",
@@ -179,7 +168,7 @@ test_cases: List[TestCase] = [
             "subjects": ["CBASF02A"],
             "filters": {
                 "exclude_professors": {
-                    "CBASF02A": ["HERNANDO RAFAEL ALTAMAR MERCADO"] # Usamos mayúsculas para probar la insensibilidad
+                    "CBASF02A": ["HERNANDO RAFAEL ALTAMAR MERCADO"]
                 }
             }
         }
@@ -190,7 +179,7 @@ test_cases: List[TestCase] = [
             "subjects": ["CBASF01A"],
             "filters": {
                 "include_professors": {
-                    "CBASF01A": ["vilma viviana ojeda caicedo"] # Usamos minúsculas
+                    "CBASF01A": ["vilma viviana ojeda caicedo"]
                 }
             }
         }
@@ -201,7 +190,7 @@ test_cases: List[TestCase] = [
             "subjects": ["CBASF01A"],
             "filters": {
                 "unavailable_slots": {
-                    "Martes": ["11:00"] # Bloqueamos Martes de 11 a 12
+                    "Martes": ["11:00"]
                 }
             }
         }
@@ -209,7 +198,7 @@ test_cases: List[TestCase] = [
     {
         "name": "5. Generación con Múltiples Materias",
         "payload": {
-            "subjects": ["CBASF01A", "CHUMH02A"], # Añadir otra materia
+            "subjects": ["CBASF01A", "CHUMH02A"],
             "filters": {}
         }
     }
@@ -217,6 +206,10 @@ test_cases: List[TestCase] = [
 
 # --- Script Principal ---
 def main():
+    """
+    Ejecuta todos los casos de prueba definidos, llamando a la API y
+    validando cada horario generado contra las reglas de negocio.
+    """
     total_errors = 0
     for case in test_cases:
         print(f"\n{'='*20} INICIANDO CASO DE PRUEBA: {case['name']} {'='*20}")
@@ -244,7 +237,6 @@ def main():
             print(f"\n--- Verificando Horario #{i+1} ---")
             
             has_conflict = check_for_conflicts(schedule)
-            # SOLUCIÓN: Usamos 'cast' para asegurar al analizador que los TypedDict son compatibles.
             meets_filters = check_filters(schedule, cast(Dict[str, Any], case['payload']['filters']))
             fusion_ok = check_fusion(schedule, cast(Dict[str, Any], case.get("fusion_check", {})))
 
