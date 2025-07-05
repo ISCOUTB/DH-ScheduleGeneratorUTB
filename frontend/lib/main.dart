@@ -7,11 +7,8 @@ import 'models/class_option.dart';
 import 'widgets/search_widget.dart';
 import 'widgets/schedule_grid_widget.dart';
 import 'widgets/filter_widget.dart';
-import 'pages/auth_callback_page.dart';
 import 'package:url_strategy/url_strategy.dart';
-import 'widgets/user_menu_button.dart';
 import 'services/api_service.dart';
-import 'services/auth_service.dart';
 import 'widgets/subjects_panel.dart';
 import 'widgets/main_actions_panel.dart';
 import 'widgets/schedule_overview_widget.dart';
@@ -58,8 +55,6 @@ class MyApp extends StatelessWidget {
       // Define las rutas de navegación de la aplicación.
       routes: {
         '/': (context) => const MyHomePage(title: 'Generador de Horarios UTB'),
-        '/auth': (context) =>
-            const AuthCallbackPage(), // Página de callback para autenticación.
       },
     );
   }
@@ -76,7 +71,7 @@ class MyHomePage extends StatefulWidget {
 /// Estado de [MyHomePage]. Contiene toda la lógica de la interfaz.
 class _MyHomePageState extends State<MyHomePage> {
   // Servicios para la autenticación y la comunicación con la API.
-  final AuthService _authService = AuthService();
+  // final AuthService _authService = AuthService(); // ELIMINADO
   final ApiService _apiService = ApiService(); // Instancia de ApiService
 
   // Paleta de colores para asignar a las materias en el horario.
@@ -142,12 +137,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-
-    // Redirige al login si el usuario no está autenticado.
-    if (!_authService.isUserLoggedIn()) {
-      _authService.login();
-      return;
-    }
 
     // Carga la lista de todas las materias al iniciar.
     _loadAllSubjects();
@@ -269,12 +258,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
 
     try {
-      // --- LLAMADA CORREGIDA ---
-      // Ahora coincide con la firma de ApiService
+      // Mapea las materias agregadas a sus códigos para enviarlas a la API.
       final schedules = await _apiService.generateSchedules(
-        subjects: addedSubjects, // Corregido
+        subjects: addedSubjects, // Lista de materias seleccionadas
+        // Filtros aplicados por el usuario, formateados para la API.
         filters: apiFiltersForGeneration,
-        creditLimit: creditLimit, // Corregido
+        creditLimit: creditLimit, // Límite de créditos para la generación
       );
 
       if (mounted) {
@@ -308,7 +297,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  /// Cierra el overlay de la vista detallada del horario.
+  // Cierra el overlay de la vista detallada del horario.
   void closeScheduleOverview() {
     setState(() {
       isOverviewOpen = false;
@@ -317,7 +306,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final userName = _authService.getUserNameFromToken();
     // Stack principal para poder mostrar overlays sobre la pantalla principal.
     return Stack(
       children: [
@@ -327,12 +315,17 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: const Color(0xFF0051FF),
             elevation: 0,
             title: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                UserMenuButton(
-                    userName: userName,
-                    onLogout: _authService.logout), // Usa el servicio
+                CircleAvatar(
+                  backgroundColor: Color(0xFF8CFF62),
+                  child: const Icon(
+                    Icons.calendar_today,
+                    color: Colors.white,
+                  ),
+                ),
                 const SizedBox(width: 12),
-                const Text("Generador de Horarios",
+                const Text("Generador de Horarios UTB",
                     style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,

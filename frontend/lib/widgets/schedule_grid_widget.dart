@@ -35,56 +35,52 @@ class ScheduleGridWidget extends StatelessWidget {
     // Genera un mapa de colores único para cada materia.
     Map<String, Color> subjectColors = _generateSubjectColors();
 
-    // SOLUCIÓN: Envolver con ScrollConfiguration para ocultar la barra de scroll.
-    return ScrollConfiguration(
-      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Ajusta la relación de aspecto para una mejor visualización en móviles.
-          double childAspectRatio = mobile ? 2.5 : 1.5; // Mayor ratio en móvil
-  
-          return GridView.builder(
-            physics: const ClampingScrollPhysics(),
-            itemCount: allSchedules.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: crossAxisCount,
-              childAspectRatio: childAspectRatio,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemBuilder: (context, index) {
-              // El MouseRegion para el cursor de mano ya está correcto.
-              return MouseRegion(
-                cursor: SystemMouseCursors.click, // Esto muestra la "manita".
-                child: GestureDetector(
-                  onTap: () => onScheduleTap(index),
-                  child: Card(
-                    elevation: 2,
-                    margin: const EdgeInsets.all(8),
-                    shape: RoundedRectangleBorder(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Ajusta la relación de aspecto para una mejor visualización en móviles.
+        double childAspectRatio = mobile ? 2.5 : 1.5; // Mayor ratio en móvil
+
+        return GridView.builder(
+          // physics: const ClampingScrollPhysics(), // Puedes cambiar esto si quieres otro efecto de scroll
+          itemCount: allSchedules.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: childAspectRatio,
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+          ),
+          itemBuilder: (context, index) {
+            //MouseRegion 
+            return MouseRegion(
+              cursor: SystemMouseCursors.click, 
+              child: GestureDetector(
+                onTap: () => onScheduleTap(index),
+                child: Card(
+                  elevation: 2,
+                  margin: const EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10), // Esquinas redondeadas
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
                       borderRadius:
                           BorderRadius.circular(10), // Esquinas redondeadas
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(10), // Esquinas redondeadas
-                        border: Border.all(
-                          color: Colors.white, // Color del borde
-                          width: 2, // Ancho del borde
-                        ),
+                      border: Border.all(
+                        color: Colors.white, // Color del borde
+                        width: 2, // Ancho del borde
                       ),
-                      // Construye la vista previa visual del horario.
-                      child:
-                          buildSchedulePreview(allSchedules[index], subjectColors),
                     ),
+                    // Construye la vista previa visual del horario.
+                    child:
+                        buildSchedulePreview(allSchedules[index], subjectColors),
                   ),
                 ),
-              );
-            },
-          );
-        },
-      ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -165,34 +161,35 @@ class ScheduleGridWidget extends StatelessWidget {
         return Column(
           children: [
             // Fila de encabezado con los nombres de los días.
-            Row(
-              children: [
-                SizedBox(
-                  width: hourColumnWidth,
-                  child: const Text(''),
-                ),
-                ...days.map((day) => SizedBox(
-                      width: dayColumnWidth,
-                      child: Center(
-                        child: Text(
-                          day,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: fontSize * 0.8,
+            SizedBox(
+              height: cellHeight,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: hourColumnWidth,
+                    child: const Text(''),
+                  ),
+                  ...days.map((day) => SizedBox(
+                        width: dayColumnWidth,
+                        child: Center(
+                          child: Text(
+                            day,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: fontSize * 0.8,
+                            ),
                           ),
                         ),
-                      ),
-                    )),
-              ],
+                      )),
+                ],
+              ),
             ),
             // Cuerpo de la cuadrícula con las horas y las clases.
             Expanded(
-              child: ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: timeSlots.length,
-                itemBuilder: (context, rowIndex) {
-                  String time = timeSlots[rowIndex];
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: timeSlots.map((time) {
                   return Row(
                     children: [
                       // Columna de horas.
@@ -254,7 +251,7 @@ class ScheduleGridWidget extends StatelessWidget {
                       }).toList(),
                     ],
                   );
-                },
+                }).toList(),
               ),
             ),
           ],
