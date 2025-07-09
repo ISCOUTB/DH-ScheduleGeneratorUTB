@@ -1,7 +1,8 @@
 // lib/widgets/schedule_overview_widget.dart
 import 'package:flutter/material.dart';
 import '../models/class_option.dart';
-import 'package:excel/excel.dart' as excel; 
+import '../models/schedule.dart';
+import 'package:excel/excel.dart' as excel;
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
@@ -28,6 +29,24 @@ class ScheduleOverviewWidget extends StatefulWidget {
 
   @override
   _ScheduleOverviewWidgetState createState() => _ScheduleOverviewWidgetState();
+}
+
+String formattingSchedulesInPairs(List<Schedule> horarios) {
+  List<String> lineas = [];
+  for (int i = 0; i < horarios.length; i += 2) {
+    String linea = '${horarios[i].day} ${horarios[i].time}';
+    if (i + 1 < horarios.length) {
+      linea += ' | ${horarios[i + 1].day} ${horarios[i + 1].time}';
+    }
+    lineas.add(linea);
+  }
+  // Alineamos todas las líneas debajo de la primera con sangría
+  String sangria = '               '; // mismo largo que 'Horario: '
+  return lineas
+      .asMap()
+      .entries
+      .map((entry) => entry.key == 0 ? entry.value : '$sangria${entry.value}')
+      .join('\n');
 }
 
 class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
@@ -177,7 +196,8 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                                       fontWeight: FontWeight.w600)),
                               subtitle: Text(
                                 'Profesor: ${option.professor}\n'
-                                'Horario: ${option.schedules.map((s) => '${s.day} ${s.time}').join(" | ")}\n'
+                                'Horario: ${formattingSchedulesInPairs(option.schedules)}\n'
+                                'Campus: ${option.campus}\n'
                                 'Créditos: ${option.credits}',
                               ),
                             );

@@ -31,29 +31,30 @@ def _get_option_combinations(class_options: List[ClassOption]) -> List[List[Clas
     Una combinación puede ser una clase 'Teorico-practico' o un par 'Teórico' y 'Laboratorio'.
     """
     options_by_group: Dict[int, List[ClassOption]] = {}
+
+    # Se convierte la lista a un diccionario agrupado por group_id. 
     for option in class_options:
         options_by_group.setdefault(option.group_id, []).append(option)
-
-    # SOLUCIÓN: Especificar el tipo de la lista al inicializarla
+        
     combinations: List[List[ClassOption]] = []
-    # SOLUCIÓN: Usar '_' para la variable no utilizada
-    for _, group_options in options_by_group.items():
+
+    for group_options in options_by_group.values():
         teoricas = [opt for opt in group_options if opt.type == 'Teórico']
         labs = [opt for opt in group_options if opt.type == 'Laboratorio']
         teorico_practicas = [opt for opt in group_options if opt.type == 'Teorico-practico']
 
-        if teorico_practicas:
-            for tp in teorico_practicas:
-                combinations.append([tp])
+        # Combinaciones de clases 'Teorico-practico' (cada una es una combinación en sí misma)
+        combinations.extend([[tp] for tp in teorico_practicas])
         
+        # Combinaciones de 'Teórico' + 'Laboratorio'
         if teoricas and labs:
-            for t in teoricas:
-                for l in labs:
-                    combinations.append([t, l])
+            combinations.extend([[t, l] for t in teoricas for l in labs])
+        # Combinaciones de 'Teórico' solo
         elif teoricas:
-            for t in teoricas:
-                combinations.append([t])
-        # Ignoramos laboratorios solos, como sucedía en la lógica original
+            combinations.extend([[t] for t in teoricas])
+        # Combinaciones de 'Laboratorio' solo
+        elif labs:
+            combinations.extend([[l] for l in labs])
 
     return combinations
 
@@ -80,13 +81,27 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
         SELECT 
             m.CodigoMateria, m.Nombre AS NombreMateria, m.Creditos,
             c.NRC, c.Tipo, c.GroupID, p.Nombre AS NombreProfesor,
-            cl.Dia, cl.HoraInicio, cl.HoraFinal
+            cl.Dia, cl.HoraInicio, cl.HoraFinal, c.Campus
         FROM Materia m
         JOIN Curso c ON m.CodigoMateria = c.CodigoMateria
         LEFT JOIN Profesor p ON c.ProfesorID = p.BannerID
         LEFT JOIN Clase cl ON cl.NRC = c.NRC
         WHERE m.CodigoMateria = ANY(%s)
-        ORDER BY m.CodigoMateria, c.GroupID, c.NRC, cl.Dia, cl.HoraInicio;
+        ORDER BY 
+            m.CodigoMateria,
+            c.GroupID,
+            c.NRC,
+            CASE cl.Dia
+                WHEN 'Lunes' THEN 1
+                WHEN 'Martes' THEN 2
+                WHEN 'Miércoles' THEN 3
+                WHEN 'Jueves' THEN 4
+                WHEN 'Viernes' THEN 5
+                WHEN 'Sábado' THEN 6
+                WHEN 'Domingo' THEN 7
+                ELSE 8
+            END,
+            cl.HoraInicio;
     """
     
     # Ejecuta la consulta de forma segura.
@@ -102,7 +117,7 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
     for row in rows:
         (
             code, name, credits, nrc_val, tipo, group_id,
-            profesor, dia, hora_inicio, hora_final
+            profesor, dia, hora_inicio, hora_final, campus
         ) = row
         
         nrc = str(nrc_val)
@@ -119,7 +134,8 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
                 professor=profesor or "Por Asignar",
                 nrc=nrc,
                 groupId=group_id,
-                credits=credits
+                credits=credits,
+                campus=campus
             )
             class_options_dict[nrc] = new_option
             all_options_by_subject[code].append(new_option)
@@ -153,17 +169,32 @@ def get_subject_by_code(subject_code: str) -> Subject | None:
     )
     cursor = conn.cursor()
 
+    # Consulta SQL para obtener los detalles de la materia y sus opciones de clase.
     query = """
         SELECT 
             m.CodigoMateria, m.Nombre AS NombreMateria, m.Creditos,
             c.NRC, c.Tipo, c.GroupID, p.Nombre AS NombreProfesor,
-            cl.Dia, cl.HoraInicio, cl.HoraFinal
+            cl.Dia, cl.HoraInicio, cl.HoraFinal, c.campus
         FROM Materia m
         JOIN Curso c ON m.CodigoMateria = c.CodigoMateria
         LEFT JOIN Profesor p ON c.ProfesorID = p.BannerID
         LEFT JOIN Clase cl ON cl.NRC = c.NRC
         WHERE m.CodigoMateria = %s
-        ORDER BY c.GroupID, c.NRC, cl.Dia, cl.HoraInicio;
+        ORDER BY 
+            m.CodigoMateria,
+            c.GroupID,
+            c.NRC,
+            CASE cl.Dia
+                WHEN 'Lunes' THEN 1
+                WHEN 'Martes' THEN 2
+                WHEN 'Miércoles' THEN 3
+                WHEN 'Jueves' THEN 4
+                WHEN 'Viernes' THEN 5
+                WHEN 'Sábado' THEN 6
+                WHEN 'Domingo' THEN 7
+                ELSE 8
+            END,
+            cl.HoraInicio;
     """
     
     cursor.execute(query, (subject_code,))
@@ -187,7 +218,7 @@ def get_subject_by_code(subject_code: str) -> Subject | None:
     for row in rows:
         (
             code, name, credits, nrc_val, tipo, group_id,
-            profesor, dia, hora_inicio, hora_final
+            profesor, dia, hora_inicio, hora_final, campus
         ) = row
         
         nrc = str(nrc_val)
@@ -201,7 +232,8 @@ def get_subject_by_code(subject_code: str) -> Subject | None:
                 professor=profesor or "Por Asignar",
                 nrc=nrc,
                 groupId=group_id,
-                credits=credits
+                credits=credits,
+                campus=campus
             )
             class_options_dict[nrc] = new_option
 

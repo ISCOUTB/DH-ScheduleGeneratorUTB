@@ -16,6 +16,7 @@ def exportar_subjects_a_json():
             c.NRC,
             c.Tipo,
             c.GroupID,
+            c.Campus,
             p.Nombre AS Profesor,
             cl.Dia,
             cl.HoraInicio,
@@ -24,7 +25,21 @@ def exportar_subjects_a_json():
         JOIN Curso c ON m.CodigoMateria = c.CodigoMateria
         LEFT JOIN Profesor p ON c.ProfesorID = p.BannerID
         LEFT JOIN Clase cl ON cl.NRC = c.NRC
-        ORDER BY m.CodigoMateria, c.GroupID, c.NRC, cl.Dia, cl.HoraInicio
+        ORDER BY 
+        m.CodigoMateria,
+        c.GroupID,
+        c.NRC,
+        CASE cl.Dia
+            WHEN 'Lunes' THEN 1
+            WHEN 'Martes' THEN 2
+            WHEN 'Miércoles' THEN 3
+            WHEN 'Jueves' THEN 4
+            WHEN 'Viernes' THEN 5
+            WHEN 'Sábado' THEN 6
+            WHEN 'Domingo' THEN 7
+            ELSE 8
+        END,
+        cl.HoraInicio;
     """)
 
     rows = cursor.fetchall()
@@ -33,7 +48,7 @@ def exportar_subjects_a_json():
     subjects_dict: dict[str, dict] = {}
 
     for row in rows:
-        code, name, credits, nrc, tipo, group_id, profesor, dia, hora_inicio, hora_final = row
+        code, name, credits, nrc, tipo, group_id, campus, profesor, dia, hora_inicio, hora_final = row
 
         # Inicializar materia si es nueva
         if code not in subjects_dict:
@@ -55,6 +70,7 @@ def exportar_subjects_a_json():
                 "credits": credits,
                 "professor": profesor or "",
                 "nrc": str(nrc),
+                "campus": campus or "",
                 "groupId": group_id,
                 "schedules": []
             }

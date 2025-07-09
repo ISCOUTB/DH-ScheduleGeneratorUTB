@@ -30,7 +30,7 @@ class TestCase(TypedDict):
     fusion_check: NotRequired[FusionCheckConfig] # 'NotRequired' indica que esta clave es opcional.
 
 
-# --- Lógica de Verificación (copiada y adaptada del backend) ---
+# --- Lógica de Verificación ---
 # Funciones de utilidad para parsear y comparar rangos de tiempo.
 
 def _parse_time(time_str: str) -> time:

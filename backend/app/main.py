@@ -26,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- AÑADIR ESTA LÍNEA PARA INCLUIR LAS NUEVAS RUTAS ---
+# Ruta añadida para resolver problemática
 app.include_router(subject_routes.router)
 
 
@@ -70,7 +70,10 @@ def generate_schedules_endpoint(request: GenerateScheduleRequest):
 
 @app.get("/subjects")
 def get_subject_data():
-    filepath = os.path.join(os.path.dirname(__file__), "shared_data", "subject_data.json")
+    BASE_DIR = os.path.join(os.path.dirname(__file__), "..")
+    IMPORT_DIR = os.path.join(BASE_DIR, "scripts/shared_data")
+    os.makedirs(IMPORT_DIR, exist_ok=True)
+    filepath = os.path.join(IMPORT_DIR, "subject_data.json")
     if os.path.exists(filepath):
         with open(filepath, "r", encoding="utf-8") as f:
             content = f.read()

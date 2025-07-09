@@ -10,6 +10,7 @@ class ClassOption {
   final String nrc;
   final int groupId;
   final int credits;
+  final String campus;
 
   ClassOption({
     required this.subjectName,
@@ -20,6 +21,7 @@ class ClassOption {
     required this.nrc,
     required this.groupId,
     required this.credits,
+    required this.campus,
   });
 
   factory ClassOption.fromJson(Map<String, dynamic> json) {
@@ -33,6 +35,7 @@ class ClassOption {
       nrc: json['nrc'],
       groupId: json['groupId'],
       credits: json['credits'],
+      campus: json['campus'],
     );
   }
 }

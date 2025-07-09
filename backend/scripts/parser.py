@@ -28,6 +28,7 @@ def procesar_json(data):
         is_linked = entrada.get('isSectionLinked', False)
         tipo = entrada['scheduleTypeDescription'].strip().upper()
         tipo_formateado = 'Teórico' if tipo == 'TEORICO' else 'Laboratorio'
+        campus = entrada['campusDescription']
         nrc = int(entrada['courseReferenceNumber'])
 
         # Materia
@@ -60,8 +61,14 @@ def procesar_json(data):
         else:
             nrc_teorico = None
 
+        # Campus
+        if campus == None:
+            campus = "Sin información"
+        else:
+            campus = limpiar_nombre(campus)
+
         # Curso
-        cursos.append((nrc, tipo_formateado, subject_course, profesor_id, nrc_teorico, group_id))
+        cursos.append((nrc, tipo_formateado, subject_course, profesor_id, nrc_teorico, group_id, campus))
 
         # Clases
         for mf in entrada.get('meetingsFaculty', []):

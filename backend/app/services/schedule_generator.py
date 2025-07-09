@@ -11,16 +11,20 @@ from ..models import ClassOption, Schedule
 
 # --- Funciones de Ayuda para Manejar Tiempos ---
 
+# Convierte una cadena de texto 'HH:MM' a un objeto `time` de Python.
 def _parse_time(time_str: str) -> time:
     """Convierte una cadena de texto 'HH:MM' a un objeto `time`."""
     parts = time_str.split(':')
     return time(hour=int(parts[0]), minute=int(parts[1]))
 
+
+# Convierte un rango de tiempo 'HH:MM - HH:MM' a una tupla de objetos `time`.
 def _parse_time_range(time_range_str: str) -> Tuple[time, time]:
     """Convierte un rango de tiempo 'HH:MM - HH:MM' en una tupla de objetos `time`."""
     start_str, end_str = time_range_str.split(' - ')
     return _parse_time(start_str.strip()), _parse_time(end_str.strip())
 
+# --- Función para verificar solapamientos de horarios ---
 def _schedules_overlap(schedule1: Schedule, schedule2: Schedule) -> bool:
     """Verifica si dos bloques de clase se solapan en el tiempo."""
     if schedule1.day != schedule2.day:

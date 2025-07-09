@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 
 
 def descargar_json():
@@ -54,7 +55,9 @@ def descargar_json():
         page_offset += page_max_size
 
     # Guardar todos los resultados en un archivo JSON
-    with open("search_results_complete.json", "w", encoding="utf-8") as json_file:
+    EXPORT_DIR = os.path.join(os.path.dirname(__file__), "data_scrapped")
+    os.makedirs(EXPORT_DIR, exist_ok=True)
+    with open(f"{EXPORT_DIR}/search_results_complete.json", "w", encoding="utf-8") as json_file:
         json.dump({"data": all_results}, json_file, indent=4, ensure_ascii=False)
 
     print(f"Total cursos guardados: {len(all_results)} en 'search_results_complete.json'")

@@ -25,8 +25,9 @@ def respaldar_datos(conn):
         filas = cursor.fetchall()
         respaldo[tabla] = [serializar_fila(dict(zip(columnas, fila))) for fila in filas]
 
-    os.makedirs('respaldos', exist_ok=True)
-    nombre_archivo = f"respaldos/{timestamp_actual()}.json"
+    EXPORT_DIR = os.path.join(os.path.dirname(__file__), "respaldos")
+    os.makedirs(EXPORT_DIR, exist_ok=True)
+    nombre_archivo = f"{EXPORT_DIR}/{timestamp_actual()}.json"
     with open(nombre_archivo, 'w', encoding='utf-8') as f:
         json.dump(respaldo, f, ensure_ascii=False, indent=4)
 
@@ -43,8 +44,9 @@ def limpiar_tablas(conn):
 
 def hacer_snapshot():
     timestamp = timestamp_actual()
-    os.makedirs("snapshots", exist_ok=True)
-    archivo_salida = f"snapshots/snapshot_{timestamp}.sql"
+    EXPORT_DIR = os.path.join(os.path.dirname(__file__), "snapshots")
+    os.makedirs(EXPORT_DIR, exist_ok=True)
+    archivo_salida = f"{EXPORT_DIR}/snapshot_{timestamp}.sql"
 
     os.environ['PGPASSWORD'] = DB_CONFIG['password']
 

@@ -9,14 +9,17 @@ from inserter import insertar_datos
 def guardar_log(errores):
     if not errores:
         return
-    os.makedirs("logs", exist_ok=True)
-    with open("logs/log.txt", "a", encoding="utf-8") as f:
+    EXPORT_DIR = os.path.join(os.path.dirname(__file__), "logs")
+    os.makedirs(EXPORT_DIR, exist_ok=True)
+    with open(f"{EXPORT_DIR}/log.txt", "a", encoding="utf-8") as f:
         for err in errores:
             f.write(err + "\n")
-    print(f"Se registraron {len(errores)} errores en logs/log.txt")
+    print(f"Se registraron {len(errores)} errores en {EXPORT_DIR}/log.txt")
 
 def actualizar_base():
-    ruta_json = os.path.join(os.path.dirname(__file__), "search_results_complete.json")
+    IMPORT_DIR = os.path.join(os.path.dirname(__file__), "data_scrapped")
+    os.makedirs(IMPORT_DIR, exist_ok=True)
+    ruta_json = os.path.join(IMPORT_DIR, "search_results_complete.json")
     if not os.path.exists(ruta_json):
         raise FileNotFoundError("No se encontró el archivo search_results_complete.json")
 
