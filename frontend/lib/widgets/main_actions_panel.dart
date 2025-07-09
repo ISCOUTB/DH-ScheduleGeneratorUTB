@@ -42,40 +42,40 @@ class MainActionsPanel extends StatelessWidget {
             // Botón para realizar filtro.
             Expanded(
                 child: _MainCardButton(
-                    color: const Color(0xFF0051FF),
+                    color: const Color(0xFFB833FF),
                     icon: Icons.filter_alt,
                     label: "Realizar filtro",
                     onTap: onFilter)),
             const SizedBox(width: 20),
-            // Botón para limpiar horarios.
+            // Botón para generar horarios.
             Expanded(
                 child: _MainCardButton(
-                    color: const Color(0xFFFF2F2F),
-                    icon: Icons.delete_outline,
-                    label: "Limpiar Horarios",
-                    onTap: onClear)),
+                    color: const Color(0xFF8CFF62),
+                    icon: Icons.calendar_month,
+                    label: "Generar Horarios",
+                    onTap: onGenerate)),
           ],
         ),
         const SizedBox(height: 28),
-        // Botón principal para generar horarios.
+        // Botón principal para limpiar horarios.
         SizedBox(
           height: 60,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8CFF62),
+                backgroundColor: const Color(0xFFFF2F2F),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16))),
-            onPressed: onGenerate,
+            onPressed: onClear,
             child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Generar Horarios",
+                Text("Limpiar Horarios",
                     style: TextStyle(
                         fontSize: 20,
-                        color: Colors.black,
+                        color: Colors.white,
                         fontWeight: FontWeight.bold)),
                 SizedBox(width: 10),
-                Icon(Icons.calendar_month, color: Colors.black),
+                Icon(Icons.delete_outline, color: Colors.white),
               ],
             ),
           ),

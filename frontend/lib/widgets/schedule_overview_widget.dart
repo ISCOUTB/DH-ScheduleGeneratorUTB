@@ -100,9 +100,9 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      // Aumentamos el ancho para acomodar el diseño de dos columnas
+      // Aumenta el ancho para acomodar el diseño de dos columnas
       child: Container(
-        width: 1100,
+        width: 1200,
         height: MediaQuery.of(context).size.height * 0.85,
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -321,45 +321,74 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   /// Crea la lista de widgets (bloques) que representan cada clase en la cuadrícula.
   List<Widget> _buildClassBlocks(double hourRowHeight, double dayColumnWidth) {
     List<Widget> blocks = [];
+    
+    // Agrupa las clases por día y hora para detectar superposiciones
+    Map<String, List<ClassOption>> classesByDayAndTime = {};
+    
     for (var classOption in widget.schedule) {
-      final color = subjectColors[classOption.subjectName] ?? Colors.grey;
       for (var scheduleItem in classOption.schedules) {
-        final dayIndex = days.indexOf(scheduleItem.day);
-        if (dayIndex == -1) continue;
+        String key = '${scheduleItem.day}_${scheduleItem.time}';
+        if (!classesByDayAndTime.containsKey(key)) {
+          classesByDayAndTime[key] = [];
+        }
+        classesByDayAndTime[key]!.add(classOption);
+      }
+    }
+    
+    // Procesa cada grupo de clases
+    for (var entry in classesByDayAndTime.entries) {
+      String key = entry.key;
+      List<ClassOption> overlappingClasses = entry.value;
+      
+      String day = key.split('_')[0];
+      String time = key.split('_')[1];
+      
+      final dayIndex = days.indexOf(day);
+      if (dayIndex == -1) continue;
 
-        // Calcula la posición y el tamaño del bloque en función de la hora y el día.
-        final timeRange = parseTimeRange(scheduleItem.time);
-        final startHour = timeRange.start.hour + timeRange.start.minute / 60.0;
-        final endHour = timeRange.end.hour + timeRange.end.minute / 60.0;
+      // Calcula la posición y el tamaño del bloque en función de la hora y el día.
+      final timeRange = parseTimeRange(time);
+      final startHour = timeRange.start.hour + timeRange.start.minute / 60.0;
+      final endHour = timeRange.end.hour + timeRange.end.minute / 60.0;
 
-        final top = (startHour - 7) * hourRowHeight;
-        final height = (endHour - startHour) * hourRowHeight;
-        final left = dayIndex * dayColumnWidth;
+      final top = (startHour - 7) * hourRowHeight;
+      final height = (endHour - startHour) * hourRowHeight;
+      final left = dayIndex * dayColumnWidth;
 
-        if (top >= 0 && height > 0) {
-          blocks.add(
-            Positioned(
-              top: top,
-              left: left,
-              width: dayColumnWidth - 2, // Margen para evitar superposición
-              height: height,
-              child: Container(
-                margin: const EdgeInsets.all(1),
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(4),
+      if (top >= 0 && height > 0) {
+        // Obtener el color de la primera clase (todas las clases superpuestas de la misma materia tendrán el mismo color)
+        final color = subjectColors[overlappingClasses.first.subjectName] ?? Colors.grey;
+        
+        // Crear un texto con todos los NRC separados por nueva línea
+        String allNRCs = overlappingClasses.map((classOption) => classOption.nrc).join('\n');
+        
+        blocks.add(
+          Positioned(
+            top: top,
+            left: left,
+            width: dayColumnWidth - 2, // Margen para evitar superposición
+            height: height,
+            child: Container(
+              margin: const EdgeInsets.all(1),
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                allNRCs,
+                style: const TextStyle(
+                  color: Colors.white, 
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
                 ),
-                child: Text(
-                  classOption.subjectName,
-                  style: const TextStyle(color: Colors.white, fontSize: 10),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                ),
+                overflow: TextOverflow.ellipsis,
+                maxLines: overlappingClasses.length, // Permitir tantas líneas como NRC haya
+                textAlign: TextAlign.left,
               ),
             ),
-          );
-        }
+          ),
+        );
       }
     }
     return blocks;
