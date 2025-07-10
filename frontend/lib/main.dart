@@ -12,6 +12,7 @@ import 'services/api_service.dart';
 import 'widgets/subjects_panel.dart';
 import 'widgets/main_actions_panel.dart';
 import 'widgets/schedule_overview_widget.dart';
+import 'widgets/schedule_sort_widget.dart';
 
 /// Punto de entrada principal de la aplicación.
 void main() {
@@ -125,6 +126,13 @@ class _MyHomePageState extends State<MyHomePage> {
   // Filtros aplicados por el usuario.
   Map<String, dynamic> appliedFilters = {}; // Para mantener el estado de la UI de filtros.
   Map<String, dynamic> apiFiltersForGeneration = {}; // Para enviar a la API.
+  
+  // Opciones de optimización de horarios
+  Map<String, dynamic> currentOptimizations = {
+    'optimizeGaps': false,
+    'optimizeFreeDays': false,
+  };
+  
   late FocusNode _focusNode;
 
   /// Comprueba si la plataforma es móvil.
@@ -202,6 +210,9 @@ class _MyHomePageState extends State<MyHomePage> {
         SnackBar(content: Text('Materia agregada: ${subject.name}')),
       );
     });
+
+    // Generar horarios automáticamente al agregar una materia
+    generateSchedule();
   }
 
   /// Elimina una materia de la lista de seleccionadas.
@@ -215,17 +226,53 @@ class _MyHomePageState extends State<MyHomePage> {
         SnackBar(content: Text('Materia eliminada: ${subject.name}')),
       );
     });
+
+    // Generar horarios automáticamente al eliminar una materia
+    // Si quedan materias, regenerar; si no, limpiar los horarios
+    if (addedSubjects.isNotEmpty) {
+      generateSchedule();
+    } else {
+      setState(() {
+        allSchedules.clear();
+        selectedScheduleIndex = null;
+      });
+    }
   }
 
-  /// Limpia la lista de horarios generados.
+  /// Limpia completamente el estado de la aplicación.
   void clearSchedules() {
     setState(() {
+      // Limpiar horarios generados
       allSchedules.clear();
       selectedScheduleIndex = null;
+      
+      // Limpiar materias seleccionadas
+      addedSubjects.clear();
+      usedCredits = 0;
+      
+      // Limpiar filtros aplicados
+      appliedFilters.clear();
+      apiFiltersForGeneration.clear();
+      
+      // Resetear opciones de optimización
+      currentOptimizations = {
+        'optimizeGaps': false,
+        'optimizeFreeDays': false,
+      };
+      
+      // Cerrar todos los paneles abiertos
+      isSearchOpen = false;
+      isFilterOpen = false;
+      isOverviewOpen = false;
+      isExpandedView = false;
+      isFullExpandedView = false;
+      
+      // Limpiar el controlador de búsqueda
+      subjectController.clear();
     });
     showCustomNotification(
-        context, 'Los horarios generados han sido limpiados.',
-        icon: Icons.info, color: Colors.green);
+        context, 'Aplicación reiniciada completamente.',
+        icon: Icons.refresh, color: Colors.green);
   }
 
   /// Aplica los filtros seleccionados y regenera los horarios si hay materias.
@@ -234,14 +281,17 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       // Guardamos los filtros para mantener el estado de la UI
       appliedFilters = stateFilters;
-      // Guardamos los filtros formateados para la API
-      apiFiltersForGeneration = apiFilters;
+      // Combinamos los filtros de la API con las optimizaciones actuales
+      apiFiltersForGeneration = {
+        ...apiFilters,
+        ...currentOptimizations,
+      };
       isFilterOpen = false;
     });
 
-    // Si hay materias, generamos el horario con los filtros listos para la API
+    // Si hay materias, regeneramos automáticamente el horario con los filtros
     if (addedSubjects.isNotEmpty) {
-      generateSchedule(); // Ya no se necesita pasar el parámetro
+      generateSchedule();
     }
   }
 
@@ -261,8 +311,11 @@ class _MyHomePageState extends State<MyHomePage> {
       // Mapea las materias agregadas a sus códigos para enviarlas a la API.
       final schedules = await _apiService.generateSchedules(
         subjects: addedSubjects, // Lista de materias seleccionadas
-        // Filtros aplicados por el usuario, formateados para la API.
-        filters: apiFiltersForGeneration,
+        // Combina filtros aplicados por el usuario con optimizaciones actuales
+        filters: {
+          ...apiFiltersForGeneration,
+          ...currentOptimizations,
+        },
         creditLimit: creditLimit, // Límite de créditos para la generación
       );
 
@@ -289,6 +342,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  /// Función placeholder para el botón "Generar Horarios" (sin funcionalidad)
+  void generateScheduleButtonAction() {
+    // Botón sin funcionalidad por ahora - se le dará otro uso más adelante
+    showCustomNotification(
+        context, 'Funcionalidad en desarrollo...',
+        icon: Icons.info, color: Colors.blue);
+  }
+
   /// Abre el overlay con la vista detallada de un horario específico.
   void openScheduleOverview(int index) {
     setState(() {
@@ -302,6 +363,23 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       isOverviewOpen = false;
     });
+  }
+
+  /// Maneja los cambios en las opciones de optimización de horarios.
+  void onOptimizationChanged(Map<String, dynamic> optimizations) {
+    setState(() {
+      currentOptimizations = optimizations;
+      // También actualizamos los filtros de la API para incluir las optimizaciones
+      apiFiltersForGeneration = {
+        ...apiFiltersForGeneration,
+        ...optimizations,
+      };
+    });
+
+    // Si hay horarios generados, los regeneramos con las nuevas optimizaciones
+    if (allSchedules.isNotEmpty && addedSubjects.isNotEmpty) {
+      generateSchedule();
+    }
   }
 
   @override
@@ -343,14 +421,74 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      if (!isExpandedView)
+                      if (!isExpandedView) ...[
+                        // Primera fila: Buscar, Filtrar, Generar
                         MainActionsPanel(
                           onSearch: () => setState(() => isSearchOpen = true),
                           onFilter: () => setState(() => isFilterOpen = true),
                           onClear: clearSchedules,
-                          onGenerate:
-                              generateSchedule, // Esto ahora es correcto
+                          onGenerate: generateScheduleButtonAction, // Ahora sin funcionalidad real
                         ),
+                        
+                        const SizedBox(height: 20),
+                        
+                        // Segunda fila: Ordenar Horarios por + Limpiar Todo
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            // Calculamos el ancho disponible
+                            double totalWidth = constraints.maxWidth;
+                            double spaceBetween = 20;
+                            double clearButtonWidth = (totalWidth - 2 * spaceBetween) / 3; // Mismo ancho que un botón de arriba
+                            double sortWidth = totalWidth - clearButtonWidth - spaceBetween;
+                            
+                            return Row(
+                              children: [
+                                // Widget de ordenamiento (ocupa espacio de 2 botones + espacio entre ellos)
+                                SizedBox(
+                                  width: sortWidth,
+                                  child: ScheduleSortWidget(
+                                    currentOptimizations: currentOptimizations,
+                                    onOptimizationChanged: onOptimizationChanged,
+                                    isEnabled: allSchedules.isNotEmpty,
+                                  ),
+                                ),
+                                SizedBox(width: spaceBetween),
+                                // Botón Limpiar Todo (mismo ancho que botón de arriba)
+                                SizedBox(
+                                  width: clearButtonWidth,
+                                  height: 60,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFFFF2F2F),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                    ),
+                                    onPressed: clearSchedules,
+                                    child: const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Limpiar todo",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        SizedBox(width: 8),
+                                        Icon(Icons.refresh, color: Colors.white, size: 20),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+                      
                       // Muestra la grilla de horarios o un mensaje de vista previa.
                       Expanded(
                         //Envolver con un Stack para superponer el contador.

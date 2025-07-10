@@ -27,60 +27,31 @@ class MainActionsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
-        Row(
-          children: [
-            // Botón para buscar materia.
-            Expanded(
-                child: _MainCardButton(
-                    color: const Color(0xFF0051FF),
-                    icon: Icons.search,
-                    label: "Buscar materia",
-                    onTap: onSearch)),
-            const SizedBox(width: 20),
-            // Botón para realizar filtro.
-            Expanded(
-                child: _MainCardButton(
-                    color: const Color(0xFFB833FF),
-                    icon: Icons.filter_alt,
-                    label: "Realizar filtro",
-                    onTap: onFilter)),
-            const SizedBox(width: 20),
-            // Botón para generar horarios.
-            Expanded(
-                child: _MainCardButton(
-                    color: const Color(0xFF8CFF62),
-                    icon: Icons.calendar_month,
-                    label: "Generar Horarios",
-                    onTap: onGenerate)),
-          ],
-        ),
-        const SizedBox(height: 28),
-        // Botón principal para limpiar horarios.
-        SizedBox(
-          height: 60,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF2F2F),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16))),
-            onPressed: onClear,
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Limpiar Horarios",
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold)),
-                SizedBox(width: 10),
-                Icon(Icons.delete_outline, color: Colors.white),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 28),
+        // Botón para buscar materia.
+        Expanded(
+            child: _MainCardButton(
+                color: const Color(0xFF0051FF),
+                icon: Icons.search,
+                label: "Agregar materia",
+                onTap: onSearch)),
+        const SizedBox(width: 20),
+        // Botón para realizar filtro.
+        Expanded(
+            child: _MainCardButton(
+                color: const Color(0xFFB833FF),
+                icon: Icons.filter_alt,
+                label: "Realizar filtro",
+                onTap: onFilter)),
+        const SizedBox(width: 20),
+        // Botón para tutorial.
+        Expanded(
+            child: _MainCardButton(
+                color: const Color(0xFF8CFF62),
+                icon: Icons.lightbulb_outline,
+                label: "Tutorial",
+                onTap: onGenerate)),
       ],
     );
   }

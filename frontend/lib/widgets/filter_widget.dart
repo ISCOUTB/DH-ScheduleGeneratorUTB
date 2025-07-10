@@ -1,10 +1,9 @@
 // lib/widgets/filter_widget.dart
 
-/// Widget para configurar filtros de profesores, horarios y optimización.
+/// Widget para configurar filtros de profesores y horarios.
 //
 /// Permite al usuario definir preferencias para la generación de horarios,
-/// incluyendo la selección de profesores, la definición de horas no disponibles
-/// y la configuración de opciones de optimización.
+/// incluyendo la selección de profesores y la definición de horas no disponibles.
 import 'package:flutter/material.dart';
 import '../models/subject.dart';
 import 'professor_filter_widget.dart';
@@ -45,12 +44,6 @@ class _FilterWidgetState extends State<FilterWidget> {
   /// Almacena las horas no disponibles por día.
   late Map<String, dynamic> _timeFilters;
 
-  /// Flag para optimizar y reducir los huecos entre clases.
-  late bool _optimizeGaps;
-
-  /// Flag para optimizar y maximizar los días libres.
-  late bool _optimizeFreeDays;
-
   /// Días de la semana para la selección de filtros de tiempo.
   final List<String> days = [
     'Lunes',
@@ -90,8 +83,6 @@ class _FilterWidgetState extends State<FilterWidget> {
         Map<String, dynamic>.from(widget.currentFilters['professors'] ?? {});
     _timeFilters =
         Map<String, dynamic>.from(widget.currentFilters['timeFilters'] ?? {});
-    _optimizeGaps = widget.currentFilters['optimizeGaps'] ?? false;
-    _optimizeFreeDays = widget.currentFilters['optimizeFreeDays'] ?? false;
   }
 
   /// Construye la interfaz de usuario del widget de filtros.
@@ -365,92 +356,6 @@ class _FilterWidgetState extends State<FilterWidget> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    // Sección: Opciones de Optimización
-                    /// Contiene switches para las optimizaciones del generador.
-                    Theme(
-                      data: Theme.of(context).copyWith(
-                        dividerColor: Colors.transparent,
-                        unselectedWidgetColor: textColor,
-                        colorScheme: Theme.of(context).colorScheme.copyWith(
-                              secondary: accentColor,
-                            ),
-                      ),
-                      child: ExpansionTile(
-                        leading: Icon(Icons.sort, color: textColor),
-                        title: Text('Opciones de Optimización',
-                            style: TextStyle(color: textColor)),
-                        children: [
-                          // Switch para optimizar huecos
-                          /// Prioriza horarios con menos huecos entre clases.
-                          SwitchListTile(
-                            activeColor: accentColor,
-                            trackColor:
-                                MaterialStateProperty.resolveWith<Color?>(
-                              (Set<MaterialState> states) {
-                                if (states.contains(MaterialState.selected)) {
-                                  return accentColor
-                                      .withOpacity(0.5); // visible en activo
-                                }
-                                return Colors
-                                    .grey.shade400; // visible en inactivo
-                              },
-                            ),
-                            thumbColor:
-                                MaterialStateProperty.resolveWith<Color?>(
-                              (Set<MaterialState> states) {
-                                if (states.contains(MaterialState.selected)) {
-                                  return Colors.white;
-                                }
-                                return Colors.grey.shade200;
-                              },
-                            ),
-                            title: Text('Optimizar Horas (Menos huecos)',
-                                style: TextStyle(color: textColor)),
-                            value: _optimizeGaps,
-                            onChanged: (value) {
-                              setState(() {
-                                _optimizeGaps = value;
-                              });
-                            },
-                          ),
-                          // Switch para optimizar días libres
-                          /// Prioriza horarios que maximicen los días libres.
-                          SwitchListTile(
-                            activeColor: accentColor,
-                            trackColor:
-                                MaterialStateProperty.resolveWith<Color?>(
-                              (Set<MaterialState> states) {
-                                if (states.contains(MaterialState.selected)) {
-                                  return accentColor
-                                      .withOpacity(0.5); // visible en activo
-                                }
-                                return Colors
-                                    .grey.shade400; // visible en inactivo
-                              },
-                            ),
-                            thumbColor:
-                                MaterialStateProperty.resolveWith<Color?>(
-                              (Set<MaterialState> states) {
-                                if (states.contains(MaterialState.selected)) {
-                                  return Colors.white;
-                                }
-                                return Colors.grey.shade200;
-                              },
-                            ),
-                            title: Text(
-                                'Optimizar Días Libres (Más días libres primero)',
-                                style: TextStyle(color: textColor)),
-                            value: _optimizeFreeDays,
-                            onChanged: (value) {
-                              setState(() {
-                                _optimizeFreeDays = value;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -497,16 +402,12 @@ class _FilterWidgetState extends State<FilterWidget> {
                     Map<String, dynamic> filtersForApi = {
                       ...finalProfessorFiltersForApi,
                       'unavailable_slots': _timeFilters,
-                      'optimizeGaps': _optimizeGaps,
-                      'optimizeFreeDays': _optimizeFreeDays,
                     };
 
                     // Objeto de filtros para el estado de la UI.
                     Map<String, dynamic> filtersForState = {
                       'professors': _professorsFilters,
                       'timeFilters': _timeFilters,
-                      'optimizeGaps': _optimizeGaps,
-                      'optimizeFreeDays': _optimizeFreeDays,
                     };
 
                     // Llama al callback con ambos mapas de filtros.
