@@ -34,7 +34,7 @@ class MainActionsPanel extends StatelessWidget {
             child: _MainCardButton(
                 color: const Color(0xFF0051FF),
                 icon: Icons.search,
-                label: "Agregar materia",
+                label: "Buscar materia",
                 onTap: onSearch)),
         const SizedBox(width: 20),
         // Botón para realizar filtro.
