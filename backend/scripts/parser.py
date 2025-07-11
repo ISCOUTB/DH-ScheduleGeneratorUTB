@@ -1,25 +1,41 @@
 from collections import defaultdict
 from utils import limpiar_nombre, formatear_hora, obtener_dias
+from typing import Any, Optional
 
-def procesar_json(data):
-    materias = {}
-    profesores = {}
-    cursos = []
-    clases = []
-    errores = []
+def procesar_json(data: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
 
-    group_counter = defaultdict(lambda: defaultdict(int))
-    grupo_teoricos = defaultdict(dict)
+    materias: dict[str, tuple[str, int, str]] = {}  # subjectCourse: (subjectCourse, creditos, nombre_materia)
+    profesores: dict[str, tuple[str, str]] = {}  # Estructura: profesor_id: (profesor_id, nombre_profesor)
+    cursos: list[tuple[int, str, str, Optional[str], Optional[int], int, str]] = []  # Estructura: (nrc, tipo, subjectCourse, profesor_id, nrc_teorico, group_id, campus)
+    clases: list[tuple[int, Optional[str], Optional[str], Optional[str], str]] = []  # Estructura: (nrc, tipo, subjectCourse, profesor_id, nrc_teorico, group_id, campus)
+    errores: list[str] = []
+
+    group_counter: defaultdict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    grupo_teoricos: defaultdict[str, dict[str, int]] = defaultdict(dict)
 
     # Primera pasada: identificar todos los cursos teóricos
     for entrada in data['data']:
-        subject_course = entrada['subjectCourse']
+        subject_course: str = entrada['subjectCourse']
         link_id = entrada.get('linkIdentifier')
         is_linked = entrada.get('isSectionLinked', False)
         tipo = entrada['scheduleTypeDescription'].strip().upper()
+        nrc = int(entrada['courseReferenceNumber'])
+
         if tipo == "TEORICO":
-            key = link_id[1] if is_linked and len(link_id) > 1 else link_id
-            grupo_teoricos[subject_course][key] = int(entrada['courseReferenceNumber'])
+            group_key: str
+            base_id: str
+
+            if is_linked and link_id:
+                if link_id.startswith("L") and len(link_id) > 1:
+                    base_id = link_id[1]
+                else:
+                    base_id = link_id
+                group_key = f"{subject_course}-LINK-{base_id}"
+            else:
+                group_key = f"{subject_course}-NRC-{nrc}"
+
+            grupo_teoricos[subject_course][group_key] = int(entrada['courseReferenceNumber'])
+
 
     # Segunda pasada: procesar materias, profesores, cursos y clases
     for entrada in data['data']:
@@ -47,14 +63,25 @@ def procesar_json(data):
                 profesores[profesor_id] = (profesor_id, nombre_profesor)
 
         # GroupID
-        key = link_id[1] if is_linked and len(link_id) > 1 else link_id
-        if key not in group_counter[subject_course]:
-            group_counter[subject_course][key] = len(group_counter[subject_course]) + 1
-        group_id = group_counter[subject_course][key]
+        if is_linked and link_id:
+            # Si el curso está ligado, lo identificamos por su letra base
+            if link_id.startswith("L") and len(link_id) > 1:
+                base_id = link_id[1]   # "LH" → "H"
+            else:
+                base_id = link_id      # "H" → "H"
+            group_key = f"{subject_course}-LINK-{base_id}"
+        else:
+            # Si no está ligado, usamos su NRC para asegurarnos de que no se mezcle con otro
+            group_key = f"{subject_course}-NRC-{nrc}"
+        
+        if group_key not in group_counter[subject_course]:
+            group_counter[subject_course][group_key] = len(group_counter[subject_course]) + 1
+
+        group_id = group_counter[subject_course][group_key]
 
         # Verificación de cursos ligados
         if tipo_formateado == "Laboratorio" and is_linked:
-            nrc_teorico = grupo_teoricos[subject_course].get(key)
+            nrc_teorico = grupo_teoricos[subject_course].get(group_key)
             if not nrc_teorico:
                 errores.append(f"Curso ligado sin teórico: NRC {nrc} - {subject_course} - {link_id}")
                 continue  # No se agrega a la base de datos

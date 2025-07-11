@@ -3,6 +3,7 @@ from insertar_en_db import actualizar_base
 from export_to_subject_json import exportar_subjects_a_json
 
 def main():
+
     print("Descargando JSON crudo desde Banner...")
     descargar_json()  # Genera search_results_complete.json
     print("JSON descargado.")
@@ -16,4 +17,7 @@ def main():
     print("Listo: subject_data.json generado.")
 
 if __name__ == "__main__":
+    
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
     main()

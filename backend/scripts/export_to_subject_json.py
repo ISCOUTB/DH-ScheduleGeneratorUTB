@@ -2,7 +2,7 @@ import psycopg
 import json
 import os
 from config import DB_CONFIG  # Asegúrate de que config.py tenga los datos correctos
-
+from app.models import Subject, ClassOption, Schedule
 
 def exportar_subjects_a_json():
     conn = psycopg.connect(**DB_CONFIG)
@@ -45,59 +45,58 @@ def exportar_subjects_a_json():
     rows = cursor.fetchall()
 
     # Estructura: { subjectCode: { ...materia..., classOptions: { NRC: {...} } } }
-    subjects_dict: dict[str, dict] = {}
+    subjects_dict: dict[str, Subject] = {}
 
     for row in rows:
         code, name, credits, nrc, tipo, group_id, campus, profesor, dia, hora_inicio, hora_final = row
 
         # Inicializar materia si es nueva
         if code not in subjects_dict:
-            subjects_dict[code] = {
-                "code": code,
-                "name": name,
-                "credits": credits,
-                "classOptions": {}
-            }
+            subjects_dict[code] = Subject(
+                code=code,
+                name=name,
+                credits=credits,
+                classOptions=[]
+            )
 
         subj = subjects_dict[code]
+        nrc_str = str(nrc)
 
-        # Inicializar opción de clase si es nueva
-        if nrc not in subj["classOptions"]:
-            subj["classOptions"][nrc] = {
-                "subjectCode": code,
-                "subjectName": name,
-                "type": tipo,
-                "credits": credits,
-                "professor": profesor or "",
-                "nrc": str(nrc),
-                "campus": campus or "",
-                "groupId": group_id,
-                "schedules": []
-            }
+        exist_nrc = any(op.nrc == nrc_str for op in subj.class_options)
 
-        clase = subj["classOptions"][nrc]
+        if not exist_nrc:
+            nueva_opcion = ClassOption(
+                subjectName=name,
+                subjectCode=code,
+                type=tipo,
+                schedules=[],
+                professor=profesor or "",
+                nrc=nrc_str,
+                groupId=group_id,
+                credits=credits,
+                campus=campus or ""
+            )
+            subj.class_options.append(nueva_opcion)
+
+        # Obtener la clase correspondiente
+        clase = next((op for op in subj.class_options if op.nrc == nrc_str), None)
 
         # Añadir horario si existe
-        if dia and hora_inicio and hora_final:
+        if clase and dia and hora_inicio and hora_final:
             hora_inicio_str = hora_inicio.strftime("%H:%M")
             hora_final_str = hora_final.strftime("%H:%M")
-            clase["schedules"].append({
-                "day": dia,
-                "time": f"{hora_inicio_str} - {hora_final_str}"
-            })
+            clase.schedules.append(Schedule(
+                day=dia,
+                time=f"{hora_inicio_str} - {hora_final_str}"
+            ))
+
 
     # Convertir a lista compatible con JSON
-    subjects_list = []
-    for subj_data in subjects_dict.values():
-        class_options = list(subj_data["classOptions"].values())
-        subject_dict = {
-            "code": subj_data["code"],
-            "name": subj_data["name"],
-            "credits": subj_data["credits"],
-            "classOptions": class_options
-        }
-        subjects_list.append(subject_dict)
-    
+    subjects_list = [
+        subj_data.model_dump(by_alias=True)
+        for subj_data in subjects_dict.values()
+    ]
+
     EXPORT_DIR = os.path.join(os.path.dirname(__file__), "shared_data")
     os.makedirs(EXPORT_DIR, exist_ok=True)
 

@@ -25,7 +25,7 @@ def descargar_json():
     # Simular clic en "Continuar" enviando los datos correctos en `Form Data`
     search_url = f"{base_url}/term/search?mode=search"
     payload = {
-        "term": "202520",  # PRIMER PERIODO 2025 PREGRADO
+        "term": "202520",  # SEGUNDO PERIODO 2025 PREGRADO
         "studyPath": "",
         "studyPathText": "",
         "startDatepicker": "",

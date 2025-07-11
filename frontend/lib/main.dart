@@ -113,26 +113,29 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Horarios generados por la API.
   List<List<ClassOption>> allSchedules = [];
-  int? selectedScheduleIndex; // Índice del horario seleccionado para la vista detallada.
+  int?
+      selectedScheduleIndex; // Índice del horario seleccionado para la vista detallada.
 
   // Controladores de estado para la visibilidad de los paneles y overlays.
   bool isSearchOpen = false;
   bool isFilterOpen = false;
   bool isOverviewOpen = false;
-  bool isExpandedView = false; // Controla la vista expandida del panel de materias.
+  bool isExpandedView =
+      false; // Controla la vista expandida del panel de materias.
   bool isFullExpandedView = false; // Controla si el panel lateral está oculto.
   bool _isLoading = false; // Controla la visibilidad del indicador de carga.
 
   // Filtros aplicados por el usuario.
-  Map<String, dynamic> appliedFilters = {}; // Para mantener el estado de la UI de filtros.
+  Map<String, dynamic> appliedFilters =
+      {}; // Para mantener el estado de la UI de filtros.
   Map<String, dynamic> apiFiltersForGeneration = {}; // Para enviar a la API.
-  
+
   // Opciones de optimización de horarios
   Map<String, dynamic> currentOptimizations = {
     'optimizeGaps': false,
     'optimizeFreeDays': false,
   };
-  
+
   late FocusNode _focusNode;
 
   /// Comprueba si la plataforma es móvil.
@@ -245,33 +248,32 @@ class _MyHomePageState extends State<MyHomePage> {
       // Limpiar horarios generados
       allSchedules.clear();
       selectedScheduleIndex = null;
-      
+
       // Limpiar materias seleccionadas
       addedSubjects.clear();
       usedCredits = 0;
-      
+
       // Limpiar filtros aplicados
       appliedFilters.clear();
       apiFiltersForGeneration.clear();
-      
+
       // Resetear opciones de optimización
       currentOptimizations = {
         'optimizeGaps': false,
         'optimizeFreeDays': false,
       };
-      
+
       // Cerrar todos los paneles abiertos
       isSearchOpen = false;
       isFilterOpen = false;
       isOverviewOpen = false;
       isExpandedView = false;
       isFullExpandedView = false;
-      
+
       // Limpiar el controlador de búsqueda
       subjectController.clear();
     });
-    showCustomNotification(
-        context, 'Aplicación reiniciada completamente.',
+    showCustomNotification(context, 'Aplicación reiniciada completamente.',
         icon: Icons.refresh, color: Colors.green);
   }
 
@@ -345,8 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Función placeholder para el botón "Generar Horarios" (sin funcionalidad)
   void generateScheduleButtonAction() {
     // Botón sin funcionalidad por ahora - se le dará otro uso más adelante
-    showCustomNotification(
-        context, 'Funcionalidad en desarrollo...',
+    showCustomNotification(context, 'Funcionalidad en desarrollo...',
         icon: Icons.info, color: Colors.blue);
   }
 
@@ -427,20 +428,24 @@ class _MyHomePageState extends State<MyHomePage> {
                           onSearch: () => setState(() => isSearchOpen = true),
                           onFilter: () => setState(() => isFilterOpen = true),
                           onClear: clearSchedules,
-                          onGenerate: generateScheduleButtonAction, // Ahora sin funcionalidad real
+                          onGenerate:
+                              generateScheduleButtonAction, // Ahora sin funcionalidad real
                         ),
-                        
+
                         const SizedBox(height: 20),
-                        
+
                         // Segunda fila: Ordenar Horarios por + Limpiar Todo
                         LayoutBuilder(
                           builder: (context, constraints) {
                             // Calculamos el ancho disponible
                             double totalWidth = constraints.maxWidth;
                             double spaceBetween = 20;
-                            double clearButtonWidth = (totalWidth - 2 * spaceBetween) / 3; // Mismo ancho que un botón de arriba
-                            double sortWidth = totalWidth - clearButtonWidth - spaceBetween;
-                            
+                            double clearButtonWidth =
+                                (totalWidth - 2 * spaceBetween) /
+                                    3; // Mismo ancho que un botón de arriba
+                            double sortWidth =
+                                totalWidth - clearButtonWidth - spaceBetween;
+
                             return Row(
                               children: [
                                 // Widget de ordenamiento (ocupa espacio de 2 botones + espacio entre ellos)
@@ -448,7 +453,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   width: sortWidth,
                                   child: ScheduleSortWidget(
                                     currentOptimizations: currentOptimizations,
-                                    onOptimizationChanged: onOptimizationChanged,
+                                    onOptimizationChanged:
+                                        onOptimizationChanged,
                                     isEnabled: allSchedules.isNotEmpty,
                                   ),
                                 ),
@@ -466,7 +472,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                     ),
                                     onPressed: clearSchedules,
                                     child: const Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           "Limpiar todo",
@@ -477,7 +484,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ),
                                         SizedBox(width: 8),
-                                        Icon(Icons.refresh, color: Colors.white, size: 20),
+                                        Icon(Icons.refresh,
+                                            color: Colors.white, size: 20),
                                       ],
                                     ),
                                   ),
@@ -488,7 +496,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         const SizedBox(height: 24),
                       ],
-                      
+
                       // Muestra la grilla de horarios o un mensaje de vista previa.
                       Expanded(
                         //Envolver con un Stack para superponer el contador.
@@ -513,7 +521,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 : ScheduleGridWidget(
                                     allSchedules: allSchedules,
                                     onScheduleTap: openScheduleOverview),
-                            
+
                             // Widget para mostrar el contador de horarios generados.
                             if (allSchedules.isNotEmpty)
                               Positioned(
@@ -599,7 +607,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         allSubjects:
                             _allSubjectsList, // Pasamos la lista de resúmenes
                         onSubjectSelected: (subjectSummary) async {
-                          subjectController.clear(); // Limpia el campo de texto.
+                          subjectController
+                              .clear(); // Limpia el campo de texto.
                           setState(() {
                             isSearchOpen =
                                 false; // Cierra la búsqueda inmediatamente
@@ -625,7 +634,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                         },
                         closeWindow: () {
-                          subjectController.clear(); // Limpia el campo de texto también al cerrar.
+                          subjectController
+                              .clear(); // Limpia el campo de texto también al cerrar.
                           setState(() => isSearchOpen = false);
                         },
                       )
