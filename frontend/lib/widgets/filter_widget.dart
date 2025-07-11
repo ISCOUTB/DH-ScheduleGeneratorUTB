@@ -44,6 +44,9 @@ class _FilterWidgetState extends State<FilterWidget> {
   /// Almacena las horas no disponibles por día.
   late Map<String, dynamic> _timeFilters;
 
+  /// Clave para forzar la reconstrucción del widget cuando se limpian los filtros
+  Key _widgetKey = UniqueKey();
+
   /// Días de la semana para la selección de filtros de tiempo.
   final List<String> days = [
     'Lunes',
@@ -129,6 +132,7 @@ class _FilterWidgetState extends State<FilterWidget> {
             const Divider(),
             // Contenido principal con scroll
             Expanded(
+              key: _widgetKey, // Clave para forzar reconstrucción
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -299,7 +303,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                 CheckboxListTile(
                                   activeColor: accentColor,
                                   title: Text(
-                                    'Seleccionar todas las horas (No tener clases este día)',
+                                    'Seleccionar todas las horas (Dejar este día completamente libre)',
                                     style: TextStyle(color: textColor),
                                   ),
                                   value: allHoursSelected,
@@ -362,61 +366,102 @@ class _FilterWidgetState extends State<FilterWidget> {
             ),
             // Botones de acción
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Botón Cancelar - cierra el diálogo sin aplicar cambios
-                TextButton(
-                  onPressed: widget.closeWindow,
-                  child: Text('Cancelar', style: TextStyle(color: accentColor)),
-                ),
-                // Botón para aplicar los filtros configurados
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: accentColor,
-                  ),
+                // Botón Limpiar filtros - resetea todos los filtros
+                TextButton.icon(
                   onPressed: () {
-                    /// Procesa y aplica los filtros, generando dos formatos:
-                    /// 1. Para el estado de la UI (conserva la selección del usuario).
-                    /// 2. Para la API (formato esperado por el backend).
-
-                    // Procesa los filtros de profesores para la API.
-                    Map<String, dynamic> finalProfessorFiltersForApi = {};
-                    _professorsFilters.forEach((subjectCode, filterData) {
-                      String filterType = filterData['filterType'];
-                      List<String> professors =
-                          List<String>.from(filterData['professors']);
-
-                      if (professors.isNotEmpty) {
-                        String key = filterType == 'include'
-                            ? 'include_professors'
-                            : 'exclude_professors';
-                        if (finalProfessorFiltersForApi[key] == null) {
-                          finalProfessorFiltersForApi[key] = {};
-                        }
-                        finalProfessorFiltersForApi[key][subjectCode] =
-                            professors;
+                    setState(() {
+                      // Resetear filtros de profesores
+                      _professorsFilters.clear();
+                      
+                      // Resetear filtros de tiempo
+                      _timeFilters.clear();
+                      
+                      // Reinicializar filtros de profesores para las materias actuales
+                      for (Subject subject in widget.addedSubjects) {
+                        _professorsFilters[subject.code] = {
+                          'filterType': 'include',
+                          'professors': <String>[]
+                        };
                       }
+                      
+                      // Generar nueva clave para forzar reconstrucción completa
+                      _widgetKey = UniqueKey();
                     });
-
-                    // Objeto de filtros para la API.
-                    Map<String, dynamic> filtersForApi = {
-                      ...finalProfessorFiltersForApi,
-                      'unavailable_slots': _timeFilters,
-                    };
-
-                    // Objeto de filtros para el estado de la UI.
-                    Map<String, dynamic> filtersForState = {
-                      'professors': _professorsFilters,
-                      'timeFilters': _timeFilters,
-                    };
-
-                    // Llama al callback con ambos mapas de filtros.
-                    widget.onApplyFilters(filtersForState, filtersForApi);
-
-                    // Cierra el diálogo.
-                    widget.closeWindow();
+                    
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Todos los filtros han sido eliminados'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
                   },
-                  child: const Text('Aplicar filtros'),
+                  icon: Icon(Icons.clear_all, color: Colors.red.shade600),
+                  label: Text(
+                    'Limpiar filtros', 
+                    style: TextStyle(color: Colors.red.shade600)
+                  ),
+                ),
+                
+                // Botones de Cancelar y Aplicar
+                Row(
+                  children: [
+                    // Botón Cancelar - cierra el diálogo sin aplicar cambios
+                    TextButton(
+                      onPressed: widget.closeWindow,
+                      child: Text('Cancelar', style: TextStyle(color: accentColor)),
+                    ),
+                    const SizedBox(width: 8),
+                    // Botón para aplicar los filtros configurados
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: accentColor,
+                      ),                      onPressed: () {
+                        /// Procesa y aplica los filtros, generando dos formatos:
+                        /// 1. Para el estado de la UI (conserva la selección del usuario).
+                        /// 2. Para la API (formato esperado por el backend).
+
+                        // Procesa los filtros de profesores para la API.
+                        Map<String, dynamic> finalProfessorFiltersForApi = {};
+                        _professorsFilters.forEach((subjectCode, filterData) {
+                          String filterType = filterData['filterType'];
+                          List<String> professors =
+                              List<String>.from(filterData['professors']);
+
+                          if (professors.isNotEmpty) {
+                            String key = filterType == 'include'
+                                ? 'include_professors'
+                                : 'exclude_professors';
+                            if (finalProfessorFiltersForApi[key] == null) {
+                              finalProfessorFiltersForApi[key] = {};
+                            }
+                            finalProfessorFiltersForApi[key][subjectCode] =
+                                professors;
+                          }
+                        });
+
+                        // Objeto de filtros para la API.
+                        Map<String, dynamic> filtersForApi = {
+                          ...finalProfessorFiltersForApi,
+                          'unavailable_slots': _timeFilters,
+                        };
+
+                        // Objeto de filtros para el estado de la UI.
+                        Map<String, dynamic> filtersForState = {
+                          'professors': _professorsFilters,
+                          'timeFilters': _timeFilters,
+                        };
+
+                        // Llama al callback con ambos mapas de filtros.
+                        widget.onApplyFilters(filtersForState, filtersForApi);
+
+                        // Cierra el diálogo.
+                        widget.closeWindow();
+                      },
+                      child: const Text('Aplicar filtros'),
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -88,20 +88,20 @@ class _ScheduleSortWidgetState extends State<ScheduleSortWidget> {
         color: widget.isEnabled ? Colors.white : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: widget.isEnabled ? Colors.grey.shade300 : Colors.grey.shade200,
-          width: 1,
+          color: widget.isEnabled ? Colors.grey.shade400 : Colors.grey.shade300,
+          width: 1.5,
         ),
         boxShadow: widget.isEnabled 
           ? [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Colors.black.withOpacity(0.12),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
             ]
           : [
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withOpacity(0.06),
                 blurRadius: 4,
                 offset: const Offset(0, 1),
               ),
@@ -115,8 +115,8 @@ class _ScheduleSortWidgetState extends State<ScheduleSortWidget> {
             Icon(
               Icons.sort,
               color: widget.isEnabled 
-                ? Colors.grey.shade600
-                : Colors.grey.shade300,
+                ? Colors.grey.shade700
+                : Colors.grey.shade400,
               size: 20,
             ),
             const SizedBox(width: 12),
@@ -128,8 +128,8 @@ class _ScheduleSortWidgetState extends State<ScheduleSortWidget> {
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: widget.isEnabled 
-                  ? Colors.grey.shade700 
-                  : Colors.grey.shade300,
+                  ? Colors.grey.shade800 
+                  : Colors.grey.shade400,
               ),
             ),
             
@@ -151,8 +151,8 @@ class _ScheduleSortWidgetState extends State<ScheduleSortWidget> {
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
                               color: widget.isEnabled 
-                                ? Colors.grey.shade600 
-                                : Colors.grey.shade300,
+                                ? Colors.grey.shade700 
+                                : Colors.grey.shade400,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -164,8 +164,8 @@ class _ScheduleSortWidgetState extends State<ScheduleSortWidget> {
                             onChanged: widget.isEnabled ? _handleGapsChange : null,
                             activeColor: Colors.amber.shade600,
                             activeTrackColor: Colors.amber.shade300,
-                            inactiveThumbColor: Colors.grey.shade300,
-                            inactiveTrackColor: Colors.grey.shade200,
+                            inactiveThumbColor: Colors.grey.shade400,
+                            inactiveTrackColor: Colors.grey.shade300,
                             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                         ),
@@ -177,7 +177,7 @@ class _ScheduleSortWidgetState extends State<ScheduleSortWidget> {
                   Container(
                     height: 24,
                     width: 1,
-                    color: Colors.grey.shade300,
+                    color: Colors.grey.shade400,
                     margin: const EdgeInsets.symmetric(horizontal: 12),
                   ),
                   
@@ -193,8 +193,8 @@ class _ScheduleSortWidgetState extends State<ScheduleSortWidget> {
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
                               color: widget.isEnabled 
-                                ? Colors.grey.shade600 
-                                : Colors.grey.shade300,
+                                ? Colors.grey.shade700 
+                                : Colors.grey.shade400,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -206,8 +206,8 @@ class _ScheduleSortWidgetState extends State<ScheduleSortWidget> {
                             onChanged: widget.isEnabled ? _handleFreeDaysChange : null,
                             activeColor: Colors.amber.shade600,
                             activeTrackColor: Colors.amber.shade300,
-                            inactiveThumbColor: Colors.grey.shade300,
-                            inactiveTrackColor: Colors.grey.shade200,
+                            inactiveThumbColor: Colors.grey.shade400,
+                            inactiveTrackColor: Colors.grey.shade300,
                             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                         ),

@@ -25,7 +25,7 @@ def descargar_json():
     # Simular clic en "Continuar" enviando los datos correctos en `Form Data`
     search_url = f"{base_url}/term/search?mode=search"
     payload = {
-        "term": "202510",  # PRIMER PERIODO 2025 PREGRADO
+        "term": "202520",  # PRIMER PERIODO 2025 PREGRADO
         "studyPath": "",
         "studyPathText": "",
         "startDatepicker": "",
@@ -39,7 +39,7 @@ def descargar_json():
     all_results = []
 
     while True:
-        search_results_url = f"{base_url}/searchResults/searchResults?txt_term=202510&startDatepicker=&endDatepicker=&pageOffset={page_offset}&pageMaxSize={page_max_size}&sortColumn=subjectDescription&sortDirection=asc"
+        search_results_url = f"{base_url}/searchResults/searchResults?txt_term=202520&startDatepicker=&endDatepicker=&pageOffset={page_offset}&pageMaxSize={page_max_size}&sortColumn=subjectDescription&sortDirection=asc"
         response = session.get(search_results_url, headers=headers, verify=False)
 
         if response.status_code != 200:
