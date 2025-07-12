@@ -1,4 +1,8 @@
-def insertar_datos(conn, datos):
+# insertar_en_db.py
+import psycopg
+from parser import ProcesarJsonResponse
+
+def insertar_datos(conn: psycopg.Connection, datos: ProcesarJsonResponse) -> None:
     cursor = conn.cursor()
 
     for m in datos['materias']:

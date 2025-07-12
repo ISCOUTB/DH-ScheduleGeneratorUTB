@@ -1,7 +1,7 @@
 import requests
 import json
 import os
-
+from typing import Any
 
 def descargar_json():
 # Mantener la misma sesión activa
@@ -36,7 +36,7 @@ def descargar_json():
     # Paginación
     page_offset = 0
     page_max_size = 500
-    all_results = []
+    all_results: list[dict[str, Any]] = []
 
     while True:
         search_results_url = f"{base_url}/searchResults/searchResults?txt_term=202520&startDatepicker=&endDatepicker=&pageOffset={page_offset}&pageMaxSize={page_max_size}&sortColumn=subjectDescription&sortDirection=asc"
@@ -51,6 +51,8 @@ def descargar_json():
             break
 
         print(f"Obtenidos {len(page_data)} registros desde offset {page_offset}")
+
+
         all_results.extend(page_data)
         page_offset += page_max_size
 

@@ -1,4 +1,4 @@
-import os
+import os 
 import sys
 from descargar_json import descargar_json
 from insertar_en_db import actualizar_base
@@ -19,7 +19,6 @@ def main():
     print("Listo: subject_data.json generado.")
 
 if __name__ == "__main__":
-    
-    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
     main()

@@ -2,11 +2,14 @@
 import json
 import os
 from config import get_connection
-from backup import respaldar_datos, limpiar_tablas, hacer_snapshot
+from backup import limpiar_tablas, hacer_snapshot
 from parser import procesar_json
 from inserter import insertar_datos
 
-def guardar_log(errores):
+def guardar_log(errores: list[str]):
+    """
+    Guarda los errores en un archivo de log.
+    """
     if not errores:
         return
     EXPORT_DIR = os.path.join(os.path.dirname(__file__), "logs")
@@ -28,9 +31,10 @@ def actualizar_base():
 
     conn = get_connection()
 
+    print("Creando snapshot de la base de datos...")
     hacer_snapshot()
-    print("Respaldando y limpiando datos anteriores...")
-    respaldar_datos(conn)
+    
+    print("Limpiando tablas...")
     limpiar_tablas(conn)
 
     print("Procesando JSON...")

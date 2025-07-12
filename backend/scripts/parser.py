@@ -1,8 +1,15 @@
 from collections import defaultdict
 from utils import limpiar_nombre, formatear_hora, obtener_dias
-from typing import Any, Optional
+from typing import Any, Optional, TypedDict
 
-def procesar_json(data: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
+class ProcesarJsonResponse(TypedDict):
+    materias: list[tuple[str, int, str]]
+    profesores: list[tuple[str, str]]
+    cursos: list[tuple[int, str, str, Optional[str], Optional[int], int, str]]
+    clases: list[tuple[int, Optional[str], Optional[str], Optional[str], str]]
+    errores: list[str]
+
+def procesar_json(data: dict[str, list[dict[str, Any]]]) -> ProcesarJsonResponse:
 
     materias: dict[str, tuple[str, int, str]] = {}  # subjectCourse: (subjectCourse, creditos, nombre_materia)
     profesores: dict[str, tuple[str, str]] = {}  # Estructura: profesor_id: (profesor_id, nombre_profesor)

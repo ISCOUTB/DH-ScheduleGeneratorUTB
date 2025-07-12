@@ -1,39 +1,14 @@
 # backup.py
 import os
-import json
 import subprocess
+import psycopg
 from config import DB_CONFIG
 from utils import timestamp_actual
 
-def serializar_fila(fila):
-    serializada = {}
-    for clave, valor in fila.items():
-        if hasattr(valor, 'isoformat'):  # Para time, date, datetime
-            serializada[clave] = valor.isoformat()
-        else:
-            serializada[clave] = valor
-    return serializada
 
-def respaldar_datos(conn):
-    cursor = conn.cursor()
-    tablas = ['Clase', 'Curso', 'Profesor', 'Materia']
-    respaldo = {}
-
-    for tabla in tablas:
-        cursor.execute(f"SELECT * FROM {tabla}")
-        columnas = [desc[0] for desc in cursor.description]
-        filas = cursor.fetchall()
-        respaldo[tabla] = [serializar_fila(dict(zip(columnas, fila))) for fila in filas]
-
-    EXPORT_DIR = os.path.join(os.path.dirname(__file__), "respaldos")
-    os.makedirs(EXPORT_DIR, exist_ok=True)
-    nombre_archivo = f"{EXPORT_DIR}/{timestamp_actual()}.json"
-    with open(nombre_archivo, 'w', encoding='utf-8') as f:
-        json.dump(respaldo, f, ensure_ascii=False, indent=4)
-
-    print(f"Respaldo guardado en: {nombre_archivo}")
-    
-def limpiar_tablas(conn):
+def limpiar_tablas(conn: psycopg.Connection):
+    """Limpia las tablas de la base de datos.
+    """
     cursor = conn.cursor()
     cursor.execute("DELETE FROM Clase")
     cursor.execute("DELETE FROM Curso")
@@ -50,7 +25,7 @@ def hacer_snapshot():
 
     os.environ['PGPASSWORD'] = DB_CONFIG['password']
 
-    comando = [
+    comando: list[str] = [
         "pg_dump",
         "-U", DB_CONFIG['user'],
         "-h", DB_CONFIG.get('host', 'localhost'),
