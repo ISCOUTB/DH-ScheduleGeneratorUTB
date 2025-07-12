@@ -1,6 +1,8 @@
+import sys
 import psycopg
 import json
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from config import DB_CONFIG  # Asegúrate de que config.py tenga los datos correctos
 from app.models import Subject, ClassOption, Schedule
 

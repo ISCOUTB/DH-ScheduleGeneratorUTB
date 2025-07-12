@@ -1,6 +1,7 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:html' as html;
 import 'models/subject.dart';
 import 'models/subject_summary.dart';
 import 'models/class_option.dart';
@@ -135,7 +136,10 @@ class _MyHomePageState extends State<MyHomePage> {
     'optimizeGaps': false,
     'optimizeFreeDays': false,
   };
-
+  
+  // Control para mostrar el mensaje de advertencia solo la primera vez
+  bool _showWelcomeDialog = true;
+  
   late FocusNode _focusNode;
 
   /// Comprueba si la plataforma es móvil.
@@ -155,6 +159,9 @@ class _MyHomePageState extends State<MyHomePage> {
     _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
+      
+      // Verificar si se debe mostrar el diálogo de advertencia
+      _checkAndShowImportantNotice();
     });
   }
 
@@ -175,6 +182,97 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icons.error, color: Colors.red);
       }
     }
+  }
+
+  /// Verifica si se debe mostrar el mensaje de advertencia y lo muestra si es necesario
+  void _checkAndShowImportantNotice() {
+    if (kIsWeb) {
+      // En web, usar localStorage
+      final hasSeenNotice = html.window.localStorage['has_seen_important_notice'];
+      if (hasSeenNotice == null || hasSeenNotice != 'true') {
+        _showImportantNoticeDialog();
+      }
+    } else {
+      // En móvil, mostrar solo una vez por sesión
+      if (_showWelcomeDialog) {
+        _showImportantNoticeDialog();
+      }
+    }
+  }
+
+  /// Muestra el diálogo de advertencia importante al abrir la aplicación
+  void _showImportantNoticeDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // No se puede cerrar tocando fuera
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Icon(
+                Icons.warning,
+                color: Colors.red.shade600,
+                size: 28,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'IMPORTANTE',
+                style: TextStyle(
+                  color: Colors.red.shade600,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: Container(
+            width: 400,
+            child: Text(
+              'Antes de tomar decisiones basadas en un horario generado, te recomendamos verificar la información directamente en Banner, ya que este generador es una herramienta de apoyo y la fuente oficial de horarios, NRC y disponibilidad es Banner.',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade700,
+                height: 1.5,
+              ),
+              textAlign: TextAlign.justify,
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0051FF),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+              onPressed: () {
+                // Marcar que ya vió el mensaje
+                if (kIsWeb) {
+                  html.window.localStorage['has_seen_important_notice'] = 'true';
+                } else {
+                  setState(() {
+                    _showWelcomeDialog = false;
+                  });
+                }
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Entendido',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -327,9 +425,26 @@ class _MyHomePageState extends State<MyHomePage> {
           _isLoading = false;
         });
         if (schedules.isEmpty) {
-          showCustomNotification(
-              context, 'No se encontraron horarios con los filtros aplicados.',
-              icon: Icons.info, color: Colors.orange);
+          // Determinar el mensaje apropiado según si hay filtros aplicados
+          String message;
+          IconData icon;
+          Color color;
+          
+          bool hasFilters = apiFiltersForGeneration.isNotEmpty && 
+                           apiFiltersForGeneration.values.any((value) => 
+                             value != false && value != null && value != '');
+          
+          if (hasFilters) {
+            message = 'No se encontraron horarios con los filtros aplicados. Intenta relajar algunos filtros.';
+            icon = Icons.filter_alt_off;
+            color = Colors.orange;
+          } else {
+            message = 'No se pueden generar horarios con estas materias. Puede haber cruces de horarios o incompatibilidades.';
+            icon = Icons.schedule_send;
+            color = Colors.red.shade600;
+          }
+          
+          showCustomNotification(context, message, icon: icon, color: color);
         }
       }
     } catch (e) {

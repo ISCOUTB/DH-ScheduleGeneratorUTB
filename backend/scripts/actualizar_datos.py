@@ -1,3 +1,5 @@
+import os
+import sys
 from descargar_json import descargar_json
 from insertar_en_db import actualizar_base
 from export_to_subject_json import exportar_subjects_a_json
