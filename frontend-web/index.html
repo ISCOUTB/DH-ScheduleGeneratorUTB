@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Horarios UTB</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="stylesheet" href="styles/debug.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="header-title">
+                <i class="fas fa-calendar-alt"></i>
+                Generador de Horarios UTB
+            </h1>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Left Panel - Subject Management -->
+        <aside class="left-panel" id="left-panel">
+            <div class="panel-header">
+                <h2>Materias Seleccionadas</h2>
+                <div class="credits-info">
+                    <span id="used-credits">0</span> / <span id="credit-limit">20</span> créditos
+                </div>
+            </div>
+
+            <!-- Add Subject Section -->
+            <div class="add-subject-section">
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        id="subject-search" 
+                        placeholder="Buscar materias..."
+                        class="search-input"
+                    >
+                    <button id="search-btn" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Selected Subjects List -->
+            <div class="subjects-list" id="subjects-list">
+                <div class="empty-state" id="empty-subjects">
+                    <i class="fas fa-book"></i>
+                    <p>No hay materias seleccionadas</p>
+                    <small>Busca y agrega materias para generar horarios</small>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="panel-actions">
+                <button id="filters-btn" class="btn btn-outline">
+                    <i class="fas fa-filter"></i>
+                    Filtros
+                </button>
+            </div>
+        </aside>
+
+        <!-- Right Content Area -->
+        <section class="content-area">
+            <!-- Loading State -->
+            <div class="loading-overlay" id="loading-overlay">
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Generando horarios...</p>
+                </div>
+            </div>
+
+            <!-- Welcome State -->
+            <div class="welcome-state" id="welcome-state">
+                <div class="welcome-content">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h2>Bienvenido al Generador de Horarios UTB</h2>
+                    <p>Selecciona las materias que deseas cursar y genera horarios optimizados automáticamente.</p>
+                    <div class="welcome-steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h3>Buscar Materias</h3>
+                                <p>Utiliza el buscador para encontrar y agregar las materias que necesitas</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h3>Aplicar Filtros</h3>
+                                <p>Configura filtros de profesores y horarios según tus preferencias</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h3>Generar Horarios</h3>
+                                <p>Obtén horarios optimizados que cumplan con tus criterios</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="welcome-actions">
+                        <button id="tutorial-btn" class="btn btn-outline">
+                            <i class="fas fa-play-circle"></i>
+                            Ver Tutorial
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedules Grid -->
+            <div class="schedules-container" id="schedules-container" style="display: none;">
+                <div class="schedules-header">
+                    <h2>Horarios Generados (<span id="schedules-count">0</span>)</h2>
+                    <div class="schedules-actions">
+                        <button id="sort-btn" class="btn btn-outline">
+                            <i class="fas fa-sort"></i>
+                            Ordenar
+                        </button>
+                    </div>
+                </div>
+                <div class="schedules-grid" id="schedules-grid">
+                    <!-- Schedule cards will be generated here -->
+                </div>
+                <div class="load-more-container" id="load-more-container">
+                    <button id="load-more-btn" class="btn btn-outline">
+                        Cargar más horarios
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <!-- Search Modal -->
+    <div class="modal" id="search-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Buscar Materias</h3>
+                <button class="modal-close" id="search-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        id="modal-search-input" 
+                        placeholder="Buscar por código o nombre..."
+                        class="search-input"
+                    >
+                </div>
+                <div class="search-results" id="search-results">
+                    <div class="loading-state">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Cargando materias...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Modal -->
+    <div class="modal" id="filters-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Filtros de Horario</h3>
+                <button class="modal-close" id="filters-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="filters-content">
+                    <!-- Professor Filters -->
+                    <div class="filter-section">
+                        <h4>Filtros de Profesores</h4>
+                        <div id="professor-filters">
+                            <!-- Professor filters will be generated here -->
+                        </div>
+                    </div>
+
+                    <!-- Time Filters -->
+                    <div class="filter-section">
+                        <h4>Horarios No Disponibles</h4>
+                        <div class="time-filters">
+                            <div class="days-grid">
+                                <div class="day-column">
+                                    <h5>Lunes</h5>
+                                    <div class="time-slots" data-day="monday">
+                                        <!-- Time slots for Monday -->
+                                    </div>
+                                </div>
+                                <div class="day-column">
+                                    <h5>Martes</h5>
+                                    <div class="time-slots" data-day="tuesday">
+                                        <!-- Time slots for Tuesday -->
+                                    </div>
+                                </div>
+                                <div class="day-column">
+                                    <h5>Miércoles</h5>
+                                    <div class="time-slots" data-day="wednesday">
+                                        <!-- Time slots for Wednesday -->
+                                    </div>
+                                </div>
+                                <div class="day-column">
+                                    <h5>Jueves</h5>
+                                    <div class="time-slots" data-day="thursday">
+                                        <!-- Time slots for Thursday -->
+                                    </div>
+                                </div>
+                                <div class="day-column">
+                                    <h5>Viernes</h5>
+                                    <div class="time-slots" data-day="friday">
+                                        <!-- Time slots for Friday -->
+                                    </div>
+                                </div>
+                                <div class="day-column">
+                                    <h5>Sábado</h5>
+                                    <div class="time-slots" data-day="saturday">
+                                        <!-- Time slots for Saturday -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="clear-filters-btn" class="btn btn-outline">
+                    <i class="fas fa-times"></i>
+                    Limpiar Filtros
+                </button>
+                <button id="apply-filters-btn" class="btn btn-primary">
+                    <i class="fas fa-check"></i>
+                    Aplicar Filtros
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sort Modal -->
+    <div class="modal" id="sort-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ordenar Horarios</h3>
+                <button class="modal-close" id="sort-modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="sort-options">
+                    <div class="sort-option">
+                        <input type="radio" id="sort-morning" name="sortBy" value="morning">
+                        <label for="sort-morning">
+                            <i class="fas fa-sun"></i>
+                            <div>
+                                <span>Horas Matutinas</span>
+                                <small>Priorizar horarios de mañana</small>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="sort-option">
+                        <input type="radio" id="sort-afternoon" name="sortBy" value="afternoon">
+                        <label for="sort-afternoon">
+                            <i class="fas fa-moon"></i>
+                            <div>
+                                <span>Horas Vespertinas</span>
+                                <small>Priorizar horarios de tarde</small>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="sort-option">
+                        <input type="radio" id="sort-less-gaps" name="sortBy" value="lessGaps">
+                        <label for="sort-less-gaps">
+                            <i class="fas fa-compress-alt"></i>
+                            <div>
+                                <span>Menos Espacios Entre Clases</span>
+                                <small>Horarios más compactos con menor tiempo libre</small>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="sort-option">
+                        <input type="radio" id="sort-more-gaps" name="sortBy" value="moreGaps">
+                        <label for="sort-more-gaps">
+                            <i class="fas fa-expand-alt"></i>
+                            <div>
+                                <span>Más Espacios Entre Clases</span>
+                                <small>Horarios con mayor tiempo libre entre materias</small>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="sort-option">
+                        <input type="radio" id="sort-free-days" name="sortBy" value="freeDays">
+                        <label for="sort-free-days">
+                            <i class="fas fa-calendar-check"></i>
+                            <div>
+                                <span>Días Libres</span>
+                                <small>Priorizar horarios con días completos libres</small>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="clear-sort-btn" class="btn btn-outline">
+                    <i class="fas fa-undo"></i>
+                    Sin Ordenar
+                </button>
+                <button id="apply-sort-btn" class="btn btn-primary">
+                    <i class="fas fa-check"></i>
+                    Aplicar Ordenamiento
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Detail Modal -->
+    <div class="modal" id="schedule-detail-modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Detalle del Horario</h3>
+                <button class="modal-close" id="schedule-detail-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="schedule-detail-content" id="schedule-detail-content">
+                    <!-- Schedule detail will be generated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debug Info Panel -->
+    <div class="debug-info" id="debug-info" style="display: none;">
+        <div><strong>Debug Info:</strong></div>
+        <div>Materias: <span id="debug-subjects">0</span></div>
+        <div>Horarios: <span id="debug-schedules">0</span></div>
+        <div>Estado: <span id="debug-state">Inicial</span></div>
+        <div>API: <span id="debug-api">Desconocido</span></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/components/SearchModal.js"></script>
+    <script src="js/components/FiltersModal.js"></script>
+    <script src="js/components/SortModal.js"></script>
+    <script src="js/components/ScheduleDetailModal.js"></script>
+    <script src="js/components/SubjectsList.js"></script>
+    <script src="js/components/SchedulesGrid.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:html' as html;
+import 'dart:ui_web' as ui_web;
 import 'models/subject.dart';
 import 'models/subject_summary.dart';
 import 'models/class_option.dart';
@@ -15,18 +16,46 @@ import 'widgets/main_actions_panel.dart';
 import 'widgets/schedule_overview_widget.dart';
 import 'widgets/schedule_sort_widget.dart';
 
+/// Detecta si el dispositivo es móvil basado en el User-Agent
+bool get isMobileDevice {
+  if (!kIsWeb) return false;
+  final userAgent = html.window.navigator.userAgent.toLowerCase();
+  return userAgent.contains('mobi') || 
+         userAgent.contains('android') || 
+         userAgent.contains('iphone') || 
+         userAgent.contains('ipad') ||
+         userAgent.contains('mobile');
+}
+
 /// Punto de entrada principal de la aplicación.
-void main() {
+void main() async {
   setPathUrlStrategy(); // Configura la estrategia de URL para web, eliminando el #.
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Solo registrar vista HTML si estamos en web y es móvil
+  if (kIsWeb && isMobileDevice) {
+    // Registrar la vista HTML para móviles
+    ui_web.platformViewRegistry.registerViewFactory(
+      'mobile-html-view',
+      (int viewId) {
+        final iframe = html.IFrameElement()
+          ..src = 'http://localhost:8000/'
+          ..style.border = 'none'
+          ..style.width = '100%'
+          ..style.height = '100%';
+        return iframe;
+      },
+    );
+  }
+  
   runApp(const MyApp());
 }
 
 /// Comportamiento de scroll personalizado para la web que elimina el "glow" de sobredescroll.
 class WebScrollBehavior extends ScrollBehavior {
   @override
-  Widget buildViewportChrome(
-      BuildContext context, Widget child, AxisDirection axisDirection) {
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
     return child;
   }
 }
@@ -37,7 +66,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Define el tema global de la aplicación.
+    // Si es dispositivo móvil en web, mostrar el contenido HTML
+    if (kIsWeb && isMobileDevice) {
+      return MaterialApp(
+        title: 'Generador de Horarios UTB - Móvil',
+        home: Scaffold(
+          body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: HtmlElementView(
+              viewType: 'mobile-html-view',
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Para escritorio o aplicaciones nativas, mostrar la interfaz Flutter normal
     final ThemeData theme = ThemeData(
       primarySwatch: Colors.indigo,
       brightness: Brightness.light,
