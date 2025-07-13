@@ -20,9 +20,12 @@ def guardar_log(errores: list[str]):
     print(f"Se registraron {len(errores)} errores en {EXPORT_DIR}/log.txt")
 
 def actualizar_base():
+
+    # Actualiza la base de datos con los datos del JSON.
     IMPORT_DIR = os.path.join(os.path.dirname(__file__), "data_scrapped")
     os.makedirs(IMPORT_DIR, exist_ok=True)
     ruta_json = os.path.join(IMPORT_DIR, "search_results_complete.json")
+    
     if not os.path.exists(ruta_json):
         raise FileNotFoundError("No se encontró el archivo search_results_complete.json")
 

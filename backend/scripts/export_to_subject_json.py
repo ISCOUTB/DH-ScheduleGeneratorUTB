@@ -19,6 +19,8 @@ def exportar_subjects_a_json():
             c.Tipo,
             c.GroupID,
             c.Campus,
+            c.CuposDisponibles,
+            c.CuposTotales,
             p.Nombre AS Profesor,
             cl.Dia,
             cl.HoraInicio,
@@ -50,7 +52,7 @@ def exportar_subjects_a_json():
     subjects_dict: dict[str, Subject] = {}
 
     for row in rows:
-        code, name, credits, nrc, tipo, group_id, campus, profesor, dia, hora_inicio, hora_final = row
+        code, name, credits, nrc, tipo, group_id, campus, cupos_disponibles, cupos_totales, profesor, dia, hora_inicio, hora_final = row
 
         # Inicializar materia si es nueva
         if code not in subjects_dict:
@@ -76,7 +78,9 @@ def exportar_subjects_a_json():
                 nrc=nrc_str,
                 groupId=group_id,
                 credits=credits,
-                campus=campus or ""
+                campus=campus or "",
+                seatsAvailable=cupos_disponibles,
+                seatsMaximum=cupos_totales
             )
             subj.class_options.append(nueva_opcion)
 

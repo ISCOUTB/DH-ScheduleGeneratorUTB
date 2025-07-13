@@ -21,6 +21,8 @@ class ClassOption(BaseModel):
     group_id: int = Field(..., alias='groupId')
     credits: int
     campus: str
+    seats_available: int = Field(..., alias='seatsAvailable')
+    seats_maximum: int = Field(..., alias='seatsMaximum')
 
 class Subject(BaseModel):
     # Configuración para que los modelos Pydantic usen camelCase en lugar de snake_case
