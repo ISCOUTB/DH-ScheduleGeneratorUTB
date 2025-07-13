@@ -90,10 +90,13 @@ class ScheduleDetailModal {
             subjectsMap.get(classOption.subjectCode).push(classOption);
         });
 
-        // Crear cards para cada materia
+        // Crear cards para cada materia con colores consistentes
+        let subjectIndex = 0;
         subjectsMap.forEach((classOptions, subjectCode) => {
-            const subjectCard = this.createSubjectCard(classOptions);
+            const colorIndex = subjectIndex % CONFIG.SUBJECT_COLORS.length;
+            const subjectCard = this.createSubjectCard(classOptions, colorIndex);
             subjectsContainer.appendChild(subjectCard);
+            subjectIndex++;
         });
 
         // Estadísticas del horario
@@ -106,26 +109,53 @@ class ScheduleDetailModal {
         return panel;
     }
 
-    createSubjectCard(classOptions) {
+    createSubjectCard(classOptions, colorIndex) {
         const firstOption = classOptions[0];
+        const subjectColor = CONFIG.getSubjectColor(colorIndex);
         
         const card = DOMUtils.createElement('div', {
-            className: 'detail-subject'
+            className: 'detail-subject',
+            style: {
+                backgroundColor: subjectColor + '20', // 20 hace el color más transparente
+                border: `2px solid ${subjectColor}`,
+                borderRadius: 'var(--radius-sm)',
+                padding: 'var(--spacing-md)',
+                marginBottom: 'var(--spacing-md)'
+            }
         });
 
         const header = DOMUtils.createElement('div', {
-            className: 'detail-subject-header'
+            className: 'detail-subject-header',
+            style: {
+                backgroundColor: subjectColor,
+                color: 'white',
+                padding: 'var(--spacing-sm)',
+                borderRadius: 'var(--radius-xs)',
+                marginBottom: 'var(--spacing-sm)',
+                fontWeight: 'bold'
+            }
         });
 
         const code = DOMUtils.createElement('span', {
-            className: 'detail-subject-code'
+            className: 'detail-subject-code',
+            style: {
+                color: 'white',
+                fontWeight: 'bold',
+                fontSize: 'var(--font-size-lg)'
+            }
         }, firstOption.subjectCode);
 
-        header.appendChild(code);
-
         const name = DOMUtils.createElement('div', {
-            className: 'detail-subject-name'
+            className: 'detail-subject-name',
+            style: {
+                color: 'white',
+                fontSize: 'var(--font-size-sm)',
+                marginTop: 'var(--spacing-xs)'
+            }
         }, firstOption.subjectName);
+
+        header.appendChild(code);
+        header.appendChild(name);
 
         // Información de cada opción de clase (teoría, laboratorio, etc.)
         const optionsContainer = DOMUtils.createElement('div', {
@@ -136,11 +166,11 @@ class ScheduleDetailModal {
             const optionCard = DOMUtils.createElement('div', {
                 className: 'detail-subject-option',
                 style: {
-                    backgroundColor: 'var(--bg-secondary)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
                     padding: 'var(--spacing-sm)',
-                    borderRadius: 'var(--radius-sm)',
+                    borderRadius: 'var(--radius-xs)',
                     marginBottom: 'var(--spacing-sm)',
-                    border: '1px solid var(--border-light)'
+                    border: '1px solid rgba(0, 0, 0, 0.1)'
                 }
             });
 
@@ -205,7 +235,6 @@ class ScheduleDetailModal {
         });
 
         card.appendChild(header);
-        card.appendChild(name);
         card.appendChild(optionsContainer);
 
         return card;

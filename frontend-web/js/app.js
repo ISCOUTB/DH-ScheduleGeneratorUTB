@@ -62,11 +62,15 @@ class ScheduleGeneratorApp {
         // Eventos del panel izquierdo
         const searchBtn = DOMUtils.find('#search-btn');
         const filtersBtn = DOMUtils.find('#filters-btn');
-        const themeToggle = DOMUtils.find('#toggle-theme');
 
         EventUtils.on(searchBtn, 'click', () => this.openSearchModal());
         EventUtils.on(filtersBtn, 'click', () => this.openFiltersModal());
-        EventUtils.on(themeToggle, 'click', () => this.toggleTheme());
+
+        // Evento del botón de tutorial
+        const tutorialBtn = DOMUtils.find('#tutorial-btn');
+        if (tutorialBtn) {
+            EventUtils.on(tutorialBtn, 'click', () => this.showTutorial());
+        }
 
         // Eventos del input de búsqueda rápida
         const quickSearchInput = DOMUtils.find('#subject-search');
@@ -162,10 +166,6 @@ class ScheduleGeneratorApp {
     }
 
     loadSavedState() {
-        // Solo cargar tema guardado, sin filtros ni materias para empezar de cero
-        const savedTheme = StorageUtils.get(CONFIG.STORAGE_KEYS.THEME, 'light');
-        this.setTheme(savedTheme);
-        
         // Limpiar datos previos para empezar de cero
         this.selectedSubjects = [];
         this.appliedFilters = { professors: {}, timeFilters: {} };
@@ -348,20 +348,9 @@ class ScheduleGeneratorApp {
         filtersModal.open(this.selectedSubjects);
     }
 
-    toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        this.setTheme(newTheme);
-    }
-
-    setTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        StorageUtils.set(CONFIG.STORAGE_KEYS.THEME, theme);
-        
-        // Actualizar icono del botón de tema
-        const themeBtn = DOMUtils.find('#toggle-theme');
-        const icon = DOMUtils.find('i', themeBtn);
-        icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+    showTutorial() {
+        // Mostrar mensaje de funcionalidad en desarrollo
+        this.showMessage('Funcionalidad en desarrollo', 'info');
     }
 
     openSortModal() {
