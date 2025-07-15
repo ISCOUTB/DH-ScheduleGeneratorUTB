@@ -102,8 +102,9 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       ),
       // Aumenta el ancho para acomodar el diseño de dos columnas
       child: Container(
-        width: 1200,
-        height: MediaQuery.of(context).size.height * 0.85,
+        width: 1333,
+        height:
+            500, // Usamos una altura fija en lugar de una relativa a la pantalla.
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,6 +199,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                                 'Profesor: ${option.professor}\n'
                                 'Horario: ${formattingSchedulesInPairs(option.schedules)}\n'
                                 'Campus: ${option.campus}\n'
+                                'Cupos: ${option.seatsAvailable} de ${option.seatsMaximum}\n'
                                 'Créditos: ${option.credits}',
                               ),
                             );
@@ -321,10 +323,10 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   /// Crea la lista de widgets (bloques) que representan cada clase en la cuadrícula.
   List<Widget> _buildClassBlocks(double hourRowHeight, double dayColumnWidth) {
     List<Widget> blocks = [];
-    
+
     // Agrupa las clases por día y hora para detectar superposiciones
     Map<String, List<ClassOption>> classesByDayAndTime = {};
-    
+
     for (var classOption in widget.schedule) {
       for (var scheduleItem in classOption.schedules) {
         String key = '${scheduleItem.day}_${scheduleItem.time}';
@@ -334,15 +336,15 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         classesByDayAndTime[key]!.add(classOption);
       }
     }
-    
+
     // Procesa cada grupo de clases
     for (var entry in classesByDayAndTime.entries) {
       String key = entry.key;
       List<ClassOption> overlappingClasses = entry.value;
-      
+
       String day = key.split('_')[0];
       String time = key.split('_')[1];
-      
+
       final dayIndex = days.indexOf(day);
       if (dayIndex == -1) continue;
 
@@ -357,11 +359,13 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
       if (top >= 0 && height > 0) {
         // Obtener el color de la primera clase (todas las clases superpuestas de la misma materia tendrán el mismo color)
-        final color = subjectColors[overlappingClasses.first.subjectName] ?? Colors.grey;
-        
+        final color =
+            subjectColors[overlappingClasses.first.subjectName] ?? Colors.grey;
+
         // Crear un texto con todos los NRC separados por nueva línea
-        String allNRCs = overlappingClasses.map((classOption) => classOption.nrc).join('\n');
-        
+        String allNRCs =
+            overlappingClasses.map((classOption) => classOption.nrc).join('\n');
+
         blocks.add(
           Positioned(
             top: top,
@@ -378,12 +382,13 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
               child: Text(
                 allNRCs,
                 style: const TextStyle(
-                  color: Colors.white, 
+                  color: Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                 ),
                 overflow: TextOverflow.ellipsis,
-                maxLines: overlappingClasses.length, // Permitir tantas líneas como NRC haya
+                maxLines: overlappingClasses
+                    .length, // Permitir tantas líneas como NRC haya
                 textAlign: TextAlign.left,
               ),
             ),

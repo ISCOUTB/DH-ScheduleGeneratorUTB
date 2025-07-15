@@ -81,7 +81,7 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
         SELECT 
             m.CodigoMateria, m.Nombre AS NombreMateria, m.Creditos,
             c.NRC, c.Tipo, c.GroupID, p.Nombre AS NombreProfesor,
-            cl.Dia, cl.HoraInicio, cl.HoraFinal, c.Campus
+            cl.Dia, cl.HoraInicio, cl.HoraFinal, c.Campus, c.CuposDisponibles, c.CuposTotales
         FROM Materia m
         JOIN Curso c ON m.CodigoMateria = c.CodigoMateria
         LEFT JOIN Profesor p ON c.ProfesorID = p.BannerID
@@ -117,7 +117,7 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
     for row in rows:
         (
             code, name, credits, nrc_val, tipo, group_id,
-            profesor, dia, hora_inicio, hora_final, campus
+            profesor, dia, hora_inicio, hora_final, campus, cupos_disponibles, cupos_totales
         ) = row
         
         nrc = str(nrc_val)
@@ -135,7 +135,9 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
                 nrc=nrc,
                 groupId=group_id,
                 credits=credits,
-                campus=campus
+                campus=campus,
+                seatsAvailable=cupos_disponibles,
+                seatsMaximum=cupos_totales
             )
             class_options_dict[nrc] = new_option
             all_options_by_subject[code].append(new_option)
@@ -174,7 +176,7 @@ def get_subject_by_code(subject_code: str) -> Subject | None:
         SELECT 
             m.CodigoMateria, m.Nombre AS NombreMateria, m.Creditos,
             c.NRC, c.Tipo, c.GroupID, p.Nombre AS NombreProfesor,
-            cl.Dia, cl.HoraInicio, cl.HoraFinal, c.campus
+            cl.Dia, cl.HoraInicio, cl.HoraFinal, c.campus, c.CuposDisponibles, c.CuposTotales
         FROM Materia m
         JOIN Curso c ON m.CodigoMateria = c.CodigoMateria
         LEFT JOIN Profesor p ON c.ProfesorID = p.BannerID
@@ -218,7 +220,7 @@ def get_subject_by_code(subject_code: str) -> Subject | None:
     for row in rows:
         (
             code, name, credits, nrc_val, tipo, group_id,
-            profesor, dia, hora_inicio, hora_final, campus
+            profesor, dia, hora_inicio, hora_final, campus, cupos_disponibles, cupos_totales
         ) = row
         
         nrc = str(nrc_val)
@@ -233,7 +235,9 @@ def get_subject_by_code(subject_code: str) -> Subject | None:
                 nrc=nrc,
                 groupId=group_id,
                 credits=credits,
-                campus=campus
+                campus=campus,
+                seatsAvailable=cupos_disponibles,
+                seatsMaximum=cupos_totales
             )
             class_options_dict[nrc] = new_option
 

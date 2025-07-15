@@ -5,7 +5,7 @@ from typing import Any, Optional, TypedDict
 class ProcesarJsonResponse(TypedDict):
     materias: list[tuple[str, int, str]]
     profesores: list[tuple[str, str]]
-    cursos: list[tuple[int, str, str, Optional[str], Optional[int], int, str]]
+    cursos: list[tuple[int, str, str, Optional[str], Optional[int], int, str, int, int]]
     clases: list[tuple[int, Optional[str], Optional[str], Optional[str], str]]
     errores: list[str]
 
@@ -13,7 +13,7 @@ def procesar_json(data: dict[str, list[dict[str, Any]]]) -> ProcesarJsonResponse
 
     materias: dict[str, tuple[str, int, str]] = {}  # subjectCourse: (subjectCourse, creditos, nombre_materia)
     profesores: dict[str, tuple[str, str]] = {}  # Estructura: profesor_id: (profesor_id, nombre_profesor)
-    cursos: list[tuple[int, str, str, Optional[str], Optional[int], int, str]] = []  # Estructura: (nrc, tipo, subjectCourse, profesor_id, nrc_teorico, group_id, campus)
+    cursos: list[tuple[int, str, str, Optional[str], Optional[int], int, str, int, int]] = []  # Estructura: (nrc, tipo, subjectCourse, profesor_id, nrc_teorico, group_id, campus)
     clases: list[tuple[int, Optional[str], Optional[str], Optional[str], str]] = []  # Estructura: (nrc, tipo, subjectCourse, profesor_id, nrc_teorico, group_id, campus)
     errores: list[str] = []
 
@@ -52,6 +52,8 @@ def procesar_json(data: dict[str, list[dict[str, Any]]]) -> ProcesarJsonResponse
         tipo = entrada['scheduleTypeDescription'].strip().upper()
         tipo_formateado = 'Teórico' if tipo == 'TEORICO' else 'Laboratorio'
         campus = entrada['campusDescription']
+        seats_a = entrada.get('seatsAvailable', 0)
+        seats_m = entrada.get('maximumEnrollment', 0)
         nrc = int(entrada['courseReferenceNumber'])
 
         # Materia
@@ -102,7 +104,7 @@ def procesar_json(data: dict[str, list[dict[str, Any]]]) -> ProcesarJsonResponse
             campus = limpiar_nombre(campus)
 
         # Curso
-        cursos.append((nrc, tipo_formateado, subject_course, profesor_id, nrc_teorico, group_id, campus))
+        cursos.append((nrc, tipo_formateado, subject_course, profesor_id, nrc_teorico, group_id, campus, seats_a, seats_m))
 
         # Clases
         for mf in entrada.get('meetingsFaculty', []):

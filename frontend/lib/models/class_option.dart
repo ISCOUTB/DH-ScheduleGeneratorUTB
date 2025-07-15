@@ -11,6 +11,8 @@ class ClassOption {
   final int groupId;
   final int credits;
   final String campus;
+  final int seatsAvailable;
+  final int seatsMaximum;
 
   ClassOption({
     required this.subjectName,
@@ -22,6 +24,8 @@ class ClassOption {
     required this.groupId,
     required this.credits,
     required this.campus,
+    required this.seatsAvailable,
+    required this.seatsMaximum,
   });
 
   factory ClassOption.fromJson(Map<String, dynamic> json) {
@@ -36,6 +40,8 @@ class ClassOption {
       groupId: json['groupId'],
       credits: json['credits'],
       campus: json['campus'],
+      seatsAvailable: json['seatsAvailable'],
+      seatsMaximum: json['seatsMaximum'],
     );
   }
 }

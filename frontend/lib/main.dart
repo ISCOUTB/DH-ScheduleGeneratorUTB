@@ -136,17 +136,30 @@ class _MyHomePageState extends State<MyHomePage> {
     'optimizeGaps': false,
     'optimizeFreeDays': false,
   };
-  
+
   // Control para mostrar el mensaje de advertencia solo la primera vez
   bool _showWelcomeDialog = true;
-  
+
   late FocusNode _focusNode;
+  final TransformationController _transformationController =
+      TransformationController();
+  Orientation? _previousOrientation;
 
   /// Comprueba si la plataforma es móvil.
   bool isMobile() {
-    if (kIsWeb) return false;
-    return defaultTargetPlatform == TargetPlatform.android ||
-        defaultTargetPlatform == TargetPlatform.iOS;
+    if (kIsWeb) {
+      // En la web, la forma más fiable de diferenciar es a través del User Agent del navegador.
+      final userAgent = html.window.navigator.userAgent.toLowerCase();
+      // Buscamos palabras clave comunes que indican que es un navegador móvil.
+      return userAgent.contains('mobi') ||
+          userAgent.contains('android') ||
+          userAgent.contains('iphone') ||
+          userAgent.contains('ipad');
+    } else {
+      // Mantenemos la lógica original para compilaciones nativas (Android/iOS).
+      return defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS;
+    }
   }
 
   @override
@@ -159,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _focusNode.requestFocus();
-      
+
       // Verificar si se debe mostrar el diálogo de advertencia
       _checkAndShowImportantNotice();
     });
@@ -188,7 +201,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _checkAndShowImportantNotice() {
     if (kIsWeb) {
       // En web, usar localStorage
-      final hasSeenNotice = html.window.localStorage['has_seen_important_notice'];
+      final hasSeenNotice =
+          html.window.localStorage['has_seen_important_notice'];
       if (hasSeenNotice == null || hasSeenNotice != 'true') {
         _showImportantNoticeDialog();
       }
@@ -248,12 +262,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               ),
               onPressed: () {
                 // Marcar que ya vió el mensaje
                 if (kIsWeb) {
-                  html.window.localStorage['has_seen_important_notice'] = 'true';
+                  html.window.localStorage['has_seen_important_notice'] =
+                      'true';
                 } else {
                   setState(() {
                     _showWelcomeDialog = false;
@@ -429,21 +445,23 @@ class _MyHomePageState extends State<MyHomePage> {
           String message;
           IconData icon;
           Color color;
-          
-          bool hasFilters = apiFiltersForGeneration.isNotEmpty && 
-                           apiFiltersForGeneration.values.any((value) => 
-                             value != false && value != null && value != '');
-          
+
+          bool hasFilters = apiFiltersForGeneration.isNotEmpty &&
+              apiFiltersForGeneration.values.any(
+                  (value) => value != false && value != null && value != '');
+
           if (hasFilters) {
-            message = 'No se encontraron horarios con los filtros aplicados. Intenta relajar algunos filtros.';
+            message =
+                'No se encontraron horarios con los filtros aplicados. Intenta relajar algunos filtros.';
             icon = Icons.filter_alt_off;
             color = Colors.orange;
           } else {
-            message = 'No se pueden generar horarios con estas materias. Puede haber cruces de horarios o incompatibilidades.';
+            message =
+                'No se pueden generar horarios con estas materias. Puede haber cruces de horarios o incompatibilidades.';
             icon = Icons.schedule_send;
             color = Colors.red.shade600;
           }
-          
+
           showCustomNotification(context, message, icon: icon, color: color);
         }
       }
@@ -500,192 +518,221 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Detecta el cambio de orientación y resetea el InteractiveViewer si es necesario.
+    final currentOrientation = MediaQuery.of(context).orientation;
+    if (isMobile() &&
+        _previousOrientation != null &&
+        _previousOrientation != currentOrientation) {
+      _transformationController.value =
+          Matrix4.identity(); // Resetea el zoom y pan
+    }
+    _previousOrientation = currentOrientation;
+
     // Stack principal para poder mostrar overlays sobre la pantalla principal.
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F7FA),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0051FF),
+        elevation: 0,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              backgroundColor: Color(0xFF8CFF62),
+              child: const Icon(
+                Icons.calendar_today,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text("Generador de Horarios UTB",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white)),
+          ],
+        ),
+      ),
+      body: isMobile()
+          ? InteractiveViewer(
+              transformationController: _transformationController,
+              minScale: 0.25,
+              maxScale: 4.0,
+              constrained:
+                  false, // Permite que el contenido sea más grande que la pantalla
+              child: SizedBox(
+                width: 1400, // Ancho fijo para simular una vista de escritorio
+                height: 900, // Altura fija
+                child: _buildBodyContent(),
+              ),
+            )
+          : _buildBodyContent(),
+    );
+  }
+
+  /// Construye el contenido principal del cuerpo de la página.
+  Widget _buildBodyContent() {
+    // El contenido principal ahora se envuelve en un Stack para manejar los overlays internamente.
     return Stack(
       children: [
-        Scaffold(
-          backgroundColor: const Color(0xFFF5F7FA),
-          appBar: AppBar(
-            backgroundColor: const Color(0xFF0051FF),
-            elevation: 0,
-            title: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircleAvatar(
-                  backgroundColor: Color(0xFF8CFF62),
-                  child: const Icon(
-                    Icons.calendar_today,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                const Text("Generador de Horarios UTB",
-                    style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white)),
-              ],
-            ),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Contenido principal (acciones y grilla de horario).
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      if (!isExpandedView) ...[
-                        // Primera fila: Buscar, Filtrar, Generar
-                        MainActionsPanel(
-                          onSearch: () => setState(() => isSearchOpen = true),
-                          onFilter: () => setState(() => isFilterOpen = true),
-                          onClear: clearSchedules,
-                          onGenerate:
-                              generateScheduleButtonAction, // Ahora sin funcionalidad real
-                        ),
+        Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Contenido principal (acciones y grilla de horario).
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (!isExpandedView) ...[
+                      // Primera fila: Buscar, Filtrar, Generar
+                      MainActionsPanel(
+                        onSearch: () => setState(() => isSearchOpen = true),
+                        onFilter: () => setState(() => isFilterOpen = true),
+                        onClear: clearSchedules,
+                        onGenerate:
+                            generateScheduleButtonAction, // Ahora sin funcionalidad real
+                      ),
 
-                        const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-                        // Segunda fila: Ordenar Horarios por + Limpiar Todo
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            // Calculamos el ancho disponible
-                            double totalWidth = constraints.maxWidth;
-                            double spaceBetween = 20;
-                            double clearButtonWidth =
-                                (totalWidth - 2 * spaceBetween) /
-                                    3; // Mismo ancho que un botón de arriba
-                            double sortWidth =
-                                totalWidth - clearButtonWidth - spaceBetween;
+                      // Segunda fila: Ordenar Horarios por + Limpiar Todo
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          // Calculamos el ancho disponible
+                          double totalWidth = constraints.maxWidth;
+                          double spaceBetween = 20;
+                          double clearButtonWidth =
+                              (totalWidth - 2 * spaceBetween) /
+                                  3; // Mismo ancho que un botón de arriba
+                          double sortWidth =
+                              totalWidth - clearButtonWidth - spaceBetween;
 
-                            return Row(
-                              children: [
-                                // Widget de ordenamiento (ocupa espacio de 2 botones + espacio entre ellos)
-                                SizedBox(
-                                  width: sortWidth,
-                                  child: ScheduleSortWidget(
-                                    currentOptimizations: currentOptimizations,
-                                    onOptimizationChanged:
-                                        onOptimizationChanged,
-                                    isEnabled: allSchedules.isNotEmpty,
-                                  ),
+                          return Row(
+                            children: [
+                              // Widget de ordenamiento (ocupa espacio de 2 botones + espacio entre ellos)
+                              SizedBox(
+                                width: sortWidth,
+                                child: ScheduleSortWidget(
+                                  currentOptimizations: currentOptimizations,
+                                  onOptimizationChanged: onOptimizationChanged,
+                                  isEnabled: allSchedules.isNotEmpty,
                                 ),
-                                SizedBox(width: spaceBetween),
-                                // Botón Limpiar Todo (mismo ancho que botón de arriba)
-                                SizedBox(
-                                  width: clearButtonWidth,
-                                  height: 60,
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFFF2F2F),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
+                              ),
+                              SizedBox(width: spaceBetween),
+                              // Botón Limpiar Todo (mismo ancho que botón de arriba)
+                              SizedBox(
+                                width: clearButtonWidth,
+                                height: 60,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFFF2F2F),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
-                                    onPressed: clearSchedules,
-                                    child: const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "Limpiar todo",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                  ),
+                                  onPressed: clearSchedules,
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Limpiar todo",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        SizedBox(width: 8),
-                                        Icon(Icons.refresh,
-                                            color: Colors.white, size: 20),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 24),
-                      ],
-
-                      // Muestra la grilla de horarios o un mensaje de vista previa.
-                      Expanded(
-                        //Envolver con un Stack para superponer el contador.
-                        child: Stack(
-                          children: [
-                            allSchedules.isEmpty
-                                ? Container(
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        color: const Color(0xFFF5F7FA),
-                                        borderRadius: BorderRadius.circular(18),
-                                        border: Border.all(
-                                            color: Colors.grey.shade400,
-                                            width: 2)),
-                                    child: Center(
-                                        child: Text("Vista previa del horario",
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.grey.shade600,
-                                                fontWeight: FontWeight.w500))),
-                                  )
-                                : ScheduleGridWidget(
-                                    allSchedules: allSchedules,
-                                    onScheduleTap: openScheduleOverview),
-
-                            // Widget para mostrar el contador de horarios generados.
-                            if (allSchedules.isNotEmpty)
-                              Positioned(
-                                bottom: 16,
-                                left: 16,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.6),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    '${allSchedules.length} ${allSchedules.length == 1 ? "horario generado" : "horarios generados"}',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
+                                      ),
+                                      SizedBox(width: 8),
+                                      Icon(Icons.refresh,
+                                          color: Colors.white, size: 20),
+                                    ],
                                   ),
                                 ),
                               ),
-                          ],
-                        ),
+                            ],
+                          );
+                        },
                       ),
+                      const SizedBox(height: 24),
                     ],
-                  ),
+
+                    // Muestra la grilla de horarios o un mensaje de vista previa.
+                    Expanded(
+                      //Envolver con un Stack para superponer el contador.
+                      child: Stack(
+                        children: [
+                          allSchedules.isEmpty
+                              ? Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      color: const Color(0xFFF5F7FA),
+                                      borderRadius: BorderRadius.circular(18),
+                                      border: Border.all(
+                                          color: Colors.grey.shade400,
+                                          width: 2)),
+                                  child: Center(
+                                      child: Text("Vista previa del horario",
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.grey.shade600,
+                                              fontWeight: FontWeight.w500))),
+                                )
+                              : ScheduleGridWidget(
+                                  allSchedules: allSchedules,
+                                  onScheduleTap: openScheduleOverview),
+
+                          // Widget para mostrar el contador de horarios generados.
+                          if (allSchedules.isNotEmpty)
+                            Positioned(
+                              bottom: 16,
+                              left: 16,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  '${allSchedules.length} ${allSchedules.length == 1 ? "horario generado" : "horarios generados"}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                // Panel lateral: modo normal o encogido
-                const SizedBox(width: 32),
-                SubjectsPanel(
-                  isFullExpandedView: isFullExpandedView,
-                  addedSubjects: addedSubjects,
-                  usedCredits: usedCredits,
-                  creditLimit: creditLimit,
-                  getSubjectColor: getSubjectColor,
-                  onShowPanel: () => setState(() => isFullExpandedView = false),
-                  onHidePanel: () => setState(() => isFullExpandedView = true),
-                  onAddSubject: () => setState(() => isSearchOpen = true),
-                  onToggleExpandView: () =>
-                      setState(() => isExpandedView = !isExpandedView),
-                  onRemoveSubject: removeSubject,
-                  isExpandedView: isExpandedView,
-                ),
-              ],
-            ),
+              ),
+              // Panel lateral: modo normal o encogido
+              const SizedBox(width: 32),
+              SubjectsPanel(
+                isFullExpandedView: isFullExpandedView,
+                addedSubjects: addedSubjects,
+                usedCredits: usedCredits,
+                creditLimit: creditLimit,
+                getSubjectColor: getSubjectColor,
+                onShowPanel: () => setState(() => isFullExpandedView = false),
+                onHidePanel: () => setState(() => isFullExpandedView = true),
+                onAddSubject: () => setState(() => isSearchOpen = true),
+                onToggleExpandView: () =>
+                    setState(() => isExpandedView = !isExpandedView),
+                onRemoveSubject: removeSubject,
+                isExpandedView: isExpandedView,
+              ),
+            ],
           ),
         ),
+
         // --- Overlays ---
+        // Se renderizan aquí para estar dentro del InteractiveViewer en móvil.
 
         // Overlay de carga mientras se generan los horarios.
         if (_isLoading)
@@ -766,16 +813,13 @@ class _MyHomePageState extends State<MyHomePage> {
           Stack(
             children: [
               const ModalBarrier(dismissible: false, color: Colors.black45),
-              AbsorbPointer(
-                absorbing: true,
-                child: Container(color: Colors.black45),
-              ),
-              FilterWidget(
-                closeWindow: () => setState(() => isFilterOpen = false),
-                // --- ACTUALIZAR LA LLAMADA PARA QUE COINCIDA ---
-                onApplyFilters: applyFilters,
-                currentFilters: appliedFilters,
-                addedSubjects: addedSubjects,
+              Center(
+                child: FilterWidget(
+                  closeWindow: () => setState(() => isFilterOpen = false),
+                  onApplyFilters: applyFilters,
+                  currentFilters: appliedFilters,
+                  addedSubjects: addedSubjects,
+                ),
               ),
             ],
           ),

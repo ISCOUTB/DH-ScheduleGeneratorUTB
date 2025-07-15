@@ -18,15 +18,15 @@ def insertar_datos(conn: psycopg.Connection, datos: ProcesarJsonResponse) -> Non
     # Insertar teóricos primero
     for c in cursos_teoricos:
         cursor.execute("""
-            INSERT INTO Curso (NRC, Tipo, CodigoMateria, ProfesorID, NRCTeorico, GroupID, Campus)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Curso (NRC, Tipo, CodigoMateria, ProfesorID, NRCTeorico, GroupID, Campus, CuposDisponibles, CuposTotales)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, c)
 
     # Luego insertar laboratorios
     for c in cursos_lab:
         cursor.execute("""
-            INSERT INTO Curso (NRC, Tipo, CodigoMateria, ProfesorID, NRCTeorico, GroupID, Campus)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Curso (NRC, Tipo, CodigoMateria, ProfesorID, NRCTeorico, GroupID, Campus, CuposDisponibles, CuposTotales)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, c)
 
     for cl in datos['clases']:
