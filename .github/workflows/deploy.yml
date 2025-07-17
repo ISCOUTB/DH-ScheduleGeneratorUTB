@@ -48,11 +48,11 @@ jobs:
 
             # Detiene cualquier contenedor que esté corriendo de una versión anterior.
             echo "Stopping old containers..."
-            docker-compose down
+            docker compose down
 
             # Construye las nuevas imágenes (si hay cambios) y levanta los contenedores en segundo plano (-d).
             echo "Building and starting new containers..."
-            docker-compose up --build -d
+            docker compose up --build -d
 
             # (Opcional pero recomendado) Limpia imágenes de Docker viejas y sin usar para ahorrar espacio.
             echo "Cleaning up unused Docker images..."
