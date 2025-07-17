@@ -18,9 +18,8 @@ services:
     build:
       context: ./frontend
       args:
-        #  - API_URL=http://api:8000 # URL del backend
-        #  - API_URL=http://localhost:8000 # URL del backend para desarrollo local
-        - API_URL=http://api:8000
+        # Lee la variable de entorno API_URL. Si no existe, usa un valor por defecto.
+        - API_URL=${API_URL:-http://localhost:8000}
     container_name: web
     restart: unless-stopped
     ports:

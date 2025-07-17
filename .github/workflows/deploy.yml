@@ -46,14 +46,20 @@ jobs:
             echo "Creating .env file..."
             echo "${{ secrets.DOT_ENV_FILE }}" > backend/.env
 
+            # Exporta la URL pública de la API como una variable de entorno.
+            # Esta variable será leída por docker-compose.yml.
+            export API_URL="http://${{ secrets.VM_HOST }}:8000"
+            echo "API URL for build will be: $API_URL"
+
             # Detiene cualquier contenedor que esté corriendo de una versión anterior.
             echo "Stopping old containers..."
             docker compose down
 
-            # Construye las nuevas imágenes (si hay cambios) y levanta los contenedores en segundo plano (-d).
+            # Construye las nuevas imágenes y levanta los contenedores.
+            # --build es importante para que reconstruya con la nueva variable.
             echo "Building and starting new containers..."
             docker compose up --build -d
 
-            # (Opcional pero recomendado) Limpia imágenes de Docker viejas y sin usar para ahorrar espacio.
+            # Limpia imágenes de Docker viejas y sin usar.
             echo "Cleaning up unused Docker images..."
             docker image prune -af
