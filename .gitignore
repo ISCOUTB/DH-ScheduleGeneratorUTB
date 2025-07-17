@@ -1,47 +1,107 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
+# ===================================================================
+# Archivos de Entorno y Secretos
+# Ignora todos los archivos .env, incluyendo los específicos como .env.local
+.env
+.env.*
+!.env.example
 
-# IntelliJ related
+# ===================================================================
+# Python / Backend
+#
+# Entorno virtual
+venv/
+.venv/
+env/
+.env/
+
+# Archivos compilados y cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos de distribución y empaquetado
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Registros y datos generados por los scripts
+/backend/scripts/logs/
+/backend/scripts/data_scrapped/
+/backend/scripts/shared_data/
+/backend/scripts/snapshots/
+
+# Cobertura de tests
+.coverage
+.coverage.*
+htmlcov/
+
+# Pytest
+.pytest_cache/
+
+# ===================================================================
+# Flutter / Frontend
+#
+# Archivos generados por Pub y Dart
+.dart_tool/
+.pub/
+.pub-cache/
+
+# Archivos de compilación
+/frontend/build/
+
+# Archivos generados por Flutter
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Símbolos de depuración y ofuscación
+app.*.symbols
+app.*.map.json
+
+# Archivos específicos de Android Studio / IntelliJ
+/android/local.properties
+/ios/Pods/
+/ios/Runner/GeneratedPluginRegistrant.h
+/ios/Runner/GeneratedPluginRegistrant.m
+/ios/Flutter/ephemeral/
+
+# ===================================================================
+# Configuración de IDEs y Editores
+#
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
 *.iml
 *.ipr
 *.iws
-.idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Atom
+.atom/
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-#/build/
+# ===================================================================
+# Docker
+#
+# Archivos de contexto de compilación que no se deben incluir
+.dockerignore
 
-# Symbolication related
-app.*.symbols
+# ===================================================================
+# Archivos del Sistema Operativo y Misceláneos
+#
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
 
-# Obfuscation related
-app.*.map.json
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-
-#another information
-/backend/.env
-/backend/scripts/.env
+# Otros
+*.log
+*.swp
+.history
+*.class

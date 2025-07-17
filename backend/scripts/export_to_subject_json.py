@@ -1,119 +1,113 @@
 import sys
-import psycopg
 import json
 import os
-from config import DB_CONFIG
+# Importa la función de conexión en lugar de la configuración antigua.
+from config import get_connection
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from app.models import Subject, ClassOption, Schedule
 
 def exportar_subjects_a_json():
-    conn = psycopg.connect(**DB_CONFIG)
+    """
+    Consulta la base de datos, construye los objetos de materia y los exporta a un archivo JSON.
+    """
+    # Usa la función centralizada para obtener la conexión.
+    conn = get_connection()
     cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT 
+    try: 
+        cursor.execute("""
+            SELECT 
+                m.CodigoMateria,
+                m.Nombre,
+                m.Creditos,
+                c.NRC,
+                c.Tipo,
+                c.GroupID,
+                c.Campus,
+                c.CuposDisponibles,
+                c.CuposTotales,
+                p.Nombre AS Profesor,
+                cl.Dia,
+                cl.HoraInicio,
+                cl.HoraFinal
+            FROM Materia m
+            JOIN Curso c ON m.CodigoMateria = c.CodigoMateria
+            LEFT JOIN Profesor p ON c.ProfesorID = p.BannerID
+            LEFT JOIN Clase cl ON cl.NRC = c.NRC
+            ORDER BY 
             m.CodigoMateria,
-            m.Nombre,
-            m.Creditos,
-            c.NRC,
-            c.Tipo,
             c.GroupID,
-            c.Campus,
-            c.CuposDisponibles,
-            c.CuposTotales,
-            p.Nombre AS Profesor,
-            cl.Dia,
-            cl.HoraInicio,
-            cl.HoraFinal
-        FROM Materia m
-        JOIN Curso c ON m.CodigoMateria = c.CodigoMateria
-        LEFT JOIN Profesor p ON c.ProfesorID = p.BannerID
-        LEFT JOIN Clase cl ON cl.NRC = c.NRC
-        ORDER BY 
-        m.CodigoMateria,
-        c.GroupID,
-        c.NRC,
-        CASE cl.Dia
-            WHEN 'Lunes' THEN 1
-            WHEN 'Martes' THEN 2
-            WHEN 'Miércoles' THEN 3
-            WHEN 'Jueves' THEN 4
-            WHEN 'Viernes' THEN 5
-            WHEN 'Sábado' THEN 6
-            WHEN 'Domingo' THEN 7
-            ELSE 8
-        END,
-        cl.HoraInicio;
-    """)
+            c.NRC,
+            CASE cl.Dia
+                WHEN 'Lunes' THEN 1
+                WHEN 'Martes' THEN 2
+                WHEN 'Miércoles' THEN 3
+                WHEN 'Jueves' THEN 4
+                WHEN 'Viernes' THEN 5
+                WHEN 'Sábado' THEN 6
+                WHEN 'Domingo' THEN 7
+                ELSE 8
+            END,
+            cl.HoraInicio;
+        """)
 
-    rows = cursor.fetchall()
+        rows = cursor.fetchall()
 
-    # Estructura: { subjectCode: { ...materia..., classOptions: { NRC: {...} } } }
-    subjects_dict: dict[str, Subject] = {}
+        subjects_dict: dict[str, Subject] = {}
+        class_options_dict: dict[str, ClassOption] = {}
 
-    for row in rows:
-        code, name, credits, nrc, tipo, group_id, campus, cupos_disponibles, cupos_totales, profesor, dia, hora_inicio, hora_final = row
+        for row in rows:
+            (
+                code, name, credits, nrc_val, tipo, group_id, campus, 
+                cupos_disponibles, cupos_totales, profesor, dia, 
+                hora_inicio, hora_final
+            ) = row
+            
+            nrc = str(nrc_val)
 
-        # Inicializar materia si es nueva
-        if code not in subjects_dict:
-            subjects_dict[code] = Subject(
-                code=code,
-                name=name,
-                credits=credits,
-                classOptions=[]
-            )
+            # Si la materia no existe en nuestro diccionario, la creamos.
+            if code not in subjects_dict:
+                subjects_dict[code] = Subject(code=code, name=name, credits=credits, classOptions=[])
 
-        subj = subjects_dict[code]
-        nrc_str = str(nrc)
+            # Si la opción de clase (curso) no existe, la creamos y la añadimos a su materia.
+            if nrc not in class_options_dict:
+                new_option = ClassOption(
+                    subjectName=name, subjectCode=code, type=tipo, schedules=[],
+                    professor=profesor or "Por Asignar", nrc=nrc, groupId=group_id,
+                    credits=credits, campus=campus or "N/A",
+                    seatsAvailable=cupos_disponibles, seatsMaximum=cupos_totales
+                )
+                class_options_dict[nrc] = new_option
+                subjects_dict[code].class_options.append(new_option)
 
-        exist_nrc = any(op.nrc == nrc_str for op in subj.class_options)
+            # Añade el horario a la opción de clase correspondiente.
+            if dia and hora_inicio and hora_final:
+                hora_inicio_str = hora_inicio.strftime("%H:%M")
+                hora_final_str = hora_final.strftime("%H:%M")
+                class_options_dict[nrc].schedules.append(
+                    Schedule(day=dia, time=f"{hora_inicio_str} - {hora_final_str}")
+                )
 
-        if not exist_nrc:
-            nueva_opcion = ClassOption(
-                subjectName=name,
-                subjectCode=code,
-                type=tipo,
-                schedules=[],
-                professor=profesor or "",
-                nrc=nrc_str,
-                groupId=group_id,
-                credits=credits,
-                campus=campus or "",
-                seatsAvailable=cupos_disponibles,
-                seatsMaximum=cupos_totales
-            )
-            subj.class_options.append(nueva_opcion)
+        # Convertir a lista compatible con JSON
+        subjects_list = [subj.model_dump(by_alias=True) for subj in subjects_dict.values()]
 
-        # Obtener la clase correspondiente
-        clase = next((op for op in subj.class_options if op.nrc == nrc_str), None)
+        # La ruta de exportación debe ser accesible desde el contenedor
+        EXPORT_DIR = os.path.join(os.path.dirname(__file__), "shared_data")
+        os.makedirs(EXPORT_DIR, exist_ok=True)
+        filepath = os.path.join(EXPORT_DIR, "subject_data.json")
 
-        # Añadir horario si existe
-        if clase and dia and hora_inicio and hora_final:
-            hora_inicio_str = hora_inicio.strftime("%H:%M")
-            hora_final_str = hora_final.strftime("%H:%M")
-            clase.schedules.append(Schedule(
-                day=dia,
-                time=f"{hora_inicio_str} - {hora_final_str}"
-            ))
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(subjects_list, f, ensure_ascii=False, indent=2)
 
+        print(f"Archivo '{filepath}' generado correctamente.")
 
-    # Convertir a lista compatible con JSON
-    subjects_list = [
-        subj_data.model_dump(by_alias=True)
-        for subj_data in subjects_dict.values()
-    ]
+    finally:
+        cursor.close()
+        conn.close()
 
-    EXPORT_DIR = os.path.join(os.path.dirname(__file__), "shared_data")
-    os.makedirs(EXPORT_DIR, exist_ok=True)
+# Permite ejecutar el script directamente para pruebas
+if __name__ == '__main__':
+    try:
+        exportar_subjects_a_json()
+    except Exception as e:
+        print(f"Ocurrió un error al exportar a JSON: {e}")
 
-    filepath = os.path.join(EXPORT_DIR, "subject_data.json")
-
-    with open(filepath, "w", encoding="utf-8") as f:
-        json.dump(subjects_list, f, ensure_ascii=False, indent=2)
-
-    print("Archivo 'subject_data.json' generado correctamente.")
-
-    cursor.close()
-    conn.close()
-
-    

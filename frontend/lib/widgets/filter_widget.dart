@@ -19,6 +19,9 @@ class FilterWidget extends StatefulWidget {
           Map<String, dynamic> stateFilters, Map<String, dynamic> apiFilters)
       onApplyFilters;
 
+  /// Callback que se ejecuta cuando se limpian los filtros.
+  final VoidCallback onClearFilters;
+
   /// Filtros actuales para inicializar el estado del widget.
   final Map<String, dynamic> currentFilters;
 
@@ -30,6 +33,7 @@ class FilterWidget extends StatefulWidget {
     Key? key,
     required this.closeWindow,
     required this.onApplyFilters,
+    required this.onClearFilters,
     required this.currentFilters,
     required this.addedSubjects,
   }) : super(key: key);
@@ -407,28 +411,16 @@ class _FilterWidgetState extends State<FilterWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Botón Limpiar filtros - resetea todos los filtros
+                // Botón Limpiar filtros
                 TextButton.icon(
                   onPressed: () {
-                    setState(() {
-                      // Resetear filtros de profesores
-                      _professorsFilters.clear();
+                    // Notifica al padre para que limpie el estado principal.
+                    widget.onClearFilters();
 
-                      // Resetear filtros de tiempo
-                      _timeFilters.clear();
+                    // Cierra la ventana de filtros.
+                    widget.closeWindow();
 
-                      // Reinicializar filtros de profesores para las materias actuales
-                      for (Subject subject in widget.addedSubjects) {
-                        _professorsFilters[subject.code] = {
-                          'filterType': 'include',
-                          'professors': <String>[]
-                        };
-                      }
-
-                      // Generar nueva clave para forzar reconstrucción completa
-                      _widgetKey = UniqueKey();
-                    });
-                    _applyFilters();
+                    // Muestra una notificación.
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Todos los filtros han sido eliminados'),

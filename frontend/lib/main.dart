@@ -14,11 +14,20 @@ import 'widgets/subjects_panel.dart';
 import 'widgets/main_actions_panel.dart';
 import 'widgets/schedule_overview_widget.dart';
 import 'widgets/schedule_sort_widget.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 /// Punto de entrada principal de la aplicación.
-void main() {
-  setPathUrlStrategy(); // Configura la estrategia de URL para web, eliminando el #.
+void main() async {
+  setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
+  // Inicializa Firebase para que funcione correctamente
+  // para cualquier plataforma (web, android, ios).
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
@@ -73,8 +82,9 @@ class MyHomePage extends StatefulWidget {
 /// Estado de [MyHomePage]. Contiene toda la lógica de la interfaz.
 class _MyHomePageState extends State<MyHomePage> {
   // Servicios para la autenticación y la comunicación con la API.
-  // final AuthService _authService = AuthService(); // ELIMINADO
+  // final AuthService _authService = AuthService();
   final ApiService _apiService = ApiService(); // Instancia de ApiService
+  final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   // Paleta de colores para asignar a las materias en el horario.
   final List<Color> subjectColors = [
@@ -313,6 +323,16 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
+    // Evento de Analytics
+    analytics.logEvent(
+      name: 'add_subject',
+      parameters: {
+        'subject_code': subject.code,
+        'subject_name': subject.name,
+        'credits': subject.credits,
+      },
+    );
+
     setState(() {
       usedCredits = newTotalCredits;
       addedSubjects.add(subject);
@@ -332,9 +352,32 @@ class _MyHomePageState extends State<MyHomePage> {
     generateSchedule();
   }
 
-  /// Elimina una materia de la lista de seleccionadas.
+  /// Elimina una materia de la lista de seleccionadas y limpia sus filtros asociados.
   void removeSubject(Subject subject) {
+    final subjectCode = subject.code;
+
     setState(() {
+      // 1. Limpiar los filtros asociados a esta materia
+
+      // Limpia de los filtros de estado de la UI
+      if (appliedFilters['professors'] != null &&
+          appliedFilters['professors'] is Map) {
+        (appliedFilters['professors'] as Map).remove(subjectCode);
+      }
+
+      // Limpia de los filtros que se envían a la API
+      if (apiFiltersForGeneration['include_professors'] != null &&
+          apiFiltersForGeneration['include_professors'] is Map) {
+        (apiFiltersForGeneration['include_professors'] as Map)
+            .remove(subjectCode);
+      }
+      if (apiFiltersForGeneration['exclude_professors'] != null &&
+          apiFiltersForGeneration['exclude_professors'] is Map) {
+        (apiFiltersForGeneration['exclude_professors'] as Map)
+            .remove(subjectCode);
+      }
+
+      // 2. Eliminar la materia y actualizar los créditos.
       addedSubjects
           .removeWhere((s) => s.code == subject.code && s.name == subject.name);
       usedCredits -= subject.credits;
@@ -344,8 +387,7 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     });
 
-    // Generar horarios automáticamente al eliminar una materia
-    // Si quedan materias, regenerar; si no, limpiar los horarios
+    // 3. Regenerar horarios.
     if (addedSubjects.isNotEmpty) {
       generateSchedule();
     } else {
@@ -389,6 +431,23 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     showCustomNotification(context, 'Aplicación reiniciada completamente.',
         icon: Icons.refresh, color: Colors.green);
+  }
+
+
+  /// Limpia solo los filtros aplicados y regenera los horarios.
+  void clearFilters() {
+    setState(() {
+      appliedFilters.clear();
+      // Resetea los filtros de la API, manteniendo solo las optimizaciones.
+      apiFiltersForGeneration = {
+        ...currentOptimizations,
+      };
+    });
+
+    // Si hay materias, regeneramos el horario sin los filtros.
+    if (addedSubjects.isNotEmpty) {
+      generateSchedule();
+    }
   }
 
   /// Aplica los filtros seleccionados y regenera los horarios si hay materias.
@@ -817,6 +876,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: FilterWidget(
                   closeWindow: () => setState(() => isFilterOpen = false),
                   onApplyFilters: applyFilters,
+                  onClearFilters:
+                      clearFilters, // Limpia solo los filtros aplicados
                   currentFilters: appliedFilters,
                   addedSubjects: addedSubjects,
                 ),

@@ -18,49 +18,32 @@
 
     <meta charset="UTF-8" />
     <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
-    <meta name="description" content="A new Flutter project." />
     <meta
-      http-equiv="Cache-Control"
-      content="no-cache, no-store, must-revalidate"
+      name="description"
+      content="Generador de Horarios para la Universidad Tecnológica de Bolívar (UTB)."
     />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <!-- iOS meta tags & icons -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-title" content="try_2_schedule" />
+    <meta name="apple-mobile-web-app-title" content="Generador Horarios UTB" />
     <link rel="apple-touch-icon" href="icons/Icon-192.png" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png" />
 
-    <title>try_2_schedule</title>
+    <title>Generador de Horarios UTB</title>
     <link rel="manifest" href="manifest.json" />
   </head>
   <body>
-    <!-- ESTE SCRIPT SE EJECUTA ANTES QUE FLUTTER -->
-    <script>
-      (function () {
-        // Solo nos interesa la ruta de callback de autenticación
-        if (window.location.pathname === "/auth") {
-          const hash = window.location.hash;
-          if (hash.includes("id_token=")) {
-            // Extraemos el token del fragmento de la URL
-            const idToken = hash.split("id_token=")[1].split("&")[0];
-            if (idToken) {
-              console.log(
-                "JS Interceptor: Token encontrado y guardado en localStorage."
-              );
-              // Guardamos el token donde Flutter pueda encontrarlo
-              localStorage.setItem("id_token", idToken);
-              // Redirigimos a la raíz de la app. Flutter ahora se iniciará
-              // en la página principal y encontrará el token.
-              window.location.href = "/";
-            }
-          }
-        }
-      })();
-    </script>
-    <script src="flutter_bootstrap.js" async></script>
+    <!-- Carga los scripts de Firebase primero. El navegador esperará a que se completen. -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-analytics-compat.js"></script>
+
+    <!-- Carga el script de arranque de Flutter. -->
+    <script src="flutter_bootstrap.js"></script>
   </body>
 </html>

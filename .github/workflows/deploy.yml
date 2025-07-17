@@ -1,0 +1,59 @@
+name: Build and Deploy to VM
+
+# Define cuándo se debe ejecutar este workflow.
+on:
+  push:
+    branches:
+      - master # Se ejecuta cada vez que se haga un 'push' a la rama 'master'.
+
+# Define los trabajos (jobs) que se ejecutarán.
+jobs:
+  # Nombra el único trabajo 'deploy'.
+  deploy:
+    # Especifica que el trabajo se ejecutará en una máquina virtual de Ubuntu proporcionada por GitHub.
+    runs-on: ubuntu-latest
+
+    # Define la secuencia de pasos que se ejecutarán en el trabajo.
+    steps:
+      # Paso 1: Descargar el código del repositorio.
+      # 'uses' indica que se está usando una acción pre-hecha por la comunidad.
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Paso 2: Copiar todo el proyecto a la Máquina Virtual (VM) usando SCP.
+      - name: Copy project to VM
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.VM_HOST }} # La IP de tu VM.
+          username: ${{ secrets.VM_USERNAME }} # El usuario de tu VM.
+          key: ${{ secrets.VM_SSH_KEY }} # Tu clave SSH privada.
+          source: "." # Copia todo el contenido de la carpeta actual.
+          target: "~/app" # Lo deposita en una carpeta llamada 'app' en el home de la VM.
+
+      # Paso 3: se conecta a la VM por SSH y ejecuta los comandos de despliegue.
+      - name: Build and Run on VM
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          # El script que se ejecutará en la VM.
+          script: |
+            # Navega a la carpeta donde copiamos el proyecto.
+            cd ~/app
+
+            # Crea el archivo .env en la carpeta 'backend' usando el secret de GitHub.
+            echo "Creating .env file..."
+            echo "${{ secrets.DOT_ENV_FILE }}" > backend/.env
+
+            # Detiene cualquier contenedor que esté corriendo de una versión anterior.
+            echo "Stopping old containers..."
+            docker-compose down
+
+            # Construye las nuevas imágenes (si hay cambios) y levanta los contenedores en segundo plano (-d).
+            echo "Building and starting new containers..."
+            docker-compose up --build -d
+
+            # (Opcional pero recomendado) Limpia imágenes de Docker viejas y sin usar para ahorrar espacio.
+            echo "Cleaning up unused Docker images..."
+            docker image prune -af

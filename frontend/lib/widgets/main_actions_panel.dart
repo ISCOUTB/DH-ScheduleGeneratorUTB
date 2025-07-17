@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Un panel que contiene los botones de acción principales de la aplicación.
 ///
@@ -47,11 +48,18 @@ class MainActionsPanel extends StatelessWidget {
         const SizedBox(width: 20),
         // Botón para tutorial.
         Expanded(
-            child: _MainCardButton(
-                color: const Color(0xFF8CFF62),
-                icon: Icons.lightbulb_outline,
-                label: "Tutorial",
-                onTap: onGenerate)),
+          child: _MainCardButton(
+            color: const Color(0xFF8CFF62),
+            icon: Icons.lightbulb_outline,
+            label: "Tutorial",
+            onTap: () async {
+              final url = Uri.parse('https://youtu.be/rFi0M0gcMHM');
+              if (await canLaunchUrl(url)) {
+                await launchUrl(url, mode: LaunchMode.externalApplication);
+              }
+            },
+          ),
+        ),
       ],
     );
   }

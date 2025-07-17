@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "161597507125",
+    "project_id": "schedule-generator-utb-d1ccc",
+    "storage_bucket": "schedule-generator-utb-d1ccc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:161597507125:android:5c61672b6e91523ef5537c",
+        "android_client_info": {
+          "package_name": "com.example.try_2_schedule"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmYWwOON6uW5a-hvXH3-A-blSnns64hAA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
