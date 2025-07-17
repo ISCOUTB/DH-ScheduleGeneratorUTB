@@ -5,8 +5,6 @@ services:
     container_name: api
     restart: unless-stopped
     env_file: ./backend/.env
-    ports:
-      - "8000:8000"
     depends_on:
       db:
         condition: service_healthy # Espera a que la DB esté lista
@@ -15,11 +13,7 @@ services:
 
   # Servicio del Frontend (Flutter + Nginx)
   frontend:
-    build:
-      context: ./frontend
-      args:
-        # Lee la variable de entorno API_URL. Si no existe, usa un valor por defecto.
-        - API_URL=${API_URL:-http://localhost:8000}
+    build: ./frontend # Ya no necesita 'context' ni 'args'
     container_name: web
     restart: unless-stopped
     ports:
