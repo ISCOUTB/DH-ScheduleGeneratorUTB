@@ -5,7 +5,12 @@ import '../models/subject.dart';
 import '../models/subject_summary.dart';
 
 class ApiService {
-  static const String _baseUrl = "http://127.0.0.1:8000";
+  // URL base de la API, se puede configurar al compilar la aplicación.
+  // Por defecto, apunta a un servidor local.
+  static const String _baseUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: 'http://127.0.0.1:8000',
+  );
 
   // Obtiene una lista de todas las materias disponibles.
   Future<List<SubjectSummary>> getAllSubjects() async {
