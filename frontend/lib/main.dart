@@ -511,7 +511,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           if (hasFilters) {
             message =
-                'No se encontraron horarios con los filtros aplicados. Intenta relajar algunos filtros.';
+                'No se encontraron horarios con los filtros aplicados. Intenta relajar algunos filtros; pero si lo que hiciste fue agregar una materia nueva, posiblemente se trate de un cruce de horario.';
             icon = Icons.filter_alt_off;
             color = Colors.orange;
           } else {
