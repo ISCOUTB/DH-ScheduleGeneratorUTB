@@ -28,14 +28,25 @@ services:
     networks:
       - schedule-net
 
-  # Nuevo servicio para Let's Encrypt
+  # Servicio de Let's Encrypt para la renovación automática
   certbot:
     image: certbot/certbot
     container_name: certbot
+    restart: unless-stopped 
     volumes:
       - ./data/letsencrypt:/etc/letsencrypt
       - ./data/www:/var/www/html
-    command: certonly --webroot --webroot-path=/var/www/html --email gmantilla@utb.edu.co --agree-tos --no-eff-email -d horario.lab.utb.edu.co
+    # Este comando se ejecuta en un bucle para renovar automáticamente.
+    command: >
+      sh -c "
+        trap exit TERM;
+        while :; do
+          certbot renew;
+          sleep 12h & wait $${!};
+        done;
+      "
+    depends_on:
+      - frontend
 
   # Servicio de la Base de Datos (PostgreSQL)
   db:
