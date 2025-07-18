@@ -35,7 +35,7 @@ services:
     volumes:
       - ./data/letsencrypt:/etc/letsencrypt
       - ./data/www:/var/www/html
-    command: certonly --webroot --webroot-path=/var/www/html --email tu-email@dominio.com --agree-tos --no-eff-email -d tu.dominio.com
+    command: certonly --webroot --webroot-path=/var/www/html --email gmantilla@utb.edu.co --agree-tos --no-eff-email -d horario.lab.utb.edu.co
 
   # Servicio de la Base de Datos (PostgreSQL)
   db:
