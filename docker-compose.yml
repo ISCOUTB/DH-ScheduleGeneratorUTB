@@ -32,16 +32,19 @@ services:
   certbot:
     image: certbot/certbot
     container_name: certbot
-    restart: unless-stopped 
+    restart: unless-stopped
     volumes:
       - ./data/letsencrypt:/etc/letsencrypt
       - ./data/www:/var/www/html
-    # Este comando se ejecuta en un bucle para renovar automáticamente.
+    entrypoint: ""
+    # Ahora, este comando se ejecuta como el proceso principal del contenedor.
     command: >
       sh -c "
         trap exit TERM;
         while :; do
-          certbot renew;
+          echo 'Attempting to renew certificates...';
+          certbot renew --webroot -w /var/www/html;
+          echo 'Sleeping for 12 hours...';
           sleep 12h & wait $${!};
         done;
       "
