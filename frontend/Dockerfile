@@ -17,7 +17,8 @@ FROM nginx:1.29.0-alpine
 # Copia los archivos web compilados desde la etapa 'builder'.
 COPY --from=builder /app/build/web /usr/share/nginx/html
 
-# Copia nuestra configuración personalizada de Nginx, sobreescribiendo la default.
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Ya no copiamos nginx.conf aquí, se monta como volumen.
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
+EXPOSE 443
