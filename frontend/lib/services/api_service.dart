@@ -6,7 +6,7 @@ import '../models/subject_summary.dart';
 
 class ApiService {
   // La URL base ahora está vacía. Las peticiones serán relativas al dominio actual.
-  // Por ejemplo, si estás en 'midominio.com', pedirá a 'midominio.com/api/subjects'.
+  // Por ejemplo, si se está en 'midominio.com', pedirá a 'midominio.com/api/subjects'.
   static const String _baseUrl = "";
 
   // Obtiene una lista de todas las materias disponibles.

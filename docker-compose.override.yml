@@ -18,10 +18,11 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-      - "443:443" # <-- Añadimos el puerto para HTTPS
+      # No se expone el puerto 443 en desarrollo
     volumes:
-      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./data/letsencrypt:/etc/letsencrypt
+      # Anula el volumen de nginx.conf para usar la versión de desarrollo
+      - ./frontend/nginx.dev.conf:/etc/nginx/conf.d/default.conf
+      # Los volúmenes de letsencrypt no son necesarios en desarrollo
       - ./data/www:/var/www/html
     depends_on:
       - backend
@@ -30,26 +31,8 @@ services:
 
   # Servicio de Let's Encrypt para la renovación automática
   certbot:
-    image: certbot/certbot
-    container_name: certbot
-    restart: unless-stopped
-    volumes:
-      - ./data/letsencrypt:/etc/letsencrypt
-      - ./data/www:/var/www/html
-    entrypoint: ""
-    # Ahora, este comando se ejecuta como el proceso principal del contenedor.
-    command: >
-      sh -c "
-        trap exit TERM;
-        while :; do
-          echo 'Attempting to renew certificates...';
-          certbot renew --webroot -w /var/www/html;
-          echo 'Sleeping for 12 hours...';
-          sleep 12h & wait $${!};
-        done;
-      "
-    depends_on:
-      - frontend
+    image: alpine
+    command: echo "Certbot is disabled in development mode. No certificates will be generated."
 
   # Servicio de la Base de Datos (PostgreSQL)
   db:
@@ -110,7 +93,7 @@ services:
 
 volumes:
   postgres_data:
-  # Los volúmenes de letsencrypt y www ahora se manejan como carpetas locales
+  # Los volúmenes de letsencrypt y www se manejan como carpetas locales
 
 networks:
   schedule-net:

@@ -11,116 +11,118 @@ class ProcesarJsonResponse(TypedDict):
 
 def procesar_json(data: dict[str, list[dict[str, Any]]]) -> ProcesarJsonResponse:
 
-    materias: dict[str, tuple[str, int, str]] = {}  # subjectCourse: (subjectCourse, creditos, nombre_materia)
-    profesores: dict[str, tuple[str, str]] = {}  # Estructura: profesor_id: (profesor_id, nombre_profesor)
-    cursos: list[tuple[int, str, str, Optional[str], Optional[int], int, str, int, int]] = []  # Estructura: (nrc, tipo, subjectCourse, profesor_id, nrc_teorico, group_id, campus)
-    clases: list[tuple[int, Optional[str], Optional[str], Optional[str], str]] = []  # Estructura: (nrc, tipo, subjectCourse, profesor_id, nrc_teorico, group_id, campus)
+    materias: dict[str, tuple[str, int, str]] = {}
+    profesores: dict[str, tuple[str, str]] = {}
+    cursos: list[tuple[int, str, str, Optional[str], Optional[int], int, str, int, int]] = []
+    clases: list[tuple[int, Optional[str], Optional[str], Optional[str], str]] = []
     errores: list[str] = []
 
     group_counter: defaultdict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
-    grupo_teoricos: defaultdict[str, dict[str, int]] = defaultdict(dict)
+    
+    # Mapa de teóricos: { subject_course: { sequence_number: nrc } }
+    mapa_teoricos: defaultdict[str, dict[str, int]] = defaultdict(dict)
+    teoricos_con_hijos: set[int] = set()
 
-    # Primera pasada: identificar todos los cursos teóricos
+    # Primera pasada: Identificar todos los teóricos por su sequenceNumber
     for entrada in data['data']:
-        subject_course: str = entrada['subjectCourse']
-        link_id = entrada.get('linkIdentifier')
-        is_linked = entrada.get('isSectionLinked', False)
         tipo = entrada['scheduleTypeDescription'].strip().upper()
-        nrc = int(entrada['courseReferenceNumber'])
-
         if tipo == "TEORICO":
-            group_key: str
-            base_id: str
+            subject_course = entrada['subjectCourse']
+            sequence_number = entrada['sequenceNumber']
+            nrc = int(entrada['courseReferenceNumber'])
+            mapa_teoricos[subject_course][sequence_number] = nrc
 
-            if is_linked and link_id:
-                if link_id.startswith("L") and len(link_id) > 1:
-                    base_id = link_id[1]
-                else:
-                    base_id = link_id
-                group_key = f"{subject_course}-LINK-{base_id}"
-            else:
-                group_key = f"{subject_course}-NRC-{nrc}"
-
-            grupo_teoricos[subject_course][group_key] = int(entrada['courseReferenceNumber'])
-
-
-    # Segunda pasada: procesar materias, profesores, cursos y clases
+    # Segunda pasada: Procesar y agrupar todo
     for entrada in data['data']:
         subject_course = entrada['subjectCourse']
-        link_id = entrada.get('linkIdentifier')
-        is_linked = entrada.get('isSectionLinked', False)
         tipo = entrada['scheduleTypeDescription'].strip().upper()
         tipo_formateado = 'Teórico' if tipo == 'TEORICO' else 'Laboratorio'
+        sequence_number = entrada['sequenceNumber']
+        nrc = int(entrada['courseReferenceNumber'])
+        
+        # Determina de enlace. Debido al origen de los datos, se confía más en la existencia de
+        # linkIdentifier que en la bandera isSectionLinked.
+        link_id = entrada.get('linkIdentifier')
+        is_linked = link_id is not None
+
+        # --- Lógica de Agrupamiento ---
+        group_key: str = ""
+        nrc_teorico: Optional[int] = None
+
+        if tipo_formateado == 'Teórico':
+            # Los teóricos siempre definen su propio grupo.
+            group_key = f"{subject_course}-{nrc}"
+
+        elif is_linked: # Es un Laboratorio que debería estar ligado.
+            # Busca el teórico correspondiente basándose en el prefijo del sequenceNumber.
+            teorico_encontrado = False
+            teoricos_de_materia = sorted(mapa_teoricos[subject_course].keys(), key=len, reverse=True)
+            
+            for seq_teorico in teoricos_de_materia:
+                if sequence_number.startswith(seq_teorico):
+                    nrc_teorico = mapa_teoricos[subject_course][seq_teorico]
+                    teoricos_con_hijos.add(nrc_teorico) # <--- AÑADIR ESTA LÍNEA
+                    group_key = f"{subject_course}-{nrc_teorico}" # Se une al grupo de su teórico.
+                    teorico_encontrado = True
+                    break
+            
+            if not teorico_encontrado:
+                # Si no se encuentra un teórico, se registra un error.
+                errores.append(f"Laboratorio ligado sin teórico: NRC {nrc} - {subject_course} (Seq: {sequence_number})")
+                continue # Descartamos este curso por completo.
+
+        else: # Es un Laboratorio no ligado (ej. Práctica Profesional)
+            # Es un curso válido e independiente.
+            group_key = f"{subject_course}-{nrc}"
+
+        # Asignar GroupID
+        if group_key not in group_counter[subject_course]:
+            group_counter[subject_course][group_key] = len(group_counter[subject_course]) + 1
+        group_id = group_counter[subject_course][group_key]
+        # --- Fin de la Lógica de Agrupamiento ---
+
+        # Procesar información del curso
         campus = entrada['campusDescription']
         seats_a = entrada.get('seatsAvailable', 0)
         seats_m = entrada.get('maximumEnrollment', 0)
-        nrc = int(entrada['courseReferenceNumber'])
 
-        # Materia
         if subject_course not in materias:
-            creditos = entrada['creditHourHigh'] or entrada['creditHourLow']
-            nombre_materia = limpiar_nombre(entrada['courseTitle'])  # Normalizado
+            creditos = entrada.get('creditHourHigh') or entrada.get('creditHourLow', 0)
+            nombre_materia = limpiar_nombre(entrada['courseTitle'])
             materias[subject_course] = (subject_course, creditos, nombre_materia)
 
-        # Profesor
         profesor_id = None
         if entrada.get('faculty'):
             profesor_info = entrada['faculty'][0]
             profesor_id = profesor_info['bannerId']
             if profesor_id not in profesores:
-                nombre_profesor = limpiar_nombre(profesor_info['displayName'])  # Normalizado
+                nombre_profesor = limpiar_nombre(profesor_info['displayName'])
                 profesores[profesor_id] = (profesor_id, nombre_profesor)
 
-        # GroupID
-        if is_linked and link_id:
-            # Si el curso está ligado, lo identificamos por su letra base
-            if link_id.startswith("L") and len(link_id) > 1:
-                base_id = link_id[1]   # "LH" → "H"
-            else:
-                base_id = link_id      # "H" → "H"
-            group_key = f"{subject_course}-LINK-{base_id}"
-        else:
-            # Si no está ligado, usamos su NRC para asegurarnos de que no se mezcle con otro
-            group_key = f"{subject_course}-NRC-{nrc}"
-        
-        if group_key not in group_counter[subject_course]:
-            group_counter[subject_course][group_key] = len(group_counter[subject_course]) + 1
+        campus = limpiar_nombre(campus) if campus else "Sin información"
 
-        group_id = group_counter[subject_course][group_key]
-
-        # Verificación de cursos ligados
-        if tipo_formateado == "Laboratorio" and is_linked:
-            nrc_teorico = grupo_teoricos[subject_course].get(group_key)
-            if not nrc_teorico:
-                errores.append(f"Curso ligado sin teórico: NRC {nrc} - {subject_course} - {link_id}")
-                continue  # No se agrega a la base de datos
-        else:
-            nrc_teorico = None
-
-        # Campus
-        if campus == None:
-            campus = "Sin información"
-        else:
-            campus = limpiar_nombre(campus)
-
-        # Curso
         cursos.append((nrc, tipo_formateado, subject_course, profesor_id, nrc_teorico, group_id, campus, seats_a, seats_m))
 
-        # Clases
         for mf in entrada.get('meetingsFaculty', []):
             mt = mf.get('meetingTime', {})
             if not mt.get('beginTime') or not mt.get('endTime'):
                 continue
             dias = obtener_dias(mt)
-            aula = mt.get('room') if mt.get('room') else None
+            aula = mt.get('room') or None
             for dia in dias:
-                clases.append((
-                    nrc,
-                    formatear_hora(mt['beginTime']),
-                    formatear_hora(mt['endTime']),
-                    aula,
-                    dia
-                ))
+                clases.append((nrc, formatear_hora(mt['beginTime']), formatear_hora(mt['endTime']), aula, dia))
+
+    # Tercera pasada: Verifica teóricos que deberían tener labs y no tienen
+    for entrada in data['data']:
+        tipo = entrada['scheduleTypeDescription'].strip().upper()
+        link_id = entrada.get('linkIdentifier')
+        nrc = int(entrada['courseReferenceNumber'])
+
+        # Caso en el que un curso es un teórico CON linkIdentifier pero nunca fue reclamado por un curso teórico
+        if tipo == "TEORICO" and link_id and nrc not in teoricos_con_hijos:
+            subject_course = entrada['subjectCourse']
+            sequence_number = entrada['sequenceNumber']
+            errores.append(f"Teórico ligado sin laboratorios: NRC {nrc} - {subject_course} (Seq: {sequence_number})")
 
     return {
         'materias': list(materias.values()),

@@ -180,21 +180,36 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          title: Text(
-                            subjectName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                          title: Row(
+                            children: [
+                              Text(
+                                subjectName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              if (classOptions
+                                  .any((opt) => opt.seatsAvailable == 0)) ...[
+                                const SizedBox(width: 10),
+                                const Icon(Icons.warning_amber_rounded,
+                                    color: Colors.red, size: 24),
+                              ],
+                            ],
                           ),
                           // Muestra los detalles de la clase (NRC, profesor, etc.) al expandir.
                           children: classOptions.map((option) {
                             return ListTile(
                               contentPadding: const EdgeInsets.only(
                                   left: 40, right: 16, bottom: 8),
-                              title: Text('${option.type} (NRC: ${option.nrc})',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600)),
+                              tileColor: option.seatsAvailable == 0
+                                  ? Colors.red.shade100
+                                  : null, // <-- sombreado rojo
+                              title: Text(
+                                '${option.type} (NRC: ${option.nrc})',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600),
+                              ),
                               subtitle: Text(
                                 'Profesor: ${option.professor}\n'
                                 'Horario: ${formattingSchedulesInPairs(option.schedules)}\n'
