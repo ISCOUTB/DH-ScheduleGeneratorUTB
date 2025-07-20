@@ -1,7 +1,6 @@
 // lib/widgets/filter_widget.dart
 
 /// Widget para configurar filtros de profesores y horarios.
-//
 /// Permite al usuario definir preferencias para la generación de horarios,
 /// incluyendo la selección de profesores y la definición de horas no disponibles.
 import 'package:flutter/material.dart';
@@ -136,6 +135,7 @@ class _FilterWidgetState extends State<FilterWidget> {
   Widget build(BuildContext context) {
     // Determinar si estamos en modo oscuro o claro
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final bool isMobile = MediaQuery.of(context).size.width < 600;
 
     // Colores basados en el tema actual
     Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
@@ -408,60 +408,70 @@ class _FilterWidgetState extends State<FilterWidget> {
               ),
             ),
             // Botones de acción
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Botón Limpiar filtros
-                TextButton.icon(
-                  onPressed: () {
-                    // Notifica al padre para que limpie el estado principal.
-                    widget.onClearFilters();
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Botón Limpiar filtros
+                  TextButton.icon(
+                    onPressed: () {
+                      // Notifica al padre para que limpie el estado principal.
+                      widget.onClearFilters();
 
-                    // Cierra la ventana de filtros.
-                    widget.closeWindow();
+                      // Cierra la ventana de filtros.
+                      widget.closeWindow();
 
-                    // Muestra una notificación.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Todos los filtros han sido eliminados'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                  icon: Icon(Icons.clear_all, color: Colors.red.shade600),
-                  label: Text('Limpiar filtros',
-                      style: TextStyle(color: Colors.red.shade600)),
-                ),
-
-                // Botones de Cancelar y Aplicar
-                Row(
-                  children: [
-                    // Botón Cancelar - cierra el diálogo sin aplicar cambios
-                    TextButton(
-                      onPressed: widget.closeWindow,
-                      child: Text('Cancelar',
-                          style: TextStyle(color: accentColor)),
+                      // Muestra una notificación.
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content:
+                              Text('Todos los filtros han sido eliminados'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.clear_all, color: Colors.red.shade600),
+                    label: Text(
+                      isMobile ? 'Limpiar\nfiltros' : 'Limpiar filtros',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.red.shade600),
                     ),
-                    const SizedBox(width: 8),
-                    // Botón para aplicar los filtros configurados
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: accentColor,
-                      ),
-                      onPressed: () {
-                        _applyFilters();
+                  ),
+
+                  // Botón para aplicar los filtros configurados
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: accentColor,
+                    ),
+                    onPressed: () {
+                      // Validar si hay materias agregadas antes de aplicar
+                      if (widget.addedSubjects.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Filtros aplicados correctamente'),
-                            duration: Duration(seconds: 2),
+                            content: Text(
+                                'Agrega al menos una materia para aplicar filtros.'),
+                            backgroundColor: Colors.orange,
                           ),
                         );
-                      },
-                      child: const Text('Aplicar filtros'),
+                        return; // Detiene la ejecución si no hay materias
+                      }
+
+                      _applyFilters();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Filtros aplicados correctamente'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      isMobile ? 'Aplicar\nfiltros' : 'Aplicar filtros',
+                      textAlign: TextAlign.center,
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),

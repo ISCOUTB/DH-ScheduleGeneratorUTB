@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../models/subject.dart';
 
-/// Un panel lateral que muestra las materias seleccionadas y el conteo de créditos.
+/// Un panel que muestra las materias seleccionadas y el conteo de créditos.
 ///
-/// Ofrece dos vistas: una colapsada que solo muestra un botón para expandir,
-/// y una expandida que lista las materias y las acciones disponibles.
+/// Se adapta para mostrarse como un panel lateral en escritorio o como una
+/// tarjeta en la vista móvil.
 class SubjectsPanel extends StatelessWidget {
   /// Controla si el panel está en su vista mínima (colapsada).
   final bool isFullExpandedView;
@@ -39,6 +39,9 @@ class SubjectsPanel extends StatelessWidget {
   /// Indica si la vista de la cuadrícula de horarios está expandida.
   final bool isExpandedView;
 
+  /// Determina si se debe usar el layout para móvil.
+  final bool isMobileLayout;
+
   const SubjectsPanel({
     Key? key,
     required this.isFullExpandedView,
@@ -52,32 +55,101 @@ class SubjectsPanel extends StatelessWidget {
     required this.onToggleExpandView,
     required this.onRemoveSubject,
     required this.isExpandedView,
+    this.isMobileLayout = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Elige el layout basado en el flag.
+    if (isMobileLayout) {
+      return _buildMobileLayout();
+    } else {
+      return _buildDesktopLayout();
+    }
+  }
+
+  /// Construye el layout de escritorio (panel lateral colapsable).
+  Widget _buildDesktopLayout() {
     return Container(
-      // El ancho cambia dependiendo de si la vista está colapsada o expandida.
       width: isFullExpandedView ? 60 : 340,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black12, blurRadius: 8, offset: Offset(0, 2))
-        ],
-      ),
+      decoration: _buildPanelDecoration(),
       padding: isFullExpandedView
           ? const EdgeInsets.only(top: 12)
           : const EdgeInsets.all(20),
-      // Muestra la vista colapsada o expandida según el estado.
-      child: isFullExpandedView
-          ? _buildCollapsedView()
-          : _buildExpandedView(),
+      child: isFullExpandedView ? _buildCollapsedView() : _buildExpandedView(),
     );
   }
 
-  /// Construye la vista colapsada del panel, que solo muestra un botón para expandir.
+  /// Construye el layout móvil (una tarjeta dentro de la lista principal).
+  Widget _buildMobileLayout() {
+    return Container(
+      decoration: _buildPanelDecoration(),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Materias seleccionadas",
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          const SizedBox(height: 12),
+          const Divider(),
+          const SizedBox(height: 4),
+          // Lista de materias o mensaje si está vacía.
+          if (addedSubjects.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24.0),
+              child: Center(
+                child: Text(
+                  "Usa el botón (+) para agregar materias.",
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+          else
+            Column(
+              children: addedSubjects.asMap().entries.map((entry) {
+                final idx = entry.key;
+                final subject = entry.value;
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    leading: Container(
+                      width: 14,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: getSubjectColor(idx),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    title: Text(subject.name,
+                        style: const TextStyle(fontWeight: FontWeight.w600)),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.remove_circle_outline,
+                          color: Colors.red),
+                      onPressed: () => onRemoveSubject(subject),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          const SizedBox(height: 16),
+          // Contador de créditos alineado a la derecha.
+          Align(
+            alignment: Alignment.centerRight,
+            child: _buildCreditCounter(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Construye la vista colapsada del panel de escritorio.
   Widget _buildCollapsedView() {
     return Column(
       children: [
@@ -96,20 +168,19 @@ class SubjectsPanel extends StatelessWidget {
     );
   }
 
-  /// Construye la vista expandida del panel con la lista de materias y acciones.
+  /// Construye la vista expandida del panel de escritorio.
   Widget _buildExpandedView() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Encabezado con título y botón para colapsar.
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text("Materias seleccionadas",
+            const Text("Materias",
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
-            const SizedBox(width: 8),
             IconButton(
               tooltip: "Encoger panel",
               icon: const Icon(Icons.chevron_right,
@@ -119,19 +190,16 @@ class SubjectsPanel extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 18),
-        // Lista de materias agregadas.
         Expanded(
           child: SingleChildScrollView(
             child: Column(
               children: [
-                // Mapea cada materia a un widget de tarjeta (Card).
                 ...addedSubjects.asMap().entries.map((entry) {
                   final idx = entry.key;
                   final subject = entry.value;
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 6),
                     child: ListTile(
-                      // Indicador de color para la materia.
                       leading: Container(
                         width: 14,
                         height: 14,
@@ -142,7 +210,6 @@ class SubjectsPanel extends StatelessWidget {
                       ),
                       title: Text(subject.name,
                           style: const TextStyle(fontWeight: FontWeight.w600)),
-                      // Botón para eliminar la materia.
                       trailing: IconButton(
                         icon: const Icon(Icons.remove, color: Colors.red),
                         onPressed: () => onRemoveSubject(subject),
@@ -151,7 +218,6 @@ class SubjectsPanel extends StatelessWidget {
                   );
                 }),
                 const SizedBox(height: 12),
-                // Botón para agregar una nueva materia.
                 Align(
                   alignment: Alignment.centerLeft,
                   child: OutlinedButton.icon(
@@ -165,39 +231,52 @@ class SubjectsPanel extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        // Pie de página con el botón de expandir vista y el contador de créditos.
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Botón para alternar la vista de la cuadrícula de horarios.
             OutlinedButton.icon(
               onPressed: onToggleExpandView,
               icon: Icon(
                   isExpandedView ? Icons.fullscreen_exit : Icons.fullscreen),
               label: Text(isExpandedView ? "Vista Normal" : "Expandir Vista"),
             ),
-            // Contador de créditos.
-            Text.rich(
-              TextSpan(
-                children: [
-                  const TextSpan(
-                    text: "Créditos: ",
-                    style: TextStyle(fontSize: 16, color: Colors.black),
-                  ),
-                  TextSpan(
-                    text: "$usedCredits/$creditLimit",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2979FF),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _buildCreditCounter(),
           ],
         ),
       ],
+    );
+  }
+
+  /// Construye la decoración base para el panel/tarjeta.
+  BoxDecoration _buildPanelDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      boxShadow: const [
+        BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2))
+      ],
+    );
+  }
+
+  /// Construye el widget de texto para el contador de créditos.
+  Widget _buildCreditCounter() {
+    return Text.rich(
+      TextSpan(
+        children: [
+          const TextSpan(
+            text: "Créditos: ",
+            style: TextStyle(fontSize: 16, color: Colors.black),
+          ),
+          TextSpan(
+            text: "$usedCredits/$creditLimit",
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF2979FF),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

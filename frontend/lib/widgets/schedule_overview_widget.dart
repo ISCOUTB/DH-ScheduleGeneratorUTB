@@ -92,143 +92,189 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // Agrupa las clases por nombre de materia para la lista de detalles.
-    final Map<String, List<ClassOption>> groupedSubjects =
-        groupBy(widget.schedule, (ClassOption option) => option.subjectName);
+    // Usamos LayoutBuilder para detectar el tamaño y decidir el layout.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const double mobileBreakpoint = 600.0;
+        final bool isMobileLayout = constraints.maxWidth < mobileBreakpoint;
 
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      // Aumenta el ancho para acomodar el diseño de dos columnas
-      child: Container(
-        width: 1333,
-        height:
-            500, // Usamos una altura fija en lugar de una relativa a la pantalla.
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return Dialog(
+          // Reducimos el padding para que el diálogo sea más ancho en móvil.
+          insetPadding: EdgeInsets.symmetric(
+            horizontal: isMobileLayout ? 16.0 : 40.0,
+            vertical: 24.0,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          // El Dialog se ajustará al contenido.
+          child: Container(
+            width: isMobileLayout ? null : 1333, // Ancho flexible en móvil
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min, // Se ajusta al contenido
               children: [
-                const Text(
-                  'Detalles del Horario',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                Row(
-                  children: [
-                    // Botón para descargar el horario en formato PDF.
-                    Tooltip(
-                      message: 'Descargar PDF',
-                      child: IconButton(
-                        icon: const Icon(Icons.picture_as_pdf_outlined),
-                        onPressed: downloadScheduleAsPDF,
-                      ),
-                    ),
-                    // Botón para descargar el horario en formato Excel.
-                    Tooltip(
-                      message: 'Descargar Excel',
-                      child: IconButton(
-                        icon: const Icon(Icons.table_chart_outlined),
-                        onPressed: downloadScheduleAsExcel,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    // Botón para cerrar la vista de detalle.
-                    IconButton(
-                      icon: const Icon(Icons.close),
-                      tooltip: 'Cerrar',
-                      onPressed: widget.onClose,
-                    ),
-                  ],
+                _buildHeader(),
+                const Divider(height: 24),
+                // El contenido se adapta al layout.
+                Flexible(
+                  child: isMobileLayout
+                      ? _buildMobileContent()
+                      : _buildDesktopContent(),
                 ),
               ],
             ),
-            const Divider(height: 24),
+          ),
+        );
+      },
+    );
+  }
 
-            // Layout principal de dos columnas: cuadrícula a la izquierda, detalles a la derecha.
-            Expanded(
-              child: Row(
-                children: [
-                  // Columna izquierda: Cuadrícula visual del horario.
-                  Expanded(
-                    flex: 3, // Ocupa 3/5 del espacio
-                    child: _buildScheduleGrid(),
-                  ),
-
-                  const VerticalDivider(width: 24),
-
-                  // Columna derecha: Lista desplegable con los detalles de cada materia.
-                  Expanded(
-                    flex: 2, // Ocupa 2/5 del espacio
-                    child: ListView.builder(
-                      itemCount: groupedSubjects.length,
-                      itemBuilder: (context, index) {
-                        final subjectName =
-                            groupedSubjects.keys.elementAt(index);
-                        final classOptions = groupedSubjects[subjectName]!;
-                        final color = subjectColors[subjectName] ?? Colors.grey;
-
-                        // Cada materia es un ExpansionTile que muestra los detalles al expandirse.
-                        return ExpansionTile(
-                          leading: Container(
-                            width: 12,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              color: color,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          title: Row(
-                            children: [
-                              Text(
-                                subjectName,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              if (classOptions
-                                  .any((opt) => opt.seatsAvailable == 0)) ...[
-                                const SizedBox(width: 10),
-                                const Icon(Icons.warning_amber_rounded,
-                                    color: Colors.red, size: 24),
-                              ],
-                            ],
-                          ),
-                          // Muestra los detalles de la clase (NRC, profesor, etc.) al expandir.
-                          children: classOptions.map((option) {
-                            return ListTile(
-                              contentPadding: const EdgeInsets.only(
-                                  left: 40, right: 16, bottom: 8),
-                              tileColor: option.seatsAvailable == 0
-                                  ? Colors.red.shade100
-                                  : null, // <-- sombreado rojo
-                              title: Text(
-                                '${option.type} (NRC: ${option.nrc})',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              subtitle: Text(
-                                'Profesor: ${option.professor}\n'
-                                'Horario: ${formattingSchedulesInPairs(option.schedules)}\n'
-                                'Campus: ${option.campus}\n'
-                                'Cupos: ${option.seatsAvailable} de ${option.seatsMaximum}\n'
-                                'Créditos: ${option.credits}',
-                              ),
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+  /// Construye la cabecera del diálogo con el título y los botones de acción.
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // Envolvemos el título en Flexible para evitar el overflow.
+        const Flexible(
+          child: Text(
+            'Detalles del Horario',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Tooltip(
+              message: 'Descargar PDF',
+              child: IconButton(
+                icon: const Icon(Icons.picture_as_pdf_outlined),
+                onPressed: downloadScheduleAsPDF,
               ),
+            ),
+            Tooltip(
+              message: 'Descargar Excel',
+              child: IconButton(
+                icon: const Icon(Icons.table_chart_outlined),
+                onPressed: downloadScheduleAsExcel,
+              ),
+            ),
+            const SizedBox(width: 10),
+            IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: 'Cerrar',
+              onPressed: widget.onClose,
             ),
           ],
         ),
+      ],
+    );
+  }
+
+  /// Construye el layout de escritorio (dos columnas).
+  Widget _buildDesktopContent() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 3,
+          child: _buildScheduleGrid(),
+        ),
+        const VerticalDivider(width: 24),
+        Expanded(
+          flex: 2,
+          child: _buildDetailsList(isMobile: false),
+        ),
+      ],
+    );
+  }
+
+  /// Construye el layout móvil (una columna).
+  Widget _buildMobileContent() {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Usamos AspectRatio para que la tabla sea más ancha que alta.
+          AspectRatio(
+            aspectRatio: 1.0, // Es un cuadrado
+            child: _buildScheduleGrid(),
+          ),
+          const SizedBox(height: 24),
+          Flexible(
+            child: _buildDetailsList(isMobile: true),
+          ),
+        ],
       ),
+    );
+  }
+
+  /// Construye la lista de detalles de las materias.
+  Widget _buildDetailsList({bool isMobile = false}) {
+    //
+    final Map<String, List<ClassOption>> groupedSubjects =
+        groupBy(widget.schedule, (ClassOption option) => option.subjectName);
+
+    return ListView.builder(
+      shrinkWrap: isMobile,
+      physics: isMobile ? const NeverScrollableScrollPhysics() : null,
+      itemCount: groupedSubjects.length,
+      itemBuilder: (context, index) {
+        final subjectName = groupedSubjects.keys.elementAt(index);
+        final classOptions = groupedSubjects[subjectName]!;
+        final color = subjectColors[subjectName] ?? Colors.grey;
+
+        return ExpansionTile(
+          leading: Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          title: Row(
+            children: [
+              Flexible(
+                child: Text(
+                  subjectName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              if (classOptions.any((opt) => opt.seatsAvailable == 0)) ...[
+                const SizedBox(width: 10),
+                const Icon(Icons.warning_amber_rounded,
+                    color: Colors.red, size: 24),
+              ],
+            ],
+          ),
+          // Muestra los detalles de la clase (NRC, profesor, etc.) al expandir.
+          children: classOptions.map((option) {
+            return ListTile(
+              contentPadding:
+                  const EdgeInsets.only(left: 40, right: 16, bottom: 8),
+              tileColor:
+                  option.seatsAvailable == 0 ? Colors.red.shade100 : null,
+              title: Text(
+                '${option.type} (NRC: ${option.nrc})',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text(
+                'Profesor: ${option.professor}\n'
+                'Horario: ${formattingSchedulesInPairs(option.schedules)}\n'
+                'Campus: ${option.campus}\n'
+                'Cupos: ${option.seatsAvailable} de ${option.seatsMaximum}\n'
+                'Créditos: ${option.credits}',
+              ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 
@@ -416,7 +462,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
   /// Genera un mapa de colores único para cada materia del horario.
   Map<String, Color> _generateSubjectColors() {
-    List<Color> colors = [
+    final List<Color> colors = [
       Colors.red,
       Colors.blue,
       Colors.green,
@@ -509,11 +555,12 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     excel.Sheet sheetObject = excelFile['Horario'];
 
     // Agrega la fila de encabezado.
-    sheetObject.appendRow(['Horario', ...days]);
+    sheetObject.appendRow(
+        ['Horario', ...days].map((day) => excel.TextCellValue(day)).toList());
 
     // Llena cada fila con la materia correspondiente a la hora y día.
     for (var timeSlot in timeSlots) {
-      List<String?> row = [timeSlot];
+      List<excel.CellValue?> row = [excel.TextCellValue(timeSlot)];
       TimeOfDay timeSlotTime = parseTimeOfDay(timeSlot);
       for (var day in days) {
         ClassOption? classOption = schedule.firstWhereOrNull(
@@ -527,9 +574,11 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         );
         // Concatenar subjectName y nrc si existe la opción
         if (classOption != null) {
-          row.add('${classOption.subjectName}\nNRC: ${classOption.nrc}');
-        } else
-          row.add('');
+          row.add(excel.TextCellValue(
+              '${classOption.subjectName}\nNRC: ${classOption.nrc}'));
+        } else {
+          row.add(null); // Añade una celda vacía
+        }
       }
       sheetObject.appendRow(row);
     }

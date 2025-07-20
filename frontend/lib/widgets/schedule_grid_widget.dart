@@ -1,7 +1,6 @@
 // lib/widgets/schedule_grid_widget.dart
 import 'package:flutter/material.dart';
 import '../models/class_option.dart';
-import 'package:flutter/foundation.dart'; // Para kIsWeb y defaultTargetPlatform
 
 /// Muestra una cuadrícula de previsiones de horarios generados.
 ///
@@ -15,10 +14,18 @@ class ScheduleGridWidget extends StatefulWidget {
   /// Callback que se ejecuta cuando se toca un horario, devolviendo su índice.
   final Function(int) onScheduleTap;
 
+  /// Determina si se debe usar el layout para móvil.
+  final bool isMobileLayout;
+
+  /// Determina si el GridView debe ser scrollable. Se usa para anidar en otros scrollables.
+  final bool isScrollable;
+
   const ScheduleGridWidget({
     Key? key,
     required this.allSchedules,
     required this.onScheduleTap,
+    this.isMobileLayout = false,
+    this.isScrollable = true, // Por defecto es scrollable
   }) : super(key: key);
 
   @override
@@ -70,7 +77,8 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
 
   void _loadMoreSchedules() {
     // No hacer nada si ya estamos cargando o si ya se han mostrado todos los horarios.
-    if (_isLoading || _displayedSchedules.length >= widget.allSchedules.length) {
+    if (_isLoading ||
+        _displayedSchedules.length >= widget.allSchedules.length) {
       return;
     }
 
@@ -80,11 +88,10 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
 
     // Simula una pequeña demora para que el indicador de carga sea visible.
     Future.delayed(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
       final int currentLength = _displayedSchedules.length;
-      final List<List<ClassOption>> nextBatch = widget.allSchedules
-          .skip(currentLength)
-          .take(_itemsPerPage)
-          .toList();
+      final List<List<ClassOption>> nextBatch =
+          widget.allSchedules.skip(currentLength).take(_itemsPerPage).toList();
 
       setState(() {
         _displayedSchedules.addAll(nextBatch);
@@ -93,72 +100,55 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
     });
   }
 
-  /// Comprueba si la plataforma actual es móvil (Android o iOS).
-  bool isMobile() {
-    if (kIsWeb) return false;
-    return defaultTargetPlatform == TargetPlatform.android ||
-        defaultTargetPlatform == TargetPlatform.iOS;
-  }
-
   @override
   Widget build(BuildContext context) {
-    bool mobile = isMobile();
-    int crossAxisCount = mobile ? 1 : 2;
+
+    int crossAxisCount = widget.isMobileLayout ? 1 : 2;
+    // Ajusta la relación de aspecto para una mejor visualización en móviles.
+    double childAspectRatio = widget.isMobileLayout ? 1.8 : 1.5;
 
     // Genera un mapa de colores único para cada materia.
     Map<String, Color> subjectColors = _generateSubjectColors();
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Ajusta la relación de aspecto para una mejor visualización en móviles.
-        double childAspectRatio = mobile ? 2.5 : 1.5; // Mayor ratio en móvil
+    return GridView.builder(
 
-        return GridView.builder(
-          controller: _scrollController,
-          itemCount: _displayedSchedules.length + (_isLoading ? 1 : 0),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            childAspectRatio: childAspectRatio,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-          ),
-          itemBuilder: (context, index) {
-            // Si es el último item y estamos cargando, muestra un indicador de progreso.
-            if (index == _displayedSchedules.length) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+      physics: widget.isScrollable
+          ? const AlwaysScrollableScrollPhysics()
+          : const NeverScrollableScrollPhysics(),
+      shrinkWrap: !widget.isScrollable,
+      controller: widget.isScrollable ? _scrollController : null,
+      padding: const EdgeInsets.all(8),
+      itemCount: _displayedSchedules.length +
+          (_isLoading && widget.isScrollable ? 1 : 0),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        childAspectRatio: childAspectRatio,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemBuilder: (context, index) {
+        // Si es el último item y estamos cargando, muestra un indicador de progreso.
+        if (index == _displayedSchedules.length) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-            //MouseRegion
-            return MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: GestureDetector(
-                onTap: () => widget.onScheduleTap(index),
-                child: Card(
-                  elevation: 2,
-                  margin: const EdgeInsets.all(8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(10), // Esquinas redondeadas
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius:
-                          BorderRadius.circular(10), // Esquinas redondeadas
-                      border: Border.all(
-                        color: Colors.white, // Color del borde
-                        width: 2, // Ancho del borde
-                      ),
-                    ),
-                    // Construye la vista previa visual del horario.
-                    child: buildSchedulePreview(
-                        _displayedSchedules[index], subjectColors),
-                  ),
-                ),
+        return MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: () => widget.onScheduleTap(index),
+            child: Card(
+              elevation: 3,
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-            );
-          },
+              // Construye la vista previa visual del horario.
+              child: buildSchedulePreview(
+                  _displayedSchedules[index], subjectColors),
+            ),
+          ),
         );
       },
     );
@@ -191,24 +181,21 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
       'Jue',
       'Vie',
       'Sáb',
-      'Dom',
+      'Dom'
     ];
 
     // Matriz para almacenar las clases organizadas por día y hora.
-    Map<String, Map<String, ClassOption?>> scheduleMatrix = {};
-
-    for (String time in timeSlots) {
-      scheduleMatrix[time] = {};
-      for (String day in days) {
-        scheduleMatrix[time]![day] = null; // Inicialmente vacío
-      }
-    }
+    Map<String, Map<String, ClassOption?>> scheduleMatrix = {
+      for (var time in timeSlots) time: {for (var day in days) day: null}
+    };
 
     // Llena la matriz con las clases del horario.
     for (var classOption in schedule) {
       for (var sched in classOption.schedules) {
         TimeOfDayRange range = parseTimeRange(sched.time);
-        String day = sched.day.substring(0, 3); // Abreviar el día
+        String day = sched.day.substring(0, 3);
+
+        if (!days.contains(day)) continue;
 
         int startIndex = getTimeSlotIndex(range.start, timeSlots);
         int endIndex = getTimeSlotIndex(range.end, timeSlots);
@@ -217,7 +204,6 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
 
         for (int i = startIndex; i < endIndex; i++) {
           if (i < timeSlots.length) {
-            // Almacena la opción de clase en la celda correspondiente.
             scheduleMatrix[timeSlots[i]]![day] = classOption;
           }
         }
@@ -230,13 +216,10 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
         double totalWidth = constraints.maxWidth;
         double totalHeight = constraints.maxHeight;
 
-        double hourColumnWidth = totalWidth * 0.10; // 10% del ancho total
+        double hourColumnWidth = totalWidth * 0.12;
         double dayColumnWidth = (totalWidth - hourColumnWidth) / days.length;
-
-        double cellHeight =
-            totalHeight / (timeSlots.length + 1); // +1 para el encabezado
-
-        double fontSize = cellHeight * 0.5; // Ajusta según sea necesario
+        double cellHeight = totalHeight / (timeSlots.length + 1);
+        double fontSize = (cellHeight * 0.4).clamp(6.0, 12.0);
 
         return Column(
           children: [
@@ -245,21 +228,15 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
               height: cellHeight,
               child: Row(
                 children: [
-                  SizedBox(
-                    width: hourColumnWidth,
-                    child: const Text(''),
-                  ),
+                  SizedBox(width: hourColumnWidth),
                   ...days.map((day) => SizedBox(
                         width: dayColumnWidth,
                         child: Center(
-                          child: Text(
-                            day,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: fontSize * 0.8,
-                            ),
-                          ),
+                          child: Text(day,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: fontSize * 0.9)),
                         ),
                       )),
                 ],
@@ -267,71 +244,70 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
             ),
             // Cuerpo de la cuadrícula con las horas y las clases.
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: timeSlots.map((time) {
-                  return Row(
-                    children: [
-                      // Columna de horas.
-                      SizedBox(
-                        width: hourColumnWidth,
-                        height: cellHeight,
-                        child: Center(
-                          child: Text(
-                            time,
-                            style: TextStyle(
-                              fontSize: fontSize * 0.7,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                      // Celdas para cada día de la semana.
-                      ...days.map((day) {
-                        ClassOption? classOption = scheduleMatrix[time]![day];
-                        Color? subjectColor;
-                        if (classOption != null) {
-                          subjectColor =
-                              subjectColors[classOption.subjectName] ??
-                                  Colors.blueAccent;
-                        }
-                        return SizedBox(
-                          width: dayColumnWidth,
-                          height: cellHeight,
-                          child: Container(
-                            margin: const EdgeInsets.all(0.5),
-                            decoration: BoxDecoration(
-                              color: classOption != null
-                                  ? subjectColor
-                                  : Colors.grey[200],
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            // Muestra el nombre abreviado de la materia.
-                            child: classOption != null
-                                ? Center(
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      child: Text(
-                                        classOption.subjectName.length > 3
-                                            ? classOption.subjectName
-                                                .split(' ')
-                                                .first
-                                            : classOption.subjectName,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: fontSize * 0.6,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : null,
+              child: Row(
+                children: [
+                  // Columna de horas.
+                  SizedBox(
+                    width: hourColumnWidth,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: timeSlots
+                          .map((time) => Expanded(
+                                child: Center(
+                                  child: Text(time,
+                                      style: TextStyle(
+                                          fontSize: fontSize * 0.8,
+                                          fontWeight: FontWeight.w500)),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                  // Celdas para cada día de la semana.
+                  Expanded(
+                    child: Column(
+                      children: timeSlots.map((time) {
+                        return Expanded(
+                          child: Row(
+                            children: days.map((day) {
+                              ClassOption? classOption =
+                                  scheduleMatrix[time]![day];
+                              Color? subjectColor = classOption != null
+                                  ? subjectColors[classOption.subjectName]
+                                  : null;
+
+                              return Expanded(
+                                child: Container(
+                                  margin: const EdgeInsets.all(0.5),
+                                  decoration: BoxDecoration(
+                                    color: classOption != null
+                                        ? subjectColor
+                                        : Colors.grey.shade200,
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                  child: classOption != null
+                                      ? Center(
+                                          child: Text(
+                                            //Se coloca el nombre hasta el primer espacio
+                                            classOption.subjectName
+                                                .split(' ')[0],
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: fontSize,
+                                                fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        )
+                                      : null,
+                                ),
+                              );
+                            }).toList(),
                           ),
                         );
                       }).toList(),
-                    ],
-                  );
-                }).toList(),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -342,36 +318,31 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
 
   /// Genera un mapa de colores único para cada materia en los horarios.
   Map<String, Color> _generateSubjectColors() {
-    List<Color> colors = [
-      Colors.redAccent,
-      Colors.blueAccent,
-      Colors.greenAccent,
-      Colors.orangeAccent,
-      Colors.purpleAccent,
-      Colors.cyanAccent,
-      Colors.amberAccent,
-      Colors.tealAccent,
-      Colors.indigoAccent,
-      Colors.pinkAccent,
-      Colors.limeAccent,
-      Colors.deepOrangeAccent,
-      Colors.lightBlueAccent,
-      Colors.lightGreenAccent,
-      Colors.deepPurpleAccent,
+    final List<Color> colors = [
+      Colors.red,
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.cyan,
+      Colors.amber,
+      Colors.teal,
+      Colors.indigo,
+      Colors.pink,
+      Colors.lime,
+      Colors.deepOrange,
+      Colors.lightBlue,
+      Colors.lightGreen,
+      Colors.deepPurple,
     ];
 
     Map<String, Color> subjectColors = {};
     int colorIndex = 0;
 
-    // Extrae todos los nombres de materias únicos.
-    Set<String> allSubjects = {};
-    for (var schedule in widget.allSchedules) {
-      for (var classOption in schedule) {
-        allSubjects.add(classOption.subjectName);
-      }
-    }
+    Set<String> allSubjects = widget.allSchedules
+        .expand((schedule) => schedule.map((co) => co.subjectName))
+        .toSet();
 
-    // Asigna un color a cada materia.
     for (var subject in allSubjects) {
       subjectColors[subject] = colors[colorIndex % colors.length];
       colorIndex++;
@@ -383,35 +354,30 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
   /// Parsea una cadena de rango de tiempo (ej. "07:00 - 09:00") a un objeto TimeOfDayRange.
   TimeOfDayRange parseTimeRange(String timeRange) {
     List<String> parts = timeRange.split(' - ');
-    TimeOfDay start = parseTimeOfDay(parts[0]);
-    TimeOfDay end = parseTimeOfDay(parts[1]);
-    return TimeOfDayRange(start, end);
+    return TimeOfDayRange(parseTimeOfDay(parts[0]), parseTimeOfDay(parts[1]));
   }
 
   /// Parsea una cadena de tiempo (ej. "07:00") a un objeto TimeOfDay.
   TimeOfDay parseTimeOfDay(String timeString) {
-    timeString = timeString.trim();
-
-    List<String> timeParts = timeString.split(':');
-    int hour = int.parse(timeParts[0]);
-    int minute = int.parse(timeParts[1]);
-
+    final List<String> timeParts = timeString.split(':');
+    final int hour = int.parse(timeParts[0]);
+    final int minute = int.parse(timeParts[1]);
     return TimeOfDay(hour: hour, minute: minute);
   }
 
   /// Encuentra el índice de una franja horaria correspondiente a una hora específica.
   int getTimeSlotIndex(TimeOfDay time, List<String> timeSlots) {
-    int timeMinutes = time.hour * 60 + time.minute;
+    // Si la hora de fin tiene minutos (ej. 14:50), se considera que ocupa
+    // toda la franja horaria de la hora de inicio (ej. la franja de las 14:00).
+    // Para que el bucle `i < endIndex` la incluya, el índice final debe ser
+    // el de la siguiente hora.
+    int hourToIndex = time.minute > 0 ? time.hour + 1 : time.hour;
 
-    for (int i = 0; i < timeSlots.length; i++) {
-      TimeOfDay slotTime = parseTimeOfDay(timeSlots[i]);
-      int slotMinutes = slotTime.hour * 60 + slotTime.minute;
+    // La primera franja es a las 7:00, que corresponde al índice 0.
+    int index = hourToIndex - 7;
 
-      if (timeMinutes <= slotMinutes) {
-        return i;
-      }
-    }
-    return -1;
+    // El +1 es porque el endIndex puede ser el tamaño de la lista (para incluir la última franja).
+    return index.clamp(0, timeSlots.length);
   }
 }
 
