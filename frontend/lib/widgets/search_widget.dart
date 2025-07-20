@@ -79,14 +79,21 @@ class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // Detectar si la vista es para móvil para ajustar el layout
+    final bool isMobile = MediaQuery.of(context).size.width < 600;
+
     return Dialog(
+      // Reducir el margen exterior en móviles
+      insetPadding: EdgeInsets.all(isMobile ? 16.0 : 24.0),
       child: GestureDetector(
         onTap: () {}, // Evita que el diálogo se cierre al hacer clic dentro
         child: Container(
-          width: 500,
-          height: 600,
-          padding: const EdgeInsets.all(16),
+          // Ancho flexible y altura que se ajusta al contenido
+          width: isMobile ? double.infinity : 500,
+          padding: EdgeInsets.all(isMobile ? 12.0 : 16.0),
           child: Column(
+            mainAxisSize:
+                MainAxisSize.min, // La columna se ajusta a su contenido
             children: [
               // Encabezado del diálogo.
               Container(
@@ -97,17 +104,20 @@ class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
                     topRight: Radius.circular(12),
                   ),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                // Padding vertical reducido en móvil
+                padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 16 : 20,
+                    vertical: isMobile ? 4 : 16),
                 child: Row(
                   children: [
                     const Icon(Icons.menu_book, color: Colors.white),
                     const SizedBox(width: 10),
+                    // Tamaño de fuente consistente
                     const Text(
                       'Buscar Materia',
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: 22,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
@@ -121,8 +131,9 @@ class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
               const SizedBox(height: 10),
               // Mensaje informativo
               Container(
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.only(bottom: 16),
+                // Padding y margen reducidos en móvil
+                padding: EdgeInsets.all(isMobile ? 4 : 12),
+                margin: EdgeInsets.only(bottom: isMobile ? 8 : 16),
                 decoration: BoxDecoration(
                   color: Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(8),
@@ -139,9 +150,10 @@ class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
                     Expanded(
                       child: Text(
                         'Busca la materia por nombre o código. Si no la ves, revisa la escritura o ten en cuenta que puede estar llena.',
+                        // Tamaño de fuente reducido en móvil
                         style: TextStyle(
                           color: Colors.blue.shade700,
-                          fontSize: 13,
+                          fontSize: isMobile ? 12 : 13,
                           height: 1.3,
                         ),
                       ),
@@ -160,11 +172,13 @@ class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
               ),
               const SizedBox(height: 10),
               // Lista de resultados de la búsqueda.
-              Expanded(
+              // Flexible para que la lista ocupe el espacio restante
+              Flexible(
                 child: _filteredSubjects.isEmpty &&
                         widget.subjectController.text.isNotEmpty
                     ? const Center(child: Text('No hay resultados'))
                     : ListView.builder(
+                        shrinkWrap: true, // Se ajusta al contenido
                         itemCount: _filteredSubjects.length,
                         itemBuilder: (context, index) {
                           var subject = _filteredSubjects[index];
