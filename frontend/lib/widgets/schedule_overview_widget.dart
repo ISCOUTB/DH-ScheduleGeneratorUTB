@@ -69,7 +69,6 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     '18:00',
     '19:00',
     '20:00',
-    '21:00',
   ];
 
   /// Lista de días de la semana para las columnas de la cuadrícula.
@@ -199,7 +198,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         children: [
           // Usamos AspectRatio para que la tabla sea más ancha que alta.
           AspectRatio(
-            aspectRatio: 1.0, // Es un cuadrado
+            aspectRatio: 0.85, // Alto más grande que ancho
             child: _buildScheduleGrid(),
           ),
           const SizedBox(height: 24),
@@ -412,7 +411,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       // Calcula la posición y el tamaño del bloque en función de la hora y el día.
       final timeRange = parseTimeRange(time);
       final startHour = timeRange.start.hour + timeRange.start.minute / 60.0;
-      final endHour = timeRange.end.hour + timeRange.end.minute / 60.0;
+      final endHour = timeRange.end.hour + (timeRange.end.minute + 10) / 60.0;
 
       final top = (startHour - 7) * hourRowHeight;
       final height = (endHour - startHour) * hourRowHeight;

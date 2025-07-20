@@ -154,6 +154,11 @@ class _MyHomePageState extends State<MyHomePage> {
   // Control para mostrar el mensaje de advertencia solo la primera vez
   bool _showWelcomeDialog = true;
 
+
+  // Controlador de scroll para la paginación en móvil.
+  final ScrollController _mobileScrollController = ScrollController();
+
+
   late FocusNode _focusNode;
   final TransformationController _transformationController =
       TransformationController();
@@ -177,6 +182,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
     // Carga la lista de todas las materias al iniciar.
     _loadAllSubjects();
+
+
+    // Añadir listener al controlador de scroll móvil
+    _mobileScrollController.addListener(_onMobileScroll);
+
 
     _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -303,8 +313,21 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     _focusNode.dispose();
+
+    _mobileScrollController.removeListener(_onMobileScroll);
+    _mobileScrollController.dispose();
     super.dispose();
   }
+
+
+  /// Listener para el scroll en móvil que podría usarse para lógica de paginación global si fuera necesario.
+  /// Por ahora, el controlador se pasa directamente al widget de la grilla.
+  void _onMobileScroll() {
+    // La lógica de paginación ahora está en el ScheduleGridWidget,
+    // que escucha a este mismo controlador.
+    // Se puede añadir lógica aquí si otros widgets necesitaran reaccionar al scroll.
+  }
+
 
   /// Añade una materia a la lista de seleccionadas, validando créditos y duplicados.
   void addSubject(Subject subject) {
@@ -706,6 +729,39 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: _buildSpeedDial(context),
               ),
 
+            // Contador de horarios flotante para la vista móvil.
+            if (isMobileLayout && allSchedules.isNotEmpty)
+              Positioned(
+                bottom: 16,
+                left: 16,
+                child: IgnorePointer(
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          spreadRadius: 1,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      '${allSchedules.length} ${allSchedules.length == 1 ? "horario" : "horarios"}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
             // --- Overlays Globales ---
             // Se mantienen aquí para funcionar en ambas vistas.
             if (_isLoading)
@@ -871,6 +927,7 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Construye el layout para móvil.
   Widget _buildMobileLayout(bool isMobileLayout) {
     return ListView(
+      controller: _mobileScrollController, // Asigna el controlador al ListView
       padding: const EdgeInsets.all(16.0),
       children: [
         // Pasamos el flag isMobileLayout a cada widget.
@@ -897,7 +954,8 @@ class _MyHomePageState extends State<MyHomePage> {
           isMobileLayout: isMobileLayout,
         ),
         const SizedBox(height: 16),
-        // Contenedor para la grilla de horarios
+
+        // El contador es un widget flotante global en la vista móvil.
         allSchedules.isEmpty
             ? Container(
                 height: 300, // Le damos una altura mínima al placeholder
@@ -918,6 +976,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 isMobileLayout: isMobileLayout,
                 // Esta propiedad es para arreglar el scroll.
                 isScrollable: false,
+                // Pasa el controlador de scroll para que la paginación funcione
+                scrollController: _mobileScrollController,
               ),
       ],
     );

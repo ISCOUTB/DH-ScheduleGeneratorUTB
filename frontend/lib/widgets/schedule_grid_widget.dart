@@ -20,12 +20,17 @@ class ScheduleGridWidget extends StatefulWidget {
   /// Determina si el GridView debe ser scrollable. Se usa para anidar en otros scrollables.
   final bool isScrollable;
 
+  /// Controlador de scroll opcional, para manejar la paginación desde un scrollable padre.
+  final ScrollController? scrollController;
+
   const ScheduleGridWidget({
     Key? key,
     required this.allSchedules,
     required this.onScheduleTap,
     this.isMobileLayout = false,
     this.isScrollable = true, // Por defecto es scrollable
+
+    this.scrollController,
   }) : super(key: key);
 
   @override
@@ -33,7 +38,10 @@ class ScheduleGridWidget extends StatefulWidget {
 }
 
 class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
-  final ScrollController _scrollController = ScrollController();
+  // Usa el controlador pasado o crea uno nuevo.
+  late final ScrollController _scrollController;
+  bool _isInternalController = false;
+
   List<List<ClassOption>> _displayedSchedules = [];
   bool _isLoading = false;
   final int _itemsPerPage = 10; // Número de horarios a cargar cada vez
@@ -41,6 +49,15 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
   @override
   void initState() {
     super.initState();
+
+    // Determina qué controlador usar.
+    if (widget.scrollController == null) {
+      _scrollController = ScrollController();
+      _isInternalController = true;
+    } else {
+      _scrollController = widget.scrollController!;
+    }
+
     _loadInitialSchedules();
     _scrollController.addListener(_onScroll);
   }
@@ -56,7 +73,11 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    // Solo elimina el controlador si fue creado internamente.
+    _scrollController.removeListener(_onScroll);
+    if (_isInternalController) {
+      _scrollController.dispose();
+    }
     super.dispose();
   }
 
@@ -102,7 +123,6 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     int crossAxisCount = widget.isMobileLayout ? 1 : 2;
     // Ajusta la relación de aspecto para una mejor visualización en móviles.
     double childAspectRatio = widget.isMobileLayout ? 1.8 : 1.5;
@@ -111,11 +131,14 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
     Map<String, Color> subjectColors = _generateSubjectColors();
 
     return GridView.builder(
-
       physics: widget.isScrollable
           ? const AlwaysScrollableScrollPhysics()
           : const NeverScrollableScrollPhysics(),
       shrinkWrap: !widget.isScrollable,
+      // Asigna el controlador SOLO si el widget es el que se desplaza.
+      // Si isScrollable es false, el controlador ya está siendo usado por el
+      // ListView padre y adjuntarlo aquí causa el error. La paginación
+      // funciona igual porque el listener ya está activo.
       controller: widget.isScrollable ? _scrollController : null,
       padding: const EdgeInsets.all(8),
       itemCount: _displayedSchedules.length +
@@ -146,7 +169,7 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
               ),
               // Construye la vista previa visual del horario.
               child: buildSchedulePreview(
-                  _displayedSchedules[index], subjectColors),
+                  _displayedSchedules[index], subjectColors, index),
             ),
           ),
         );
@@ -155,8 +178,8 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
   }
 
   // Construye la vista previa visual de un único horario en formato de cuadrícula.
-  Widget buildSchedulePreview(
-      List<ClassOption> schedule, Map<String, Color> subjectColors) {
+  Widget buildSchedulePreview(List<ClassOption> schedule,
+      Map<String, Color> subjectColors, int scheduleIndex) {
     final List<String> timeSlots = [
       '07:00',
       '08:00',
@@ -174,15 +197,7 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
       '20:00',
     ];
 
-    final List<String> days = [
-      'Lun',
-      'Mar',
-      'Mié',
-      'Jue',
-      'Vie',
-      'Sáb',
-      'Dom'
-    ];
+    final List<String> days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
 
     // Matriz para almacenar las clases organizadas por día y hora.
     Map<String, Map<String, ClassOption?>> scheduleMatrix = {
@@ -228,7 +243,30 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
               height: cellHeight,
               child: Row(
                 children: [
-                  SizedBox(width: hourColumnWidth),
+                  // Celda de la esquina para mostrar el número del horario
+                  Container(
+                    width: hourColumnWidth,
+                    height: cellHeight,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      border: Border(
+                        right:
+                            BorderSide(color: Colors.grey.shade400, width: 1),
+                        bottom:
+                            BorderSide(color: Colors.grey.shade400, width: 1),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '#${scheduleIndex + 1}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: fontSize,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ),
+                  ),
                   ...days.map((day) => SizedBox(
                         width: dayColumnWidth,
                         child: Center(
