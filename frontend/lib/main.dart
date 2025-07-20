@@ -563,8 +563,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // Función para abrir el tutorial
   /// Abre el enlace del tutorial en una nueva pestaña.
   void _openTutorial() async {
-    final Uri url = Uri.parse(
-        'https://www.youtube.com/watch?v=rFi0M0gcMHM');
+    final Uri url = Uri.parse('https://www.youtube.com/watch?v=rFi0M0gcMHM');
     if (!await launchUrl(url)) {
       showCustomNotification(context, 'No se pudo abrir el tutorial',
           icon: Icons.error, color: Colors.red);
@@ -656,38 +655,41 @@ class _MyHomePageState extends State<MyHomePage> {
 
       return Scaffold(
         backgroundColor: const Color(0xFFF5F7FA),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFF0051FF),
-          elevation: 0,
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircleAvatar(
-                backgroundColor: Color(0xFF8CFF62),
-                child: Icon(
-                  Icons.calendar_today,
-                  color: Colors.white,
+        // Oculta el AppBar en móvil cuando el buscador está abierto
+        appBar: (isMobileLayout && isSearchOpen)
+            ? null
+            : AppBar(
+                backgroundColor: const Color(0xFF0051FF),
+                elevation: 0,
+                title: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const CircleAvatar(
+                      backgroundColor: Color(0xFF8CFF62),
+                      child: Icon(
+                        Icons.calendar_today,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text("Generador de Horarios UTB",
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white)),
+                  ],
                 ),
+                actions: [
+                  // Botón de "Acerca de" solo para la vista de escritorio
+                  if (!isMobileLayout)
+                    IconButton(
+                      icon: const Icon(Icons.info_outline, color: Colors.white),
+                      tooltip: 'Acerca de los creadores',
+                      onPressed: _showCreatorsDialog,
+                    ),
+                  const SizedBox(width: 16),
+                ],
               ),
-              const SizedBox(width: 12),
-              const Text("Generador de Horarios UTB",
-                  style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white)),
-            ],
-          ),
-          actions: [
-            // Botón de "Acerca de" solo para la vista de escritorio
-            if (!isMobileLayout)
-              IconButton(
-                icon: const Icon(Icons.info_outline, color: Colors.white),
-                tooltip: 'Acerca de los creadores',
-                onPressed: _showCreatorsDialog,
-              ),
-            const SizedBox(width: 16),
-          ],
-        ),
         // El FAB se mueve al Stack para controlar su visibilidad con los modales.
         body: Stack(
           children: [
