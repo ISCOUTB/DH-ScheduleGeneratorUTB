@@ -36,7 +36,7 @@ class ApiService {
     }
   }
 
-  // --- NUEVO MÉTODO PARA OBTENER DETALLES DE UNA MATERIA ---
+
   Future<Subject> getSubjectDetails(String subjectCode) async {
     final url = Uri.parse('$_baseUrl/api/subjects/$subjectCode');
     try {

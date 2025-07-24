@@ -21,10 +21,14 @@ class ScheduleOverviewWidget extends StatefulWidget {
   /// Callback para cerrar la vista de detalle.
   final VoidCallback onClose;
 
+  /// Mapa de colores para las materias.
+  final Map<String, Color> subjectColors;
+
   const ScheduleOverviewWidget({
     Key? key,
     required this.schedule,
     required this.onClose,
+    required this.subjectColors,
   }) : super(key: key);
 
   @override
@@ -86,7 +90,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   void initState() {
     super.initState();
     // Genera los colores para las materias al iniciar el widget.
-    subjectColors = _generateSubjectColors();
+    subjectColors = widget.subjectColors;
   }
 
   @override
@@ -457,44 +461,6 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       }
     }
     return blocks;
-  }
-
-  /// Genera un mapa de colores único para cada materia del horario.
-  Map<String, Color> _generateSubjectColors() {
-    final List<Color> colors = [
-      Colors.red,
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.cyan,
-      Colors.amber,
-      Colors.teal,
-      Colors.indigo,
-      Colors.pink,
-      Colors.lime,
-      Colors.deepOrange,
-      Colors.lightBlue,
-      Colors.lightGreen,
-      Colors.deepPurple,
-    ];
-
-    Map<String, Color> subjectColors = {};
-    int colorIndex = 0;
-
-    // Extrae los nombres de materias únicos del horario actual.
-    Set<String> allSubjects = {};
-    for (var classOption in widget.schedule) {
-      allSubjects.add(classOption.subjectName);
-    }
-
-    // Asigna un color a cada materia de forma cíclica.
-    for (var subject in allSubjects) {
-      subjectColors[subject] = colors[colorIndex % colors.length];
-      colorIndex++;
-    }
-
-    return subjectColors;
   }
 
   /// Inicia la descarga del horario en formato Excel.

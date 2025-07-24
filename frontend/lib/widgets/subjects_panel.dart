@@ -18,8 +18,8 @@ class SubjectsPanel extends StatelessWidget {
   /// El límite de créditos permitido.
   final int creditLimit;
 
-  /// Función que devuelve un color para una materia específica, basado en su índice.
-  final Color Function(int) getSubjectColor;
+  /// Mapa de colores para las materias.
+  final Map<String, Color> subjectColors;
 
   /// Callback para mostrar el panel en su vista expandida.
   final VoidCallback onShowPanel;
@@ -48,7 +48,7 @@ class SubjectsPanel extends StatelessWidget {
     required this.addedSubjects,
     required this.usedCredits,
     required this.creditLimit,
-    required this.getSubjectColor,
+    required this.subjectColors,
     required this.onShowPanel,
     required this.onHidePanel,
     required this.onAddSubject,
@@ -111,7 +111,6 @@ class SubjectsPanel extends StatelessWidget {
           else
             Column(
               children: addedSubjects.asMap().entries.map((entry) {
-                final idx = entry.key;
                 final subject = entry.value;
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 4),
@@ -123,7 +122,7 @@ class SubjectsPanel extends StatelessWidget {
                       width: 14,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: getSubjectColor(idx),
+                        color: subjectColors[subject.name] ?? Colors.grey,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -195,7 +194,6 @@ class SubjectsPanel extends StatelessWidget {
             child: Column(
               children: [
                 ...addedSubjects.asMap().entries.map((entry) {
-                  final idx = entry.key;
                   final subject = entry.value;
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 6),
@@ -204,7 +202,7 @@ class SubjectsPanel extends StatelessWidget {
                         width: 14,
                         height: 14,
                         decoration: BoxDecoration(
-                          color: getSubjectColor(idx),
+                          color: subjectColors[subject.name] ?? Colors.grey,
                           shape: BoxShape.circle,
                         ),
                       ),

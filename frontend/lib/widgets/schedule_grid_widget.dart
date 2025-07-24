@@ -14,6 +14,9 @@ class ScheduleGridWidget extends StatefulWidget {
   /// Callback que se ejecuta cuando se toca un horario, devolviendo su índice.
   final Function(int) onScheduleTap;
 
+  /// Mapa de colores para las materias.
+  final Map<String, Color> subjectColors;
+
   /// Determina si se debe usar el layout para móvil.
   final bool isMobileLayout;
 
@@ -27,6 +30,7 @@ class ScheduleGridWidget extends StatefulWidget {
     Key? key,
     required this.allSchedules,
     required this.onScheduleTap,
+    required this.subjectColors,
     this.isMobileLayout = false,
     this.isScrollable = true, // Por defecto es scrollable
 
@@ -128,7 +132,7 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
     double childAspectRatio = widget.isMobileLayout ? 1.8 : 1.5;
 
     // Genera un mapa de colores único para cada materia.
-    Map<String, Color> subjectColors = _generateSubjectColors();
+    Map<String, Color> subjectColors = widget.subjectColors;
 
     return GridView.builder(
       physics: widget.isScrollable
@@ -352,41 +356,6 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
         );
       },
     );
-  }
-
-  /// Genera un mapa de colores único para cada materia en los horarios.
-  Map<String, Color> _generateSubjectColors() {
-    final List<Color> colors = [
-      Colors.red,
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.cyan,
-      Colors.amber,
-      Colors.teal,
-      Colors.indigo,
-      Colors.pink,
-      Colors.lime,
-      Colors.deepOrange,
-      Colors.lightBlue,
-      Colors.lightGreen,
-      Colors.deepPurple,
-    ];
-
-    Map<String, Color> subjectColors = {};
-    int colorIndex = 0;
-
-    Set<String> allSubjects = widget.allSchedules
-        .expand((schedule) => schedule.map((co) => co.subjectName))
-        .toSet();
-
-    for (var subject in allSubjects) {
-      subjectColors[subject] = colors[colorIndex % colors.length];
-      colorIndex++;
-    }
-
-    return subjectColors;
   }
 
   /// Parsea una cadena de rango de tiempo (ej. "07:00 - 09:00") a un objeto TimeOfDayRange.

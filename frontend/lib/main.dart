@@ -99,8 +99,6 @@ class _MyHomePageState extends State<MyHomePage> {
     Colors.orange,
     Colors.purple,
     Colors.cyan,
-    Colors.amber,
-    Colors.teal,
     Colors.indigo,
     Colors.pink,
     Colors.lime,
@@ -114,7 +112,22 @@ class _MyHomePageState extends State<MyHomePage> {
   Color getSubjectColor(int index) =>
       subjectColors[index % subjectColors.length];
 
+  /// Asigna un color a una materia si aún no tiene uno.
+  void _assignColorToSubject(Subject subject) {
+    if (!subjectColorMap.containsKey(subject.name)) {
+      // Asigna el siguiente color disponible de la paleta.
+      final color =
+          subjectColors[subjectColorMap.length % subjectColors.length];
+      setState(() {
+        subjectColorMap[subject.name] = color;
+      });
+    }
+  }
+
   // --- ESTADO DE LA APLICACIÓN ---
+
+  // Mapa de colores para las materias, asignado por nombre de materia.
+  Map<String, Color> subjectColorMap = {};
 
   // Materias seleccionadas por el usuario.
   List<Subject> addedSubjects = [];
@@ -349,6 +362,9 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
 
+    // Asigna un color a la materia antes de agregarla
+    _assignColorToSubject(subject);
+
     setState(() {
       usedCredits = newTotalCredits;
       addedSubjects.add(subject);
@@ -398,6 +414,9 @@ class _MyHomePageState extends State<MyHomePage> {
           .removeWhere((s) => s.code == subject.code && s.name == subject.name);
       usedCredits -= subject.credits;
 
+      // Se puede limpiar el color del mapa si ya no hay materias con ese nombre.
+      // Por simplicidad, lo dejamos para mantener consistencia si se vuelve a agregar.
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Materia eliminada: ${subject.name}')),
       );
@@ -443,6 +462,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   // Limpiar materias seleccionadas
                   addedSubjects.clear();
                   usedCredits = 0;
+
+                  // Limpiar mapa de colores
+                  subjectColorMap.clear();
 
                   // Limpiar filtros aplicados
                   appliedFilters.clear();
@@ -789,7 +811,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             subjectController: subjectController,
                             allSubjects: _allSubjectsList,
                             onSubjectSelected: (subjectSummary) async {
-
                               subjectController.clear();
                               setState(() {
                                 isSearchOpen = false;
@@ -842,6 +863,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: ScheduleOverviewWidget(
                       schedule: allSchedules[selectedScheduleIndex!],
                       onClose: closeScheduleOverview,
+                      subjectColors: subjectColorMap,
                     ),
                   ),
                 ],
@@ -935,7 +957,7 @@ class _MyHomePageState extends State<MyHomePage> {
           addedSubjects: addedSubjects,
           usedCredits: usedCredits,
           creditLimit: creditLimit,
-          getSubjectColor: getSubjectColor,
+          subjectColors: subjectColorMap,
           onShowPanel: () => setState(() => isFullExpandedView = false),
           onHidePanel: () => setState(() => isFullExpandedView = true),
           onAddSubject: () => setState(() => isSearchOpen = true),
@@ -966,6 +988,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 allSchedules: allSchedules,
                 onScheduleTap: openScheduleOverview,
                 isMobileLayout: isMobileLayout,
+                subjectColors: subjectColorMap,
                 // Esta propiedad es para arreglar el scroll.
                 isScrollable: false,
                 // Pasa el controlador de scroll para que la paginación funcione
@@ -1073,6 +1096,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               allSchedules: allSchedules,
                               onScheduleTap: openScheduleOverview,
                               isMobileLayout: isMobileLayout,
+                              subjectColors: subjectColorMap,
                             ),
                       if (allSchedules.isNotEmpty)
                         Positioned(
@@ -1107,7 +1131,7 @@ class _MyHomePageState extends State<MyHomePage> {
             addedSubjects: addedSubjects,
             usedCredits: usedCredits,
             creditLimit: creditLimit,
-            getSubjectColor: getSubjectColor,
+            subjectColors: subjectColorMap,
             onShowPanel: () => setState(() => isFullExpandedView = false),
             onHidePanel: () => setState(() => isFullExpandedView = true),
             onAddSubject: () => setState(() => isSearchOpen = true),
