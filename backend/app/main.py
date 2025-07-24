@@ -2,7 +2,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import Response
-from typing import List
+from typing import List, Dict, Any # <--- Importa 'Dict' y 'Any'
 import os
 
 # Importa módulos y modelos. El '.' indica que son del mismo paquete 'app'
@@ -40,9 +40,9 @@ def get_subjects_list():
     return repository.get_all_subjects_summary()
 
 @app.post("/api/schedules/generate", response_model=List[List[ClassOption]], summary="Generar horarios válidos")
-def generate_schedules_endpoint(request: GenerateScheduleRequest):
+def generate_schedules_endpoint(request: GenerateScheduleRequest) -> List[List[ClassOption]]:
     """
-    Recibe una lista de códigos de materia y un diccionario de filtros.
+    Recibe una lista de objetos de materia (código y nombre) y un diccionario de filtros.
     
     Ejecuta el algoritmo de backtracking y devuelve una lista de horarios válidos.
     Cada horario es una lista de las opciones de clase que lo componen.
@@ -50,19 +50,27 @@ def generate_schedules_endpoint(request: GenerateScheduleRequest):
     if not request.subjects:
         raise HTTPException(status_code=400, detail="La lista de materias no puede estar vacía.")
 
-    # Obtiene las combinaciones de opciones pre-procesadas desde la BD.
-    combinations = repository.get_combinations_for_subjects(request.subjects)
+    subjects_data = [s.model_dump() for s in request.subjects]
+    combinations = repository.get_combinations_for_subjects(subjects_data)
     
-    # Si una de las materias no devuelve combinaciones, el resultado debe ser vacío.
     if not combinations or len(combinations) != len(request.subjects):
-        # Devuelve una variable con el tipo explícito.
         empty_result: List[List[ClassOption]] = []
         return empty_result
 
-    # Ejecuta el algoritmo de backtracking con los datos preparados.
+    # --- INICIO DE LA CORRECCIÓN ---
+    # 1. Definimos explícitamente el tipo del diccionario para Pylance.
+    #    Esto soluciona el error "Type of 'generation_params' is partially unknown".
+    generation_params: Dict[str, Any] = {
+        **request.filters,
+        "credit_limit": request.credit_limit
+    }
+
+    # 2. Pasamos los dos argumentos que la función probablemente espera.
+    #    El error de "Unknown" se solucionará al añadir el tipo de retorno en `schedule_generator.py`.
     valid_schedules = schedule_generator.find_valid_schedules(
-        combinations, request.filters
+        combinations, generation_params
     )
+    # --- FIN DE LA CORRECCIÓN ---
 
     # Devuelve los resultados.
     return valid_schedules

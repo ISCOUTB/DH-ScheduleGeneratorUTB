@@ -6,10 +6,10 @@ def insertar_datos(conn: psycopg.Connection, datos: ProcesarJsonResponse) -> Non
     cursor = conn.cursor()
 
     for m in datos['materias']:
-        cursor.execute("INSERT INTO Materia VALUES (%s, %s, %s)", m)
+        cursor.execute("INSERT INTO Materia (CodigoMateria, Creditos, Nombre) VALUES (%s, %s, %s)", m)
 
     for p in datos['profesores']:
-        cursor.execute("INSERT INTO Profesor VALUES (%s, %s)", p)
+        cursor.execute("INSERT INTO Profesor (BannerID, Nombre) VALUES (%s, %s)", p)
 
     # Separa cursos teóricos y laboratorios
     cursos_teoricos = [c for c in datos['cursos'] if c[1] == "Teórico"]
@@ -18,15 +18,15 @@ def insertar_datos(conn: psycopg.Connection, datos: ProcesarJsonResponse) -> Non
     # Insertar teóricos primero
     for c in cursos_teoricos:
         cursor.execute("""
-            INSERT INTO Curso (NRC, Tipo, CodigoMateria, ProfesorID, NRCTeorico, GroupID, Campus, CuposDisponibles, CuposTotales)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Curso (NRC, Tipo, CodigoMateria, ProfesorID, NRCTeorico, GroupID, Campus, CuposDisponibles, CuposTotales, NombreMateria)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, c)
 
     # Luego insertar laboratorios
     for c in cursos_lab:
         cursor.execute("""
-            INSERT INTO Curso (NRC, Tipo, CodigoMateria, ProfesorID, NRCTeorico, GroupID, Campus, CuposDisponibles, CuposTotales)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO Curso (NRC, Tipo, CodigoMateria, ProfesorID, NRCTeorico, GroupID, Campus, CuposDisponibles, CuposTotales, NombreMateria)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, c)
 
     for cl in datos['clases']:

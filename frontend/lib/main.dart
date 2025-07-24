@@ -154,10 +154,8 @@ class _MyHomePageState extends State<MyHomePage> {
   // Control para mostrar el mensaje de advertencia solo la primera vez
   bool _showWelcomeDialog = true;
 
-
   // Controlador de scroll para la paginación en móvil.
   final ScrollController _mobileScrollController = ScrollController();
-
 
   late FocusNode _focusNode;
   final TransformationController _transformationController =
@@ -183,10 +181,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // Carga la lista de todas las materias al iniciar.
     _loadAllSubjects();
 
-
     // Añadir listener al controlador de scroll móvil
     _mobileScrollController.addListener(_onMobileScroll);
-
 
     _focusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -319,7 +315,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-
   /// Listener para el scroll en móvil que podría usarse para lógica de paginación global si fuera necesario.
   /// Por ahora, el controlador se pasa directamente al widget de la grilla.
   void _onMobileScroll() {
@@ -327,7 +322,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // que escucha a este mismo controlador.
     // Se puede añadir lógica aquí si otros widgets necesitaran reaccionar al scroll.
   }
-
 
   /// Añade una materia a la lista de seleccionadas, validando créditos y duplicados.
   void addSubject(Subject subject) {
@@ -795,26 +789,26 @@ class _MyHomePageState extends State<MyHomePage> {
                             subjectController: subjectController,
                             allSubjects: _allSubjectsList,
                             onSubjectSelected: (subjectSummary) async {
+                              // --- INICIO DEL CAMBIO ---
+                              // Eliminamos la llamada a la API 'getSubjectDetails'.
+                              // Ya tenemos toda la información que necesitamos del 'subjectSummary'.
                               subjectController.clear();
                               setState(() {
                                 isSearchOpen = false;
-                                _isLoading = true;
                               });
-                              try {
-                                final fullSubject = await _apiService
-                                    .getSubjectDetails(subjectSummary.code);
-                                addSubject(fullSubject);
-                              } catch (e) {
-                                showCustomNotification(context,
-                                    'Error al cargar detalles: ${e.toString()}',
-                                    icon: Icons.error, color: Colors.red);
-                              } finally {
-                                if (mounted) {
-                                  setState(() {
-                                    _isLoading = false;
-                                  });
-                                }
-                              }
+
+                              // Creamos un objeto Subject "parcial" con los datos exactos.
+                              // No necesitamos las classOptions aquí, solo la identidad de la materia.
+                              final subjectToAdd = Subject(
+                                code: subjectSummary.code,
+                                name: subjectSummary.name,
+                                credits: subjectSummary.credits,
+                                classOptions: [], // La lista de opciones no es necesaria en este punto.
+                              );
+
+                              // Llamamos a addSubject con la materia que tiene el nombre correcto.
+                              addSubject(subjectToAdd);
+                              // --- FIN DEL CAMBIO ---
                             },
                             closeWindow: () {
                               subjectController.clear();
@@ -927,7 +921,8 @@ class _MyHomePageState extends State<MyHomePage> {
   /// Construye el layout para móvil.
   Widget _buildMobileLayout(bool isMobileLayout) {
     return ListView(
-      controller: _mobileScrollController, // Asigna el controlador al ListView
+      controller: _mobileScrollController // Asigna el controlador al ListView
+      ,
       padding: const EdgeInsets.all(16.0),
       children: [
         // Pasamos el flag isMobileLayout a cada widget.

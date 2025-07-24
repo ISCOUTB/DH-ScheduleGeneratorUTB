@@ -7,6 +7,7 @@ import psycopg.rows
 import os
 from dotenv import load_dotenv
 from typing import List, Dict, Any
+from psycopg.sql import SQL
 from ..models import ClassOption, Schedule, Subject
 
 # Define la ruta base del proyecto (la carpeta 'backend')
@@ -27,21 +28,24 @@ def get_db_connection():
     if not DATABASE_URL:
         raise ValueError("DATABASE_URL no está definida. Asegúrate de que backend/.env o backend/.env.local exista y esté configurado.")
     
-    # Descomentar esta línea para depuración local.
-    # print(f"API conectando a: {DATABASE_URL.split('@')[-1]}") 
     return psycopg.connect(DATABASE_URL)
 
 
 def _get_option_combinations(class_options: List[ClassOption]) -> List[List[ClassOption]]:
     """
-    Agrupa las opciones de clase por grupo y genera combinaciones válidas.
+    Agrupa las opciones de clase por grupo y nombre de materia, y genera combinaciones válidas.
     Una combinación puede ser una clase 'Teorico-practico' o un par 'Teórico' y 'Laboratorio'.
     """
-    options_by_group: Dict[int, List[ClassOption]] = {}
+    # --- INICIO DE LA CORRECCIÓN ---
+    # Se agrupa por una tupla de (group_id, subject_name) para diferenciar
+    # materias con el mismo código pero diferente nombre (ej. las Éticas).
+    options_by_group: Dict[tuple[int, str], List[ClassOption]] = {}
 
-    # Se convierte la lista a un diccionario agrupado por group_id.
     for option in class_options:
-        options_by_group.setdefault(option.group_id, []).append(option)
+        # Usamos una clave compuesta para la agrupación.
+        group_key = (option.group_id, option.subject_name)
+        options_by_group.setdefault(group_key, []).append(option)
+    # --- FIN DE LA CORRECCIÓN ---
 
     combinations: List[List[ClassOption]] = []
 
@@ -50,46 +54,51 @@ def _get_option_combinations(class_options: List[ClassOption]) -> List[List[Clas
         labs = [opt for opt in group_options if opt.type == 'Laboratorio']
         teorico_practicas = [opt for opt in group_options if opt.type == 'Teorico-practico']
 
-        # Combinaciones de clases 'Teorico-practico' (cada una es una combinación en sí misma)
         combinations.extend([[tp] for tp in teorico_practicas])
 
-        # Combinaciones de 'Teórico' + 'Laboratorio'
         if teoricas and labs:
             combinations.extend([[t, l] for t in teoricas for l in labs])
-        # Combinaciones de 'Teórico' solo
         elif teoricas:
             combinations.extend([[t] for t in teoricas])
-        # Combinaciones de 'Laboratorio' solo
         elif labs:
             combinations.extend([[l] for l in labs])
 
     return combinations
 
 
-def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[ClassOption]]]:
+def get_combinations_for_subjects(subjects_payload: List[Dict[str, str]]) -> List[List[List[ClassOption]]]:
     """
-    Obtiene todas las combinaciones de clases posibles para una lista de códigos de materia.
+    Obtiene todas las combinaciones de clases posibles para una lista de materias,
+    filtrando por código y nombre de curso específico.
     """
-    if not subject_codes:
+    if not subjects_payload:
         return []
 
-    # Usa la nueva función para obtener la conexión.
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Consulta SQL para obtener todos los datos de materias, cursos, profesores y clases.
-    query = """
+    # --- INICIO DE LA CORRECCIÓN (USANDO TU LÓGICA) ---
+    conditions: List[SQL] = []
+    params: List[Any] = []
+    for subject in subjects_payload:
+        conditions.append(SQL("(c.CodigoMateria = %s AND c.nombremateria = %s)"))
+        params.extend([subject['code'], subject['name']])
+
+    where_clause = SQL(" OR ").join(conditions)
+
+    query = SQL("""
         SELECT
-            m.CodigoMateria, m.Nombre AS NombreMateria, m.Creditos,
+            c.CodigoMateria, c.nombremateria AS NombreCurso, m.Creditos,
             c.NRC, c.Tipo, c.GroupID, p.Nombre AS NombreProfesor,
             cl.Dia, cl.HoraInicio, cl.HoraFinal, c.Campus, c.CuposDisponibles, c.CuposTotales
-        FROM Materia m
-        JOIN Curso c ON m.CodigoMateria = c.CodigoMateria
+        FROM Curso c
+        JOIN Materia m ON c.CodigoMateria = m.CodigoMateria AND m.Nombre = c.nombremateria
         LEFT JOIN Profesor p ON c.ProfesorID = p.BannerID
         LEFT JOIN Clase cl ON cl.NRC = c.NRC
-        WHERE m.CodigoMateria = ANY(%s)
+        WHERE {where_clause}
         ORDER BY
-            m.CodigoMateria,
+            c.CodigoMateria,
+            c.nombremateria,
             c.GroupID,
             c.NRC,
             CASE cl.Dia
@@ -103,16 +112,16 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
                 ELSE 8
             END,
             cl.HoraInicio;
-    """
+    """).format(where_clause=where_clause)
+    
+    cursor.execute(query, params)
+    # --- FIN DE LA CORRECCIÓN ---
 
-    # Ejecuta la consulta de forma segura.
-    cursor.execute(query, (subject_codes,))
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
 
-    # Procesa los resultados para construir los objetos ClassOption.
-    all_options_by_subject: Dict[str, List[ClassOption]] = {}
+    all_options_by_subject: Dict[tuple[str, str], List[ClassOption]] = {}
     class_options_dict: Dict[str, ClassOption] = {}
 
     for row in rows:
@@ -122,9 +131,10 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
         ) = row
 
         nrc = str(nrc_val)
+        subject_key = (code, name)
 
-        if code not in all_options_by_subject:
-            all_options_by_subject[code] = []
+        if subject_key not in all_options_by_subject:
+            all_options_by_subject[subject_key] = []
 
         if nrc not in class_options_dict:
             new_option = ClassOption(
@@ -141,7 +151,7 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
                 seatsMaximum=cupos_totales
             )
             class_options_dict[nrc] = new_option
-            all_options_by_subject[code].append(new_option)
+            all_options_by_subject[subject_key].append(new_option)
 
         if dia and hora_inicio and hora_final:
             hora_inicio_str = hora_inicio.strftime("%H:%M")
@@ -150,10 +160,9 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
                 Schedule(day=dia, time=f"{hora_inicio_str} - {hora_final_str}")
             )
 
-    # Genera las combinaciones de clases para cada materia.
     combinations_per_subject: List[List[List[ClassOption]]] = []
-    for code in subject_codes:
-        subject_options = all_options_by_subject.get(code, [])
+    for subject_key in all_options_by_subject:
+        subject_options = all_options_by_subject.get(subject_key, [])
         if subject_options:
             combinations = _get_option_combinations(subject_options)
             if combinations:
@@ -162,7 +171,7 @@ def get_combinations_for_subjects(subject_codes: List[str]) -> List[List[List[Cl
     return combinations_per_subject
 
 
-def get_subject_by_code(subject_code: str) -> Subject | None:
+def get_subject_by_code(subject_code: str, subject_name: str) -> Subject | None:
     """
     Obtiene los detalles completos de una materia específica desde la base de datos,
     incluyendo todas sus opciones de clase (classOptions).
@@ -170,19 +179,20 @@ def get_subject_by_code(subject_code: str) -> Subject | None:
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Consulta SQL para obtener los detalles de la materia y sus opciones de clase.
+    # --- INICIO DE LA CORRECCIÓN (USANDO TU LÓGICA) ---
+    # Se aplica la misma lógica de JOIN y WHERE a esta consulta.
     query = """
         SELECT
-            m.CodigoMateria, m.Nombre AS NombreMateria, m.Creditos,
+            c.CodigoMateria, c.nombremateria AS NombreMateria, m.Creditos,
             c.NRC, c.Tipo, c.GroupID, p.Nombre AS NombreProfesor,
             cl.Dia, cl.HoraInicio, cl.HoraFinal, c.campus, c.CuposDisponibles, c.CuposTotales
-        FROM Materia m
-        JOIN Curso c ON m.CodigoMateria = c.CodigoMateria
+        FROM Curso c
+        JOIN Materia m ON c.CodigoMateria = m.CodigoMateria AND m.Nombre = c.nombremateria
         LEFT JOIN Profesor p ON c.ProfesorID = p.BannerID
         LEFT JOIN Clase cl ON cl.NRC = c.NRC
-        WHERE m.CodigoMateria = %s
+        WHERE c.CodigoMateria = %s AND c.nombremateria = %s
         ORDER BY
-            m.CodigoMateria,
+            c.CodigoMateria,
             c.GroupID,
             c.NRC,
             CASE cl.Dia
@@ -198,7 +208,9 @@ def get_subject_by_code(subject_code: str) -> Subject | None:
             cl.HoraInicio;
     """
 
-    cursor.execute(query, (subject_code,))
+    cursor.execute(query, (subject_code, subject_name))
+    # --- FIN DE LA CORRECCIÓN ---
+    
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -206,7 +218,6 @@ def get_subject_by_code(subject_code: str) -> Subject | None:
     if not rows:
         return None
 
-    # Procesa las filas para construir el objeto Subject con sus ClassOption.
     subject_details: Dict[str, Any] = {}
     subject_details = {
         "code": rows[0][0],
@@ -256,9 +267,7 @@ def get_all_subjects_summary() -> List[Dict[str, Any]]:
     """
     Obtiene una lista de resúmenes de todas las materias (código, nombre, créditos).
     """
-    # Conecta a la base de datos.
     conn = get_db_connection()
-    # Usa dict_row para que la BD devuelva diccionarios directamente.
     cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
 
     cursor.execute("SELECT CodigoMateria as code, Nombre as name, Creditos as credits FROM Materia ORDER BY Nombre;")
@@ -268,5 +277,4 @@ def get_all_subjects_summary() -> List[Dict[str, Any]]:
     cursor.close()
     conn.close()
 
-    # Convierte el resultado a una lista de diccionarios estándar.
     return [dict(s) for s in subjects]

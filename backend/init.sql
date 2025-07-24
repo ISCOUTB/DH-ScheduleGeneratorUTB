@@ -64,7 +64,8 @@ CREATE TABLE public.curso (
     groupid integer,
     campus character varying,
     cuposdisponibles integer,
-    cupostotales integer
+    cupostotales integer,
+    nombremateria character varying NOT NULL
 );
 
 
@@ -116,7 +117,7 @@ ALTER TABLE ONLY public.curso
 --
 
 ALTER TABLE ONLY public.materia
-    ADD CONSTRAINT materia_pkey PRIMARY KEY (codigomateria);
+    ADD CONSTRAINT materia_pkey PRIMARY KEY (codigomateria, nombre);
 
 
 --
@@ -140,7 +141,7 @@ ALTER TABLE ONLY public.clase
 --
 
 ALTER TABLE ONLY public.curso
-    ADD CONSTRAINT curso_codigomateria_fkey FOREIGN KEY (codigomateria) REFERENCES public.materia(codigomateria);
+    ADD CONSTRAINT curso_codigomateria_fkey FOREIGN KEY (codigomateria, nombremateria) REFERENCES public.materia(codigomateria, nombre);
 
 
 --

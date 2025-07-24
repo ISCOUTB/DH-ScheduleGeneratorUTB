@@ -13,12 +13,14 @@ router = APIRouter(
 )
 
 @router.get('/subjects/{subject_code}', response_model=Subject, summary="Obtener detalles de una materia")
-def get_subject_details(subject_code: str) -> Any:
+def get_subject_details(subject_code: str, name: str) -> Any:
     """
-    Obtiene los detalles completos de una materia específica por su código,
-    incluyendo todas sus classOptions.
+    Obtiene los detalles completos de una materia específica por su código Y nombre.
+    El nombre se pasa como un parámetro de consulta (query parameter).
+    Ejemplo: /api/subjects/ETI101?name=Ética%20y%20Cívica
     """
-    subject_data = repository.get_subject_by_code(subject_code)
+    # Llama a la función del repositorio con ambos argumentos.
+    subject_data = repository.get_subject_by_code(subject_code, name)
     
     if not subject_data:
         raise HTTPException(status_code=404, detail="Materia no encontrada")

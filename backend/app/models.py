@@ -34,7 +34,19 @@ class Subject(BaseModel):
     credits: int
     class_options: List[ClassOption] = Field(..., alias='classOptions')
 
-# Modelo para la petición que recibiremos del frontend
+# --- INICIO DE LA CORRECCIÓN ---
+
+# 1. Creamos un modelo para identificar una materia de forma única (código y nombre).
+class SubjectIdentifier(BaseModel):
+    code: str
+    name: str
+
+# 2. Actualizamos el modelo de la petición para que use el nuevo modelo y acepte el límite de créditos.
 class GenerateScheduleRequest(BaseModel):
-    subjects: List[str] # Lista de códigos de materia
+    # Ahora esperamos una lista de objetos SubjectIdentifier, no de strings.
+    subjects: List[SubjectIdentifier]
     filters: Dict[str, Any]
+    # El frontend envía 'creditLimit' (camelCase), usamos un alias para que Pydantic lo entienda como 'credit_limit'.
+    credit_limit: int = Field(..., alias='creditLimit')
+
+# --- FIN DE LA CORRECCIÓN ---
