@@ -2,7 +2,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import Response
-from typing import List, Dict, Any # <--- Importa 'Dict' y 'Any'
+from typing import List, Dict, Any 
 import os
 
 # Importa módulos y modelos. El '.' indica que son del mismo paquete 'app'
@@ -57,20 +57,17 @@ def generate_schedules_endpoint(request: GenerateScheduleRequest) -> List[List[C
         empty_result: List[List[ClassOption]] = []
         return empty_result
 
-    # --- INICIO DE LA CORRECCIÓN ---
-    # 1. Definimos explícitamente el tipo del diccionario para Pylance.
-    #    Esto soluciona el error "Type of 'generation_params' is partially unknown".
+
+    # Se define explícitamente el tipo del diccionario para Pylance.
     generation_params: Dict[str, Any] = {
         **request.filters,
         "credit_limit": request.credit_limit
     }
 
-    # 2. Pasamos los dos argumentos que la función probablemente espera.
-    #    El error de "Unknown" se solucionará al añadir el tipo de retorno en `schedule_generator.py`.
+    # 2. Se pasan los dos argumentos que la función expecta.
     valid_schedules = schedule_generator.find_valid_schedules(
         combinations, generation_params
     )
-    # --- FIN DE LA CORRECCIÓN ---
 
     # Devuelve los resultados.
     return valid_schedules

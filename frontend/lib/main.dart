@@ -789,16 +789,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             subjectController: subjectController,
                             allSubjects: _allSubjectsList,
                             onSubjectSelected: (subjectSummary) async {
-                              // --- INICIO DEL CAMBIO ---
-                              // Eliminamos la llamada a la API 'getSubjectDetails'.
-                              // Ya tenemos toda la información que necesitamos del 'subjectSummary'.
+
                               subjectController.clear();
                               setState(() {
                                 isSearchOpen = false;
                               });
 
-                              // Creamos un objeto Subject "parcial" con los datos exactos.
-                              // No necesitamos las classOptions aquí, solo la identidad de la materia.
+                              // Se crea un objeto Subject "parcial" con los datos exactos.
+                              // No se necesita los classOptions aquí, solo la identidad de la materia.
                               final subjectToAdd = Subject(
                                 code: subjectSummary.code,
                                 name: subjectSummary.name,
@@ -806,9 +804,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 classOptions: [], // La lista de opciones no es necesaria en este punto.
                               );
 
-                              // Llamamos a addSubject con la materia que tiene el nombre correcto.
+                              // Se llama a addSubject con la materia que tiene el nombre correcto.
                               addSubject(subjectToAdd);
-                              // --- FIN DEL CAMBIO ---
                             },
                             closeWindow: () {
                               subjectController.clear();

@@ -62,8 +62,7 @@ class ApiService {
   }) async {
     final url = Uri.parse('$_baseUrl/api/schedules/generate');
 
-    // --- INICIO DEL CAMBIO ---
-    // En lugar de una lista de códigos, creamos una lista de mapas.
+    // Se crea una lista de mapas.
     // Cada mapa contiene el código y el nombre exacto de la materia.
     final subjectsPayload = subjects
         .map((s) => {
@@ -73,12 +72,9 @@ class ApiService {
         .toList();
 
     final payload = {
-      "subjects": subjectsPayload, // Usamos el nuevo payload
+      "subjects": subjectsPayload,
       "filters": filters, // Los filtros se mantienen igual
-      // --- INICIO DE LA CORRECCIÓN ---
-      // El backend espera la clave en camelCase ('creditLimit') debido al alias en el modelo Pydantic.
       "creditLimit": creditLimit,
-      // --- FIN DE LA CORRECCIÓN ---
     };
 
     try {

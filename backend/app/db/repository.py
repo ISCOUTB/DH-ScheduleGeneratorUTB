@@ -36,7 +36,7 @@ def _get_option_combinations(class_options: List[ClassOption]) -> List[List[Clas
     Agrupa las opciones de clase por grupo y nombre de materia, y genera combinaciones válidas.
     Una combinación puede ser una clase 'Teorico-practico' o un par 'Teórico' y 'Laboratorio'.
     """
-    # --- INICIO DE LA CORRECCIÓN ---
+
     # Se agrupa por una tupla de (group_id, subject_name) para diferenciar
     # materias con el mismo código pero diferente nombre (ej. las Éticas).
     options_by_group: Dict[tuple[int, str], List[ClassOption]] = {}
@@ -45,7 +45,7 @@ def _get_option_combinations(class_options: List[ClassOption]) -> List[List[Clas
         # Usamos una clave compuesta para la agrupación.
         group_key = (option.group_id, option.subject_name)
         options_by_group.setdefault(group_key, []).append(option)
-    # --- FIN DE LA CORRECCIÓN ---
+
 
     combinations: List[List[ClassOption]] = []
 
@@ -77,7 +77,7 @@ def get_combinations_for_subjects(subjects_payload: List[Dict[str, str]]) -> Lis
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # --- INICIO DE LA CORRECCIÓN (USANDO TU LÓGICA) ---
+
     conditions: List[SQL] = []
     params: List[Any] = []
     for subject in subjects_payload:
@@ -115,7 +115,7 @@ def get_combinations_for_subjects(subjects_payload: List[Dict[str, str]]) -> Lis
     """).format(where_clause=where_clause)
     
     cursor.execute(query, params)
-    # --- FIN DE LA CORRECCIÓN ---
+
 
     rows = cursor.fetchall()
     cursor.close()
@@ -179,7 +179,7 @@ def get_subject_by_code(subject_code: str, subject_name: str) -> Subject | None:
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # --- INICIO DE LA CORRECCIÓN (USANDO TU LÓGICA) ---
+
     # Se aplica la misma lógica de JOIN y WHERE a esta consulta.
     query = """
         SELECT
@@ -209,7 +209,6 @@ def get_subject_by_code(subject_code: str, subject_name: str) -> Subject | None:
     """
 
     cursor.execute(query, (subject_code, subject_name))
-    # --- FIN DE LA CORRECCIÓN ---
     
     rows = cursor.fetchall()
     cursor.close()
