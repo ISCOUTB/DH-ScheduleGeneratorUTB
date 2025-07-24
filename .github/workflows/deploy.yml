@@ -53,7 +53,7 @@ jobs:
 
             # Detiene cualquier contenedor que esté corriendo de una versión anterior.
             echo "Stopping old containers..."
-            docker compose down
+            docker compose down -v
 
             # Construye las nuevas imágenes y levanta los contenedores.
             # --build es importante para que reconstruya con la nueva variable.
