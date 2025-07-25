@@ -36,22 +36,27 @@ class ApiService {
     }
   }
 
+  Future<Subject> getSubjectDetails(
+      String subjectCode, String subjectName) async {
+    // Codifica el nombre de la materia para que sea seguro en una URL (ej: "Ética y Cívica" -> "Ética%20y%20Cívica")
+    final encodedSubjectName = Uri.encodeComponent(subjectName);
+    final url = Uri.parse(
+        '$_baseUrl/api/subjects/$subjectCode?name=$encodedSubjectName');
 
-  Future<Subject> getSubjectDetails(String subjectCode) async {
-    final url = Uri.parse('$_baseUrl/api/subjects/$subjectCode');
     try {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
-        return Subject.fromJson(data);
+        // Decodificación UTF-8 para manejar tildes y caracteres especiales.
+        final decodedBody = utf8.decode(response.bodyBytes);
+        return Subject.fromJson(json.decode(decodedBody));
       } else {
         throw Exception(
             'Error del servidor al obtener detalles: ${response.statusCode}');
       }
     } catch (e) {
       print('Error en la petición a la API de detalles: $e');
-      throw Exception('No se pudo obtener los detalles de la materia.');
+      rethrow;
     }
   }
 

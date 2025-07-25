@@ -98,10 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
     Colors.green,
     Colors.orange,
     Colors.purple,
-    Colors.cyan,
     Colors.indigo,
-    Colors.pink,
     Colors.lime,
+    Colors.pink,
     Colors.deepOrange,
     Colors.lightBlue,
     Colors.lightGreen,
@@ -693,184 +692,203 @@ class _MyHomePageState extends State<MyHomePage> {
       final bool isMobileLayout = constraints.maxWidth < mobileBreakpoint;
 
       return Scaffold(
-        backgroundColor: const Color(0xFFF5F7FA),
-        // Oculta el AppBar en móvil cuando el buscador está abierto
-        appBar: (isMobileLayout && isSearchOpen)
-            ? null
-            : AppBar(
-                backgroundColor: const Color(0xFF0051FF),
-                elevation: 0,
-                title: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const CircleAvatar(
-                      backgroundColor: Color(0xFF8CFF62),
-                      child: Icon(
-                        Icons.calendar_today,
-                        color: Colors.white,
+          backgroundColor: const Color(0xFFF5F7FA),
+          // Oculta el AppBar en móvil cuando el buscador está abierto
+          appBar: (isMobileLayout && isSearchOpen)
+              ? null
+              : AppBar(
+                  backgroundColor: const Color(0xFF0051FF),
+                  elevation: 0,
+                  title: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircleAvatar(
+                        backgroundColor: Color(0xFF8CFF62),
+                        child: Icon(
+                          Icons.calendar_today,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    const Text("Generador de Horarios UTB",
-                        style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white)),
+                      const SizedBox(width: 12),
+                      const Text("Generador de Horarios UTB",
+                          style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
+                    ],
+                  ),
+                  actions: [
+                    // Botón de "Acerca de" solo para la vista de escritorio
+                    if (!isMobileLayout)
+                      IconButton(
+                        icon:
+                            const Icon(Icons.info_outline, color: Colors.white),
+                        tooltip: 'Acerca de los creadores',
+                        onPressed: _showCreatorsDialog,
+                      ),
+                    const SizedBox(width: 16),
                   ],
                 ),
-                actions: [
-                  // Botón de "Acerca de" solo para la vista de escritorio
-                  if (!isMobileLayout)
-                    IconButton(
-                      icon: const Icon(Icons.info_outline, color: Colors.white),
-                      tooltip: 'Acerca de los creadores',
-                      onPressed: _showCreatorsDialog,
+          // El FAB se mueve al Stack para controlar su visibilidad con los modales.
+          body: Stack(
+            children: [
+              // Contenido principal (móvil o escritorio)
+              isMobileLayout
+                  ? _buildMobileLayout(isMobileLayout)
+                  : _buildDesktopLayout(isMobileLayout),
+
+              // Botón flotante (solo en móvil y debajo de los modales)
+              if (isMobileLayout)
+                Positioned(
+                  bottom: 16,
+                  right: 16,
+                  child: _buildSpeedDial(context),
+                ),
+
+              // Contador de horarios flotante para la vista móvil.
+              if (isMobileLayout && allSchedules.isNotEmpty)
+                Positioned(
+                  bottom: 16,
+                  left: 16,
+                  child: IgnorePointer(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Text(
+                        '${allSchedules.length} ${allSchedules.length == 1 ? "horario" : "horarios"}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
-                  const SizedBox(width: 16),
-                ],
-              ),
-        // El FAB se mueve al Stack para controlar su visibilidad con los modales.
-        body: Stack(
-          children: [
-            // Contenido principal (móvil o escritorio)
-            isMobileLayout
-                ? _buildMobileLayout(isMobileLayout)
-                : _buildDesktopLayout(isMobileLayout),
+                  ),
+                ),
 
-            // Botón flotante (solo en móvil y debajo de los modales)
-            if (isMobileLayout)
-              Positioned(
-                bottom: 16,
-                right: 16,
-                child: _buildSpeedDial(context),
-              ),
-
-            // Contador de horarios flotante para la vista móvil.
-            if (isMobileLayout && allSchedules.isNotEmpty)
-              Positioned(
-                bottom: 16,
-                left: 16,
-                child: IgnorePointer(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
+              // --- Overlays Globales ---
+              // Se mantienen aquí para funcionar en ambas vistas.
+              if (_isLoading)
+                Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(color: Colors.white),
+                        SizedBox(height: 20),
+                        Text(
+                          'Generando horarios...',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            decoration: TextDecoration.none,
+                          ),
                         ),
                       ],
                     ),
-                    child: Text(
-                      '${allSchedules.length} ${allSchedules.length == 1 ? "horario" : "horarios"}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    ),
                   ),
                 ),
-              ),
+              if (isSearchOpen)
+                Stack(
+                  children: [
+                    const ModalBarrier(
+                        dismissible: false, color: Colors.black45),
+                    Center(
+                      child: _areSubjectsLoaded
+                          ? SearchSubjectsWidget(
+                              subjectController: subjectController,
+                              allSubjects: _allSubjectsList,
+                              onSubjectSelected: (subjectSummary) async {
+                                // Se cierra la ventana de búsqueda y mostramos el indicador de carga.
+                                subjectController.clear();
+                                setState(() {
+                                  isSearchOpen = false;
+                                  _isLoading = true;
+                                });
 
-            // --- Overlays Globales ---
-            // Se mantienen aquí para funcionar en ambas vistas.
-            if (_isLoading)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: const Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(color: Colors.white),
-                      SizedBox(height: 20),
-                      Text(
-                        'Generando horarios...',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          decoration: TextDecoration.none,
-                        ),
-                      ),
-                    ],
-                  ),
+                                try {
+                                  // Se a la API con AMBOS parámetros: código y nombre.
+                                  // El objeto 'subjectSummary' ya contiene ambos datos.
+                                  final fullSubject =
+                                      await _apiService.getSubjectDetails(
+                                          subjectSummary.code,
+                                          subjectSummary.name);
+
+                                  // Se usa el objeto completo para añadirlo a la lista.
+                                  addSubject(fullSubject);
+                                } catch (e) {
+                                  // Manejo de errores por si la API falla
+                                  if (mounted) {
+                                    showCustomNotification(context,
+                                        'Error al cargar detalles: ${e.toString()}',
+                                        icon: Icons.error, color: Colors.red);
+                                  }
+                                } finally {
+                                  // Se oculta el indicador de carga.
+                                  if (mounted) {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
+                                }
+                              },
+                              closeWindow: () {
+                                subjectController.clear();
+                                setState(() => isSearchOpen = false);
+                              },
+                            )
+                          : const Center(
+                              child: CircularProgressIndicator(
+                                  color: Colors.white),
+                            ),
+                    ),
+                  ],
                 ),
-              ),
-            if (isSearchOpen)
-              Stack(
-                children: [
-                  const ModalBarrier(dismissible: false, color: Colors.black45),
-                  Center(
-                    child: _areSubjectsLoaded
-                        ? SearchSubjectsWidget(
-                            subjectController: subjectController,
-                            allSubjects: _allSubjectsList,
-                            onSubjectSelected: (subjectSummary) async {
-                              subjectController.clear();
-                              setState(() {
-                                isSearchOpen = false;
-                              });
-
-                              // Se crea un objeto Subject "parcial" con los datos exactos.
-                              // No se necesita los classOptions aquí, solo la identidad de la materia.
-                              final subjectToAdd = Subject(
-                                code: subjectSummary.code,
-                                name: subjectSummary.name,
-                                credits: subjectSummary.credits,
-                                classOptions: [], // La lista de opciones no es necesaria en este punto.
-                              );
-
-                              // Se llama a addSubject con la materia que tiene el nombre correcto.
-                              addSubject(subjectToAdd);
-                            },
-                            closeWindow: () {
-                              subjectController.clear();
-                              setState(() => isSearchOpen = false);
-                            },
-                          )
-                        : const Center(
-                            child:
-                                CircularProgressIndicator(color: Colors.white),
-                          ),
-                  ),
-                ],
-              ),
-            if (isFilterOpen)
-              Stack(
-                children: [
-                  const ModalBarrier(dismissible: false, color: Colors.black45),
-                  Center(
-                    child: FilterWidget(
-                      closeWindow: () => setState(() => isFilterOpen = false),
-                      onApplyFilters: applyFilters,
-                      onClearFilters: clearFilters,
-                      currentFilters: appliedFilters,
-                      addedSubjects: addedSubjects,
+              if (isFilterOpen)
+                Stack(
+                  children: [
+                    const ModalBarrier(
+                        dismissible: false, color: Colors.black45),
+                    Center(
+                      child: FilterWidget(
+                        closeWindow: () => setState(() => isFilterOpen = false),
+                        onApplyFilters: applyFilters,
+                        onClearFilters: clearFilters,
+                        currentFilters: appliedFilters,
+                        addedSubjects: addedSubjects,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            if (isOverviewOpen && selectedScheduleIndex != null)
-              Stack(
-                children: [
-                  const ModalBarrier(dismissible: false, color: Colors.black45),
-                  Center(
-                    child: ScheduleOverviewWidget(
-                      schedule: allSchedules[selectedScheduleIndex!],
-                      onClose: closeScheduleOverview,
-                      subjectColors: subjectColorMap,
+                  ],
+                ),
+              if (isOverviewOpen && selectedScheduleIndex != null)
+                Stack(
+                  children: [
+                    const ModalBarrier(
+                        dismissible: false, color: Colors.black45),
+                    Center(
+                      child: ScheduleOverviewWidget(
+                        schedule: allSchedules[selectedScheduleIndex!],
+                        onClose: closeScheduleOverview,
+                        subjectColors: subjectColorMap,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-          ],
-        ),
-      );
+                  ],
+                ),
+            ],
+          ));
     });
   }
 
