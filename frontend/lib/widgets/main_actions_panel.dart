@@ -41,7 +41,7 @@ class MainActionsPanel extends StatelessWidget {
         // Botón para realizar filtro.
         Expanded(
             child: _MainCardButton(
-                color: const Color(0xFFB833FF),
+                color: const Color(0xFF0FC4EF),
                 icon: Icons.filter_alt,
                 label: "Realizar filtro",
                 onTap: onFilter)),
@@ -49,7 +49,7 @@ class MainActionsPanel extends StatelessWidget {
         // Botón para tutorial.
         Expanded(
           child: _MainCardButton(
-            color: const Color(0xFF8CFF62),
+            color: const Color(0xFF71ED37),
             icon: Icons.lightbulb_outline,
             label: "Tutorial",
             onTap: () async {

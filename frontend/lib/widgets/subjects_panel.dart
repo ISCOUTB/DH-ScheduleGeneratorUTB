@@ -175,7 +175,7 @@ class SubjectsPanel extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text("Materias",
+            const Text("Materias Seleccionadas",
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,

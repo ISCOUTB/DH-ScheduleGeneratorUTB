@@ -18,6 +18,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // Importación condicional para el servicio de plataforma.
 import 'utils/platform_service_stub.dart'
@@ -55,7 +56,7 @@ class MyApp extends StatelessWidget {
     final ThemeData theme = ThemeData(
       primarySwatch: Colors.indigo,
       brightness: Brightness.light,
-      fontFamily: 'Roboto',
+      fontFamily: 'DM Sans',
       visualDensity: VisualDensity.adaptivePlatformDensity,
       colorScheme: ColorScheme.fromSwatch(
         primarySwatch: Colors.indigo,
@@ -649,27 +650,52 @@ class _MyHomePageState extends State<MyHomePage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
+          contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
           title: const Row(
             children: [
               Icon(Icons.info_outline, color: Color(0xFF0051FF)),
               SizedBox(width: 10),
-              Text('Acerca de'),
+              Text('Acerca de', style: TextStyle(fontSize: 18)),
             ],
           ),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Esta aplicación fue desarrollada por:',
-                style: TextStyle(fontWeight: FontWeight.bold),
+          content: SizedBox(
+            width: 450,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'La idea y los primeros avances de esta aplicación surgieron en la asignatura Desarrollo de Software de la Universidad Tecnológica de Bolívar, bajo la instrucción del profesor Jairo Enrique Serrano Castañeda.',
+                    style: TextStyle(fontSize: 13, height: 1.4),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Equipo del prototipo inicial:',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(' • Gabriel Alejandro Mantilla Clavijo', style: TextStyle(fontSize: 13)),
+                  const Text(' • Melany Marcela Saez Acuña', style: TextStyle(fontSize: 13)),
+                  const Text(' • Eddy Josue Lara Cermeno', style: TextStyle(fontSize: 13)),
+                  const Text(' • Julio de Jesús Denubila Vergara', style: TextStyle(fontSize: 13)),
+                  const Text(' • Diego Peña Páez', style: TextStyle(fontSize: 13)),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Equipo de desarrollo actual:',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(' • Gabriel Alejandro Mantilla Clavijo', style: TextStyle(fontSize: 13)),
+                  const Text(' • Melany Marcela Saez Acuña', style: TextStyle(fontSize: 13)),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Todos los estudiantes mencionados pertenecen a la Escuela de Transformación Digital, del programa de Ingeniería en Sistemas y Computación de la Universidad Tecnológica de Bolívar (UTB).',
+                    style: TextStyle(fontSize: 13, height: 1.4),
+                  ),
+                ],
               ),
-              SizedBox(height: 12),
-              Text(' • Gabriel Mantilla'),
-              Text(' • Melany Saez'),
-              Text(' • Eddy Lara'),
-              Text(' • Julio Denubila'),
-            ],
+            ),
           ),
           actions: [
             TextButton(
@@ -699,23 +725,20 @@ class _MyHomePageState extends State<MyHomePage> {
               : AppBar(
                   backgroundColor: const Color(0xFF0051FF),
                   elevation: 0,
-                  title: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircleAvatar(
-                        backgroundColor: Color(0xFF8CFF62),
-                        child: Icon(
-                          Icons.calendar_today,
-                          color: Colors.white,
-                        ),
+                  toolbarHeight: 80,
+                  titleSpacing: 0,
+                  title: Padding(
+                    padding: const EdgeInsets.only(left: 24, top: 10, bottom: 10),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Image.asset(
+                        'images/utb.png',
+                        height: 60,
+                        fit: BoxFit.contain,
+                        filterQuality: FilterQuality.high,
+                        isAntiAlias: true,
                       ),
-                      const SizedBox(width: 12),
-                      const Text("Generador de Horarios UTB",
-                          style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white)),
-                    ],
+                    ),
                   ),
                   actions: [
                     // Botón de "Acerca de" solo para la vista de escritorio
@@ -923,7 +946,7 @@ class _MyHomePageState extends State<MyHomePage> {
         SpeedDialChild(
           child: const Icon(Icons.delete_forever, color: Colors.white),
           label: 'Limpiar Todo',
-          backgroundColor: Colors.red,
+          backgroundColor: const Color(0xFF2C2A2A),
           onTap: clearSchedules,
         ),
       ],
@@ -1062,7 +1085,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             height: 60,
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFFF2F2F),
+                                backgroundColor: const Color(0xFF2C2A2A),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                 ),

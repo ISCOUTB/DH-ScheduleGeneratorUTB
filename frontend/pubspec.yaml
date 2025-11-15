@@ -28,6 +28,7 @@ dependencies:
   firebase_analytics: ^11.5.2
   flutter_speed_dial: ^7.0.0
   web: ^1.1.1
+  flutter_svg: ^2.0.10+1
 
 
 flutter:
@@ -35,8 +36,21 @@ flutter:
 
   assets:
     - assets/fonts/Roboto-Regular.ttf
+    - images/logo.png
+    - images/logo_utb.svg
+    - images/utb.png
 
   fonts:
-    - family: Roboto
+    - family: DM Sans
       fonts:
-        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/DM_Sans/static/DMSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/DM_Sans/static/DMSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/DM_Sans/static/DMSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/DM_Sans/static/DMSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/DM_Sans/static/DMSans-Italic.ttf
+          weight: 400
+          style: italic
