@@ -33,7 +33,7 @@ class MainActionsPanel extends StatelessWidget {
         // Botón para buscar materia.
         Expanded(
             child: _MainCardButton(
-                color: const Color(0xFF0051FF),
+                color: const Color(0xFF093AD8),
                 icon: Icons.search,
                 label: "Buscar materia",
                 onTap: onSearch)),

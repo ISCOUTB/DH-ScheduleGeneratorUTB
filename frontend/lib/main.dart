@@ -148,6 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isSearchOpen = false;
   bool isFilterOpen = false;
   bool isOverviewOpen = false;
+  bool isMobileMenuOpen = false;
   bool isExpandedView =
       false; // Controla la vista expandida del panel de materias.
   bool isFullExpandedView = false; // Controla si el panel lateral está oculto.
@@ -286,7 +287,7 @@ class _MyHomePageState extends State<MyHomePage> {
           actions: [
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0051FF),
+                backgroundColor: const Color(0xFF093AD8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -710,6 +711,47 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  /// Abre una URL en el navegador
+  Future<void> _launchURL(String urlString) async {
+    // Cierra el menú móvil si está abierto
+    if (isMobileMenuOpen) {
+      setState(() {
+        isMobileMenuOpen = false;
+      });
+    }
+    
+    final Uri url = Uri.parse(urlString);
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        showCustomNotification(
+          context,
+          'No se pudo abrir el enlace',
+          icon: Icons.error,
+          color: Colors.red,
+        );
+      }
+    }
+  }
+
+  /// Widget para items del menú móvil
+  Widget _buildMobileMenuItem(String label, VoidCallback onTap, {bool isFirst = false, bool isLast = false}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // El LayoutBuilder envuelve todo el Scaffold.
@@ -723,31 +765,81 @@ class _MyHomePageState extends State<MyHomePage> {
           appBar: (isMobileLayout && isSearchOpen)
               ? null
               : AppBar(
-                  backgroundColor: const Color(0xFF0051FF),
+                  backgroundColor: const Color(0xFF093AD8),
                   elevation: 0,
-                  toolbarHeight: 80,
+                  toolbarHeight: 66,
                   titleSpacing: 0,
                   title: Padding(
                     padding: const EdgeInsets.only(left: 24, top: 10, bottom: 10),
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: Image.asset(
-                        'images/utb.png',
-                        height: 60,
+                      child: SvgPicture.asset(
+                        'images/logo_utb.svg',
+                        width: 183,
+                        height: 46,
                         fit: BoxFit.contain,
-                        filterQuality: FilterQuality.high,
-                        isAntiAlias: true,
                       ),
                     ),
                   ),
                   actions: [
-                    // Botón de "Acerca de" solo para la vista de escritorio
-                    if (!isMobileLayout)
+                    // Enlaces (Escritorio)
+                    if (!isMobileLayout) ...[
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                        ),
+                        onPressed: () => _launchURL('https://www.utb.edu.co/mi-utb/'),
+                        child: MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: _NavLink(text: 'Mi UTB'),
+                        ),
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                        ),
+                        onPressed: () => _launchURL('https://sites.google.com/view/turnos-de-matricula-web-utb/turnos?authuser=0'),
+                        child: MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: _NavLink(text: 'Turnos'),
+                        ),
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                        ),
+                        onPressed: () => _launchURL('https://sites.google.com/utb.edu.co/mallasutb/mallas-curriculares'),
+                        child: MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: _NavLink(text: 'Mallas'),
+                        ),
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                          overlayColor: Colors.transparent,
+                        ),
+                        onPressed: () => _launchURL('https://sites.google.com/utb.edu.co/stuplan-electivas/electivas'),
+                        child: MouseRegion(
+                          cursor: SystemMouseCursors.click,
+                          child: _NavLink(text: 'Electivas'),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
                       IconButton(
-                        icon:
-                            const Icon(Icons.info_outline, color: Colors.white),
+                        icon: const Icon(Icons.info_outline, color: Colors.white),
                         tooltip: 'Acerca de los creadores',
                         onPressed: _showCreatorsDialog,
+                      ),
+                    ],
+                    // Menú hamburguesa (Móvil)
+                    if (isMobileLayout)
+                      IconButton(
+                        icon: const Icon(Icons.menu, color: Colors.white),
+                        onPressed: () {
+                          setState(() {
+                            isMobileMenuOpen = !isMobileMenuOpen;
+                          });
+                        },
                       ),
                     const SizedBox(width: 16),
                   ],
@@ -802,7 +894,34 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
 
               // --- Overlays Globales ---
-              // Se mantienen aquí para funcionar en ambas vistas.
+
+              // Menú móvil desplegable
+              if (isMobileLayout && isMobileMenuOpen)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Material(
+                    elevation: 8,
+                    color: const Color(0xFF093AD8),
+                    child: Container(
+                      width: 200,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _buildMobileMenuItem('Mi UTB', () => _launchURL('https://www.utb.edu.co/mi-utb/'), isFirst: true),
+                          Container(height: 1, color: Colors.white24),
+                          _buildMobileMenuItem('Turnos', () => _launchURL('https://sites.google.com/view/turnos-de-matricula-web-utb/turnos?authuser=0')),
+                          Container(height: 1, color: Colors.white24),
+                          _buildMobileMenuItem('Mallas', () => _launchURL('https://sites.google.com/utb.edu.co/mallasutb/mallas-curriculares')),
+                          Container(height: 1, color: Colors.white24),
+                          _buildMobileMenuItem('Electivas', () => _launchURL('https://sites.google.com/utb.edu.co/stuplan-electivas/electivas'), isLast: true),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              // Indicador de carga global
               if (_isLoading)
                 Container(
                   color: Colors.black.withOpacity(0.5),
@@ -844,7 +963,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                                 try {
                                   // Se a la API con AMBOS parámetros: código y nombre.
-                                  // El objeto 'subjectSummary' ya contiene ambos datos.
+                      
                                   final fullSubject =
                                       await _apiService.getSubjectDetails(
                                           subjectSummary.code,
@@ -985,7 +1104,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ,
       padding: const EdgeInsets.all(16.0),
       children: [
-        // Pasamos el flag isMobileLayout a cada widget.
+        // Se pasa el flag isMobileLayout a cada widget.
         ScheduleSortWidget(
           currentOptimizations: currentOptimizations,
           onOptimizationChanged: onOptimizationChanged,
@@ -1013,7 +1132,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // El contador es un widget flotante global en la vista móvil.
         allSchedules.isEmpty
             ? Container(
-                height: 300, // Le damos una altura mínima al placeholder
+                height: 300, // Se le da una altura mínima al placeholder
                 decoration: BoxDecoration(
                     color: const Color(0xFFF5F7FA),
                     borderRadius: BorderRadius.circular(18),
@@ -1213,4 +1332,37 @@ void showCustomNotification(BuildContext context, String message,
       ),
     ),
   );
+}
+
+/// Widget para enlaces de navegación con efecto hover
+class _NavLink extends StatefulWidget {
+  final String text;
+
+  const _NavLink({required this.text});
+
+  @override
+  State<_NavLink> createState() => _NavLinkState();
+}
+
+class _NavLinkState extends State<_NavLink> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: Text(
+        widget.text,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          decoration: _isHovered ? TextDecoration.underline : TextDecoration.none,
+          decorationColor: Colors.white,
+          decorationThickness: 2,
+        ),
+      ),
+    );
+  }
 }
