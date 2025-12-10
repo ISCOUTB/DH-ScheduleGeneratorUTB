@@ -10,7 +10,7 @@ class ApiService {
   // Para pruebas locales, colocar:
   // static const String _baseUrl = "http://localhost:8000";
   // Para producción, dejar como está o configurar el dominio real.
-  static const String _baseUrl = "";
+  static const String _baseUrl = "http://localhost:8000";
 
   // Obtiene una lista de todas las materias disponibles.
   Future<List<SubjectSummary>> getAllSubjects() async {

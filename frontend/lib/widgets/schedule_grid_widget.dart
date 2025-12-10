@@ -26,6 +26,12 @@ class ScheduleGridWidget extends StatefulWidget {
   /// Controlador de scroll opcional, para manejar la paginación desde un scrollable padre.
   final ScrollController? scrollController;
 
+  /// Página actual para la paginación
+  final int currentPage;
+
+  /// Items por página para la paginación
+  final int itemsPerPage;
+
   const ScheduleGridWidget({
     Key? key,
     required this.allSchedules,
@@ -33,8 +39,9 @@ class ScheduleGridWidget extends StatefulWidget {
     required this.subjectColors,
     this.isMobileLayout = false,
     this.isScrollable = true, // Por defecto es scrollable
-
     this.scrollController,
+    this.currentPage = 1,
+    this.itemsPerPage = 10,
   }) : super(key: key);
 
   @override
@@ -48,7 +55,6 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
 
   List<List<ClassOption>> _displayedSchedules = [];
   bool _isLoading = false;
-  final int _itemsPerPage = 10; // Número de horarios a cargar cada vez
 
   @override
   void initState() {
@@ -62,66 +68,38 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
       _scrollController = widget.scrollController!;
     }
 
-    _loadInitialSchedules();
-    _scrollController.addListener(_onScroll);
+    _loadSchedulesForCurrentPage();
   }
 
   @override
   void didUpdateWidget(covariant ScheduleGridWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Si la lista de horarios cambia (ej. nueva generación), reinicia la vista.
-    if (widget.allSchedules != oldWidget.allSchedules) {
-      _loadInitialSchedules();
+    // Si la lista de horarios cambia o la página actual cambia, actualiza la vista.
+    if (widget.allSchedules != oldWidget.allSchedules ||
+        widget.currentPage != oldWidget.currentPage ||
+        widget.itemsPerPage != oldWidget.itemsPerPage) {
+      _loadSchedulesForCurrentPage();
     }
   }
 
   @override
   void dispose() {
     // Solo elimina el controlador si fue creado internamente.
-    _scrollController.removeListener(_onScroll);
     if (_isInternalController) {
       _scrollController.dispose();
     }
     super.dispose();
   }
 
-  void _loadInitialSchedules() {
+  void _loadSchedulesForCurrentPage() {
+    final int startIndex = (widget.currentPage - 1) * widget.itemsPerPage;
+    final int endIndex = (startIndex + widget.itemsPerPage).clamp(0, widget.allSchedules.length);
+    
     setState(() {
-      _displayedSchedules = widget.allSchedules.take(_itemsPerPage).toList();
-    });
-  }
-
-  void _onScroll() {
-    // Si el usuario está cerca del final de la lista y no estamos cargando, carga más.
-    if (_scrollController.position.pixels >=
-            _scrollController.position.maxScrollExtent - 200 &&
-        !_isLoading) {
-      _loadMoreSchedules();
-    }
-  }
-
-  void _loadMoreSchedules() {
-    // No hacer nada si ya estamos cargando o si ya se han mostrado todos los horarios.
-    if (_isLoading ||
-        _displayedSchedules.length >= widget.allSchedules.length) {
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    // Simula una pequeña demora para que el indicador de carga sea visible.
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (!mounted) return;
-      final int currentLength = _displayedSchedules.length;
-      final List<List<ClassOption>> nextBatch =
-          widget.allSchedules.skip(currentLength).take(_itemsPerPage).toList();
-
-      setState(() {
-        _displayedSchedules.addAll(nextBatch);
-        _isLoading = false;
-      });
+      _displayedSchedules = widget.allSchedules.sublist(
+        startIndex.clamp(0, widget.allSchedules.length),
+        endIndex,
+      );
     });
   }
 
@@ -145,8 +123,7 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
       // funciona igual porque el listener ya está activo.
       controller: widget.isScrollable ? _scrollController : null,
       padding: const EdgeInsets.all(8),
-      itemCount: _displayedSchedules.length +
-          (_isLoading && widget.isScrollable ? 1 : 0),
+      itemCount: _displayedSchedules.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         childAspectRatio: childAspectRatio,
@@ -154,17 +131,14 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
         mainAxisSpacing: 12,
       ),
       itemBuilder: (context, index) {
-        // Si es el último item y estamos cargando, muestra un indicador de progreso.
-        if (index == _displayedSchedules.length) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
         return MouseRegion(
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
-            onTap: () => widget.onScheduleTap(index),
+            onTap: () {
+              // Calcular el índice real en allSchedules
+              final int realIndex = (widget.currentPage - 1) * widget.itemsPerPage + index;
+              widget.onScheduleTap(realIndex);
+            },
             child: Card(
               elevation: 3,
               clipBehavior: Clip.antiAlias,
@@ -173,7 +147,9 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
               ),
               // Construye la vista previa visual del horario.
               child: buildSchedulePreview(
-                  _displayedSchedules[index], subjectColors, index),
+                  _displayedSchedules[index], 
+                  subjectColors, 
+                  (widget.currentPage - 1) * widget.itemsPerPage + index),
             ),
           ),
         );

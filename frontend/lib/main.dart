@@ -143,6 +143,8 @@ class _MyHomePageState extends State<MyHomePage> {
   List<List<ClassOption>> allSchedules = [];
   int?
       selectedScheduleIndex; // Índice del horario seleccionado para la vista detallada.
+  int _itemsPerPage = 10; // Control de paginación de horarios
+  int _currentPage = 1; // Página actual de la paginación
 
   // Controladores de estado para la visibilidad de los paneles y overlays.
   bool isSearchOpen = false;
@@ -561,6 +563,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (mounted) {
         setState(() {
           allSchedules = schedules;
+          _currentPage = 1; // Resetear a la primera página
           _isLoading = false;
         });
         if (schedules.isEmpty) {
@@ -752,6 +755,204 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  /// Construye el control de selección de cantidad de horarios por página
+  Widget _buildPaginationControl() {
+    // Calcular total de páginas
+    int totalPages = allSchedules.isEmpty ? 1 : ((allSchedules.length - 1) ~/ _itemsPerPage) + 1;
+    
+    // Asegurar que la página actual no exceda el total
+    if (_currentPage > totalPages) {
+      _currentPage = totalPages;
+    }
+    
+    final pageController = TextEditingController(text: _currentPage.toString());
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Primera página
+          IconButton(
+            icon: const Icon(Icons.first_page),
+            onPressed: _currentPage > 1
+                ? () => setState(() => _currentPage = 1)
+                : null,
+            color: Colors.white,
+            iconSize: 16,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+          ),
+          const SizedBox(width: 2),
+          // Página anterior
+          IconButton(
+            icon: const Icon(Icons.chevron_left),
+            onPressed: _currentPage > 1
+                ? () => setState(() => _currentPage--)
+                : null,
+            color: Colors.white,
+            iconSize: 16,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+          ),
+          const SizedBox(width: 6),
+          // Campo de entrada para número de página
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Página',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Container(
+                width: 40,
+                height: 26,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: TextField(
+                  controller: pageController,
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(vertical: 6),
+                    isDense: true,
+                  ),
+                  onSubmitted: (value) {
+                    final newPage = int.tryParse(value);
+                    if (newPage != null && newPage >= 1 && newPage <= totalPages) {
+                      setState(() => _currentPage = newPage);
+                    } else {
+                      pageController.text = _currentPage.toString();
+                    }
+                  },
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'de $totalPages',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 6),
+          // Página siguiente
+          IconButton(
+            icon: const Icon(Icons.chevron_right),
+            onPressed: _currentPage < totalPages
+                ? () => setState(() => _currentPage++)
+                : null,
+            color: Colors.white,
+            iconSize: 16,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+          ),
+          const SizedBox(width: 2),
+          // Última página
+          IconButton(
+            icon: const Icon(Icons.last_page),
+            onPressed: _currentPage < totalPages
+                ? () => setState(() => _currentPage = totalPages)
+                : null,
+            color: Colors.white,
+            iconSize: 16,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+          ),
+          const SizedBox(width: 12),
+          // Separador vertical
+          Container(
+            height: 18,
+            width: 1,
+            color: Colors.white.withOpacity(0.3),
+          ),
+          const SizedBox(width: 12),
+          // Selector de items por página
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: _itemsPerPage,
+                isDense: true,
+                dropdownColor: Colors.grey[800],
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                icon: const Icon(Icons.arrow_drop_down, color: Colors.white, size: 16),
+                items: [4, 8, 10].map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text('$value'),
+                  );
+                }).toList(),
+                onChanged: (int? newValue) {
+                  if (newValue != null && newValue != _itemsPerPage) {
+                    setState(() {
+                      _itemsPerPage = newValue;
+                      _currentPage = 1; // Resetear a la primera página
+                    });
+                  }
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          const Text(
+            'por página.',
+            style: TextStyle(
+              fontSize: 13,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Separador vertical
+          Container(
+            height: 18,
+            width: 1,
+            color: Colors.white.withOpacity(0.3),
+          ),
+          const SizedBox(width: 12),
+          // Total de registros
+          Text(
+            'Horarios: ${allSchedules.length}',
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // El LayoutBuilder envuelve todo el Scaffold.
@@ -910,11 +1111,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           _buildMobileMenuItem('Mi UTB', () => _launchURL('https://www.utb.edu.co/mi-utb/'), isFirst: true),
-                          Container(height: 1, color: Colors.white24),
+                          const Divider(color: Colors.white24, height: 1, thickness: 1),
                           _buildMobileMenuItem('Turnos', () => _launchURL('https://sites.google.com/view/turnos-de-matricula-web-utb/turnos?authuser=0')),
-                          Container(height: 1, color: Colors.white24),
+                          const Divider(color: Colors.white24, height: 1, thickness: 1),
                           _buildMobileMenuItem('Mallas', () => _launchURL('https://sites.google.com/utb.edu.co/mallasutb/mallas-curriculares')),
-                          Container(height: 1, color: Colors.white24),
+                          const Divider(color: Colors.white24, height: 1, thickness: 1),
                           _buildMobileMenuItem('Electivas', () => _launchURL('https://sites.google.com/utb.edu.co/stuplan-electivas/electivas'), isLast: true),
                         ],
                       ),
@@ -1149,6 +1350,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 onScheduleTap: openScheduleOverview,
                 isMobileLayout: isMobileLayout,
                 subjectColors: subjectColorMap,
+                currentPage: _currentPage,
+                itemsPerPage: _itemsPerPage,
                 // Esta propiedad es para arreglar el scroll.
                 isScrollable: false,
                 // Pasa el controlador de scroll para que la paginación funcione
@@ -1257,27 +1460,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               onScheduleTap: openScheduleOverview,
                               isMobileLayout: isMobileLayout,
                               subjectColors: subjectColorMap,
+                              currentPage: _currentPage,
+                              itemsPerPage: _itemsPerPage,
                             ),
                       if (allSchedules.isNotEmpty)
                         Positioned(
                           bottom: 16,
                           left: 16,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.6),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              '${allSchedules.length} ${allSchedules.length == 1 ? "horario generado" : "horarios generados"}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
+                          child: _buildPaginationControl(),
                         ),
                     ],
                   ),
