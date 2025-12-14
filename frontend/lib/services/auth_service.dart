@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/browser_client.dart';
 import 'package:universal_html/html.dart' as html;
 import '../models/user.dart';
 
@@ -28,6 +29,16 @@ class AuthService {
 
   User? _currentUser;
 
+  /// Crea un cliente HTTP que envía cookies (necesario para web).
+  http.Client _createClient() {
+    if (kIsWeb) {
+      final client = BrowserClient();
+      client.withCredentials = true;
+      return client;
+    }
+    return http.Client();
+  }
+
   /// Usuario actualmente autenticado.
   User? get currentUser => _currentUser;
 
@@ -38,25 +49,28 @@ class AuthService {
   /// 
   /// Retorna el usuario si hay sesión, null si no.
   Future<User?> checkSession() async {
+    final client = _createClient();
     try {
-      final response = await http.get(
+      final response = await client.get(
         Uri.parse('$_apiBaseUrl/api/auth/me'),
         headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(utf8.decode(response.bodyBytes));
+        final bodyString = utf8.decode(response.bodyBytes);
+        final data = json.decode(bodyString);
         _currentUser = User.fromJson(data);
         return _currentUser;
       } else {
-        print('No hay sesión activa: ${response.statusCode}');
         _currentUser = null;
         return null;
       }
     } catch (e) {
-      print('Error verificando sesión: $e');
+      debugPrint('Error verificando sesión: $e');
       _currentUser = null;
       return null;
+    } finally {
+      client.close();
     }
   }
 
@@ -71,10 +85,11 @@ class AuthService {
   /// Cierra la sesión del usuario.
   Future<void> logout() async {
     String? microsoftLogoutUrl;
+    final client = _createClient();
     
     try {
       // Enviar petición al backend para invalidar la sesión
-      final response = await http.post(
+      final response = await client.post(
         Uri.parse('$_apiBaseUrl/api/auth/logout'),
         headers: {'Content-Type': 'application/json'},
       );
@@ -84,8 +99,9 @@ class AuthService {
         microsoftLogoutUrl = data['microsoft_logout_url'];
       }
     } catch (e) {
-      print('Error durante logout: $e');
+      debugPrint('Error durante logout: $e');
     } finally {
+      client.close();
       _currentUser = null;
     }
     

@@ -2,7 +2,7 @@
 
 /// Modelo que representa a un usuario autenticado.
 class User {
-  final int id;
+  final String id;  // UUID de Microsoft Entra ID (oid)
   final String email;
   final String? nombre;
   final bool authenticated;

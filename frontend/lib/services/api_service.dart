@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http/browser_client.dart';
 import '../models/class_option.dart';
 import '../models/subject.dart';
 import '../models/subject_summary.dart';
@@ -11,11 +12,22 @@ class ApiService {
   // En producción: rutas relativas (mismo dominio)
   static const String _baseUrl = kDebugMode ? "http://localhost" : "";
 
+  /// Crea un cliente HTTP que envía cookies (necesario para web).
+  http.Client _createClient() {
+    if (kIsWeb) {
+      final client = BrowserClient();
+      client.withCredentials = true;
+      return client;
+    }
+    return http.Client();
+  }
+
   // Obtiene una lista de todas las materias disponibles.
   Future<List<SubjectSummary>> getAllSubjects() async {
     final url = Uri.parse('$_baseUrl/api/subjects');
+    final client = _createClient();
     try {
-      final response = await http.get(url);
+      final response = await client.get(url);
 
       if (response.statusCode == 200) {
         final List<dynamic> decodedList =
@@ -30,8 +42,10 @@ class ApiService {
         throw Exception('Error del servidor: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error en la petición a la API de materias: $e');
+      debugPrint('Error en la petición a la API de materias: $e');
       throw Exception('No se pudo obtener la lista de materias.');
+    } finally {
+      client.close();
     }
   }
 
@@ -41,9 +55,10 @@ class ApiService {
     final encodedSubjectName = Uri.encodeComponent(subjectName);
     final url = Uri.parse(
         '$_baseUrl/api/subjects/$subjectCode?name=$encodedSubjectName');
+    final client = _createClient();
 
     try {
-      final response = await http.get(url);
+      final response = await client.get(url);
 
       if (response.statusCode == 200) {
         // Decodificación UTF-8 para manejar tildes y caracteres especiales.
@@ -54,8 +69,10 @@ class ApiService {
             'Error del servidor al obtener detalles: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error en la petición a la API de detalles: $e');
+      debugPrint('Error en la petición a la API de detalles: $e');
       rethrow;
+    } finally {
+      client.close();
     }
   }
 
@@ -65,6 +82,7 @@ class ApiService {
     required int creditLimit,
   }) async {
     final url = Uri.parse('$_baseUrl/api/schedules/generate');
+    final client = _createClient();
 
     // Se crea una lista de mapas.
     // Cada mapa contiene el código y el nombre exacto de la materia.
@@ -82,7 +100,7 @@ class ApiService {
     };
 
     try {
-      final response = await http.post(
+      final response = await client.post(
         url,
         headers: {"Content-Type": "application/json"},
         body: json.encode(payload),
@@ -104,6 +122,8 @@ class ApiService {
     } catch (e) {
       print('Error en la petición a la API: $e');
       throw Exception('No se pudo conectar al servidor.');
+    } finally {
+      client.close();
     }
   }
 }

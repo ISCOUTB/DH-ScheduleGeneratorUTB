@@ -1,129 +1,173 @@
-# Documentación del Frontend
+# Documentacion del Frontend
 
-## 1. Visión General
+## 1. Vision General
 
-El frontend es una aplicación web construida con **Flutter**, el framework de Google para desarrollo multiplataforma. Aunque Flutter permite compilar para móvil, escritorio y web, esta aplicación está optimizada principalmente para navegadores web.
+El frontend es una aplicacion web construida con **Flutter 3**, optimizada para navegadores web. Implementa autenticacion con **Microsoft Entra ID** (Azure AD) y utiliza el patron **Provider** para manejo de estado.
 
-### Tecnologías Principales
+### Tecnologias Principales
 
-| Tecnología | Propósito |
+| Tecnologia | Proposito |
 |------------|-----------|
-| **Flutter 3** | Framework de UI |
-| **Dart** | Lenguaje de programación |
-| **Firebase Analytics** | Análisis de uso |
-| **Nginx** | Servidor web para producción |
+| **Flutter 3.38+** | Framework de UI multiplataforma |
+| **Dart** | Lenguaje de programacion |
+| **Provider** | Manejo de estado reactivo |
+| **Firebase Analytics** | Analisis de uso |
+| **BrowserClient** | Peticiones HTTP con soporte de cookies |
+| **Nginx** | Servidor web para produccion |
 
 ## 2. Estructura del Proyecto
 
-```
+`
 frontend/lib/
-├── main.dart                 # Punto de entrada y lógica principal
-├── firebase_options.dart     # Configuración de Firebase
-│
-├── models/                   # Modelos de datos
-│   ├── subject.dart          # Materia completa con opciones de clase
-│   ├── subject_summary.dart  # Resumen de materia (búsqueda)
-│   ├── class_option.dart     # Opción de clase individual
-│   └── schedule.dart         # Bloque horario (día + hora)
-│
-├── services/                 # Servicios y comunicación
-│   └── api_service.dart      # Cliente HTTP para la API
-│
-├── widgets/                  # Componentes de UI reutilizables
-│   ├── search_widget.dart    # Buscador de materias
-│   ├── subjects_panel.dart   # Panel de materias seleccionadas
-│   ├── schedule_grid_widget.dart    # Grilla de horario semanal
-│   ├── filter_widget.dart           # Panel de filtros
-│   ├── professor_filter_widget.dart # Filtro de profesores
-│   ├── schedule_overview_widget.dart # Vista resumen de horarios
-│   ├── schedule_sort_widget.dart    # Ordenamiento de horarios
-│   └── main_actions_panel.dart      # Botones de acción principales
-│
-└── utils/                    # Utilidades
-    ├── platform_service_stub.dart   # Servicio de plataforma (stub)
-    └── platform_service_web.dart    # Servicio de plataforma (web)
-```
++-- main.dart                 # Punto de entrada, autenticacion y configuracion
++-- firebase_options.dart     # Configuracion de Firebase (autogenerado)
+|
++-- config/                   # Configuracion global
+|   +-- constants.dart        # Constantes (colores, breakpoints, URLs)
+|   +-- theme.dart            # Tema visual (AppTheme, WebScrollBehavior)
+|
++-- models/                   # Modelos de datos
+|   +-- user.dart             # Usuario autenticado (Microsoft Entra ID)
+|   +-- subject.dart          # Materia con opciones de clase
+|   +-- subject_summary.dart  # Resumen ligero de materia
+|   +-- class_option.dart     # Opcion de clase individual
+|   +-- schedule.dart         # Bloque horario (dia + hora)
+|
++-- providers/                # Proveedores de estado (ChangeNotifier)
+|   +-- schedule_provider.dart # Estado global de materias, horarios y filtros
+|
++-- screens/                  # Pantallas principales
+|   +-- home_screen.dart      # Pantalla principal con toda la funcionalidad
+|
++-- services/                 # Servicios para comunicacion externa
+|   +-- auth_service.dart     # Autenticacion OAuth con Microsoft Entra ID
+|   +-- api_service.dart      # Comunicacion con API del backend
+|
++-- utils/                    # Utilidades y helpers
+|   +-- time_utils.dart       # Conversion de tiempos (militar a AM/PM)
+|   +-- file_utils*.dart      # Exportacion de archivos (web/mobile/stub)
+|   +-- platform_service*.dart # Deteccion de plataforma (web/stub)
+|   +-- storage_permissions.dart # Permisos de almacenamiento
+|
++-- widgets/                  # Componentes de UI
+    +-- search_widget.dart           # Buscador de materias
+    +-- filter_widget.dart           # Panel de filtros
+    +-- subjects_panel.dart          # Panel de materias seleccionadas
+    +-- main_actions_panel.dart      # Acciones principales
+    +-- schedule_grid_widget.dart    # Grilla visual del horario
+    +-- schedule_overview_widget.dart # Resumen del horario
+    +-- schedule_sort_widget.dart    # Ordenamiento de horarios
+    +-- professor_filter_widget.dart # Filtro por profesor
+    |
+    +-- common/               # Widgets comunes reutilizables
+    |   +-- common.dart       # Barrel export
+    |   +-- nav_link.dart     # Enlaces de navegacion
+    |   +-- loading_overlay.dart # Overlay de carga
+    |   +-- custom_notification.dart # Notificaciones
+    |
+    +-- dialogs/              # Dialogos modales
+    |   +-- dialogs.dart      # Barrel export
+    |   +-- creators_dialog.dart  # Dialogo de creadores
+    |   +-- clear_confirmation_dialog.dart # Confirmacion
+    |   +-- important_notice_dialog.dart   # Avisos
+    |
+    +-- layout/               # Componentes de layout
+        +-- layout.dart       # Barrel export
+        +-- mobile_menu.dart  # Menu para movil
+        +-- speed_dial_menu.dart   # Menu flotante (FAB)
+        +-- user_info_badge.dart   # Badge de usuario
+        +-- pagination_control.dart # Paginacion
+        +-- schedule_counter_badge.dart # Contador
+`
 
-## 3. Arquitectura de la Aplicación
+## 3. Flujo de Autenticacion
 
-### Flujo de Datos
+La autenticacion utiliza **Microsoft Entra ID** con flujo OAuth manejado por el backend:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                         main.dart                           │
-│                    (Estado Principal)                       │
-│                                                             │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐     │
-│  │ Materias    │    │ Filtros     │    │ Horarios    │     │
-│  │ Selec.      │    │ Aplicados   │    │ Generados   │     │
-│  └──────┬──────┘    └──────┬──────┘    └──────┬──────┘     │
-│         │                  │                  │             │
-│         └──────────────────┼──────────────────┘             │
-│                            ▼                                │
-│                    ┌───────────────┐                        │
-│                    │  ApiService   │                        │
-│                    └───────┬───────┘                        │
-│                            │                                │
-└────────────────────────────┼────────────────────────────────┘
-                             ▼
-                    ┌───────────────┐
-                    │   Backend     │
-                    │   (FastAPI)   │
-                    └───────────────┘
-```
+1. Flutter llama a `/api/auth/me` para verificar sesion
+2. Si no hay sesion (401), redirige a `/api/auth/login`
+3. Backend redirige a Microsoft para autenticacion
+4. Microsoft retorna con codigo de autorizacion
+5. Backend intercambia codigo por tokens
+6. Backend crea sesion y establece cookie `session_id`
+7. Flutter recibe cookie y accede a la aplicacion
 
-### Gestión de Estado
+### Consideraciones Importantes
 
-La aplicación utiliza `StatefulWidget` con el estado centralizado en `_MyHomePageState`. Las principales variables de estado son:
+1. **BrowserClient con withCredentials**: En Flutter Web, `http.get/post` no envia cookies automaticamente. Se usa `BrowserClient` con `withCredentials = true`.
 
-```dart
-// Materias seleccionadas por el usuario
-List<Subject> addedSubjects = [];
+2. **Un solo MaterialApp**: Se mantiene un unico `MaterialApp` para evitar problemas de reconstruccion del arbol de widgets.
 
-// Horarios generados por la API
-List<List<ClassOption>> allSchedules = [];
+3. **Tipo de ID**: El ID de Microsoft Entra es un UUID (String), no un entero.
 
-// Filtros aplicados
-Map<String, dynamic> appliedFilters = {};
+## 4. Manejo de Estado con Provider
 
-// Control de créditos
-int usedCredits = 0;
-final int creditLimit = 20;
-```
+El estado global se maneja con `ScheduleProvider`:
 
-## 4. Modelos de Datos
+`dart
+class ScheduleProvider extends ChangeNotifier {
+  // Materias
+  List<SubjectSummary> _allSubjects = [];
+  List<Subject> _selectedSubjects = [];
+  
+  // Horarios generados
+  List<List<ClassOption>> _allSchedules = [];
+  int _currentScheduleIndex = 0;
+  
+  // Filtros
+  Map<String, dynamic> _filters = {...};
+  
+  // Estados de UI
+  bool _isLoading = false;
+  bool _isSearchOpen = false;
+  bool _isFilterOpen = false;
+}
+`
+
+## 5. Servicios
+
+### AuthService
+Maneja autenticacion OAuth:
+- `checkSession()`: Verifica sesion activa via cookie
+- `login()`: Redirige a Microsoft para autenticacion
+- `logout()`: Cierra sesion y redirige
+
+### ApiService
+Comunicacion con el backend:
+- `getAllSubjects()`: Lista de materias disponibles
+- `getSubjectDetails(code, name)`: Detalles de una materia
+- `generateSchedules(subjects, filters, creditLimit)`: Genera horarios
+
+Ambos servicios usan `BrowserClient` con `withCredentials = true`.
+
+## 6. Modelos de Datos
+
+### User
+`dart
+class User {
+  final String id;    // UUID de Microsoft Entra ID
+  final String email;
+  final String? nombre;
+  final bool authenticated;
+}
+`
 
 ### Subject
-Representa una materia completa con todas sus opciones de clase:
-
-```dart
+`dart
 class Subject {
-  final String code;      // Código (ej: "IING1011")
-  final String name;      // Nombre (ej: "CÁLCULO I")
-  final int credits;      // Créditos académicos
-  final List<ClassOption> classOptions; // Grupos disponibles
-}
-```
-
-### SubjectSummary
-Versión ligera para el buscador:
-
-```dart
-class SubjectSummary {
   final String code;
   final String name;
   final int credits;
+  final List<ClassOption> classOptions;
 }
-```
+`
 
 ### ClassOption
-Representa una opción de clase específica (un grupo):
-
-```dart
+`dart
 class ClassOption {
   final String subjectName;
   final String subjectCode;
-  final String type;           // "Teórico", "Laboratorio", "Teorico-practico"
+  final String type;       // Teorico, Laboratorio, etc.
   final String nrc;
   final int groupId;
   final String professor;
@@ -133,155 +177,47 @@ class ClassOption {
   final int credits;
   final List<Schedule> schedules;
 }
-```
+`
 
-### Schedule
-Bloque horario:
+## 7. Compilacion y Despliegue
 
-```dart
-class Schedule {
-  final String day;   // "Lunes", "Martes", etc.
-  final String time;  // "08:00 - 10:00"
-}
-```
-
-## 5. Componentes Principales
-
-### SearchWidget
-Diálogo modal para buscar y seleccionar materias:
-- Búsqueda en tiempo real por nombre o código
-- Normalización de acentos para búsqueda flexible
-- Muestra código, nombre y créditos de cada materia
-
-### SubjectsPanel
-Panel lateral que muestra las materias seleccionadas:
-- Lista de materias con colores asignados
-- Contador de créditos usados vs límite
-- Botón para eliminar materias
-
-### ScheduleGridWidget
-Grilla visual del horario semanal:
-- Visualización de lunes a sábado
-- Bloques de colores por materia
-- Información del profesor y aula
-
-### FilterWidget
-Panel de configuración de filtros:
-- Filtros por rango de horas
-- Exclusión de profesores
-- Opciones de optimización
-
-### ScheduleOverviewWidget
-Vista resumen de todos los horarios generados:
-- Navegación entre horarios
-- Vista compacta para comparar opciones
-
-## 6. Servicio de API
-
-El `ApiService` centraliza la comunicación con el backend:
-
-```dart
-class ApiService {
-  static const String _baseUrl = "http://localhost:8000";
-
-  // Obtiene lista resumida de todas las materias
-  Future<List<SubjectSummary>> getAllSubjects();
-
-  // Obtiene detalles completos de una materia
-  Future<Subject> getSubjectDetails(String code, String name);
-
-  // Genera horarios válidos
-  Future<List<List<ClassOption>>> generateSchedules({
-    required List<Subject> subjects,
-    required Map<String, dynamic> filters,
-    required int creditLimit,
-  });
-}
-```
-
-### Configuración de URL Base
-
-Para desarrollo local:
-```dart
-static const String _baseUrl = "http://localhost:8000";
-```
-
-Para producción (usa el proxy de Nginx):
-```dart
-static const String _baseUrl = "";  // Peticiones relativas
-```
-
-## 7. Configuración de Nginx
-
-### Desarrollo (`nginx.dev.conf`)
-Configuración simplificada sin SSL:
-```nginx
-server {
-    listen 80;
-    server_name localhost;
-
-    location / {
-        root /usr/share/nginx/html;
-        try_files $uri $uri/ /index.html;
-    }
-
-    location /api/ {
-        proxy_pass http://api:8000;
-    }
-}
-```
-
-### Producción (`nginx.conf`)
-Configuración completa con HTTPS y certificados SSL de Let's Encrypt.
-
-## 8. Flujo de Usuario
-
-1. **Carga inicial:** Al abrir la app, se cargan todas las materias disponibles desde `/api/subjects`.
-
-2. **Búsqueda de materias:** El usuario abre el buscador y filtra por nombre o código.
-
-3. **Selección:** Al seleccionar una materia, se obtienen sus detalles completos desde `/api/subjects/{code}`.
-
-4. **Configuración de filtros:** El usuario puede configurar restricciones de horario y profesores.
-
-5. **Generación:** Al presionar "Generar", se envía la petición a `/api/schedules/generate`.
-
-6. **Visualización:** Los horarios se muestran en la grilla y el usuario puede navegar entre opciones.
-
-7. **Exportación:** El usuario puede descargar el horario seleccionado en PDF.
-
-## 9. Desarrollo Local
-
-### Requisitos
-- Flutter SDK 3.x
-- Dart SDK >=2.17.0
-
-### Ejecutar en modo desarrollo
-
-```bash
-cd frontend
-flutter pub get
+### Desarrollo local:
+`ash
 flutter run -d chrome
-```
+`
 
-### Compilar para producción
+### Produccion (Docker):
+`ash
+docker-compose up --build frontend -d
+`
 
-```bash
-flutter build web --release
-```
+El Dockerfile usa multi-stage build:
+1. **Stage 1 (builder)**: Imagen de Flutter para compilar
+2. **Stage 2 (runtime)**: Imagen de Nginx para servir archivos
 
-Los archivos compilados se generan en `build/web/`.
+## 8. Refactorizacion Realizada
 
-## 10. Dependencias Principales
+### Resumen del cambio
+El archivo `main.dart` paso de **1677 lineas** a **112 lineas** mediante:
 
-Del `pubspec.yaml`:
+| Componente | Antes | Despues |
+|------------|-------|---------|
+| main.dart | 1677 lineas | 112 lineas |
+| Estado | setState local | Provider global |
+| Constantes | Inline | config/constants.dart |
+| Tema | Inline | config/theme.dart |
+| Widgets | Monolitico | Extraidos en widgets/ |
 
-| Paquete | Propósito |
-|---------|-----------|
-| `http` | Cliente HTTP para API |
-| `pdf` | Generación de PDFs |
-| `firebase_core` | Integración Firebase |
-| `firebase_analytics` | Analytics |
-| `url_launcher` | Abrir URLs externas |
-| `diacritic` | Normalización de acentos |
-| `flutter_svg` | Renderizado de SVGs |
+### Archivos nuevos creados:
+- `config/constants.dart` - Colores, breakpoints, URLs
+- `config/theme.dart` - Tema de la aplicacion
+- `providers/schedule_provider.dart` - Estado global
+- `widgets/common/*` - Widgets reutilizables
+- `widgets/dialogs/*` - Dialogos modales
+- `widgets/layout/*` - Componentes de layout
+- `utils/time_utils.dart` - Utilidades de tiempo
+
+### Correcciones de autenticacion:
+- Cambiado `int id` a `String id` en modelo User
+- Agregado `BrowserClient` con `withCredentials = true`
+- Unificado a un solo `MaterialApp`

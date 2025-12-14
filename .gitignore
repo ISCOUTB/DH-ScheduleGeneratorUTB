@@ -28,6 +28,8 @@ dist/
 
 # Registros y datos generados por los scripts
 /backend/scripts/logs/
+/data/log.txt
+*.log
 /backend/scripts/data_scrapped/
 /backend/scripts/shared_data/
 /backend/scripts/snapshots/
