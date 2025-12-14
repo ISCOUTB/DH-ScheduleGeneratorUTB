@@ -163,3 +163,21 @@ ALTER TABLE ONLY public.curso
 --
 -- PostgreSQL database dump complete
 --
+
+--
+-- Tabla de usuarios autenticados con Microsoft Entra ID
+--
+
+CREATE TABLE IF NOT EXISTS public.usuario (
+    id SERIAL PRIMARY KEY,
+    entra_id character varying NOT NULL UNIQUE,
+    email character varying NOT NULL UNIQUE,
+    nombre character varying,
+    created_at timestamp without time zone DEFAULT NOW()
+);
+
+ALTER TABLE public.usuario OWNER TO pg_database_owner;
+
+CREATE INDEX IF NOT EXISTS idx_usuario_entra_id ON public.usuario(entra_id);
+CREATE INDEX IF NOT EXISTS idx_usuario_email ON public.usuario(email);
+

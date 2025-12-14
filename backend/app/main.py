@@ -10,6 +10,7 @@ from .models import GenerateScheduleRequest, ClassOption
 from .db import repository
 from .services import schedule_generator
 from .routes import subject_routes
+from .auth.routes import router as auth_router
 
 app = FastAPI(
     title="DH Schedule Generator API",
@@ -28,6 +29,9 @@ app.add_middleware(
 
 # Ruta añadida para resolver problemática
 app.include_router(subject_routes.router)
+
+# Rutas de autenticación OAuth
+app.include_router(auth_router)
 
 
 @app.get("/api/subjects", summary="Obtener lista de todas las materias")
@@ -83,3 +87,4 @@ def get_subject_data():
             content = f.read()
         return Response(content=content, media_type="application/json; charset=utf-8")
     return {"error": "subject_data.json no encontrado"}
+

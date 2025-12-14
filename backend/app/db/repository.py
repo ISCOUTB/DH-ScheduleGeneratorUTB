@@ -277,3 +277,72 @@ def get_all_subjects_summary() -> List[Dict[str, Any]]:
     conn.close()
 
     return [dict(s) for s in subjects]
+
+
+# --- Funciones de Usuario ---
+
+def get_or_create_user(entra_id: str, email: str, nombre: str = None) -> Dict[str, Any]:
+    """
+    Obtiene un usuario existente o lo crea si no existe.
+    Retorna un diccionario con la información del usuario.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    
+    try:
+        # Intentar obtener el usuario existente
+        cursor.execute(
+            "SELECT id, email, nombre, entra_id, created_at FROM usuario WHERE entra_id = %s",
+            (entra_id,)
+        )
+        user = cursor.fetchone()
+        
+        if user:
+            # Actualizar nombre si cambió
+            if nombre and user.get("nombre") != nombre:
+                cursor.execute(
+                    "UPDATE usuario SET nombre = %s WHERE entra_id = %s",
+                    (nombre, entra_id)
+                )
+                conn.commit()
+                user = dict(user)
+                user["nombre"] = nombre
+            return dict(user)
+        
+        # Crear nuevo usuario
+        cursor.execute(
+            """
+            INSERT INTO usuario (entra_id, email, nombre)
+            VALUES (%s, %s, %s)
+            RETURNING id, email, nombre, entra_id, created_at
+            """,
+            (entra_id, email, nombre)
+        )
+        new_user = cursor.fetchone()
+        conn.commit()
+        
+        return dict(new_user)
+        
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_user_by_id(user_id: int) -> Dict[str, Any] | None:
+    """
+    Obtiene un usuario por su ID.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    
+    try:
+        cursor.execute(
+            "SELECT id, email, nombre, entra_id, created_at FROM usuario WHERE id = %s",
+            (user_id,)
+        )
+        user = cursor.fetchone()
+        return dict(user) if user else None
+        
+    finally:
+        cursor.close()
+        conn.close()

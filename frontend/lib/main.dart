@@ -5,11 +5,13 @@ import 'package:url_launcher/url_launcher.dart';
 import 'models/subject.dart';
 import 'models/subject_summary.dart';
 import 'models/class_option.dart';
+import 'models/user.dart';
 import 'widgets/search_widget.dart';
 import 'widgets/schedule_grid_widget.dart';
 import 'widgets/filter_widget.dart';
 import 'package:url_strategy/url_strategy.dart';
 import 'services/api_service.dart';
+import 'services/auth_service.dart';
 import 'widgets/subjects_panel.dart';
 import 'widgets/main_actions_panel.dart';
 import 'widgets/schedule_overview_widget.dart';
@@ -34,6 +36,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Nota: AuthService se inicializa después de que MaterialApp esté listo
+  // para que el navigatorKey esté asociado correctamente.
+
   runApp(const MyApp());
 }
 
@@ -47,12 +52,58 @@ class WebScrollBehavior extends ScrollBehavior {
 }
 
 /// Widget raíz de la aplicación.
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  User? _currentUser;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _authenticate();
+    });
+  }
+
+  /// Autenticación: verifica sesión existente o redirige al login.
+  Future<void> _authenticate() async {
+    final authService = AuthService();
+    
+    try {
+      // Verificar si hay sesión activa (cookie de sesión)
+      final user = await authService.checkSession();
+      
+      if (user != null) {
+        // Sesión válida
+        setState(() {
+          _currentUser = user;
+          _isLoading = false;
+        });
+      } else {
+        // No hay sesión, redirigir al login de Microsoft
+        authService.login();
+        // La página se redirigirá, no hay más que hacer aquí
+      }
+    } catch (e) {
+      print('Error en autenticación: $e');
+      // En caso de error de red, intentar redirigir al login
+      AuthService().login();
+    }
+  }
+
+  void _handleLogout() {
+    AuthService().logout();
+    // logout() ya redirige al login
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Define el tema global de la aplicación.
     final ThemeData theme = ThemeData(
       primarySwatch: Colors.indigo,
       brightness: Brightness.light,
@@ -65,22 +116,46 @@ class MyApp extends StatelessWidget {
       ),
     );
 
+    // Si está cargando o no hay usuario, mostrar pantalla en blanco
+    // (la redirección a Microsoft pasará automáticamente)
+    if (_isLoading || _currentUser == null) {
+      return MaterialApp(
+        title: 'Generador de Horarios UTB',
+        navigatorKey: navigatorKey,
+        theme: theme,
+        home: const Scaffold(
+          body: SizedBox.shrink(),  // Pantalla vacía mientras redirige
+        ),
+      );
+    }
+
     return MaterialApp(
       title: 'Generador de Horarios UTB',
+      navigatorKey: navigatorKey,
       scrollBehavior: WebScrollBehavior(),
       theme: theme,
-      // Define las rutas de navegación de la aplicación.
-      routes: {
-        '/': (context) => const MyHomePage(title: 'Generador de Horarios UTB'),
-      },
+      home: MyHomePage(
+        title: 'Generador de Horarios UTB',
+        currentUser: _currentUser!,
+        onLogout: _handleLogout,
+      ),
     );
   }
 }
 
 /// Página principal de la aplicación que contiene la lógica y la interfaz de usuario.
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({
+    super.key,
+    required this.title,
+    required this.currentUser,
+    required this.onLogout,
+  });
+  
   final String title;
+  final User currentUser;
+  final VoidCallback onLogout;
+  
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -89,6 +164,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // Servicios
   final ApiService _apiService = ApiService();
+  final AuthService _authService = AuthService();
   final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final PlatformService _platformService = PlatformService();
 
@@ -1031,6 +1107,48 @@ class _MyHomePageState extends State<MyHomePage> {
                         tooltip: 'Acerca de los creadores',
                         onPressed: _showCreatorsDialog,
                       ),
+                    // Información del usuario y botón de logout
+                    if (!isMobileLayout) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            CircleAvatar(
+                              radius: 14,
+                              backgroundColor: Colors.white,
+                              child: Text(
+                                widget.currentUser.initials,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF0051FF),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              widget.currentUser.displayName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.logout, color: Colors.white),
+                        tooltip: 'Cerrar sesión',
+                        onPressed: widget.onLogout,
+                      ),
+                    ],
                     ],
                     // Menú hamburguesa (Móvil)
                     if (isMobileLayout)

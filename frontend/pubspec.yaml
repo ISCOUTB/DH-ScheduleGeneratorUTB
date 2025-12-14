@@ -30,7 +30,6 @@ dependencies:
   web: ^1.1.1
   flutter_svg: ^2.0.10+1
 
-
 flutter:
   uses-material-design: true
 

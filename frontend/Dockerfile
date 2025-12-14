@@ -1,13 +1,20 @@
-# docker-compose.yml
 # --- Compilación de Flutter ---
-FROM instrumentisto/flutter:3 AS builder
+# Usar versión específica para evitar descargas innecesarias
+FROM instrumentisto/flutter:3.38.4 AS builder
 
-# Copia el código fuente del frontend.
 WORKDIR /app
+
+# Primero copiar SOLO los archivos de dependencias
+# Esto permite que Docker cachée las dependencias si no cambian
+COPY pubspec.yaml pubspec.lock* ./
+
+# Instalar dependencias (se cachea si pubspec no cambia)
+RUN flutter pub get
+
+# Ahora copiar el resto del código
 COPY . .
 
-# Instala las dependencias.
-RUN flutter pub get
+# Compilar la aplicación web
 RUN flutter build web --release
 
 

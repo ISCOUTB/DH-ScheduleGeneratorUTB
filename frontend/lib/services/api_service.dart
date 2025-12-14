@@ -4,13 +4,12 @@ import '../models/class_option.dart';
 import '../models/subject.dart';
 import '../models/subject_summary.dart';
 
+import 'package:flutter/foundation.dart';
+
 class ApiService {
-  // La URL base ahora está vacía. Las peticiones serán relativas al dominio actual.
-  // Por ejemplo, si se está en 'midominio.com', pedirá a 'midominio.com/api/subjects'.
-  // Para pruebas locales, colocar:
-  // static const String _baseUrl = "http://localhost:8000";
-  // Para producción, dejar como está o configurar el dominio real.
-  static const String _baseUrl = "http://localhost:8000";
+  // En desarrollo: localhost (nginx puerto 80 hace proxy a /api/*)
+  // En producción: rutas relativas (mismo dominio)
+  static const String _baseUrl = kDebugMode ? "http://localhost" : "";
 
   // Obtiene una lista de todas las materias disponibles.
   Future<List<SubjectSummary>> getAllSubjects() async {
