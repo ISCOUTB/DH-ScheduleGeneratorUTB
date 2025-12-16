@@ -57,6 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late FocusNode _focusNode;
   Orientation? _previousOrientation;
   bool _showWelcomeDialog = true;
+  String? _lastShownError;
+  int _errorShowCount = 0;
 
   @override
   void initState() {
@@ -193,6 +195,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
         return Consumer<ScheduleProvider>(
           builder: (context, provider, child) {
+            // Se muestra si hay un error y es diferente al último mostrado
+            // O si es el mismo pero hubo un clearError() en el medio (detectado por el contador)
+            if (provider.errorMessage != null && !provider.isLoading) {
+              final currentError = '${provider.errorMessage}_${_errorShowCount}';
+              
+              if (_lastShownError != currentError) {
+                _lastShownError = currentError;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted && provider.errorMessage != null) {
+                    showCustomNotification(
+                      context, 
+                      provider.errorMessage!,
+                      icon: provider.errorIcon ?? Icons.error,
+                      color: provider.errorColor ?? Colors.red,
+                    );
+                    _errorShowCount++;
+                    provider.clearError();
+                  }
+                });
+              }
+            } else if (provider.errorMessage == null && _lastShownError != null) {
+              // Reset cuando no hay error
+              _lastShownError = null;
+            }
+            
             return Scaffold(
               backgroundColor: AppColors.background,
               appBar: (isMobileLayout && provider.isSearchOpen)

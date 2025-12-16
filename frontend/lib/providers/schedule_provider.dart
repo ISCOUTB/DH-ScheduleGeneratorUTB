@@ -117,6 +117,14 @@ class ScheduleProvider extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
+  /// Icono asociado al mensaje de error.
+  IconData? _errorIcon;
+  IconData? get errorIcon => _errorIcon;
+
+  /// Color asociado al mensaje de error.
+  Color? _errorColor;
+  Color? get errorColor => _errorColor;
+
   // ============================================================
   // MÉTODOS: Carga inicial
   // ============================================================
@@ -130,6 +138,8 @@ class ScheduleProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _errorMessage = 'Error al cargar la lista de materias: ${e.toString()}';
+      _errorIcon = Icons.error;
+      _errorColor = Colors.red;
       notifyListeners();
     }
   }
@@ -225,7 +235,7 @@ class ScheduleProvider extends ChangeNotifier {
     }
 
     _isLoading = true;
-    _errorMessage = null;
+    clearError();
     notifyListeners();
 
     try {
@@ -248,17 +258,32 @@ class ScheduleProvider extends ChangeNotifier {
             _apiFiltersForGeneration.values.any((value) => 
                 value != false && value != null && value != '');
 
+        String message;
+        IconData icon;
+        Color color;
+
         if (hasFilters) {
-          return 'No se encontraron horarios con los filtros aplicados. Intenta relajar algunos filtros.';
+          message = 'No se encontraron horarios con los filtros aplicados. Intenta relajar algunos filtros; pero si lo que hiciste fue agregar una materia nueva, posiblemente se trate de un cruce de horario.';
+          icon = Icons.filter_alt_off;
+          color = Colors.orange;
         } else {
-          return 'No se pueden generar horarios con estas materias. Puede haber cruces de horarios.';
+          message = 'No se pueden generar horarios con estas materias. Puede haber cruces de horarios o incompatibilidades.';
+          icon = Icons.schedule_send;
+          color = Colors.red.shade600;
         }
+
+        _errorMessage = message;
+        _errorIcon = icon;
+        _errorColor = color;
+        return message;
       }
 
       return null;
     } catch (e) {
       _isLoading = false;
       _errorMessage = 'Error al generar horarios: ${e.toString()}';
+      _errorIcon = Icons.error;
+      _errorColor = Colors.red;
       notifyListeners();
       return _errorMessage;
     }
@@ -409,6 +434,8 @@ class ScheduleProvider extends ChangeNotifier {
 
   void clearError() {
     _errorMessage = null;
+    _errorIcon = null;
+    _errorColor = null;
     notifyListeners();
   }
 }
