@@ -56,7 +56,7 @@ def actualizar_base():
 
     print("\nPaso 2: Intentando rescatar cursos desde el log...")
     # Definimos el término de búsqueda.
-    term = "202520" 
+    term = "202610" 
     # El rescatador devuelve el conjunto de datos final y curado.
     datos_finales = procesar_rescate(json_data, log_path, term)
 
