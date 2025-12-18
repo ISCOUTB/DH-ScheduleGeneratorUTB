@@ -301,6 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _buildNavButton('Turnos', 'https://sites.google.com/view/turnos-de-matricula-web-utb/turnos?authuser=0'),
       _buildNavButton('Mallas', 'https://sites.google.com/utb.edu.co/mallasutb/mallas-curriculares'),
       _buildNavButton('Electivas', 'https://sites.google.com/utb.edu.co/stuplan-electivas/electivas'),
+      _buildNavButton('Reportar Error', 'https://docs.google.com/forms/d/e/1FAIpQLSeG6F1lWErfKEtTo4R8OmF6ZCpjrqKqosn_7KLgHpLCYTuDFw/viewform?usp=publish-editor'),
       const SizedBox(width: 8),
       IconButton(
         icon: const Icon(Icons.info_outline, color: Colors.white),
@@ -341,6 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
               MobileMenuItem(label: 'Turnos', onTap: () => _launchURL('https://sites.google.com/view/turnos-de-matricula-web-utb/turnos?authuser=0')),
               MobileMenuItem(label: 'Mallas', onTap: () => _launchURL('https://sites.google.com/utb.edu.co/mallasutb/mallas-curriculares')),
               MobileMenuItem(label: 'Electivas', onTap: () => _launchURL('https://sites.google.com/utb.edu.co/stuplan-electivas/electivas')),
+              MobileMenuItem(label: 'Reportar Error', onTap: () => _launchURL('https://docs.google.com/forms/d/e/1FAIpQLSeG6F1lWErfKEtTo4R8OmF6ZCpjrqKqosn_7KLgHpLCYTuDFw/viewform?usp=publish-editor')),
             ],
           ),
         ),
