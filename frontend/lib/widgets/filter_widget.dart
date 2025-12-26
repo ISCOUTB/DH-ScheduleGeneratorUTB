@@ -1,11 +1,14 @@
 // lib/widgets/filter_widget.dart
 
-/// Widget para configurar filtros de profesores y horarios.
+/// Widget para configurar filtros de profesores, NRCs y horarios.
 /// Permite al usuario definir preferencias para la generación de horarios,
-/// incluyendo la selección de profesores y la definición de horas no disponibles.
+/// incluyendo la selección de profesores, NRCs específicos y la definición de horas no disponibles.
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/subject.dart';
+import '../providers/schedule_provider.dart';
 import 'professor_filter_widget.dart';
+import 'nrc_filter_widget.dart';
 
 /// Widget principal que contiene la lógica y la interfaz para los filtros.
 class FilterWidget extends StatefulWidget {
@@ -44,6 +47,9 @@ class FilterWidget extends StatefulWidget {
 class _FilterWidgetState extends State<FilterWidget> {
   /// Almacena los filtros de profesores por materia (incluir/excluir).
   late Map<String, dynamic> _professorsFilters;
+
+  /// Almacena los NRCs seleccionados por materia.
+  late Map<String, Map<String, bool>> _nrcFilters;
 
   /// Almacena las horas no disponibles por día.
   late Map<String, dynamic> _timeFilters;
@@ -88,6 +94,12 @@ class _FilterWidgetState extends State<FilterWidget> {
     // Clonamos los filtros actuales para poder modificarlos localmente
     _professorsFilters =
         Map<String, dynamic>.from(widget.currentFilters['professors'] ?? {});
+    _nrcFilters = {};
+    if (widget.currentFilters['nrcs'] != null) {
+      (widget.currentFilters['nrcs'] as Map).forEach((key, value) {
+        _nrcFilters[key.toString()] = Map<String, bool>.from(value as Map);
+      });
+    }
     _timeFilters =
         Map<String, dynamic>.from(widget.currentFilters['timeFilters'] ?? {});
   }
@@ -114,15 +126,30 @@ class _FilterWidgetState extends State<FilterWidget> {
       }
     });
 
+    // Procesa los filtros de NRC para la API.
+    Map<String, List<String>> nrcFiltersForApi = {};
+    _nrcFilters.forEach((subjectCode, nrcMap) {
+      List<String> selectedNrcs = nrcMap.entries
+          .where((entry) => entry.value == true)
+          .map((entry) => entry.key)
+          .toList();
+      
+      if (selectedNrcs.isNotEmpty) {
+        nrcFiltersForApi[subjectCode] = selectedNrcs;
+      }
+    });
+
     // Objeto de filtros para la API.
     Map<String, dynamic> filtersForApi = {
       ...finalProfessorFiltersForApi,
       'unavailable_slots': _timeFilters,
+      if (nrcFiltersForApi.isNotEmpty) 'selected_nrcs': nrcFiltersForApi,
     };
 
     // Objeto de filtros para el estado de la UI.
     Map<String, dynamic> filtersForState = {
       'professors': _professorsFilters,
+      'nrcs': _nrcFilters,
       'timeFilters': _timeFilters,
     };
 
@@ -279,6 +306,73 @@ class _FilterWidgetState extends State<FilterWidget> {
                       ),
                     ),
                     const SizedBox(height: 10),
+                    // Sección: Filtro por NRC
+                    /// Permite seleccionar NRCs específicos por materia.
+                    Theme(
+                      data: Theme.of(context).copyWith(
+                        dividerColor: Colors.transparent,
+                        unselectedWidgetColor: textColor,
+                        colorScheme: Theme.of(context).colorScheme.copyWith(
+                              secondary: accentColor,
+                            ),
+                      ),
+                      child: ExpansionTile(
+                        leading: Icon(Icons.numbers, color: textColor),
+                        title: Text('Filtro por NRC',
+                            style: TextStyle(color: textColor)),
+                        children: widget.addedSubjects.map((subject) {
+                          String subjectCode = subject.code;
+                          
+                          // Inicializar el mapa de NRCs para esta materia si no existe
+                          if (_nrcFilters[subjectCode] == null) {
+                            _nrcFilters[subjectCode] = {};
+                          }
+
+                          // Usar Consumer para recalcular NRCs viables dinámicamente
+                          return Consumer<ScheduleProvider>(
+                            builder: (context, provider, child) {
+                              // Calcular NRCs viables desde los horarios generados
+                              var viableNrcsMap = provider.getViableNrcsFromSchedules();
+                              var viableNrcs = viableNrcsMap[subjectCode];
+
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  dividerColor: Colors.transparent,
+                                  unselectedWidgetColor: textColor,
+                                  colorScheme:
+                                      Theme.of(context).colorScheme.copyWith(
+                                            secondary: accentColor,
+                                          ),
+                                ),
+                                child: ExpansionTile(
+                                  title: Text(subject.name,
+                                      style: TextStyle(color: textColor)),
+                                  children: [
+                                    // Widget de selección de NRCs
+                                    SizedBox(
+                                      width: 500,
+                                      height: 250,
+                                      child: NrcFilterWidget(
+                                        key: ValueKey('${subjectCode}_${viableNrcs?.length ?? 0}'),
+                                        subject: subject,
+                                        selectedNrcs: _nrcFilters[subjectCode]!,
+                                        viableNrcs: viableNrcs,
+                                        onSelectionChanged: (selectedNrcs) {
+                                          setState(() {
+                                            _nrcFilters[subjectCode] = selectedNrcs;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     // Sección: Filtros de Horas Disponibles
                     /// Permite al usuario definir las horas en las que no desea tener clases.
                     Theme(
@@ -338,6 +432,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                const SizedBox(height: 20),
                                 Text(
                                   '$day - Selecciona las horas que deseas estar libre:',
                                   style: TextStyle(color: textColor),
@@ -397,6 +492,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                     }).toList(),
                                   ),
                                 ),
+                                const SizedBox(height: 16),
                               ],
                             );
                           }).toList(),

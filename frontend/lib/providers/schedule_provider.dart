@@ -53,6 +53,9 @@ class ScheduleProvider extends ChangeNotifier {
   List<List<ClassOption>> _allSchedules = [];
   List<List<ClassOption>> get allSchedules => List.unmodifiable(_allSchedules);
 
+  /// Horarios base sin filtros de NRC (usados para calcular NRCs viables).
+  List<List<ClassOption>> _baseSchedulesForNrcCalculation = [];
+
   /// Índice del horario seleccionado para vista detallada.
   int? _selectedScheduleIndex;
   int? get selectedScheduleIndex => _selectedScheduleIndex;
@@ -190,11 +193,17 @@ class ScheduleProvider extends ChangeNotifier {
     if (_appliedFilters['professors'] != null && _appliedFilters['professors'] is Map) {
       (_appliedFilters['professors'] as Map).remove(subjectCode);
     }
+    if (_appliedFilters['nrcs'] != null && _appliedFilters['nrcs'] is Map) {
+      (_appliedFilters['nrcs'] as Map).remove(subjectCode);
+    }
     if (_apiFiltersForGeneration['include_professors'] != null) {
       (_apiFiltersForGeneration['include_professors'] as Map).remove(subjectCode);
     }
     if (_apiFiltersForGeneration['exclude_professors'] != null) {
       (_apiFiltersForGeneration['exclude_professors'] as Map).remove(subjectCode);
+    }
+    if (_apiFiltersForGeneration['selected_nrcs'] != null) {
+      (_apiFiltersForGeneration['selected_nrcs'] as Map).remove(subjectCode);
     }
 
     // Eliminar materia
@@ -208,6 +217,7 @@ class ScheduleProvider extends ChangeNotifier {
       generateSchedules();
     } else {
       _allSchedules.clear();
+      _baseSchedulesForNrcCalculation.clear();
       _selectedScheduleIndex = null;
       notifyListeners();
     }
@@ -250,6 +260,17 @@ class ScheduleProvider extends ChangeNotifier {
 
       _allSchedules = schedules;
       _currentPage = 1;
+      
+      // Si NO hay filtros de NRC aplicados, guardar estos horarios como base
+      // para calcular NRCs viables. Esto permite que al aplicar filtros de NRC,
+      // los demás NRCs no desaparezcan del filtro.
+      bool hasNrcFilters = _apiFiltersForGeneration.containsKey('selected_nrcs') &&
+          (_apiFiltersForGeneration['selected_nrcs'] as Map?)?.isNotEmpty == true;
+      
+      if (!hasNrcFilters) {
+        _baseSchedulesForNrcCalculation = schedules;
+      }
+      
       _isLoading = false;
       notifyListeners();
 
@@ -333,12 +354,47 @@ class ScheduleProvider extends ChangeNotifier {
     }
   }
 
+  /// Obtiene los NRCs viables para cada materia basándose en los horarios generados.
+  /// 
+  /// Retorna un mapa donde la clave es el código de la materia y el valor
+  /// es un conjunto de NRCs que aparecen en al menos uno de los horarios generados por la API.
+  /// 
+  /// IMPORTANTE: Usa los horarios BASE (sin filtros de NRC) para calcular viabilidad.
+  /// Esto permite que al aplicar un filtro de NRC, los demás NRCs sigan visibles
+  /// y el usuario pueda cambiar de combinación sin que desaparezcan opciones.
+  Map<String, Set<String>> getViableNrcsFromSchedules() {
+    final Map<String, Set<String>> viableNrcsMap = {};
+    
+    // Si no hay horarios base generados, retornar todos los NRCs disponibles
+    // (esto permite que el usuario vea todas las opciones antes de generar)
+    if (_baseSchedulesForNrcCalculation.isEmpty) {
+      for (var subject in _addedSubjects) {
+        viableNrcsMap[subject.code] = subject.classOptions.map((c) => c.nrc).toSet();
+      }
+      return viableNrcsMap;
+    }
+
+    // Iterar sobre los horarios BASE (sin filtros de NRC) generados por la API
+    // y extraer qué NRCs aparecen en combinaciones válidas
+    for (var schedule in _baseSchedulesForNrcCalculation) {
+      for (var classOption in schedule) {
+        // Agregar el NRC de cada clase al conjunto viable de su materia
+        viableNrcsMap
+            .putIfAbsent(classOption.subjectCode, () => <String>{})
+            .add(classOption.nrc);
+      }
+    }
+    
+    return viableNrcsMap;
+  }
+
   // ============================================================
   // MÉTODOS: Limpieza
   // ============================================================
 
   /// Limpia completamente el estado de la aplicación.
   void clearAll() {
+    _baseSchedulesForNrcCalculation.clear();
     _allSchedules.clear();
     _selectedScheduleIndex = null;
     _addedSubjects.clear();

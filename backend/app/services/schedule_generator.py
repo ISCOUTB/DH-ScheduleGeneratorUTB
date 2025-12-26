@@ -58,6 +58,68 @@ def _get_schedule_signature(schedule: List[ClassOption]) -> str:
 
 # --- Lógica Principal del Algoritmo ---
 
+def _expand_selected_nrcs(
+    combinations_per_subject: List[List[List[ClassOption]]], 
+    selected_nrcs_filter: Dict[str, List[str]]
+) -> Dict[str, List[str]]:
+    """
+    Expande los NRCs seleccionados para incluir laboratorios asociados cuando se selecciona un teórico.
+    
+    Lógica:
+    - Si se selecciona solo un teórico: incluir automáticamente todos sus labs del mismo groupId
+    - Si se selecciona teórico + lab específico: mantener solo esa combinación
+    - Si se selecciona solo lab: mantener solo ese lab
+    """
+    expanded_nrcs = {}
+    
+    for subject_combinations in combinations_per_subject:
+        if not subject_combinations:
+            continue
+            
+        # Obtener el código de la materia del primer option_group
+        subject_code = subject_combinations[0][0].subject_code
+        
+        if subject_code not in selected_nrcs_filter:
+            continue
+            
+        selected_nrcs = set(selected_nrcs_filter[subject_code])
+        expanded_set = set(selected_nrcs)
+        
+        # Crear un mapa de groupId a opciones para esta materia
+        all_options = [opt for group in subject_combinations for opt in group]
+        group_map: Dict[int, Dict[str, List[ClassOption]]] = {}
+        
+        for opt in all_options:
+            if opt.group_id not in group_map:
+                group_map[opt.group_id] = {'teoricos': [], 'labs': []}
+            
+            if opt.type == 'Teórico':
+                group_map[opt.group_id]['teoricos'].append(opt)
+            elif opt.type == 'Laboratorio':
+                group_map[opt.group_id]['labs'].append(opt)
+        
+        # Para cada teórico seleccionado, verificar si hay que agregar labs
+        for nrc in selected_nrcs:
+            # Buscar la opción correspondiente al NRC
+            matching_opt = next((opt for opt in all_options if opt.nrc == nrc), None)
+            
+            if matching_opt and matching_opt.type == 'Teórico':
+                group_id = matching_opt.group_id
+                labs_in_group = group_map.get(group_id, {}).get('labs', [])
+                
+                # Verificar si hay algún lab del mismo grupo ya seleccionado
+                labs_selected = any(lab.nrc in selected_nrcs for lab in labs_in_group)
+                
+                # Si NO hay labs seleccionados explícitamente, agregar todos los labs del grupo
+                if not labs_selected and labs_in_group:
+                    for lab in labs_in_group:
+                        expanded_set.add(lab.nrc)
+        
+        expanded_nrcs[subject_code] = list(expanded_set)
+    
+    return expanded_nrcs
+
+
 def find_valid_schedules(
     combinations_per_subject: List[List[List[ClassOption]]], 
     filters: Dict[str, Any]
@@ -68,6 +130,15 @@ def find_valid_schedules(
     Aplica filtros, fusiona horarios duplicados y los optimiza según las
     preferencias del usuario.
     """
+    
+    # Expandir NRCs seleccionados si es necesario (teóricos con sus labs)
+    if 'selected_nrcs' in filters:
+        expanded_nrcs = _expand_selected_nrcs(
+            combinations_per_subject, 
+            filters['selected_nrcs']
+        )
+        # Actualizar el filtro con los NRCs expandidos
+        filters = {**filters, 'selected_nrcs': expanded_nrcs}
     
     valid_schedules: List[List[ClassOption]] = []
     # El límite de créditos se obtiene de los filtros, con un valor por defecto.
@@ -201,12 +272,13 @@ def _calculate_schedule_score(schedule: List[ClassOption], filters: Dict[str, An
 
 def _meets_filters(schedule: List[ClassOption], filters: Dict[str, Any]) -> bool:
     """
-    Verifica si un horario cumple con los filtros de profesor y horas no disponibles.
+    Verifica si un horario cumple con los filtros de profesor, NRCs y horas no disponibles.
     Las comparaciones son insensibles a mayúsculas/minúsculas.
     """
     # 1. Extraer y normalizar filtros a minúsculas para comparación.
     exclude_professors_filter = cast(Dict[str, List[str]], filters.get('exclude_professors', {}))
     include_professors_filter = cast(Dict[str, List[str]], filters.get('include_professors', {}))
+    selected_nrcs_filter = cast(Dict[str, List[str]], filters.get('selected_nrcs', {}))
     
     unavailable_slots_input = cast(Dict[str, List[str]], filters.get('unavailable_slots', {}))
     unavailable_slots_lower = {day.lower(): times for day, times in unavailable_slots_input.items()}
@@ -216,7 +288,19 @@ def _meets_filters(schedule: List[ClassOption], filters: Dict[str, Any]) -> bool
     for option in schedule:
         schedule_by_subject.setdefault(option.subject_code, []).append(option)
 
-    # 3. Verificación de filtros de Inclusión/Exclusión de Profesores.
+    # 3. Verificación de filtros de NRCs específicos.
+    # Si se especifican NRCs para una materia, solo se aceptan horarios con esos NRCs.
+    for subject_code, subject_options in schedule_by_subject.items():
+        if subject_code in selected_nrcs_filter:
+            selected_nrcs = set(selected_nrcs_filter[subject_code])
+            schedule_nrcs = {opt.nrc for opt in subject_options}
+            
+            # El horario debe incluir al menos uno de los NRCs seleccionados
+            # y no debe incluir NRCs de esa materia que no fueron seleccionados
+            if not schedule_nrcs.issubset(selected_nrcs):
+                return False
+
+    # 4. Verificación de filtros de Inclusión/Exclusión de Profesores.
     for subject_code, subject_options in schedule_by_subject.items():
         # Verifica si algún profesor de la opción está en la lista de exclusión.
         if subject_code in exclude_professors_filter:
@@ -232,7 +316,7 @@ def _meets_filters(schedule: List[ClassOption], filters: Dict[str, Any]) -> bool
             if not professors_in_schedule.intersection(included_profs_set):
                 return False # Horario inválido.
 
-    # 4. Verificación de Horas No Disponibles.
+    # 5. Verificación de Horas No Disponibles.
     for option in schedule:
         for class_time in option.schedules:
             day_lower = class_time.day.lower()
