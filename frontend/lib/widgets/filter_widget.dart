@@ -68,6 +68,17 @@ class _FilterWidgetState extends State<FilterWidget> {
     'Dom'
   ];
 
+  /// Nombres completos de los días de la semana.
+  final Map<String, String> fullDayNames = {
+    'Lun': 'Lunes',
+    'Mar': 'Martes',
+    'Mié': 'Miércoles',
+    'Jue': 'Jueves',
+    'Vie': 'Viernes',
+    'Sáb': 'Sábado',
+    'Dom': 'Domingo',
+  };
+
   /// Franjas horarias disponibles para la selección de filtros de tiempo.
   final List<String> timeSlots = [
     '07:00',
@@ -435,7 +446,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                               children: [
                                 const SizedBox(height: 20),
                                 Text(
-                                  '$day - Selecciona las horas que deseas estar libre:',
+                                  '${fullDayNames[day]} - Selecciona las horas que deseas estar libre:',
                                   style: TextStyle(color: textColor),
                                 ),
                                 // Checkbox para seleccionar/deseleccionar todas las horas del día
