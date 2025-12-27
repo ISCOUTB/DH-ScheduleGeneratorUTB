@@ -59,13 +59,13 @@ class _FilterWidgetState extends State<FilterWidget> {
 
   /// Días de la semana para la selección de filtros de tiempo.
   final List<String> days = [
-    'Lunes',
-    'Martes',
-    'Miércoles',
-    'Jueves',
-    'Viernes',
-    'Sábado',
-    'Domingo'
+    'Lun',
+    'Mar',
+    'Mié',
+    'Jue',
+    'Vie',
+    'Sáb',
+    'Dom'
   ];
 
   /// Franjas horarias disponibles para la selección de filtros de tiempo.
@@ -403,6 +403,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                 backgroundColor: isDarkMode
                                     ? Colors.grey[800]
                                     : Colors.grey[300],
+                                showCheckmark: false,
                                 onSelected: (selected) {
                                   setState(() {
                                     if (selected) {
@@ -460,37 +461,112 @@ class _FilterWidgetState extends State<FilterWidget> {
                                   },
                                 ),
                                 // Grid para seleccionar horas específicas
-                                SizedBox(
-                                  width: 400,
-                                  height: 100,
-                                  child: GridView.count(
-                                    crossAxisCount: 4,
-                                    childAspectRatio: 3,
-                                    children: timeSlots.map((time) {
-                                      bool isSelected =
-                                          unavailableHours.contains(time);
-                                      return FilterChip(
-                                        label: Text(time,
-                                            style: TextStyle(color: textColor)),
-                                        selected: isSelected,
-                                        selectedColor: accentColor,
-                                        backgroundColor: isDarkMode
-                                            ? Colors.grey[800]
-                                            : Colors.grey[300],
-                                        onSelected: (selected) {
-                                          setState(() {
-                                            if (selected) {
-                                              unavailableHours.add(time);
-                                            } else {
-                                              unavailableHours.remove(time);
-                                            }
-                                            _timeFilters[day] =
-                                                unavailableHours;
-                                          });
-                                        },
+                                Builder(
+                                  builder: (context) {
+                                    final screenWidth = MediaQuery.of(context).size.width;
+                                    final isMobile = screenWidth < 600;
+                                    
+                                    if (isMobile) {
+                                      // Versión móvil: Wrap adaptable
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                        child: Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          alignment: WrapAlignment.center,
+                                          children: timeSlots.map((time) {
+                                            bool isSelected =
+                                                unavailableHours.contains(time);
+                                            return SizedBox(
+                                              width: 70,
+                                              height: 36,
+                                              child: Material(
+                                                color: isSelected
+                                                    ? accentColor
+                                                    : (isDarkMode
+                                                        ? Colors.grey[800]
+                                                        : Colors.grey[300]),
+                                                borderRadius: BorderRadius.circular(8),
+                                                child: InkWell(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (isSelected) {
+                                                        unavailableHours.remove(time);
+                                                      } else {
+                                                        unavailableHours.add(time);
+                                                      }
+                                                      _timeFilters[day] =
+                                                          unavailableHours;
+                                                    });
+                                                  },
+                                                  child: Center(
+                                                    child: Text(
+                                                      time,
+                                                      style: TextStyle(
+                                                        color: textColor,
+                                                        fontSize: 14,
+                                                      ),
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
                                       );
-                                    }).toList(),
-                                  ),
+                                    } else {
+                                      // Versión PC: Grid 5x3
+                                      return SizedBox(
+                                        width: 430,
+                                        child: GridView.count(
+                                          crossAxisCount: 5,
+                                          childAspectRatio: 1.94,
+                                          mainAxisSpacing: 8,
+                                          crossAxisSpacing: 8,
+                                          shrinkWrap: true,
+                                          physics: const NeverScrollableScrollPhysics(),
+                                          children: timeSlots.map((time) {
+                                            bool isSelected =
+                                                unavailableHours.contains(time);
+                                            return Material(
+                                              color: isSelected
+                                                  ? accentColor
+                                                  : (isDarkMode
+                                                      ? Colors.grey[800]
+                                                      : Colors.grey[300]),
+                                              borderRadius: BorderRadius.circular(8),
+                                              child: InkWell(
+                                                borderRadius: BorderRadius.circular(8),
+                                                onTap: () {
+                                                  setState(() {
+                                                    if (isSelected) {
+                                                      unavailableHours.remove(time);
+                                                    } else {
+                                                      unavailableHours.add(time);
+                                                    }
+                                                    _timeFilters[day] =
+                                                        unavailableHours;
+                                                  });
+                                                },
+                                                child: Center(
+                                                  child: Text(
+                                                    time,
+                                                    style: TextStyle(
+                                                      color: textColor,
+                                                      fontSize: 14,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      );
+                                    }
+                                  },
                                 ),
                                 const SizedBox(height: 16),
                               ],
