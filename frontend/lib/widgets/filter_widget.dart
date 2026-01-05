@@ -150,10 +150,17 @@ class _FilterWidgetState extends State<FilterWidget> {
       }
     });
 
+    // Convertir abreviaciones de días a nombres completos para la API
+    Map<String, dynamic> timeFiltersForApi = {};
+    _timeFilters.forEach((dayAbbrev, hours) {
+      String fullDayName = fullDayNames[dayAbbrev] ?? dayAbbrev;
+      timeFiltersForApi[fullDayName] = hours;
+    });
+
     // Objeto de filtros para la API.
     Map<String, dynamic> filtersForApi = {
       ...finalProfessorFiltersForApi,
-      'unavailable_slots': _timeFilters,
+      'unavailable_slots': timeFiltersForApi,
       if (nrcFiltersForApi.isNotEmpty) 'selected_nrcs': nrcFiltersForApi,
     };
 
