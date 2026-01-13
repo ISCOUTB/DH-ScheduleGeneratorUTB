@@ -285,11 +285,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       actions: [
         if (!isMobileLayout) ..._buildDesktopActions(provider),
-        if (isMobileLayout)
+        if (isMobileLayout) ...[
+          _buildMobileUserMenu(),
+          const SizedBox(width: 2),
           IconButton(
             icon: const Icon(Icons.menu, color: Colors.white),
             onPressed: () => provider.toggleMobileMenu(),
           ),
+        ],
         const SizedBox(width: 16),
       ],
     );
@@ -324,6 +327,67 @@ class _HomeScreenState extends State<HomeScreen> {
         cursor: SystemMouseCursors.click,
         child: NavLink(text: text),
       ),
+    );
+  }
+
+  Widget _buildMobileUserMenu() {
+    return PopupMenuButton<String>(
+      icon: CircleAvatar(
+        radius: 16,
+        backgroundColor: Colors.white,
+        child: Text(
+          widget.currentUser.initials,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: AppColors.primary,
+          ),
+        ),
+      ),
+      tooltip: widget.currentUser.displayName,
+      color: Colors.white,
+      offset: const Offset(0, 50),
+      itemBuilder: (BuildContext context) => [
+        PopupMenuItem<String>(
+          enabled: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.currentUser.displayName,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+              if (widget.currentUser.email != null)
+                Text(
+                  widget.currentUser.email!,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              const Divider(),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'logout',
+          child: const Row(
+            children: [
+              Icon(Icons.logout, color: Colors.red, size: 20),
+              SizedBox(width: 12),
+              Text('Cerrar sesión'),
+            ],
+          ),
+        ),
+      ],
+      onSelected: (String value) {
+        if (value == 'logout') {
+          widget.onLogout();
+        }
+      },
     );
   }
 
