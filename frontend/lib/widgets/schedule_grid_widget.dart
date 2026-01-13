@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/class_option.dart';
 
 /// Muestra una cuadrícula de previsiones de horarios generados.
-///
+
 /// Cada celda de la cuadrícula representa un horario y es interactiva.
 /// El diseño es adaptable para web, escritorio y dispositivos móviles.
 /// Implementa paginación para manejar de forma eficiente un gran número de horarios.
