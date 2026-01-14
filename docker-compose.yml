@@ -99,7 +99,7 @@ services:
       sh -c "
         apt-get update && apt-get install -y cron &&
         printenv | grep -v 'no_proxy' > /etc/environment &&
-        echo '0 0 * * * root . /etc/environment; /usr/local/bin/python /app/scripts/actualizar_datos.py >> /var/log/cron.log 2>&1' > /etc/cron.d/update-task &&
+        echo '*/10 * * * * root . /etc/environment; /usr/local/bin/python /app/scripts/actualizar_datos.py >> /var/log/cron.log 2>&1' > /etc/cron.d/update-task &&
         chmod 0644 /etc/cron.d/update-task &&
         touch /var/log/cron.log &&
         cron &&
