@@ -92,14 +92,20 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
   }
 
   void _loadSchedulesForCurrentPage() {
-    final int startIndex = (widget.currentPage - 1) * widget.itemsPerPage;
-    final int endIndex = (startIndex + widget.itemsPerPage).clamp(0, widget.allSchedules.length);
-    
     setState(() {
-      _displayedSchedules = widget.allSchedules.sublist(
-        startIndex.clamp(0, widget.allSchedules.length),
-        endIndex,
-      );
+      // En móvil, mostrar todos los horarios sin paginación
+      if (widget.isMobileLayout) {
+        _displayedSchedules = widget.allSchedules;
+      } else {
+        // En PC, aplicar paginación
+        final int startIndex = (widget.currentPage - 1) * widget.itemsPerPage;
+        final int endIndex = (startIndex + widget.itemsPerPage).clamp(0, widget.allSchedules.length);
+        
+        _displayedSchedules = widget.allSchedules.sublist(
+          startIndex.clamp(0, widget.allSchedules.length),
+          endIndex,
+        );
+      }
     });
   }
 
