@@ -18,51 +18,54 @@ class MainActionsPanel extends StatelessWidget {
   /// Callback para la acción de generar horarios.
   final VoidCallback onGenerate;
 
+  /// Crea el panel de acciones principales.
   const MainActionsPanel({
-    Key? key,
     required this.onSearch,
     required this.onFilter,
     required this.onClear,
     required this.onGenerate,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Botón para buscar materia.
-        Expanded(
+  Widget build(BuildContext context) => Row(
+        children: [
+          // Botón para buscar materia.
+          Expanded(
             child: _MainCardButton(
-                color: const Color(0xFF093AD8),
-                icon: Icons.search,
-                label: "Buscar materia",
-                onTap: onSearch)),
-        const SizedBox(width: 20),
-        // Botón para realizar filtro.
-        Expanded(
-            child: _MainCardButton(
-                color: const Color(0xFF0FC4EF),
-                icon: Icons.filter_alt,
-                label: "Realizar filtro",
-                onTap: onFilter)),
-        const SizedBox(width: 20),
-        // Botón para tutorial.
-        Expanded(
-          child: _MainCardButton(
-            color: const Color(0xFF71ED37),
-            icon: Icons.lightbulb_outline,
-            label: "Tutorial",
-            onTap: () async {
-              final url = Uri.parse('https://youtu.be/rFi0M0gcMHM');
-              if (await canLaunchUrl(url)) {
-                await launchUrl(url, mode: LaunchMode.externalApplication);
-              }
-            },
+              color: const Color(0xFF093AD8),
+              icon: Icons.search,
+              label: "Buscar materia",
+              onTap: onSearch,
+            ),
           ),
-        ),
-      ],
-    );
-  }
+          const SizedBox(width: 20),
+          // Botón para realizar filtro.
+          Expanded(
+            child: _MainCardButton(
+              color: const Color(0xFF0FC4EF),
+              icon: Icons.filter_alt,
+              label: "Realizar filtro",
+              onTap: onFilter,
+            ),
+          ),
+          const SizedBox(width: 20),
+          // Botón para tutorial.
+          Expanded(
+            child: _MainCardButton(
+              color: const Color(0xFF71ED37),
+              icon: Icons.lightbulb_outline,
+              label: "Tutorial",
+              onTap: () async {
+                final url = Uri.parse('https://youtu.be/rFi0M0gcMHM');
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                }
+              },
+            ),
+          ),
+        ],
+      );
 }
 
 /// Un botón de tarjeta personalizado con efecto hover para el panel de acciones.
@@ -79,11 +82,12 @@ class _MainCardButton extends StatefulWidget {
   /// Callback que se ejecuta al tocar el botón.
   final VoidCallback onTap;
 
-  const _MainCardButton(
-      {required this.color,
-      required this.icon,
-      required this.label,
-      required this.onTap});
+  const _MainCardButton({
+    required this.color,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   State<_MainCardButton> createState() => _MainCardButtonState();
@@ -112,10 +116,11 @@ class _MainCardButtonState extends State<_MainCardButton> {
             // Sombra que aparece al pasar el cursor sobre el botón.
             boxShadow: _isHovered
                 ? [
-                    BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8,
-                        offset: Offset(0, 4))
+                    const BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 8,
+                      offset: Offset(0, 4),
+                    ),
                   ]
                 : [],
           ),
@@ -124,12 +129,15 @@ class _MainCardButtonState extends State<_MainCardButton> {
             children: [
               Icon(widget.icon, color: Colors.white, size: 30),
               const SizedBox(height: 8),
-              Text(widget.label,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center),
+              Text(
+                widget.label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
         ),

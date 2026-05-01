@@ -7,15 +7,37 @@ from config import get_connection, DATABASE_URL
 from utils import timestamp_actual
 
 
-def limpiar_tablas(conn: psycopg.Connection):
-    """Limpia las tablas de la base de datos."""
+ACADEMIC_TABLES = (
+    "Clase",
+    "Curso",
+    "Profesor",
+    "Materia",
+)
+
+# Tablas funcionales de la aplicación que no deben limpiarse durante ETL académico.
+PRESERVED_APP_TABLES = (
+    "usuario",
+    "horario_destacado",
+)
+
+
+def limpiar_tablas(conn: psycopg.Connection, auto_commit: bool = True):
+    """
+    Limpia solo las tablas académicas de oferta.
+
+    Importante:
+    - No limpia tablas funcionales de aplicación (ej. `usuario`).
+    - Esto permite persistir identidad y preferencias entre actualizaciones ETL.
+    """
     with conn.cursor() as cursor:
-        cursor.execute("DELETE FROM Clase")
-        cursor.execute("DELETE FROM Curso")
-        cursor.execute("DELETE FROM Profesor")
-        cursor.execute("DELETE FROM Materia")
-    conn.commit()
-    print("Tablas limpiadas correctamente.")
+        for table_name in ACADEMIC_TABLES:
+            cursor.execute(f"DELETE FROM {table_name}")
+
+    if auto_commit:
+        conn.commit()
+
+    print(f"Tablas académicas limpiadas: {', '.join(ACADEMIC_TABLES)}")
+    print(f"Tablas preservadas: {', '.join(PRESERVED_APP_TABLES)}")
 
 def hacer_snapshot():
     """Crea un snapshot de la base de datos usando pg_dump y la DATABASE_URL."""

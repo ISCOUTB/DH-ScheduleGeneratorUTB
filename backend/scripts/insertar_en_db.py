@@ -44,8 +44,6 @@ def actualizar_base():
     conn = get_connection()
     print("Creando snapshot de la base de datos...")
     hacer_snapshot()
-    print("Limpiando tablas...")
-    limpiar_tablas(conn)
 
     # --- PROCESAMIENTO Y RESCATE ---
     print("Paso 1: Procesando JSON inicial para detectar problemas...")
@@ -61,8 +59,18 @@ def actualizar_base():
     datos_finales = procesar_rescate(json_data, log_path, term)
 
     # --- INSERCIÓN Y CIERRE ---
-    print("\nPaso 3: Insertando datos finales en la base de datos...")
-    insertar_datos(conn, datos_finales)
+    print("\nPaso 3: Aplicando actualización atómica de datos en la base de datos...")
+    try:
+        print("Iniciando transacción de actualización...")
+        print("Limpiando tablas académicas (preservando datos de aplicación)...")
+        limpiar_tablas(conn, auto_commit=False)
+        insertar_datos(conn, datos_finales, auto_commit=False)
+        conn.commit()
+        print("Transacción confirmada: actualización aplicada correctamente.")
+    except Exception as e:
+        conn.rollback()
+        print(f"Error durante actualización atómica. Se hizo rollback completo: {e}")
+        raise
     
     # Guardamos el log guardado, que ahora será más corto y preciso
     print("\nGuardando log de errores final...")

@@ -37,10 +37,10 @@ class HomeScreen extends StatefulWidget {
   final VoidCallback onLogout;
 
   const HomeScreen({
-    Key? key,
     required this.title,
     required this.currentUser,
     required this.onLogout,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -122,13 +122,13 @@ class _HomeScreenState extends State<HomeScreen> {
     final Uri url = Uri.parse(urlString);
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       if (mounted) {
-        showCustomNotification(context, 'No se pudo abrir el enlace',
-            icon: Icons.error, color: Colors.red);
+        showCustomNotification(context, 'No se pudo abrir el enlace', 
+        icon: Icons.error, color: Colors.red,);
       }
     }
   }
 
-  void _openTutorial() async {
+  Future<void> _openTutorial() async {
     final Uri url = Uri.parse('https://www.youtube.com/watch?v=rFi0M0gcMHM');
     if (!await launchUrl(url)) {
       showCustomNotification(context, 'No se pudo abrir el tutorial',
@@ -157,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (message.contains('agregada') || message.contains('alcanzado')) {
         showCustomNotification(context, message, 
             icon: Icons.info, 
-            color: message.contains('alcanzado') ? Colors.red : Colors.green);
+            color: message.contains('alcanzado') ? Colors.red : Colors.green,);
         return;
       }
     }
@@ -181,15 +181,13 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       onConfirm: () {
         context.read<ScheduleProvider>().clearAll();
-        showCustomNotification(context, 'Aplicación reiniciada completamente.',
-            icon: Icons.refresh, color: Colors.green);
+        showCustomNotification(context, 'Aplicación reiniciada completamente.', icon: Icons.refresh, color: Colors.green);
       },
     );
   }
 
   @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
+  Widget build(BuildContext context) => LayoutBuilder(
       builder: (context, constraints) {
         final bool isMobileLayout = constraints.maxWidth < AppConfig.mobileBreakpoint;
 
@@ -198,7 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // Se muestra si hay un error y es diferente al último mostrado
             // O si es el mismo pero hubo un clearError() en el medio (detectado por el contador)
             if (provider.errorMessage != null && !provider.isLoading) {
-              final currentError = '${provider.errorMessage}_${_errorShowCount}';
+              final currentError = '${provider.errorMessage}_$_errorShowCount';
               
               if (_lastShownError != currentError) {
                 _lastShownError = currentError;
@@ -263,10 +261,8 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
-  }
 
-  PreferredSizeWidget _buildAppBar(bool isMobileLayout, ScheduleProvider provider) {
-    return AppBar(
+  PreferredSizeWidget _buildAppBar(bool isMobileLayout, ScheduleProvider provider) => AppBar(
       backgroundColor: AppColors.primary,
       elevation: 0,
       toolbarHeight: 66,
@@ -296,10 +292,8 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(width: 16),
       ],
     );
-  }
 
-  List<Widget> _buildDesktopActions(ScheduleProvider provider) {
-    return [
+  List<Widget> _buildDesktopActions(ScheduleProvider provider) => [
       _buildNavButton('Mi UTB', 'https://www.utb.edu.co/mi-utb/'),
       _buildNavButton('Turnos', 'https://sites.google.com/view/turnos-de-matricula-web-utb/turnos?authuser=0'),
       _buildNavButton('Mallas', 'https://sites.google.com/utb.edu.co/mallasutb/mallas-curriculares'),
@@ -317,10 +311,8 @@ class _HomeScreenState extends State<HomeScreen> {
         onLogout: widget.onLogout,
       ),
     ];
-  }
 
-  Widget _buildNavButton(String text, String url) {
-    return TextButton(
+  Widget _buildNavButton(String text, String url) => TextButton(
       style: TextButton.styleFrom(overlayColor: Colors.transparent),
       onPressed: () => _launchURL(url),
       child: MouseRegion(
@@ -328,10 +320,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: NavLink(text: text),
       ),
     );
-  }
 
-  Widget _buildMobileUserMenu() {
-    return PopupMenuButton<String>(
+  Widget _buildMobileUserMenu() => PopupMenuButton<String>(
       icon: CircleAvatar(
         radius: 16,
         backgroundColor: Colors.white,
@@ -347,7 +337,7 @@ class _HomeScreenState extends State<HomeScreen> {
       tooltip: widget.currentUser.displayName,
       color: Colors.white,
       offset: const Offset(0, 50),
-      itemBuilder: (BuildContext context) => [
+      itemBuilder: (context) => [
         PopupMenuItem<String>(
           enabled: false,
           child: Column(
@@ -360,9 +350,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 14,
                 ),
               ),
-              if (widget.currentUser.email != null)
                 Text(
-                  widget.currentUser.email!,
+                  widget.currentUser.email,
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey.shade600,
@@ -372,9 +361,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        PopupMenuItem<String>(
+        const PopupMenuItem<String>(
           value: 'logout',
-          child: const Row(
+          child: Row(
             children: [
               Icon(Icons.logout, color: Colors.red, size: 20),
               SizedBox(width: 12),
@@ -383,13 +372,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
-      onSelected: (String value) {
+      onSelected: (value) {
         if (value == 'logout') {
           widget.onLogout();
         }
       },
     );
-  }
 
   List<Widget> _buildOverlays(ScheduleProvider provider, bool isMobileLayout) {
     final overlays = <Widget>[];
@@ -436,8 +424,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return overlays;
   }
 
-  Widget _buildSearchOverlay(ScheduleProvider provider) {
-    return Stack(
+  Widget _buildSearchOverlay(ScheduleProvider provider) => Stack(
       children: [
         const ModalBarrier(dismissible: false, color: Colors.black45),
         Center(
@@ -457,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     } catch (e) {
                       if (mounted) {
                         showCustomNotification(context, 'Error al cargar detalles: ${e.toString()}',
-                            icon: Icons.error, color: Colors.red);
+                            icon: Icons.error, color: Colors.red,);
                       }
                     }
                   },
@@ -467,10 +454,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
     );
-  }
 
-  Widget _buildFilterOverlay(ScheduleProvider provider) {
-    return Stack(
+  Widget _buildFilterOverlay(ScheduleProvider provider) => Stack(
       children: [
         const ModalBarrier(dismissible: false, color: Colors.black45),
         Center(
@@ -484,10 +469,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
     );
-  }
 
-  Widget _buildOverviewOverlay(ScheduleProvider provider) {
-    return Stack(
+  Widget _buildOverviewOverlay(ScheduleProvider provider) => Stack(
       children: [
         const ModalBarrier(dismissible: false, color: Colors.black45),
         Center(
@@ -499,10 +482,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ],
     );
-  }
 
-  Widget _buildMobileLayout(ScheduleProvider provider) {
-    return ListView(
+  Widget _buildMobileLayout(ScheduleProvider provider) => ListView(
       controller: _mobileScrollController,
       padding: const EdgeInsets.all(16.0),
       children: [
@@ -531,7 +512,6 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildScheduleArea(provider, isMobileLayout: true),
       ],
     );
-  }
 
   Widget _buildDesktopLayout(ScheduleProvider provider, bool isMobileLayout) {
     final currentOrientation = MediaQuery.of(context).orientation;
@@ -555,8 +535,7 @@ class _HomeScreenState extends State<HomeScreen> {
         : _buildBodyContent(provider, isMobileLayout);
   }
 
-  Widget _buildBodyContent(ScheduleProvider provider, bool isMobileLayout) {
-    return Padding(
+  Widget _buildBodyContent(ScheduleProvider provider, bool isMobileLayout) => Padding(
       padding: const EdgeInsets.all(24.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -617,15 +596,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
-  }
+  
 
-  Widget _buildSortAndClearRow(ScheduleProvider provider, bool isMobileLayout) {
-    return LayoutBuilder(
+  Widget _buildSortAndClearRow(ScheduleProvider provider, bool isMobileLayout) => LayoutBuilder(
       builder: (context, constraints) {
-        double totalWidth = constraints.maxWidth;
-        double spaceBetween = 20;
-        double clearButtonWidth = (totalWidth - 2 * spaceBetween) / 3;
-        double sortWidth = totalWidth - clearButtonWidth - spaceBetween;
+        final double totalWidth = constraints.maxWidth;
+        final double spaceBetween = 20;
+        final double clearButtonWidth = (totalWidth - 2 * spaceBetween) / 3;
+        final double sortWidth = totalWidth - clearButtonWidth - spaceBetween;
 
         return Row(
           children: [
@@ -671,7 +649,6 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
-  }
 
   Widget _buildScheduleArea(ScheduleProvider provider, {required bool isMobileLayout}) {
     if (provider.allSchedules.isEmpty) {

@@ -2,7 +2,14 @@
 
 Este documento describe el esquema de la base de datos PostgreSQL utilizada por el sistema.
 
-## Diagrama Entidad-Relación
+## Alcance del Documento
+
+Este documento separa dos vistas:
+
+1. Estado actual (implementado en la base de datos).
+2. Propuesta para el feature de horarios destacados (pendiente de implementar).
+
+## Diagrama Entidad-Relación (Estado Actual)
 
 ```mermaid
 erDiagram
@@ -41,6 +48,74 @@ erDiagram
     PROFESOR {
         varchar bannerid PK
         varchar nombre
+    }
+
+    USUARIO {
+        int id PK
+        varchar entra_id UK
+        varchar email UK
+        varchar nombre
+        timestamp created_at
+    }
+```
+
+## Diagrama Entidad-Relación (Propuesto para Horarios Destacados)
+
+```mermaid
+erDiagram
+    MATERIA ||--o{ CURSO : tiene
+    PROFESOR ||--o{ CURSO : imparte
+    CURSO ||--o{ CLASE : contiene
+    USUARIO ||--o{ HORARIO_DESTACADO : guarda
+
+    MATERIA {
+        varchar codigomateria PK
+        varchar nombre PK
+        int creditos
+    }
+
+    CURSO {
+        int nrc PK
+        varchar tipo
+        varchar codigomateria FK
+        varchar nombremateria FK
+        varchar profesorid FK
+        int nrcteorico FK
+        int groupid
+        varchar campus
+        int cuposdisponibles
+        int cupostotales
+    }
+
+    CLASE {
+        int id PK
+        int nrc FK
+        varchar dia
+        time horainicio
+        time horafinal
+        varchar aula
+    }
+
+    PROFESOR {
+        varchar bannerid PK
+        varchar nombre
+    }
+
+    USUARIO {
+        int id PK
+        varchar entra_id UK
+        varchar email UK
+        varchar nombre
+        timestamp created_at
+    }
+
+    HORARIO_DESTACADO {
+        int id PK
+        int usuario_id FK
+        varchar term
+        varchar signature
+        jsonb schedule_json
+        timestamp created_at
     }
 ```
 
@@ -103,6 +178,44 @@ Representa a un docente de la universidad.
 | `bannerid` | VARCHAR | Identificador único en Banner (PK) |
 | `nombre` | VARCHAR | Nombre completo del profesor |
 
+---
+
+### Usuario (Actual)
+
+Representa a un usuario autenticado con Microsoft Entra ID.
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `id` | SERIAL | Identificador interno (PK) |
+| `entra_id` | VARCHAR | Identificador de Microsoft Entra (UNIQUE) |
+| `email` | VARCHAR | Correo institucional/personal (UNIQUE) |
+| `nombre` | VARCHAR | Nombre para mostrar |
+| `created_at` | TIMESTAMP | Fecha de creación del registro |
+
+Estado de implementación:
+- La tabla existe en `backend/init.sql`.
+- Hay funciones de acceso en `backend/app/db/repository.py`.
+- El callback de autenticación sincroniza usuario en DB con `get_or_create_user`.
+- La sesión HTTP sigue almacenándose en memoria del proceso API (limitación conocida para escalado horizontal).
+
+---
+
+### Horario Destacado (Propuesto)
+
+Representa un horario guardado por el usuario como favorito.
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `id` | SERIAL | Identificador del favorito (PK) |
+| `usuario_id` | INTEGER | Usuario propietario del favorito (FK a `usuario.id`) |
+| `term` | VARCHAR | Período académico (ej. `202610`) |
+| `signature` | VARCHAR | Huella estable del horario (para evitar duplicados) |
+| `schedule_json` | JSONB | Snapshot del horario tal como se mostró al usuario |
+| `created_at` | TIMESTAMP | Fecha de creación del favorito |
+
+Restricción sugerida:
+- `UNIQUE (usuario_id, term, signature)` para evitar duplicados por usuario.
+
 ## Relaciones
 
 | Relación | Tipo | Descripción |
@@ -111,6 +224,7 @@ Representa a un docente de la universidad.
 | Profesor → Curso | 1:N | Un profesor puede impartir varios cursos |
 | Curso → Clase | 1:N | Un curso tiene uno o más bloques horarios |
 | Curso → Curso | N:1 | Laboratorios se vinculan a su teórico via `nrcteorico` |
+| Usuario → Horario Destacado | 1:N | Un usuario puede guardar múltiples horarios (propuesto) |
 
 ## Tipos de Curso
 
@@ -129,3 +243,7 @@ El campo `groupid` permite agrupar cursos que deben tomarse juntos:
 ## Script de Inicialización
 
 El archivo `backend/init.sql` contiene el esquema completo y se ejecuta automáticamente al crear el contenedor de PostgreSQL por primera vez.
+
+Nota operativa:
+- Si el volumen de la base de datos ya existe, cambios nuevos en `init.sql` no se aplican automáticamente.
+- Para cambios de esquema en ambientes persistentes se requieren migraciones versionadas.

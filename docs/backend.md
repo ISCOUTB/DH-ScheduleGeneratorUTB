@@ -13,6 +13,16 @@ La arquitectura sigue un patrón de diseño por capas para separar responsabilid
 
 Todo el entorno (API, base de datos y scripts de actualización) está contenerizado con **Docker** y gestionado con **Docker Compose**, garantizando consistencia y facilidad de despliegue.
 
+## 1.1 Registros Técnicos (Arquitectura)
+
+Para mejorar mantenibilidad y trazabilidad, las decisiones relevantes se documentan como registros técnicos en `docs/issues/`.
+
+Registros vigentes:
+
+- `docs/issues/29-03-2026-rfc-horarios-destacados.md`
+- `docs/issues/29-03-2026-politica-persistencia-etl.md`
+- `docs/issues/07-08-2025-error-materias-laboratorio.md`
+
 ## 2. Estructura del Proyecto
 
 El directorio `backend/` está organizado de la siguiente manera:
@@ -90,7 +100,7 @@ graph TD
 
 **1**. **Extract:** El script `descargar_json.py` simula ser un navegador para realizar peticiones al sistema Banner de la universidad, paginando a través de todos los resultados y guardando los datos crudos en `search_results_complete.json`.
 **2**. **Transform:** `parser.py` lee el JSON crudo, lo limpia, normaliza nombres, identifica relaciones entre cursos teóricos y laboratorios, y estructura los datos en un formato listo para ser insertado en la base de datos.
-**3**. **Load:** `insertar_en_db.py` orquesta la carga. Primero, llama a `backup.py` para crear un respaldo de los datos actuales. Luego, limpia las tablas y, finalmente, utiliza `inserter.py` para insertar los nuevos datos procesados en PostgreSQL.
+**3**. **Load:** `insertar_en_db.py` orquesta la carga. Primero, llama a `backup.py` para crear un respaldo de los datos actuales. Luego aplica limpieza de tablas académicas e inserción en una única transacción atómica. Si ocurre un error, se ejecuta rollback y se conserva el estado previo de datos.
 
 ## 4. Endpoints de la API
 

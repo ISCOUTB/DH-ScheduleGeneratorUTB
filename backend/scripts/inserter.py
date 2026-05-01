@@ -2,7 +2,7 @@
 import psycopg
 from parser import ProcesarJsonResponse
 
-def insertar_datos(conn: psycopg.Connection, datos: ProcesarJsonResponse) -> None:
+def insertar_datos(conn: psycopg.Connection, datos: ProcesarJsonResponse, auto_commit: bool = True) -> None:
     cursor = conn.cursor()
 
     for m in datos['materias']:
@@ -35,5 +35,7 @@ def insertar_datos(conn: psycopg.Connection, datos: ProcesarJsonResponse) -> Non
             VALUES (%s, %s, %s, %s, %s)
         """, cl)
 
-    conn.commit()
+    if auto_commit:
+        conn.commit()
+
     print("Datos insertados correctamente.")

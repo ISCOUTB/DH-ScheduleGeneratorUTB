@@ -298,15 +298,31 @@ def get_or_create_user(entra_id: str, email: str, nombre: str = None) -> Dict[st
         user = cursor.fetchone()
         
         if user:
-            # Actualizar nombre si cambió
-            if nombre and user.get("nombre") != nombre:
-                cursor.execute(
-                    "UPDATE usuario SET nombre = %s WHERE entra_id = %s",
-                    (nombre, entra_id)
-                )
+            updates: List[str] = []
+            params: List[Any] = []
+
+            # Mantener datos sincronizados con Entra en cada login.
+            if email and user.get("email") != email:
+                updates.append("email = %s")
+                params.append(email)
+
+            if nombre is not None and user.get("nombre") != nombre:
+                updates.append("nombre = %s")
+                params.append(nombre)
+
+            if updates:
+                update_sql = f"UPDATE usuario SET {', '.join(updates)} WHERE entra_id = %s"
+                params.append(entra_id)
+                cursor.execute(update_sql, tuple(params))
                 conn.commit()
+
                 user = dict(user)
-                user["nombre"] = nombre
+
+                if email:
+                    user["email"] = email
+                if nombre is not None:
+                    user["nombre"] = nombre
+
             return dict(user)
         
         # Crear nuevo usuario

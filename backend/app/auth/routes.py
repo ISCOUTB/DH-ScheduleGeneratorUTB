@@ -11,8 +11,10 @@ from urllib.parse import urlencode
 from typing import Optional
 import httpx
 from fastapi import APIRouter, Response, Cookie, HTTPException
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import RedirectResponse
 from dotenv import load_dotenv
+from ..db import repository
 
 load_dotenv()
 
@@ -42,6 +44,11 @@ sessions: dict = {}
 # Almacén temporal de estados PKCE (para validar callbacks)
 # Formato: {state: {code_verifier, ...}}
 pending_auth: dict = {}
+
+
+async def _persist_user(entra_id: str, email: str, nombre: Optional[str]) -> dict:
+    """Crea u obtiene el usuario en DB y retorna su registro."""
+    return await run_in_threadpool(repository.get_or_create_user, entra_id, email, nombre)
 
 
 def generate_pkce_pair():
@@ -150,14 +157,30 @@ async def callback(code: str = None, state: str = None, error: str = None, error
     if user_tenant not in ALLOWED_TENANTS:
         print(f"Tenant no autorizado: {user_tenant}")
         return RedirectResponse(url=f"{FRONTEND_URL}?error=tenant_not_allowed")
+
+    user_oid = user_info.get("oid")
+    user_email = user_info.get("preferred_username") or user_info.get("email")
+    user_nombre = user_info.get("name")
+
+    if not user_oid or not user_email:
+        print("Error de OAuth: faltan claims obligatorios (oid/email)")
+        return RedirectResponse(url=f"{FRONTEND_URL}?error=missing_user_claims")
+
+    try:
+        db_user = await _persist_user(user_oid, user_email, user_nombre)
+    except Exception as e:
+        print(f"Error persistiendo usuario en DB: {e}")
+        return RedirectResponse(url=f"{FRONTEND_URL}?error=user_persist_error")
     
     # Crear sesión
     session_id = secrets.token_urlsafe(32)
     sessions[session_id] = {
-        "id": user_info.get("oid"),  # Object ID
-        "email": user_info.get("preferred_username") or user_info.get("email"),
-        "nombre": user_info.get("name"),
-        "tenant_id": user_info.get("tid"),
+        "id": user_oid,  # Object ID de Entra (compatibilidad frontend)
+        "email": user_email,
+        "nombre": user_nombre,
+        "tenant_id": user_tenant,
+        "db_user_id": db_user.get("id"),
+        "db_user_created_at": str(db_user.get("created_at")),
     }
     
     # Redirigir al frontend con cookie de sesión
@@ -175,7 +198,7 @@ async def callback(code: str = None, state: str = None, error: str = None, error
 
 
 @router.get("/me")
-def get_me(session_id: Optional[str] = Cookie(default=None)):
+async def get_me(session_id: Optional[str] = Cookie(default=None)):
     """
     Retorna información del usuario de la sesión actual.
     """
@@ -183,10 +206,21 @@ def get_me(session_id: Optional[str] = Cookie(default=None)):
         raise HTTPException(status_code=401, detail="No autenticado")
     
     user = sessions[session_id]
+
+    # Auto-recuperación para sesiones viejas sin db_user_id.
+    if not user.get("db_user_id") and user.get("id") and user.get("email"):
+        try:
+            db_user = await _persist_user(user["id"], user["email"], user.get("nombre"))
+            user["db_user_id"] = db_user.get("id")
+            user["db_user_created_at"] = str(db_user.get("created_at"))
+        except Exception as e:
+            print(f"Warning: no se pudo sincronizar usuario de sesión con DB: {e}")
+
     return {
         "id": user["id"],
         "email": user["email"],
         "nombre": user["nombre"],
+        "dbUserId": user.get("db_user_id"),
         "authenticated": True
     }
 
