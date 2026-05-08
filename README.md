@@ -29,7 +29,8 @@ Generador de horarios académicos para estudiantes de la Universidad Tecnológic
   - Minimizar huecos entre clases.
 - **Visualización interactiva:** Vista de grilla semanal con los horarios generados.
 - **Exportación:** Descarga de horarios en formato PDF.
-- **Datos actualizados:** Sincronización automática con el sistema Banner de la universidad cada 6 minutos.
+- **Datos actualizados:** Sincronización automática con el sistema Banner de la universidad con alta frecuencia (por ejemplo, cada 6 a 10 minutos) para garantizar la frescura de la información sin afectar el historial de las preferencias de usuarios.
+- **Respaldo funcional:** Backups automáticos de la información de los usuarios cada 4 horas con retención extendida de historial físico frente a caídas.
 
 ## Arquitectura del Proyecto
 

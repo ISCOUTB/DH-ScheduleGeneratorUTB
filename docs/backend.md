@@ -19,6 +19,7 @@ Para mejorar mantenibilidad y trazabilidad, las decisiones relevantes se documen
 
 Registros vigentes:
 
+- `docs/issues/08-05-2026-optimizacion-backups-retencion.md`
 - `docs/issues/29-03-2026-rfc-horarios-destacados.md`
 - `docs/issues/29-03-2026-politica-persistencia-etl.md`
 - `docs/issues/07-08-2025-error-materias-laboratorio.md`
@@ -45,7 +46,7 @@ backend/
 │   ├── descargar_json.py   # Realiza web scraping para obtener los datos de Banner.
 │   ├── parser.py           # Procesa y limpia el JSON crudo.
 │   ├── insertar_en_db.py   # Inserta los datos procesados en la BD.
-│   ├── backup.py           # Realiza respaldos de la base de datos.
+│   ├── backup.py           # Realiza respaldos periódicos de datos de usuario.
 │   ├── Dockerfile          # Conteneriza los scripts para ejecutarlos como un cronjob.
 │   └── ...
 │
@@ -91,7 +92,7 @@ graph TD
         H[insertar_en_db.py]
         I[(PostgreSQL)]
         G --> H
-        H -- "Respalda, limpia e inserta" --> I
+        H -- "Limpia e inserta (atómico)" --> I
     end
 
     style D fill:#f9f,stroke:#333,stroke-width:2px
@@ -100,7 +101,7 @@ graph TD
 
 **1**. **Extract:** El script `descargar_json.py` simula ser un navegador para realizar peticiones al sistema Banner de la universidad, paginando a través de todos los resultados y guardando los datos crudos en `search_results_complete.json`.
 **2**. **Transform:** `parser.py` lee el JSON crudo, lo limpia, normaliza nombres, identifica relaciones entre cursos teóricos y laboratorios, y estructura los datos en un formato listo para ser insertado en la base de datos.
-**3**. **Load:** `insertar_en_db.py` orquesta la carga. Primero, llama a `backup.py` para crear un respaldo de los datos actuales. Luego aplica limpieza de tablas académicas e inserción en una única transacción atómica. Si ocurre un error, se ejecuta rollback y se conserva el estado previo de datos.
+**3**. **Load:** `insertar_en_db.py` orquesta la carga mediante una limpieza de tablas académicas y su reinserción en una única transacción atómica. Si ocurre un error, se ejecuta rollback y se conserva el estado previo. (*Nota:* Los backups ahora corren de forma paralela e independiente de este ETL, enfocándose en los datos de usuario).
 
 ## 4. Endpoints de la API
 

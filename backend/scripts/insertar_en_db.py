@@ -2,7 +2,7 @@
 import json
 import os
 from config import get_connection
-from backup import limpiar_tablas, hacer_snapshot
+from backup import limpiar_tablas
 from parser import procesar_json
 from inserter import insertar_datos
 from rescatador import procesar_rescate
@@ -42,8 +42,6 @@ def actualizar_base():
 
     # --- PREPARACIÓN DE LA BASE DE DATOS ---
     conn = get_connection()
-    print("Creando snapshot de la base de datos...")
-    hacer_snapshot()
 
     # --- PROCESAMIENTO Y RESCATE ---
     print("Paso 1: Procesando JSON inicial para detectar problemas...")

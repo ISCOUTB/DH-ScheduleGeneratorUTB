@@ -40,7 +40,7 @@ def limpiar_tablas(conn: psycopg.Connection, auto_commit: bool = True):
     print(f"Tablas preservadas: {', '.join(PRESERVED_APP_TABLES)}")
 
 def hacer_snapshot():
-    """Crea un snapshot de la base de datos usando pg_dump y la DATABASE_URL."""
+    """Crea un snapshot de la base de datos usando pg_dump, enfocado en tablas funcionales (usuarios, etc)."""
     timestamp = timestamp_actual()
     export_dir = os.path.join(os.path.dirname(__file__), "snapshots")
     os.makedirs(export_dir, exist_ok=True)
@@ -53,10 +53,26 @@ def hacer_snapshot():
         archivo_salida
     ]
 
+    # Agregar explícitamente las tablas funcionales que queremos respaldar
+    for table in PRESERVED_APP_TABLES:
+        comando.insert(-2, "-t")
+        comando.insert(-2, table)
+
     try:
-        print("Creando snapshot completo de la base de datos...")
+        print(f"Creando snapshot funcional ({', '.join(PRESERVED_APP_TABLES)})...")
         subprocess.run(comando, check=True, capture_output=True, text=True)
         print(f"Snapshot guardado en: {archivo_salida}")
+        
+        # Política de retención: mantener solo los últimos N snapshots para no llenar el disco
+        # 1125 snapshots a 6 diarios cubren un poco más de 6 meses (~187 días)
+        MAX_SNAPSHOTS = 1125
+        archivos = sorted([os.path.join(export_dir, f) for f in os.listdir(export_dir) if f.startswith("snapshot_") and f.endswith(".sql")])
+        if len(archivos) > MAX_SNAPSHOTS:
+            para_borrar = archivos[:-MAX_SNAPSHOTS]
+            for archivo in para_borrar:
+                os.remove(archivo)
+                print(f"Snapshot antiguo eliminado: {archivo}")
+                
     except FileNotFoundError:
         print("Error: El comando 'pg_dump' no se encontró. Asegúrate de que postgresql-client esté instalado en el contenedor.")
     except subprocess.CalledProcessError as e:
@@ -64,10 +80,8 @@ def hacer_snapshot():
 
 if __name__ == '__main__':
     try:
-        connection = get_connection()
+        # Solo ejecutamos el snapshot (ya no limpiamos las tablas aquí, eso es tarea del ETL)
         hacer_snapshot()
-        limpiar_tablas(connection)
-        connection.close()
     except Exception as e:
         print(f"Ocurrió un error: {e}")
 
