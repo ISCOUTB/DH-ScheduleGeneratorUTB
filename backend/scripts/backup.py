@@ -17,6 +17,7 @@ ACADEMIC_TABLES = (
 # Tablas funcionales de la aplicación que no deben limpiarse durante ETL académico.
 PRESERVED_APP_TABLES = (
     "usuario",
+    "sesion_usuario",
     "horario_destacado",
 )
 

@@ -19,6 +19,7 @@ Para mejorar mantenibilidad y trazabilidad, las decisiones relevantes se documen
 
 Registros vigentes:
 
+- `docs/issues/10-05-2026-registro-sesiones-usuario.md`
 - `docs/issues/08-05-2026-optimizacion-backups-retencion.md`
 - `docs/issues/29-03-2026-rfc-horarios-destacados.md`
 - `docs/issues/29-03-2026-politica-persistencia-etl.md`
@@ -33,7 +34,8 @@ backend/
 ├── app/                  # Contiene el código fuente de la aplicación FastAPI.
 │   ├── main.py           # Punto de entrada de la API, define endpoints y middleware.
 │   ├── models.py         # Modelos de datos Pydantic para validación y serialización.
-│   ├── Dockerfile        # Instrucciones para construir la imagen Docker de la API.
+│   ├── auth/             # Autenticación OAuth con Microsoft Entra ID.
+│   │   └── routes.py     # Flujo OAuth con PKCE, gestión de sesiones.
 │   ├── db/
 │   │   └── repository.py # Lógica de acceso a la base de datos.
 │   ├── routes/
@@ -47,11 +49,13 @@ backend/
 │   ├── parser.py           # Procesa y limpia el JSON crudo.
 │   ├── insertar_en_db.py   # Inserta los datos procesados en la BD.
 │   ├── backup.py           # Realiza respaldos periódicos de datos de usuario.
-│   ├── Dockerfile          # Conteneriza los scripts para ejecutarlos como un cronjob.
-│   └── ...
+│   ├── rescatador.py       # Recupera secciones ligadas incompletas.
+│   ├── config.py           # Configuración compartida (conexión a BD, etc.).
+│   └── utils.py            # Utilidades compartidas (timestamps, etc.).
 │
+├── Dockerfile            # Imagen Docker de la API FastAPI.
+├── scripts.Dockerfile    # Imagen Docker para scripts ETL y backups.
 ├── .env                  # Variables de entorno para la aplicación FastAPI.
-├── docker-compose.yml    # Define y orquesta los servicios de Docker (API, DB, Cron).
 └── init.sql              # Script SQL para inicializar el esquema de la base de datos.
 ```
 
@@ -116,7 +120,10 @@ La API expone los siguientes endpoints para ser consumidos por el frontend:
 
   ```json
   {
-    "subjects": ["DE456", "IS789"],
+    "subjects": [
+      {"code": "DE456", "name": "NOMBRE DE LA MATERIA"},
+      {"code": "IS789", "name": "OTRA MATERIA"}
+    ],
     "filters": {
       "timeFilters": { "Lunes": ["07:00", "08:00"] },
       "professors": {
@@ -124,7 +131,8 @@ La API expone los siguientes endpoints para ser consumidos por el frontend:
       },
       "optimizeGaps": true,
       "optimizeFreeDays": false
-    }
+    },
+    "creditLimit": 25
   }
   ```
 
@@ -157,21 +165,54 @@ La API expone los siguientes endpoints para ser consumidos por el frontend:
 
 ---
 
-### `GET /api/subjects/{subject_code}`
+### `GET /api/subjects/{subject_code}?name=...`
 
 - **Descripción:** Obtiene toda la información detallada de una única materia, incluyendo todas sus `classOptions` (grupos, profesores, horarios, etc.).
 - **Parámetro de Ruta:** `subject_code` (ej. "DE123").
+- **Parámetro de Consulta:** `name` — Nombre de la materia (requerido, ya que la PK de materia es compuesta).
 - **Respuesta Exitosa (200):** Un objeto `Subject` completo, como se define en `models.py`.
-- **Respuesta de Error (404):** Si la materia con el código especificado no se encuentra.
+- **Respuesta de Error (404):** Si la materia con el código y nombre especificados no se encuentra.
 
-## 5. Configuración y Despliegue
+## 5. Autenticación (Microsoft Entra ID)
 
-- **Variables de Entorno:** La configuración de la base de datos se gestiona a través de archivos `.env`. Existe un `.env` en la raíz del backend para la aplicación FastAPI y otro en `scripts/` para los scripts de actualización.
-- **Docker Compose:** El archivo `docker-compose.yml` es el punto de entrada para levantar todo el entorno. Define tres servicios:
-  1. `api`: El contenedor de la aplicación FastAPI.
+El módulo `app/auth/` implementa autenticación OAuth 2.0 con **Authorization Code Flow + PKCE** contra Microsoft Entra ID.
+
+### Flujo de autenticación
+
+1. El frontend redirige a `/api/auth/login`.
+2. El backend genera parámetros PKCE (`code_verifier` + `code_challenge`) y redirige a Microsoft.
+3. Microsoft autentica al usuario y retorna un `code` a `/api/auth/callback`.
+4. El backend intercambia el `code` por tokens usando `httpx`, valida el tenant, y decodifica el `id_token` con `python-jose`.
+5. Se crea o actualiza el usuario en la base de datos (`get_or_create_user`).
+6. Se registra el inicio de sesión en la tabla `sesion_usuario`.
+7. Se crea una sesión en memoria y se establece una cookie `session_id`.
+
+### Endpoints de autenticación
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/auth/login` | Inicia flujo OAuth (redirige a Microsoft) |
+| `GET` | `/api/auth/callback` | Callback tras autenticación en Microsoft |
+| `GET` | `/api/auth/me` | Retorna info del usuario de la sesión actual |
+| `POST` | `/api/auth/logout` | Cierra sesión y retorna URL de logout de Microsoft |
+
+### Limitaciones conocidas
+
+- Las sesiones se almacenan **en memoria** del proceso API. Si el contenedor se reinicia, todas las sesiones se pierden y los usuarios deben re-autenticarse.
+- Esto también limita el escalado horizontal (múltiples instancias de la API no comparten sesiones).
+- Para escalado futuro, considerar migrar a Redis o sesiones en base de datos.
+
+## 6. Configuración y Despliegue
+
+- **Variables de Entorno:** La configuración de la base de datos y autenticación se gestiona a través del archivo `.env` en la raíz del backend. Los scripts de actualización acceden a estas variables a través de la configuración de Docker (env_file en docker-compose).
+- **Docker Compose:** El archivo `docker-compose.yml` en la raíz del proyecto es el punto de entrada para levantar todo el entorno. Define los siguientes servicios:
+  1. `backend`: El contenedor de la aplicación FastAPI.
   2. `db`: El contenedor de la base de datos PostgreSQL.
-  3. `cron`: El contenedor que ejecuta los scripts de actualización de forma periódica.
-- **Ejecución:** Para iniciar el backend, simplemente ejecuta el siguiente comando desde el directorio `backend/`:
+  3. `initial-data`: Contenedor que pobla la BD con datos iniciales (se ejecuta una vez).
+  4. `cron-updater`: El contenedor que ejecuta los scripts de actualización de forma periódica.
+  5. `frontend`: El contenedor con Flutter Web + Nginx.
+  6. `certbot`: Renovación automática de certificados SSL (solo producción).
+- **Ejecución:** Para iniciar todo el entorno, ejecuta el siguiente comando desde la raíz del proyecto:
 
   ```bash
   docker-compose up -d

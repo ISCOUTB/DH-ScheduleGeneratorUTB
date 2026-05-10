@@ -23,7 +23,7 @@ Para garantizar estabilidad a largo plazo (incluso tras meses sin mantenimiento 
    - Se levantó un **nuevo cron job independiente** en `docker-compose.yml` (`0 */4 * * *`) que ejecuta `backup.py` cada 4 horas (6 veces al día).
 
 3. **Snapshots Quirúrgicos:**
-   - El backup mediante `pg_dump` ahora está configurado de manera explícita para recolectar **únicamente** las tablas persistentes (`PRESERVED_APP_TABLES`): `usuario` y `horario_destacado`. 
+   - El backup mediante `pg_dump` ahora está configurado de manera explícita para recolectar **únicamente** las tablas persistentes (`PRESERVED_APP_TABLES`): `usuario`, `sesion_usuario` y `horario_destacado`. 
    - Se excluyen las tablas de clases, cursos, profesores y materias por ser reconstruibles en cualquier momento.
 
 4. **Retención Inteligente (6 Meses) y Mapeo Físico:**

@@ -29,6 +29,7 @@ Se adopta política explícita:
 
 2. Tablas funcionales de aplicación se preservan:
 - `usuario`
+- `sesion_usuario`
 - `horario_destacado` (cuando se implemente)
 
 3. El login debe sincronizar usuario en DB (`get_or_create_user`) para asegurar persistencia.

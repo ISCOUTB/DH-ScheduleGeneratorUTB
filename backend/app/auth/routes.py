@@ -10,7 +10,7 @@ import base64
 from urllib.parse import urlencode
 from typing import Optional
 import httpx
-from fastapi import APIRouter, Response, Cookie, HTTPException
+from fastapi import APIRouter, Request, Response, Cookie, HTTPException
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import RedirectResponse
 from dotenv import load_dotenv
@@ -97,7 +97,7 @@ def login():
 
 
 @router.get("/callback")
-async def callback(code: str = None, state: str = None, error: str = None, error_description: str = None):
+async def callback(request: Request, code: str = None, state: str = None, error: str = None, error_description: str = None):
     """
     Callback de Microsoft después del login.
     Intercambia el código por tokens y crea la sesión.
@@ -182,6 +182,17 @@ async def callback(code: str = None, state: str = None, error: str = None, error
         "db_user_id": db_user.get("id"),
         "db_user_created_at": str(db_user.get("created_at")),
     }
+
+    # Registrar el inicio de sesión
+    try:
+        await run_in_threadpool(
+            repository.register_login,
+            db_user.get("id"),
+            request.client.host if request.client else None,
+            request.headers.get("user-agent")
+        )
+    except Exception as e:
+        print(f"Warning: no se pudo registrar inicio de sesión: {e}")
     
     # Redirigir al frontend con cookie de sesión
     response = RedirectResponse(url=FRONTEND_URL)

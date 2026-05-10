@@ -17,7 +17,7 @@ El frontend es una aplicacion web construida con **Flutter 3**, optimizada para 
 
 ## 2. Estructura del Proyecto
 
-`
+```
 frontend/lib/
 +-- main.dart                 # Punto de entrada, autenticacion y configuracion
 +-- firebase_options.dart     # Configuracion de Firebase (autogenerado)
@@ -58,6 +58,7 @@ frontend/lib/
     +-- schedule_overview_widget.dart # Resumen del horario
     +-- schedule_sort_widget.dart    # Ordenamiento de horarios
     +-- professor_filter_widget.dart # Filtro por profesor
+    +-- nrc_filter_widget.dart       # Filtro por NRC
     |
     +-- common/               # Widgets comunes reutilizables
     |   +-- common.dart       # Barrel export
@@ -78,7 +79,7 @@ frontend/lib/
         +-- user_info_badge.dart   # Badge de usuario
         +-- pagination_control.dart # Paginacion
         +-- schedule_counter_badge.dart # Contador
-`
+```
 
 ## 3. Flujo de Autenticacion
 
@@ -104,25 +105,33 @@ La autenticacion utiliza **Microsoft Entra ID** con flujo OAuth manejado por el 
 
 El estado global se maneja con `ScheduleProvider`:
 
-`dart
+```dart
 class ScheduleProvider extends ChangeNotifier {
   // Materias
-  List<SubjectSummary> _allSubjects = [];
-  List<Subject> _selectedSubjects = [];
+  List<SubjectSummary> _allSubjectsList = [];
+  List<Subject> _addedSubjects = [];
   
   // Horarios generados
   List<List<ClassOption>> _allSchedules = [];
-  int _currentScheduleIndex = 0;
+  List<List<ClassOption>> _baseSchedulesForNrcCalculation = [];
+  int? _selectedScheduleIndex;
   
   // Filtros
-  Map<String, dynamic> _filters = {...};
+  Map<String, dynamic> _appliedFilters = {};
+  Map<String, dynamic> _apiFiltersForGeneration = {};
+  Map<String, dynamic> _currentOptimizations = {
+    'optimizeGaps': false,
+    'optimizeFreeDays': false,
+  };
   
   // Estados de UI
   bool _isLoading = false;
   bool _isSearchOpen = false;
   bool _isFilterOpen = false;
+  bool _isOverviewOpen = false;
+  bool _isExpandedView = false;
 }
-`
+```
 
 ## 5. Servicios
 
@@ -143,27 +152,27 @@ Ambos servicios usan `BrowserClient` con `withCredentials = true`.
 ## 6. Modelos de Datos
 
 ### User
-`dart
+```dart
 class User {
   final String id;    // UUID de Microsoft Entra ID
   final String email;
   final String? nombre;
   final bool authenticated;
 }
-`
+```
 
 ### Subject
-`dart
+```dart
 class Subject {
   final String code;
   final String name;
   final int credits;
   final List<ClassOption> classOptions;
 }
-`
+```
 
 ### ClassOption
-`dart
+```dart
 class ClassOption {
   final String subjectName;
   final String subjectCode;
@@ -177,19 +186,19 @@ class ClassOption {
   final int credits;
   final List<Schedule> schedules;
 }
-`
+```
 
 ## 7. Compilacion y Despliegue
 
 ### Desarrollo local:
-`ash
+```bash
 flutter run -d chrome
-`
+```
 
 ### Produccion (Docker):
-`ash
+```bash
 docker-compose up --build frontend -d
-`
+```
 
 El Dockerfile usa multi-stage build:
 1. **Stage 1 (builder)**: Imagen de Flutter para compilar

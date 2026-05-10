@@ -1,4 +1,4 @@
-﻿--
+--
 -- PostgreSQL database dump
 --
 
@@ -181,3 +181,19 @@ ALTER TABLE public.usuario OWNER TO pg_database_owner;
 CREATE INDEX IF NOT EXISTS idx_usuario_entra_id ON public.usuario(entra_id);
 CREATE INDEX IF NOT EXISTS idx_usuario_email ON public.usuario(email);
 
+--
+-- Tabla de registro de inicios de sesión por usuario
+--
+
+CREATE TABLE IF NOT EXISTS public.sesion_usuario (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL REFERENCES public.usuario(id),
+    login_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    ip_address VARCHAR(45),
+    user_agent TEXT
+);
+
+ALTER TABLE public.sesion_usuario OWNER TO pg_database_owner;
+
+CREATE INDEX IF NOT EXISTS idx_sesion_usuario_id ON public.sesion_usuario(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_sesion_login_at ON public.sesion_usuario(login_at);

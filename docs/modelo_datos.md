@@ -57,6 +57,16 @@ erDiagram
         varchar nombre
         timestamp created_at
     }
+
+    USUARIO ||--o{ SESION_USUARIO : registra
+
+    SESION_USUARIO {
+        int id PK
+        int usuario_id FK
+        timestamp login_at
+        varchar ip_address
+        text user_agent
+    }
 ```
 
 ## Diagrama Entidad-Relación (Propuesto para Horarios Destacados)
@@ -66,7 +76,6 @@ erDiagram
     MATERIA ||--o{ CURSO : tiene
     PROFESOR ||--o{ CURSO : imparte
     CURSO ||--o{ CLASE : contiene
-    USUARIO ||--o{ HORARIO_DESTACADO : guarda
 
     MATERIA {
         varchar codigomateria PK
@@ -107,6 +116,17 @@ erDiagram
         varchar email UK
         varchar nombre
         timestamp created_at
+    }
+
+    USUARIO ||--o{ SESION_USUARIO : registra
+    USUARIO ||--o{ HORARIO_DESTACADO : guarda
+
+    SESION_USUARIO {
+        int id PK
+        int usuario_id FK
+        timestamp login_at
+        varchar ip_address
+        text user_agent
     }
 
     HORARIO_DESTACADO {
@@ -200,6 +220,25 @@ Estado de implementación:
 
 ---
 
+### Sesión de Usuario
+
+Registra cada inicio de sesión de un usuario en la aplicación.
+
+| Campo | Tipo | Descripción |
+|-------|------|-------------|
+| `id` | SERIAL | Identificador único del registro (PK) |
+| `usuario_id` | INTEGER | Usuario que inició sesión (FK a `usuario.id`) |
+| `login_at` | TIMESTAMP | Fecha y hora del inicio de sesión |
+| `ip_address` | VARCHAR(45) | Dirección IP del cliente (IPv4 o IPv6) |
+| `user_agent` | TEXT | Navegador/dispositivo del cliente |
+
+Estado de implementación:
+- La tabla existe en `backend/init.sql`.
+- El registro se realiza automáticamente en el callback de autenticación (`auth/routes.py`).
+- Los datos se incluyen en los backups periódicos.
+
+---
+
 ### Horario Destacado (Propuesto)
 
 Representa un horario guardado por el usuario como favorito.
@@ -224,6 +263,7 @@ Restricción sugerida:
 | Profesor → Curso | 1:N | Un profesor puede impartir varios cursos |
 | Curso → Clase | 1:N | Un curso tiene uno o más bloques horarios |
 | Curso → Curso | N:1 | Laboratorios se vinculan a su teórico via `nrcteorico` |
+| Usuario → Sesión de Usuario | 1:N | Un usuario tiene múltiples registros de inicio de sesión |
 | Usuario → Horario Destacado | 1:N | Un usuario puede guardar múltiples horarios (propuesto) |
 
 ## Tipos de Curso

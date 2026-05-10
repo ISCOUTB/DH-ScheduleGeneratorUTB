@@ -29,7 +29,7 @@ Generador de horarios académicos para estudiantes de la Universidad Tecnológic
   - Minimizar huecos entre clases.
 - **Visualización interactiva:** Vista de grilla semanal con los horarios generados.
 - **Exportación:** Descarga de horarios en formato PDF.
-- **Datos actualizados:** Sincronización automática con el sistema Banner de la universidad con alta frecuencia (por ejemplo, cada 6 a 10 minutos) para garantizar la frescura de la información sin afectar el historial de las preferencias de usuarios.
+- **Datos actualizados:** Sincronización automática con el sistema Banner de la universidad con alta frecuencia (cada 10 minutos en producción) para garantizar la frescura de la información sin afectar el historial de las preferencias de usuarios.
 - **Respaldo funcional:** Backups automáticos de la información de los usuarios cada 4 horas con retención extendida de historial físico frente a caídas.
 
 ## Arquitectura del Proyecto
@@ -66,12 +66,13 @@ El proyecto sigue una arquitectura de microservicios contenerizados con Docker:
 ## Tecnologías Utilizadas
 
 ### Backend
-- **Python 3.11+**
+- **Python 3.13**
 - **FastAPI** - Framework web de alto rendimiento
 - **PostgreSQL** - Base de datos relacional
 - **psycopg3** - Driver de PostgreSQL para Python
 - **Pydantic** - Validación de datos
-- **MSAL** - Microsoft Authentication Library para OAuth 2.0
+- **python-jose** - Decodificación de JWT (tokens de Entra ID)
+- **httpx** - Cliente HTTP asíncrono para flujo OAuth
 
 ### Frontend
 - **Flutter 3** - Framework de UI multiplataforma
@@ -163,17 +164,25 @@ DH-ScheduleGeneratorUTB/
 │   ├── app/                    # Código fuente de FastAPI
 │   │   ├── main.py             # Punto de entrada de la API
 │   │   ├── models.py           # Modelos Pydantic
+│   │   ├── auth/               # Autenticación OAuth con Microsoft Entra ID
+│   │   │   └── routes.py       # Flujo OAuth con PKCE
 │   │   ├── db/                 # Capa de acceso a datos
 │   │   │   └── repository.py
 │   │   ├── routes/             # Rutas modulares
+│   │   │   └── subject_routes.py
 │   │   └── services/           # Lógica de negocio
 │   │       └── schedule_generator.py
-│   ├── scripts/                # Scripts de actualización de datos
+│   ├── scripts/                # Scripts de actualización y mantenimiento
 │   │   ├── actualizar_datos.py # Orquestador del pipeline ETL
 │   │   ├── descargar_json.py   # Web scraping de Banner
 │   │   ├── parser.py           # Procesamiento de datos
-│   │   └── insertar_en_db.py   # Carga en PostgreSQL
-│   ├── Dockerfile
+│   │   ├── insertar_en_db.py   # Carga en PostgreSQL
+│   │   ├── backup.py           # Respaldos periódicos de datos de usuario
+│   │   ├── rescatador.py       # Recuperación de secciones ligadas
+│   │   ├── config.py           # Configuración compartida de scripts
+│   │   └── utils.py            # Utilidades compartidas
+│   ├── Dockerfile              # Imagen Docker de la API
+│   ├── scripts.Dockerfile      # Imagen Docker para scripts ETL y backups
 │   ├── requirements.txt
 │   └── init.sql                # Esquema inicial de la BD
 │
@@ -181,7 +190,9 @@ DH-ScheduleGeneratorUTB/
 │   ├── lib/                    # Código fuente Dart
 │   │   ├── main.dart           # Punto de entrada
 │   │   ├── models/             # Modelos de datos
-│   │   ├── services/           # Servicios (API, etc.)
+│   │   ├── providers/          # Manejo de estado (Provider)
+│   │   ├── screens/            # Pantallas principales
+│   │   ├── services/           # Servicios (API, Auth)
 │   │   ├── widgets/            # Componentes de UI
 │   │   └── utils/              # Utilidades
 │   ├── Dockerfile
@@ -192,7 +203,8 @@ DH-ScheduleGeneratorUTB/
 ├── docs/                       # Documentación adicional
 │   ├── backend.md              # Documentación del backend
 │   ├── frontend.md             # Documentación del frontend
-│   └── modelo_datos.md         # Modelo de datos
+│   ├── modelo_datos.md         # Modelo de datos
+│   └── issues/                 # Registros técnicos de decisiones
 │
 ├── tests/                      # Tests del backend
 │
@@ -209,11 +221,22 @@ DH-ScheduleGeneratorUTB/
 
 ## API Endpoints
 
+### Materias y Horarios
+
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | `GET` | `/api/subjects` | Lista todas las materias disponibles |
-| `GET` | `/api/subjects/{code}` | Obtiene detalles de una materia específica |
+| `GET` | `/api/subjects/{code}?name=...` | Obtiene detalles de una materia por código y nombre |
 | `POST` | `/api/schedules/generate` | Genera horarios válidos |
+
+### Autenticación (Microsoft Entra ID)
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/auth/login` | Inicia flujo OAuth (redirige a Microsoft) |
+| `GET` | `/api/auth/callback` | Callback de Microsoft tras autenticación |
+| `GET` | `/api/auth/me` | Retorna información del usuario autenticado |
+| `POST` | `/api/auth/logout` | Cierra sesión del usuario |
 
 Para documentación interactiva completa, accede a `/api/docs` cuando la API esté corriendo.
 
