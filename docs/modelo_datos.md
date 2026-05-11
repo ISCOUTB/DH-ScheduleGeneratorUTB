@@ -238,7 +238,7 @@ Registra cada inicio de sesión de un usuario en la aplicación.
 Estado de implementación:
 - La tabla existe en `backend/init.sql`.
 - Los logins se registran automáticamente en el callback de autenticación (`auth/routes.py`).
-- Las visitas se registran en `/api/auth/me` con throttle de 30 minutos por sesión.
+- Las visitas se registran en `/api/auth/me` con throttle de 15 minutos por sesión.
 - Los datos se incluyen en los backups periódicos.
 
 ---

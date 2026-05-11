@@ -231,12 +231,12 @@ async def get_me(request: Request, session_id: Optional[str] = Cookie(default=No
         except Exception as e:
             print(f"Warning: no se pudo sincronizar usuario de sesión con DB: {e}")
 
-    # Registrar visita (throttle: máximo 1 cada 30 minutos por sesión)
+    # Registrar visita (throttle: máximo 1 cada 15 minutos por sesión)
     if user.get("db_user_id"):
         import time
         now = time.time()
         last_visit = user.get("_last_visit_logged", 0)
-        if now - last_visit > 1800:  # 30 minutos
+        if now - last_visit > 900:  # 15 minutos
             user["_last_visit_logged"] = now
             try:
                 client_ip = request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (

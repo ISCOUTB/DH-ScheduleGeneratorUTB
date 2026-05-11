@@ -51,7 +51,7 @@ El registro ocurre en dos puntos de `auth/routes.py`:
 1. El usuario abre la app con sesión existente.
 2. El frontend llama a `/api/auth/me` para verificar la cookie.
 3. Si la sesión es válida, se registra una visita con tipo `visita`.
-4. Throttle: máximo 1 visita cada 30 minutos por sesión para evitar duplicados por recargas.
+4. Throttle: máximo 1 visita cada 15 minutos por sesión para evitar duplicados por recargas.
 
 **Resolución de IP real:**
 - Se lee el header `X-Forwarded-For` (ya configurado en Nginx) para obtener la IP real del cliente.
