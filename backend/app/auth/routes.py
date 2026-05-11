@@ -4,6 +4,7 @@ Rutas de autenticación OAuth con Microsoft Entra ID.
 Implementa Authorization Code Flow con PKCE.
 """
 import os
+import time
 import secrets
 import hashlib
 import base64
@@ -181,6 +182,7 @@ async def callback(request: Request, code: str = None, state: str = None, error:
         "tenant_id": user_tenant,
         "db_user_id": db_user.get("id"),
         "db_user_created_at": str(db_user.get("created_at")),
+        "_last_visit_logged": time.time(),  # Evita visita duplicada inmediata tras login
     }
 
     # Registrar el inicio de sesión
@@ -233,7 +235,6 @@ async def get_me(request: Request, session_id: Optional[str] = Cookie(default=No
 
     # Registrar visita (throttle: máximo 1 cada 15 minutos por sesión)
     if user.get("db_user_id"):
-        import time
         now = time.time()
         last_visit = user.get("_last_visit_logged", 0)
         if now - last_visit > 900:  # 15 minutos
