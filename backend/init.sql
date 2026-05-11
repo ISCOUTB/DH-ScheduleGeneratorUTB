@@ -190,7 +190,8 @@ CREATE TABLE IF NOT EXISTS public.sesion_usuario (
     usuario_id INTEGER NOT NULL REFERENCES public.usuario(id),
     login_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     ip_address VARCHAR(45),
-    user_agent TEXT
+    user_agent TEXT,
+    tipo VARCHAR(10) DEFAULT 'login'
 );
 
 ALTER TABLE public.sesion_usuario OWNER TO pg_database_owner;

@@ -364,18 +364,20 @@ def get_user_by_id(user_id: int) -> Dict[str, Any] | None:
         conn.close()
 
 
-def register_login(usuario_id: int, ip_address: str = None, user_agent: str = None):
+def register_login(usuario_id: int, ip_address: str = None, user_agent: str = None, tipo: str = "login"):
     """
-    Registra un inicio de sesión del usuario.
-    Guarda la fecha/hora, dirección IP y user-agent del navegador.
+    Registra un inicio de sesión o visita del usuario.
+    Guarda la fecha/hora, dirección IP, user-agent del navegador y tipo de evento.
+    
+    tipo: 'login' para autenticación OAuth, 'visita' para apertura con sesión existente.
     """
     conn = get_db_connection()
     cursor = conn.cursor()
 
     try:
         cursor.execute(
-            "INSERT INTO sesion_usuario (usuario_id, ip_address, user_agent) VALUES (%s, %s, %s)",
-            (usuario_id, ip_address, user_agent)
+            "INSERT INTO sesion_usuario (usuario_id, ip_address, user_agent, tipo) VALUES (%s, %s, %s, %s)",
+            (usuario_id, ip_address, user_agent, tipo)
         )
         conn.commit()
     except Exception as e:

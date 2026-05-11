@@ -185,11 +185,15 @@ async def callback(request: Request, code: str = None, state: str = None, error:
 
     # Registrar el inicio de sesión
     try:
+        client_ip = request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (
+            request.client.host if request.client else None
+        )
         await run_in_threadpool(
             repository.register_login,
             db_user.get("id"),
-            request.client.host if request.client else None,
-            request.headers.get("user-agent")
+            client_ip,
+            request.headers.get("user-agent"),
+            "login"
         )
     except Exception as e:
         print(f"Warning: no se pudo registrar inicio de sesión: {e}")
@@ -209,7 +213,7 @@ async def callback(request: Request, code: str = None, state: str = None, error:
 
 
 @router.get("/me")
-async def get_me(session_id: Optional[str] = Cookie(default=None)):
+async def get_me(request: Request, session_id: Optional[str] = Cookie(default=None)):
     """
     Retorna información del usuario de la sesión actual.
     """
@@ -226,6 +230,27 @@ async def get_me(session_id: Optional[str] = Cookie(default=None)):
             user["db_user_created_at"] = str(db_user.get("created_at"))
         except Exception as e:
             print(f"Warning: no se pudo sincronizar usuario de sesión con DB: {e}")
+
+    # Registrar visita (throttle: máximo 1 cada 30 minutos por sesión)
+    if user.get("db_user_id"):
+        import time
+        now = time.time()
+        last_visit = user.get("_last_visit_logged", 0)
+        if now - last_visit > 1800:  # 30 minutos
+            user["_last_visit_logged"] = now
+            try:
+                client_ip = request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (
+                    request.client.host if request.client else None
+                )
+                await run_in_threadpool(
+                    repository.register_login,
+                    user["db_user_id"],
+                    client_ip,
+                    request.headers.get("user-agent"),
+                    "visita"
+                )
+            except Exception as e:
+                print(f"Warning: no se pudo registrar visita: {e}")
 
     return {
         "id": user["id"],

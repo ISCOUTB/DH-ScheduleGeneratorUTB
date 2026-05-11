@@ -66,6 +66,7 @@ erDiagram
         timestamp login_at
         varchar ip_address
         text user_agent
+        varchar tipo
     }
 ```
 
@@ -127,6 +128,7 @@ erDiagram
         timestamp login_at
         varchar ip_address
         text user_agent
+        varchar tipo
     }
 
     HORARIO_DESTACADO {
@@ -231,10 +233,12 @@ Registra cada inicio de sesión de un usuario en la aplicación.
 | `login_at` | TIMESTAMP | Fecha y hora del inicio de sesión |
 | `ip_address` | VARCHAR(45) | Dirección IP del cliente (IPv4 o IPv6) |
 | `user_agent` | TEXT | Navegador/dispositivo del cliente |
+| `tipo` | VARCHAR(10) | Tipo de evento: `login` (OAuth) o `visita` (sesión existente) |
 
 Estado de implementación:
 - La tabla existe en `backend/init.sql`.
-- El registro se realiza automáticamente en el callback de autenticación (`auth/routes.py`).
+- Los logins se registran automáticamente en el callback de autenticación (`auth/routes.py`).
+- Las visitas se registran en `/api/auth/me` con throttle de 30 minutos por sesión.
 - Los datos se incluyen en los backups periódicos.
 
 ---

@@ -28,9 +28,10 @@ Nueva tabla `sesion_usuario`:
 |-------|------|-------------|
 | `id` | SERIAL | PK autoincremental |
 | `usuario_id` | INTEGER NOT NULL | FK a `usuario.id` |
-| `login_at` | TIMESTAMP | Fecha/hora del login (default NOW()) |
-| `ip_address` | VARCHAR(45) | IP del cliente (IPv4 o IPv6) |
+| `login_at` | TIMESTAMP | Fecha/hora del evento (default NOW()) |
+| `ip_address` | VARCHAR(45) | IP real del cliente (vía X-Forwarded-For) |
 | `user_agent` | TEXT | User-agent del navegador |
+| `tipo` | VARCHAR(10) | `login` (OAuth) o `visita` (sesión existente) |
 
 Índices:
 - `idx_sesion_usuario_id` sobre `usuario_id`
@@ -38,13 +39,23 @@ Nueva tabla `sesion_usuario`:
 
 ### 3.2 Flujo de registro
 
-El registro ocurre en el callback de autenticación OAuth (`auth/routes.py`):
+El registro ocurre en dos puntos de `auth/routes.py`:
 
+**Login (tipo=`login`):** En el callback de autenticación OAuth:
 1. El usuario completa autenticación con Microsoft Entra ID.
 2. Se persiste o recupera el usuario en BD (`get_or_create_user`).
 3. Se crea la sesión en memoria.
-4. Se registra el login llamando a `repository.register_login()` con el `usuario_id`, la IP del request y el user-agent.
-5. El registro está envuelto en try/except para que un fallo en la escritura no bloquee el flujo de autenticación.
+4. Se registra el login con tipo `login`.
+
+**Visita (tipo=`visita`):** En el endpoint `/api/auth/me`:
+1. El usuario abre la app con sesión existente.
+2. El frontend llama a `/api/auth/me` para verificar la cookie.
+3. Si la sesión es válida, se registra una visita con tipo `visita`.
+4. Throttle: máximo 1 visita cada 30 minutos por sesión para evitar duplicados por recargas.
+
+**Resolución de IP real:**
+- Se lee el header `X-Forwarded-For` (ya configurado en Nginx) para obtener la IP real del cliente.
+- Si no está presente (ej. desarrollo local sin Nginx), se usa `request.client.host` como fallback.
 
 ### 3.3 Archivos modificados
 
@@ -57,24 +68,32 @@ El registro ocurre en el callback de autenticación OAuth (`auth/routes.py`):
 ## 4. Consultas útiles
 
 ```sql
--- Logins por usuario, últimos 30 días
+-- Logins OAuth por usuario, últimos 30 días
 SELECT u.email, u.nombre, COUNT(*) as logins
 FROM sesion_usuario s
 JOIN usuario u ON s.usuario_id = u.id
-WHERE s.login_at > NOW() - INTERVAL '30 days'
+WHERE s.login_at > NOW() - INTERVAL '30 days' AND s.tipo = 'login'
 GROUP BY u.email, u.nombre
 ORDER BY logins DESC;
 
--- Último login de cada usuario
-SELECT u.email, u.nombre, MAX(s.login_at) as ultimo_login
+-- Visitas totales por usuario (entradas a la app)
+SELECT u.email, u.nombre, COUNT(*) as visitas
+FROM sesion_usuario s
+JOIN usuario u ON s.usuario_id = u.id
+WHERE s.login_at > NOW() - INTERVAL '30 days' AND s.tipo = 'visita'
+GROUP BY u.email, u.nombre
+ORDER BY visitas DESC;
+
+-- Última actividad de cada usuario
+SELECT u.email, u.nombre, MAX(s.login_at) as ultima_actividad
 FROM usuario u
 LEFT JOIN sesion_usuario s ON u.id = s.usuario_id
 GROUP BY u.email, u.nombre;
 
--- Actividad diaria
-SELECT DATE(login_at) as fecha, COUNT(*) as logins
+-- Actividad diaria (logins + visitas)
+SELECT DATE(login_at) as fecha, tipo, COUNT(*) as eventos
 FROM sesion_usuario
-GROUP BY DATE(login_at)
+GROUP BY DATE(login_at), tipo
 ORDER BY fecha DESC;
 
 -- Usuarios activos por semana
