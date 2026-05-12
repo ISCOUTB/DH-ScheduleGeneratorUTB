@@ -520,6 +520,18 @@ class ScheduleProvider extends ChangeNotifier {
   /// Número de favoritos actuales.
   int get favoritesCount => _favoriteSignatures.length;
 
+  /// Término académico actual (definido por el servidor).
+  String _currentTerm = '';
+  String get currentTerm => _currentTerm;
+
+  /// Término seleccionado actualmente en la UI de favoritos.
+  String _selectedTerm = '';
+  String get selectedTerm => _selectedTerm;
+
+  /// Términos disponibles con favoritos.
+  List<String> _availableTerms = [];
+  List<String> get availableTerms => List.unmodifiable(_availableTerms);
+
   // ============================================================
   // MÉTODOS: Favoritos
   // ============================================================
@@ -535,13 +547,38 @@ class ScheduleProvider extends ChangeNotifier {
     return _favoriteSignatures.contains(computeSignature(schedule));
   }
 
-  /// Carga los favoritos del servidor.
-  Future<void> loadFavorites() async {
+  /// Carga los términos disponibles desde el servidor.
+  Future<void> loadFavoriteTerms() async {
+    try {
+      final data = await _apiService.getFavoriteTerms();
+      _currentTerm = data['currentTerm'] as String;
+      _availableTerms = List<String>.from(data['availableTerms'] as List);
+
+      // Si no hay término seleccionado, usar el actual
+      if (_selectedTerm.isEmpty) {
+        _selectedTerm = _currentTerm;
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error cargando términos de favoritos: $e');
+    }
+  }
+
+  /// Cambia el término seleccionado y recarga favoritos.
+  Future<void> switchFavoriteTerm(String term) async {
+    if (term == _selectedTerm) return; // Sin cambio, no recargar
+    _selectedTerm = term;
+    notifyListeners();
+    await loadFavorites(term: term);
+  }
+
+  /// Carga los favoritos del servidor para un término específico.
+  Future<void> loadFavorites({String? term}) async {
     _isFavoritesLoading = true;
     notifyListeners();
 
     try {
-      final data = await _apiService.getFavorites();
+      final data = await _apiService.getFavorites(term: term ?? _selectedTerm);
       final favorites = data['favorites'] as List<dynamic>;
       _maxFavoritesAllowed = data['maxAllowed'] ?? 20;
 
@@ -561,6 +598,16 @@ class ScheduleProvider extends ChangeNotifier {
             .map<ClassOption>((co) => ClassOption.fromJson(co as Map<String, dynamic>))
             .toList();
         _favoriteSchedules.add(schedule);
+      }
+
+      // Fallback: si loadFavoriteTerms no funcionó, usar el term de esta respuesta
+      final responseTerm = data['term'] as String?;
+      if (responseTerm != null && responseTerm.isNotEmpty) {
+        if (_currentTerm.isEmpty) _currentTerm = responseTerm;
+        if (_selectedTerm.isEmpty) _selectedTerm = responseTerm;
+        if (!_availableTerms.contains(responseTerm)) {
+          _availableTerms = [responseTerm, ..._availableTerms];
+        }
       }
     } catch (e) {
       debugPrint('Error cargando favoritos: $e');

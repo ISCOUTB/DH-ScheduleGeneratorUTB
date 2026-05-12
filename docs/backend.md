@@ -203,6 +203,7 @@ El módulo `app/auth/` implementa autenticación OAuth 2.0 con **Authorization C
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | `GET` | `/api/favorites?term=202610` | Lista los favoritos del usuario autenticado para un término |
+| `GET` | `/api/favorites/terms` | Retorna términos disponibles con favoritos + término actual |
 | `POST` | `/api/favorites` | Crea un horario destacado |
 | `DELETE` | `/api/favorites/{id}` | Elimina un horario destacado (valida ownership) |
 
@@ -216,9 +217,17 @@ El módulo `app/auth/` implementa autenticación OAuth 2.0 con **Authorization C
 }
 ```
 
+**GET /api/favorites/terms — Response:**
+```json
+{
+  "currentTerm": "202610",
+  "availableTerms": ["202610", "202601"]
+}
+```
+
 **Límites:** Máximo 20 favoritos por usuario por término. Si se excede → 429.
 
-**Configuración:** El término actual se define con `CURRENT_TERM` en `auth/routes.py`. Actualizar cada semestre.
+**Configuración:** El término actual se define con `CURRENT_TERM` en `backend/.env`. Esta variable es leída por la API y por los scripts de actualización de datos. Actualizar una sola vez cada semestre.
 
 ### Limitaciones conocidas
 

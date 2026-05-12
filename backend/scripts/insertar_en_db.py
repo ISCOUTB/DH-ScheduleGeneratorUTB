@@ -1,7 +1,7 @@
 # insertar_en_db.py
 import json
 import os
-from config import get_connection
+from config import get_connection, CURRENT_TERM
 from backup import limpiar_tablas
 from parser import procesar_json
 from inserter import insertar_datos
@@ -51,8 +51,8 @@ def actualizar_base():
     guardar_log(datos_iniciales['errores'], log_path)
 
     print("\nPaso 2: Intentando rescatar cursos desde el log...")
-    # Definimos el término de búsqueda.
-    term = "202610" 
+    # Definimos el término de búsqueda desde config centralizado.
+    term = CURRENT_TERM
     # El rescatador devuelve el conjunto de datos final y curado.
     datos_finales = procesar_rescate(json_data, log_path, term)
 

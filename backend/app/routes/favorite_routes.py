@@ -16,6 +16,32 @@ router = APIRouter(prefix="/api/favorites", tags=["favorites"])
 MAX_FAVORITES_PER_TERM = 20
 
 
+@router.get("/terms")
+async def get_favorite_terms(
+    session_id: Optional[str] = Cookie(default=None),
+):
+    """
+    Retorna los términos que tienen favoritos para el usuario + el término actual.
+    """
+    user = get_authenticated_user(session_id)
+    user_id = user.get("db_user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="Usuario no vinculado a la base de datos")
+
+    terms = await run_in_threadpool(
+        repository.get_favorite_terms, user_id
+    )
+
+    # Asegurar que el término actual siempre aparezca
+    if CURRENT_TERM not in terms:
+        terms.insert(0, CURRENT_TERM)
+
+    return {
+        "currentTerm": CURRENT_TERM,
+        "availableTerms": terms,
+    }
+
+
 class CreateFavoriteRequest(BaseModel):
     """Body para crear un favorito."""
     signature: str

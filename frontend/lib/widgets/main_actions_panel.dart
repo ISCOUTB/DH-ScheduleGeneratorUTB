@@ -56,7 +56,7 @@ class MainActionsPanel extends StatelessWidget {
           // Botón para horarios destacados.
           Expanded(
             child: _MainCardButton(
-              color: const Color(0xFFE6A817),
+              color: const Color(0xFF71ED37),
               icon: Icons.star,
               label: "Destacados",
               onTap: onFavorites ?? () {},

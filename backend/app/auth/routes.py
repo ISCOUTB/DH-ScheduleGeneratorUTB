@@ -46,8 +46,8 @@ sessions: dict = {}
 # Formato: {state: {code_verifier, ...}}
 pending_auth: dict = {}
 
-# Período académico actual (actualizar cada semestre)
-CURRENT_TERM = "202610"
+# Período académico actual — lee de .env (actualizar solo en .env cada semestre)
+CURRENT_TERM = os.getenv("CURRENT_TERM", "202520")
 
 
 def get_authenticated_user(session_id: str | None) -> dict:

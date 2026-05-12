@@ -42,9 +42,62 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ScheduleProvider>().loadFavorites();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = context.read<ScheduleProvider>();
+      await provider.loadFavoriteTerms();
+      await provider.loadFavorites();
     });
+  }
+
+  /// Formatea un código de término para mostrar: "202610" → "2026-10"
+  String _formatTerm(String term) {
+    if (term.length == 6) {
+      return '${term.substring(0, 4)}-${term.substring(4)}';
+    }
+    return term;
+  }
+
+  /// Muestra modal de confirmación al eliminar de un periodo anterior.
+  Future<bool> _confirmCrossTermDelete(
+      BuildContext context, String term) async {
+    return await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: const Row(
+              children: [
+                Icon(Icons.warning_amber_rounded,
+                    color: Color(0xFFE67E22), size: 28),
+                SizedBox(width: 12),
+                Text('Eliminar de periodo anterior'),
+              ],
+            ),
+            content: Text(
+              'Este horario pertenece al periodo ${_formatTerm(term)}. '
+              'Los datos de este periodo ya no se actualizan y la eliminación '
+              'es irreversible.\n\n¿Deseas continuar?',
+              style: const TextStyle(fontSize: 14, height: 1.5),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('Cancelar'),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFDC3545),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Eliminar'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 
   /// Calcula huecos (gaps) entre clases del mismo día.
@@ -306,30 +359,46 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           onToggleMode: () => setState(() => _sidebarShowInfo = !_sidebarShowInfo),
           onSelect: (i) => setState(() => _selectedIndex = i),
           onDelete: (i) async {
+            // Confirmar si es un periodo diferente al actual
+            if (provider.selectedTerm != provider.currentTerm) {
+              final confirmed = await _confirmCrossTermDelete(
+                  context, provider.selectedTerm);
+              if (!confirmed) return;
+            }
+
             final deletingSelected = (i == _selectedIndex);
             final deletingBefore = (i < _selectedIndex);
 
             await provider.removeFavoriteAt(i);
 
+            // Recargar términos por si quedó vacío el periodo
+            provider.loadFavoriteTerms();
+
             if (provider.favoriteSchedules.isEmpty) {
               setState(() => _selectedIndex = 0);
             } else if (deletingSelected) {
-              // Elimino el que estoy viendo: mantener índice, clamp al último
               setState(() {
                 if (_selectedIndex >= provider.favoriteSchedules.length) {
                   _selectedIndex = provider.favoriteSchedules.length - 1;
                 }
               });
             } else if (deletingBefore) {
-              // Elimino uno anterior: decrementar para seguir en el mismo horario
               setState(() => _selectedIndex = _selectedIndex - 1);
             }
-            // Si elimino uno posterior, no hay que hacer nada
           },
           buildColorMap: _buildColorMap,
           calculateGaps: _calculateGaps,
           calculateFreeDays: _calculateFreeDays,
           getSubjectNames: _getSubjectNames,
+          // Term props
+          availableTerms: provider.availableTerms,
+          selectedTerm: provider.selectedTerm,
+          currentTerm: provider.currentTerm,
+          onTermChanged: (term) {
+            setState(() => _selectedIndex = 0);
+            provider.switchFavoriteTerm(term);
+          },
+          formatTerm: _formatTerm,
         ),
         // Contenido principal con padding y contorno
         Expanded(
@@ -407,20 +476,39 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   // ============================================================
 
   Widget _buildMobileLayout(ScheduleProvider provider) {
-    return ScheduleGridWidget(
-      allSchedules: provider.favoriteSchedules,
-      onScheduleTap: (index) {
-        setState(() {
-          _selectedIndex = index;
-          _showOverview = true;
-        });
-      },
-      subjectColors: _buildColorMapFromAll(provider.favoriteSchedules),
-      isMobileLayout: true,
-      showFavoriteButton: true,
-      useLetterLabels: true,
-      currentPage: 1,
-      itemsPerPage: provider.favoriteSchedules.length,
+    return Column(
+      children: [
+        // Barra de periodo
+        if (provider.availableTerms.isNotEmpty)
+          _TermSelectorBar(
+            availableTerms: provider.availableTerms,
+            selectedTerm: provider.selectedTerm,
+            currentTerm: provider.currentTerm,
+            onTermChanged: (term) {
+              setState(() => _selectedIndex = 0);
+              provider.switchFavoriteTerm(term);
+            },
+            formatTerm: _formatTerm,
+          ),
+        // Grilla
+        Expanded(
+          child: ScheduleGridWidget(
+            allSchedules: provider.favoriteSchedules,
+            onScheduleTap: (index) {
+              setState(() {
+                _selectedIndex = index;
+                _showOverview = true;
+              });
+            },
+            subjectColors: _buildColorMapFromAll(provider.favoriteSchedules),
+            isMobileLayout: true,
+            showFavoriteButton: true,
+            useLetterLabels: true,
+            currentPage: 1,
+            itemsPerPage: provider.favoriteSchedules.length,
+          ),
+        ),
+      ],
     );
   }
 
@@ -494,6 +582,12 @@ class _FavoritesSidebar extends StatelessWidget {
   final int Function(List<ClassOption>) calculateGaps;
   final int Function(List<ClassOption>) calculateFreeDays;
   final List<String> Function(List<ClassOption>) getSubjectNames;
+  // Term props
+  final List<String> availableTerms;
+  final String selectedTerm;
+  final String currentTerm;
+  final ValueChanged<String> onTermChanged;
+  final String Function(String) formatTerm;
 
   const _FavoritesSidebar({
     required this.schedules,
@@ -506,6 +600,11 @@ class _FavoritesSidebar extends StatelessWidget {
     required this.calculateGaps,
     required this.calculateFreeDays,
     required this.getSubjectNames,
+    required this.availableTerms,
+    required this.selectedTerm,
+    required this.currentTerm,
+    required this.onTermChanged,
+    required this.formatTerm,
   });
 
   @override
@@ -560,6 +659,58 @@ class _FavoritesSidebar extends StatelessWidget {
               ],
             ),
           ),
+          // Selector de periodo (solo si hay más de 1)
+          if (availableTerms.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF9FAFB),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFE5E7EB)),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: selectedTerm,
+                    isExpanded: true,
+                    icon: const Icon(Icons.calendar_month, size: 16,
+                        color: Color(0xFF6B7280)),
+                    style: const TextStyle(fontSize: 13, color: Color(0xFF374151)),
+                    items: availableTerms.map((term) {
+                      final isCurrent = term == currentTerm;
+                      return DropdownMenuItem(
+                        value: term,
+                        child: Row(
+                          children: [
+                            Text(formatTerm(term)),
+                            if (isCurrent) ...[
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 1),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF2742F5).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: const Text('actual',
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: Color(0xFF2742F5),
+                                        fontWeight: FontWeight.w600)),
+                              ),
+                            ],
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (term) {
+                      if (term != null) onTermChanged(term);
+                    },
+                  ),
+                ),
+              ),
+            ),
           // Lista de tarjetas
           Expanded(
             child: SingleChildScrollView(
@@ -813,6 +964,98 @@ class _BackButtonState extends State<_BackButton> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// MOBILE — Barra de selección de periodo
+// ============================================================
+
+class _TermSelectorBar extends StatelessWidget {
+  final List<String> availableTerms;
+  final String selectedTerm;
+  final String currentTerm;
+  final ValueChanged<String> onTermChanged;
+  final String Function(String) formatTerm;
+
+  const _TermSelectorBar({
+    required this.availableTerms,
+    required this.selectedTerm,
+    required this.currentTerm,
+    required this.onTermChanged,
+    required this.formatTerm,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(bottom: BorderSide(color: Color(0xFFE5E7EB))),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.calendar_month, size: 16, color: Color(0xFF6B7280)),
+          const SizedBox(width: 8),
+          const Text('Periodo:', style: TextStyle(fontSize: 13, color: Color(0xFF6B7280))),
+          const SizedBox(width: 8),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: availableTerms.map((term) {
+                  final isSelected = term == selectedTerm;
+                  final isCurrent = term == currentTerm;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: GestureDetector(
+                      onTap: () => onTermChanged(term),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 150),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFF2742F5)
+                              : const Color(0xFFF3F4F6),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: isSelected
+                                ? const Color(0xFF2742F5)
+                                : const Color(0xFFD1D5DB),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              formatTerm(term),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: isSelected ? Colors.white : const Color(0xFF374151),
+                              ),
+                            ),
+                            if (isCurrent) ...[
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.circle,
+                                size: 6,
+                                color: isSelected ? Colors.white70 : const Color(0xFF2742F5),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

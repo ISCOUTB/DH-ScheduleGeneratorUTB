@@ -2,6 +2,7 @@ import requests
 import json
 import os
 from typing import Any
+from config import CURRENT_TERM
 
 def descargar_json():
 # Mantener la misma sesión activa
@@ -25,7 +26,7 @@ def descargar_json():
     # Simular clic en "Continuar" enviando los datos correctos en `Form Data`
     search_url = f"{base_url}/term/search?mode=search"
     payload = {
-        "term": "202610",  # PRIMER PERIODO 2026 PREGRADO
+        "term": CURRENT_TERM,  # Período académico desde .env
         "studyPath": "",
         "studyPathText": "",
         "startDatepicker": "",
@@ -39,7 +40,7 @@ def descargar_json():
     all_results: list[dict[str, Any]] = []
 
     while True:
-        search_results_url = f"{base_url}/searchResults/searchResults?txt_term=202610&startDatepicker=&endDatepicker=&pageOffset={page_offset}&pageMaxSize={page_max_size}&sortColumn=subjectDescription&sortDirection=asc"
+        search_results_url = f"{base_url}/searchResults/searchResults?txt_term={CURRENT_TERM}&startDatepicker=&endDatepicker=&pageOffset={page_offset}&pageMaxSize={page_max_size}&sortColumn=subjectDescription&sortDirection=asc"
         response = session.get(search_results_url, headers=headers, verify=False)
 
         if response.status_code != 200:

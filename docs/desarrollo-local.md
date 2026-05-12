@@ -52,6 +52,10 @@ FRONTEND_URL=http://localhost
 
 # Tenants permitidos (separados por coma)
 AZURE_ALLOWED_TENANTS=tu_tenant_id
+
+# Período académico actual (actualizar cada semestre)
+# Lo leen: API (favoritos), scripts de descarga e inserción de datos
+CURRENT_TERM=202610
 ```
 
 > **Nota:** El `DATABASE_URL` usa `db` como host porque ese es el nombre del servicio/contenedor en Docker Compose. Dentro de la red Docker, los contenedores se resuelven por nombre de servicio.

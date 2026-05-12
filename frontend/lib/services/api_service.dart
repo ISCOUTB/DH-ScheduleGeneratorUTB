@@ -152,6 +152,26 @@ class ApiService {
     }
   }
 
+  /// Obtiene los términos disponibles con favoritos + el término actual.
+  Future<Map<String, dynamic>> getFavoriteTerms() async {
+    final url = Uri.parse('$_baseUrl/api/favorites/terms');
+    final client = _createClient();
+
+    try {
+      final response = await client.get(url);
+
+      if (response.statusCode == 200) {
+        return json.decode(utf8.decode(response.bodyBytes));
+      } else if (response.statusCode == 401) {
+        throw Exception('No autenticado');
+      } else {
+        throw Exception('Error del servidor: ${response.statusCode}');
+      }
+    } finally {
+      client.close();
+    }
+  }
+
   /// Crea un horario destacado.
   Future<Map<String, dynamic>> createFavorite({
     required String signature,

@@ -17,6 +17,9 @@ if not os.getenv('DATABASE_URL'):
 # Lee la URL de conexión completa directamente desde el entorno.
 DATABASE_URL = os.getenv('DATABASE_URL')
 
+# Período académico actual — centralizado desde .env
+CURRENT_TERM = os.getenv('CURRENT_TERM', '202610')
+
 def get_connection() -> psycopg.Connection:
     """Crea y devuelve una nueva conexión a la base de datos."""
     if not DATABASE_URL:

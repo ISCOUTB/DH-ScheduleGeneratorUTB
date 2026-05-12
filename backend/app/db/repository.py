@@ -472,3 +472,24 @@ def delete_favorite(favorite_id: int, usuario_id: int) -> bool:
     finally:
         cursor.close()
         conn.close()
+
+
+def get_favorite_terms(usuario_id: int) -> List[str]:
+    """Obtiene los términos distintos que tienen favoritos para un usuario."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            """
+            SELECT DISTINCT term
+            FROM horario_destacado
+            WHERE usuario_id = %s
+            ORDER BY term DESC
+            """,
+            (usuario_id,)
+        )
+        return [row[0] for row in cursor.fetchall()]
+    finally:
+        cursor.close()
+        conn.close()

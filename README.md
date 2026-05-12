@@ -231,8 +231,11 @@ DH-ScheduleGeneratorUTB/
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | `GET` | `/api/favorites?term=202610` | Lista favoritos del usuario autenticado |
+| `GET` | `/api/favorites/terms` | Términos disponibles con favoritos + término actual |
 | `POST` | `/api/favorites` | Guarda un horario como destacado |
 | `DELETE` | `/api/favorites/{id}` | Elimina un horario destacado |
+
+> **Configuración:** El período académico actual se define con `CURRENT_TERM` en `backend/.env`.
 
 Para documentación interactiva completa, accede a `/api/docs` cuando la API esté corriendo.
 
