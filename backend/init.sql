@@ -198,3 +198,22 @@ ALTER TABLE public.sesion_usuario OWNER TO pg_database_owner;
 
 CREATE INDEX IF NOT EXISTS idx_sesion_usuario_id ON public.sesion_usuario(usuario_id);
 CREATE INDEX IF NOT EXISTS idx_sesion_login_at ON public.sesion_usuario(login_at);
+
+--
+-- Tabla de horarios destacados (favoritos) por usuario
+--
+
+CREATE TABLE IF NOT EXISTS public.horario_destacado (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL REFERENCES public.usuario(id),
+    term VARCHAR(20) NOT NULL,
+    signature VARCHAR(255) NOT NULL,
+    schedule_json JSONB NOT NULL,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    UNIQUE (usuario_id, term, signature)
+);
+
+ALTER TABLE public.horario_destacado OWNER TO pg_database_owner;
+
+CREATE INDEX IF NOT EXISTS idx_horario_dest_usuario ON public.horario_destacado(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_horario_dest_term ON public.horario_destacado(usuario_id, term);

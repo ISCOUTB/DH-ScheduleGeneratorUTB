@@ -494,4 +494,154 @@ class ScheduleProvider extends ChangeNotifier {
     _errorColor = null;
     notifyListeners();
   }
+
+  // ============================================================
+  // ESTADO: Favoritos (Horarios Destacados)
+  // ============================================================
+
+  /// Set de signatures de los favoritos del usuario (para lookup O(1)).
+  Set<String> _favoriteSignatures = {};
+
+  /// Mapa de signature → favorite ID del servidor (necesario para DELETE).
+  final Map<String, int> _favoriteIdBySignature = {};
+
+  /// Horarios favoritos cargados del servidor (para la pantalla dedicada).
+  List<List<ClassOption>> _favoriteSchedules = [];
+  List<List<ClassOption>> get favoriteSchedules => List.unmodifiable(_favoriteSchedules);
+
+  /// Indica si los favoritos están cargándose.
+  bool _isFavoritesLoading = false;
+  bool get isFavoritesLoading => _isFavoritesLoading;
+
+  /// Cantidad máxima de favoritos permitidos.
+  int _maxFavoritesAllowed = 20;
+  int get maxFavoritesAllowed => _maxFavoritesAllowed;
+
+  /// Número de favoritos actuales.
+  int get favoritesCount => _favoriteSignatures.length;
+
+  // ============================================================
+  // MÉTODOS: Favoritos
+  // ============================================================
+
+  /// Calcula una signature determinista para un horario (NRCs ordenados).
+  String computeSignature(List<ClassOption> schedule) {
+    final nrcs = schedule.map((c) => c.nrc).toList()..sort();
+    return nrcs.join('-');
+  }
+
+  /// Verifica si un horario es favorito.
+  bool isFavorite(List<ClassOption> schedule) {
+    return _favoriteSignatures.contains(computeSignature(schedule));
+  }
+
+  /// Carga los favoritos del servidor.
+  Future<void> loadFavorites() async {
+    _isFavoritesLoading = true;
+    notifyListeners();
+
+    try {
+      final data = await _apiService.getFavorites();
+      final favorites = data['favorites'] as List<dynamic>;
+      _maxFavoritesAllowed = data['maxAllowed'] ?? 20;
+
+      _favoriteSignatures.clear();
+      _favoriteIdBySignature.clear();
+      _favoriteSchedules.clear();
+
+      for (final fav in favorites) {
+        final signature = fav['signature'] as String;
+        final favoriteId = fav['id'] as int;
+        _favoriteSignatures.add(signature);
+        _favoriteIdBySignature[signature] = favoriteId;
+
+        // Deserializar el schedule_json a List<ClassOption>
+        final scheduleJson = fav['schedule_json'] as List<dynamic>;
+        final schedule = scheduleJson
+            .map<ClassOption>((co) => ClassOption.fromJson(co as Map<String, dynamic>))
+            .toList();
+        _favoriteSchedules.add(schedule);
+      }
+    } catch (e) {
+      debugPrint('Error cargando favoritos: $e');
+    } finally {
+      _isFavoritesLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Agrega o quita un horario de favoritos (toggle).
+  Future<void> toggleFavorite(List<ClassOption> schedule) async {
+    final signature = computeSignature(schedule);
+
+    if (_favoriteSignatures.contains(signature)) {
+      // Quitar de favoritos
+      final favoriteId = _favoriteIdBySignature[signature];
+      if (favoriteId != null) {
+        try {
+          await _apiService.deleteFavorite(favoriteId);
+          _favoriteSignatures.remove(signature);
+          _favoriteIdBySignature.remove(signature);
+          _favoriteSchedules.removeWhere((s) => computeSignature(s) == signature);
+          notifyListeners();
+        } catch (e) {
+          _errorMessage = 'Error al quitar de destacados: ${e.toString()}';
+          _errorIcon = Icons.error;
+          _errorColor = Colors.red;
+          notifyListeners();
+        }
+      }
+    } else {
+      // Agregar a favoritos
+      if (_favoriteSignatures.length >= _maxFavoritesAllowed) {
+        _errorMessage = 'Límite de $_maxFavoritesAllowed horarios destacados alcanzado';
+        _errorIcon = Icons.warning;
+        _errorColor = Colors.orange;
+        notifyListeners();
+        return;
+      }
+
+      try {
+        final scheduleJson = schedule.map((c) => c.toJson()).toList();
+        final result = await _apiService.createFavorite(
+          signature: signature,
+          schedule: scheduleJson,
+        );
+        final favorite = result['favorite'];
+        _favoriteSignatures.add(signature);
+        _favoriteIdBySignature[signature] = favorite['id'];
+        _favoriteSchedules.insert(0, schedule);
+        notifyListeners();
+      } catch (e) {
+        _errorMessage = 'Error al guardar en destacados: ${e.toString()}';
+        _errorIcon = Icons.error;
+        _errorColor = Colors.red;
+        notifyListeners();
+      }
+    }
+  }
+
+  /// Elimina un favorito por su índice en la lista de favoritos cargados.
+  Future<void> removeFavoriteAt(int index) async {
+    if (index < 0 || index >= _favoriteSchedules.length) return;
+
+    final schedule = _favoriteSchedules[index];
+    final signature = computeSignature(schedule);
+    final favoriteId = _favoriteIdBySignature[signature];
+
+    if (favoriteId != null) {
+      try {
+        await _apiService.deleteFavorite(favoriteId);
+        _favoriteSignatures.remove(signature);
+        _favoriteIdBySignature.remove(signature);
+        _favoriteSchedules.removeAt(index);
+        notifyListeners();
+      } catch (e) {
+        _errorMessage = 'Error al eliminar destacado: ${e.toString()}';
+        _errorIcon = Icons.error;
+        _errorColor = Colors.red;
+        notifyListeners();
+      }
+    }
+  }
 }

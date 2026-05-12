@@ -20,6 +20,9 @@ class SpeedDialMenu extends StatelessWidget {
   /// Callback para limpiar todo.
   final VoidCallback onClear;
 
+  /// Callback para abrir horarios destacados.
+  final VoidCallback? onFavorites;
+
   const SpeedDialMenu({
     Key? key,
     required this.onSearch,
@@ -27,6 +30,7 @@ class SpeedDialMenu extends StatelessWidget {
     required this.onTutorial,
     required this.onShowCreators,
     required this.onClear,
+    this.onFavorites,
   }) : super(key: key);
 
   @override
@@ -57,6 +61,12 @@ class SpeedDialMenu extends StatelessWidget {
           label: 'Creadores',
           onTap: onShowCreators,
         ),
+        if (onFavorites != null)
+          SpeedDialChild(
+            child: const Icon(Icons.star, color: Colors.amber),
+            label: 'Mis Horarios',
+            onTap: onFavorites,
+          ),
         SpeedDialChild(
           child: const Icon(Icons.delete_forever, color: Colors.white),
           label: 'Limpiar Todo',

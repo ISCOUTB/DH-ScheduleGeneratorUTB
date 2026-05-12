@@ -38,6 +38,7 @@ frontend/lib/
 |
 +-- screens/                  # Pantallas principales
 |   +-- home_screen.dart      # Pantalla principal con toda la funcionalidad
+|   +-- favorites_screen.dart # Pantalla de horarios destacados (sidebar + grilla)
 |
 +-- services/                 # Servicios para comunicacion externa
 |   +-- auth_service.dart     # Autenticacion OAuth con Microsoft Entra ID
@@ -53,9 +54,9 @@ frontend/lib/
     +-- search_widget.dart           # Buscador de materias
     +-- filter_widget.dart           # Panel de filtros
     +-- subjects_panel.dart          # Panel de materias seleccionadas
-    +-- main_actions_panel.dart      # Acciones principales
-    +-- schedule_grid_widget.dart    # Grilla visual del horario
-    +-- schedule_overview_widget.dart # Resumen del horario
+    +-- main_actions_panel.dart      # Acciones principales (buscar, filtrar, destacados)
+    +-- schedule_grid_widget.dart    # Grilla visual del horario (soporta letras y fillParent)
+    +-- schedule_overview_widget.dart # Resumen del horario (modal)
     +-- schedule_sort_widget.dart    # Ordenamiento de horarios
     +-- professor_filter_widget.dart # Filtro por profesor
     +-- nrc_filter_widget.dart       # Filtro por NRC
@@ -148,6 +149,13 @@ Comunicacion con el backend:
 - `generateSchedules(subjects, filters, creditLimit)`: Genera horarios
 
 Ambos servicios usan `BrowserClient` con `withCredentials = true`.
+
+### Favoritos (en ScheduleProvider)
+Gestión de horarios destacados:
+- `loadFavorites()`: Carga favoritos del usuario desde el backend
+- `addFavorite(schedule)`: Guarda un horario como destacado
+- `removeFavoriteAt(index)`: Elimina un horario destacado
+- `isFavorite(schedule)`: Verifica si un horario ya está marcado
 
 ## 6. Modelos de Datos
 

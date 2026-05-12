@@ -44,4 +44,18 @@ class ClassOption {
       seatsMaximum: json['seatsMaximum'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'subjectName': subjectName,
+    'subjectCode': subjectCode,
+    'type': type,
+    'schedules': schedules.map((s) => s.toJson()).toList(),
+    'professor': professor,
+    'nrc': nrc,
+    'groupId': groupId,
+    'credits': credits,
+    'campus': campus,
+    'seatsAvailable': seatsAvailable,
+    'seatsMaximum': seatsMaximum,
+  };
 }

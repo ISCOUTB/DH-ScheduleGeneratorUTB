@@ -4,10 +4,7 @@ Este documento describe el esquema de la base de datos PostgreSQL utilizada por 
 
 ## Alcance del Documento
 
-Este documento separa dos vistas:
-
-1. Estado actual (implementado en la base de datos).
-2. Propuesta para el feature de horarios destacados (pendiente de implementar).
+Este documento describe el esquema completo de la base de datos, incluyendo las tablas de datos académicos, gestión de usuarios, registro de sesiones y horarios destacados (favoritos).
 
 ## Diagrama Entidad-Relación (Estado Actual)
 
@@ -59,6 +56,7 @@ erDiagram
     }
 
     USUARIO ||--o{ SESION_USUARIO : registra
+    USUARIO ||--o{ HORARIO_DESTACADO : guarda
 
     SESION_USUARIO {
         int id PK
@@ -68,9 +66,18 @@ erDiagram
         text user_agent
         varchar tipo
     }
+
+    HORARIO_DESTACADO {
+        int id PK
+        int usuario_id FK
+        varchar term
+        varchar signature UK
+        jsonb schedule_json
+        timestamp created_at
+    }
 ```
 
-## Diagrama Entidad-Relación (Propuesto para Horarios Destacados)
+## Diagrama Entidad-Relación (Detallado)
 
 ```mermaid
 erDiagram

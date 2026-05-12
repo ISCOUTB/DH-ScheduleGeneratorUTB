@@ -19,6 +19,8 @@ Para mejorar mantenibilidad y trazabilidad, las decisiones relevantes se documen
 
 Registros vigentes:
 
+- `docs/issues/12-05-2026-rfc-estados-cursos-notificaciones.md`
+- `docs/issues/12-05-2026-pantalla-horarios-destacados.md`
 - `docs/issues/10-05-2026-registro-sesiones-usuario.md`
 - `docs/issues/08-05-2026-optimizacion-backups-retencion.md`
 - `docs/issues/29-03-2026-rfc-horarios-destacados.md`
@@ -195,6 +197,28 @@ El módulo `app/auth/` implementa autenticación OAuth 2.0 con **Authorization C
 | `GET` | `/api/auth/callback` | Callback tras autenticación en Microsoft |
 | `GET` | `/api/auth/me` | Retorna info del usuario de la sesión actual |
 | `POST` | `/api/auth/logout` | Cierra sesión y retorna URL de logout de Microsoft |
+
+### Endpoints de favoritos (horarios destacados)
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/favorites?term=202610` | Lista los favoritos del usuario autenticado para un término |
+| `POST` | `/api/favorites` | Crea un horario destacado |
+| `DELETE` | `/api/favorites/{id}` | Elimina un horario destacado (valida ownership) |
+
+**Autorización:** Todos los endpoints requieren la cookie `session_id` (sesión activa). Si no hay sesión → 401.
+
+**POST /api/favorites — Request Body:**
+```json
+{
+  "signature": "11111-12345-67890",
+  "schedule": [/* lista de ClassOption serializadas */]
+}
+```
+
+**Límites:** Máximo 20 favoritos por usuario por término. Si se excede → 429.
+
+**Configuración:** El término actual se define con `CURRENT_TERM` en `auth/routes.py`. Actualizar cada semestre.
 
 ### Limitaciones conocidas
 

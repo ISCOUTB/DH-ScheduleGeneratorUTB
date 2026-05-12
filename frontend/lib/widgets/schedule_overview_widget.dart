@@ -1,7 +1,9 @@
 // lib/widgets/schedule_overview_widget.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/class_option.dart';
 import '../models/schedule.dart';
+import '../providers/schedule_provider.dart';
 import 'package:excel/excel.dart' as excel;
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:typed_data';
@@ -136,6 +138,9 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
   /// Construye la cabecera del diálogo con el título y los botones de acción.
   Widget _buildHeader() {
+    final provider = context.watch<ScheduleProvider>();
+    final isFav = provider.isFavorite(widget.schedule);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -150,6 +155,16 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Tooltip(
+              message: isFav ? 'Quitar de destacados' : 'Guardar como destacado',
+              child: IconButton(
+                icon: Icon(
+                  isFav ? Icons.star : Icons.star_border,
+                  color: isFav ? Colors.amber : null,
+                ),
+                onPressed: () => provider.toggleFavorite(widget.schedule),
+              ),
+            ),
             Tooltip(
               message: 'Descargar PDF',
               child: IconButton(

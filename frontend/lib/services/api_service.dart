@@ -126,4 +126,85 @@ class ApiService {
       client.close();
     }
   }
+
+  // ============================================================
+  // Favoritos (Horarios Destacados)
+  // ============================================================
+
+  /// Obtiene los horarios destacados del usuario para un término.
+  Future<Map<String, dynamic>> getFavorites({String? term}) async {
+    final queryParams = term != null ? '?term=$term' : '';
+    final url = Uri.parse('$_baseUrl/api/favorites$queryParams');
+    final client = _createClient();
+
+    try {
+      final response = await client.get(url);
+
+      if (response.statusCode == 200) {
+        return json.decode(utf8.decode(response.bodyBytes));
+      } else if (response.statusCode == 401) {
+        throw Exception('No autenticado');
+      } else {
+        throw Exception('Error del servidor: ${response.statusCode}');
+      }
+    } finally {
+      client.close();
+    }
+  }
+
+  /// Crea un horario destacado.
+  Future<Map<String, dynamic>> createFavorite({
+    required String signature,
+    required List<Map<String, dynamic>> schedule,
+  }) async {
+    final url = Uri.parse('$_baseUrl/api/favorites');
+    final client = _createClient();
+
+    try {
+      final response = await client.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "signature": signature,
+          "schedule": schedule,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(utf8.decode(response.bodyBytes));
+      } else if (response.statusCode == 409) {
+        throw Exception('Este horario ya está en tus destacados');
+      } else if (response.statusCode == 429) {
+        throw Exception('Límite de horarios destacados alcanzado');
+      } else if (response.statusCode == 401) {
+        throw Exception('No autenticado');
+      } else {
+        throw Exception('Error del servidor: ${response.statusCode}');
+      }
+    } finally {
+      client.close();
+    }
+  }
+
+  /// Elimina un horario destacado por ID.
+  Future<void> deleteFavorite(int favoriteId) async {
+    final url = Uri.parse('$_baseUrl/api/favorites/$favoriteId');
+    final client = _createClient();
+
+    try {
+      final response = await client.delete(url);
+
+      if (response.statusCode == 200) {
+        return;
+      } else if (response.statusCode == 404) {
+        throw Exception('Favorito no encontrado');
+      } else if (response.statusCode == 401) {
+        throw Exception('No autenticado');
+      } else {
+        throw Exception('Error del servidor: ${response.statusCode}');
+      }
+    } finally {
+      client.close();
+    }
+  }
 }

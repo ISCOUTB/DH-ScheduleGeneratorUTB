@@ -1,6 +1,8 @@
 // lib/widgets/schedule_grid_widget.dart
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/class_option.dart';
+import '../providers/schedule_provider.dart';
 
 /// Muestra una cuadrícula de previsiones de horarios generados.
 
@@ -32,16 +34,32 @@ class ScheduleGridWidget extends StatefulWidget {
   /// Items por página para la paginación
   final int itemsPerPage;
 
+  /// Si se muestra la estrella de favoritos.
+  final bool showFavoriteButton;
+
+  /// Si se usan etiquetas con letras (A, B, C) en vez de números (#1, #2, #3).
+  final bool useLetterLabels;
+
+  /// Si el widget debe llenar todo el espacio del padre (para vista de 1 sola grilla).
+  final bool fillParent;
+
+  /// Etiqueta personalizada para el modo fillParent (ej: 'A', 'B', 'C').
+  final String? fillParentLabel;
+
   const ScheduleGridWidget({
     Key? key,
     required this.allSchedules,
     required this.onScheduleTap,
     required this.subjectColors,
     this.isMobileLayout = false,
-    this.isScrollable = true, // Por defecto es scrollable
+    this.isScrollable = true,
     this.scrollController,
     this.currentPage = 1,
     this.itemsPerPage = 10,
+    this.showFavoriteButton = true,
+    this.useLetterLabels = false,
+    this.fillParent = false,
+    this.fillParentLabel,
   }) : super(key: key);
 
   @override
@@ -111,12 +129,34 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
 
   @override
   Widget build(BuildContext context) {
-    int crossAxisCount = widget.isMobileLayout ? 1 : 2;
-    // Ajusta la relación de aspecto para una mejor visualización en móviles.
-    double childAspectRatio = widget.isMobileLayout ? 1.8 : 1.5;
-
-    // Genera un mapa de colores único para cada materia.
     Map<String, Color> subjectColors = widget.subjectColors;
+
+    // Modo fillParent: renderiza un solo horario llenando todo el padre
+    if (widget.fillParent && _displayedSchedules.isNotEmpty) {
+      final schedule = _displayedSchedules[0];
+      final int realIndex = (widget.currentPage - 1) * widget.itemsPerPage;
+      return GestureDetector(
+        onTap: () => widget.onScheduleTap(realIndex),
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: Stack(
+            children: [
+              buildSchedulePreview(schedule, subjectColors, realIndex,
+                  labelOverride: widget.fillParentLabel ?? (widget.useLetterLabels ? 'A' : null)),
+              if (widget.showFavoriteButton)
+                Positioned(
+                  top: 2,
+                  right: 2,
+                  child: _FavoriteStarButton(schedule: schedule),
+                ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    int crossAxisCount = widget.isMobileLayout ? 1 : 2;
+    double childAspectRatio = widget.isMobileLayout ? 1.8 : 1.5;
 
     return GridView.builder(
       physics: widget.isScrollable
@@ -137,12 +177,13 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
         mainAxisSpacing: 12,
       ),
       itemBuilder: (context, index) {
+        final schedule = _displayedSchedules[index];
+        final int realIndex = (widget.currentPage - 1) * widget.itemsPerPage + index;
+
         return MouseRegion(
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
             onTap: () {
-              // Calcular el índice real en allSchedules
-              final int realIndex = (widget.currentPage - 1) * widget.itemsPerPage + index;
               widget.onScheduleTap(realIndex);
             },
             child: Card(
@@ -151,11 +192,22 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              // Construye la vista previa visual del horario.
-              child: buildSchedulePreview(
-                  _displayedSchedules[index], 
-                  subjectColors, 
-                  (widget.currentPage - 1) * widget.itemsPerPage + index),
+              child: Stack(
+                children: [
+                  // Construye la vista previa visual del horario.
+                  buildSchedulePreview(schedule, subjectColors, realIndex,
+                      labelOverride: widget.useLetterLabels
+                          ? String.fromCharCode(65 + index) // A, B, C...
+                          : null),
+                  // Estrella de favoritos
+                  if (widget.showFavoriteButton)
+                    Positioned(
+                      top: 2,
+                      right: 2,
+                      child: _FavoriteStarButton(schedule: schedule),
+                    ),
+                ],
+              ),
             ),
           ),
         );
@@ -165,7 +217,8 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
 
   // Construye la vista previa visual de un único horario en formato de cuadrícula.
   Widget buildSchedulePreview(List<ClassOption> schedule,
-      Map<String, Color> subjectColors, int scheduleIndex) {
+      Map<String, Color> subjectColors, int scheduleIndex,
+      {String? labelOverride}) {
     final List<String> timeSlots = [
       '07:00',
       '08:00',
@@ -244,7 +297,7 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
                     ),
                     child: Center(
                       child: Text(
-                        '#${scheduleIndex + 1}',
+                        labelOverride ?? '#${scheduleIndex + 1}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: fontSize,
@@ -376,4 +429,37 @@ class TimeOfDayRange {
   final TimeOfDay end;
 
   TimeOfDayRange(this.start, this.end);
+}
+
+/// Botón de estrella para marcar/desmarcar un horario como favorito.
+/// Usa el ScheduleProvider para verificar el estado y ejecutar el toggle.
+class _FavoriteStarButton extends StatelessWidget {
+  final List<ClassOption> schedule;
+
+  const _FavoriteStarButton({required this.schedule});
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<ScheduleProvider>();
+    final isFav = provider.isFavorite(schedule);
+
+    return GestureDetector(
+      // Evita que el tap en la estrella abra el overview del horario.
+      onTap: () {
+        provider.toggleFavorite(schedule);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Icon(
+          isFav ? Icons.star : Icons.star_border,
+          color: isFav ? Colors.amber : Colors.white70,
+          size: 18,
+        ),
+      ),
+    );
+  }
 }

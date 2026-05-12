@@ -10,6 +10,7 @@ from .models import GenerateScheduleRequest, ClassOption
 from .db import repository
 from .services import schedule_generator
 from .routes import subject_routes
+from .routes import favorite_routes
 from .auth.routes import router as auth_router
 
 app = FastAPI(
@@ -29,6 +30,9 @@ app.add_middleware(
 
 # Ruta añadida para resolver problemática
 app.include_router(subject_routes.router)
+
+# Rutas de favoritos (horarios destacados)
+app.include_router(favorite_routes.router)
 
 # Rutas de autenticación OAuth
 app.include_router(auth_router)

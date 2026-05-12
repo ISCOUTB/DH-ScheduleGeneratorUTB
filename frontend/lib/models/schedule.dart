@@ -11,4 +11,6 @@ class Schedule {
       time: json['time'],
     );
   }
+
+  Map<String, dynamic> toJson() => {'day': day, 'time': time};
 }

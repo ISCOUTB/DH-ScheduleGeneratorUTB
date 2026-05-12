@@ -1,9 +1,10 @@
 # RFC: Horarios Destacados por Usuario
 
 - Fecha: 2026-03-29
-- Estado: En implementación (fase de persistencia de usuario completada)
+- Estado: **Implementado** (backend + frontend completos)
 - Autor: Equipo Backend/Frontend
 - Alcance: Backend API, autenticación, modelo de datos, frontend de horarios
+- Registro de implementación: `docs/issues/12-05-2026-pantalla-horarios-destacados.md`
 
 ## 1. Contexto
 

@@ -46,6 +46,20 @@ sessions: dict = {}
 # Formato: {state: {code_verifier, ...}}
 pending_auth: dict = {}
 
+# Período académico actual (actualizar cada semestre)
+CURRENT_TERM = "202610"
+
+
+def get_authenticated_user(session_id: str | None) -> dict:
+    """
+    Retorna el user dict de la sesión activa.
+    Lanza HTTPException 401 si no hay sesión válida.
+    Reutilizable desde otros routers que necesiten autenticación.
+    """
+    if not session_id or session_id not in sessions:
+        raise HTTPException(status_code=401, detail="No autenticado")
+    return sessions[session_id]
+
 
 async def _persist_user(entra_id: str, email: str, nombre: Optional[str]) -> dict:
     """Crea u obtiene el usuario en DB y retorna su registro."""

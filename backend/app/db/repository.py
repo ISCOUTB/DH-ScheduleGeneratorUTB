@@ -4,6 +4,7 @@ Gestiona las consultas para obtener información sobre materias, cursos y horari
 """
 import psycopg
 import psycopg.rows
+import json
 import os
 from dotenv import load_dotenv
 from typing import List, Dict, Any
@@ -383,6 +384,91 @@ def register_login(usuario_id: int, ip_address: str = None, user_agent: str = No
     except Exception as e:
         print(f"Error registrando inicio de sesión: {e}")
         conn.rollback()
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# --- Funciones de Horarios Destacados (Favoritos) ---
+
+def count_favorites(usuario_id: int, term: str) -> int:
+    """Cuenta los favoritos de un usuario para un término dado."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "SELECT COUNT(*) FROM horario_destacado WHERE usuario_id = %s AND term = %s",
+            (usuario_id, term)
+        )
+        return cursor.fetchone()[0]
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def create_favorite(usuario_id: int, term: str, signature: str, schedule_json: dict) -> Dict[str, Any] | None:
+    """
+    Crea un horario destacado. Si ya existe (mismo usuario, term, signature),
+    retorna None para indicar duplicado.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+
+    try:
+        cursor.execute(
+            """
+            INSERT INTO horario_destacado (usuario_id, term, signature, schedule_json)
+            VALUES (%s, %s, %s, %s::jsonb)
+            ON CONFLICT (usuario_id, term, signature) DO NOTHING
+            RETURNING id, usuario_id, term, signature, created_at
+            """,
+            (usuario_id, term, signature, json.dumps(schedule_json))
+        )
+        result = cursor.fetchone()
+        conn.commit()
+        return dict(result) if result else None
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_favorites(usuario_id: int, term: str) -> List[Dict[str, Any]]:
+    """Obtiene los horarios destacados de un usuario para un término."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+
+    try:
+        cursor.execute(
+            """
+            SELECT id, usuario_id, term, signature, schedule_json, created_at
+            FROM horario_destacado
+            WHERE usuario_id = %s AND term = %s
+            ORDER BY created_at DESC
+            """,
+            (usuario_id, term)
+        )
+        return [dict(row) for row in cursor.fetchall()]
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def delete_favorite(favorite_id: int, usuario_id: int) -> bool:
+    """
+    Elimina un favorito por ID, validando que pertenezca al usuario.
+    Retorna True si se eliminó, False si no existía o no pertenecía al usuario.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "DELETE FROM horario_destacado WHERE id = %s AND usuario_id = %s",
+            (favorite_id, usuario_id)
+        )
+        conn.commit()
+        return cursor.rowcount > 0
     finally:
         cursor.close()
         conn.close()

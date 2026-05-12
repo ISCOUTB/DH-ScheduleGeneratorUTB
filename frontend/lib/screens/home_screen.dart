@@ -20,6 +20,7 @@ import '../widgets/main_actions_panel.dart';
 import '../widgets/schedule_grid_widget.dart';
 import '../widgets/schedule_overview_widget.dart';
 import '../widgets/schedule_sort_widget.dart';
+import '../screens/favorites_screen.dart';
 
 // Nuevos widgets extraídos
 import '../widgets/common/common.dart';
@@ -69,8 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
       _focusNode.requestFocus();
       _checkAndShowImportantNotice();
       
-      // Cargar materias usando el provider
-      context.read<ScheduleProvider>().loadAllSubjects();
+      // Cargar materias y favoritos usando el provider
+      final provider = context.read<ScheduleProvider>();
+      provider.loadAllSubjects();
+      provider.loadFavorites();
     });
   }
 
@@ -134,6 +137,17 @@ class _HomeScreenState extends State<HomeScreen> {
       showCustomNotification(context, 'No se pudo abrir el tutorial',
           icon: Icons.error, color: Colors.red);
     }
+  }
+
+  void _navigateToFavorites() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => FavoritesScreen(
+          currentUser: widget.currentUser,
+          onLogout: widget.onLogout,
+        ),
+      ),
+    );
   }
 
   Future<void> _handleAddSubject(Subject subject) async {
@@ -241,6 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTutorial: _openTutorial,
                         onShowCreators: () => CreatorsDialog.show(context),
                         onClear: _handleClearSchedules,
+                        onFavorites: _navigateToFavorites,
                       ),
                     ),
 
@@ -550,6 +565,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onFilter: () => provider.setFilterOpen(true),
                     onClear: _handleClearSchedules,
                     onGenerate: _openTutorial,
+                    onFavorites: _navigateToFavorites,
                   ),
                   const SizedBox(height: 20),
                   _buildSortAndClearRow(provider, isMobileLayout),

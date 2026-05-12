@@ -226,6 +226,14 @@ DH-ScheduleGeneratorUTB/
 | `GET` | `/api/auth/me` | Retorna información del usuario autenticado |
 | `POST` | `/api/auth/logout` | Cierra sesión del usuario |
 
+### Horarios Destacados (Favoritos)
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/favorites?term=202610` | Lista favoritos del usuario autenticado |
+| `POST` | `/api/favorites` | Guarda un horario como destacado |
+| `DELETE` | `/api/favorites/{id}` | Elimina un horario destacado |
+
 Para documentación interactiva completa, accede a `/api/docs` cuando la API esté corriendo.
 
 ## Contribuciones

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// Un panel que contiene los botones de acción principales de la aplicación.
 ///
-/// Incluye acciones para buscar materias, aplicar filtros, limpiar la selección
-/// y generar los horarios.
+/// Incluye acciones para buscar materias, aplicar filtros, y acceder a
+/// horarios destacados.
 class MainActionsPanel extends StatelessWidget {
   /// Callback para la acción de buscar materia.
   final VoidCallback onSearch;
@@ -18,12 +17,16 @@ class MainActionsPanel extends StatelessWidget {
   /// Callback para la acción de generar horarios.
   final VoidCallback onGenerate;
 
+  /// Callback para acceder a horarios destacados.
+  final VoidCallback? onFavorites;
+
   /// Crea el panel de acciones principales.
   const MainActionsPanel({
     required this.onSearch,
     required this.onFilter,
     required this.onClear,
     required this.onGenerate,
+    this.onFavorites,
     super.key,
   });
 
@@ -50,18 +53,13 @@ class MainActionsPanel extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 20),
-          // Botón para tutorial.
+          // Botón para horarios destacados.
           Expanded(
             child: _MainCardButton(
-              color: const Color(0xFF71ED37),
-              icon: Icons.lightbulb_outline,
-              label: "Tutorial",
-              onTap: () async {
-                final url = Uri.parse('https://youtu.be/rFi0M0gcMHM');
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                }
-              },
+              color: const Color(0xFFE6A817),
+              icon: Icons.star,
+              label: "Destacados",
+              onTap: onFavorites ?? () {},
             ),
           ),
         ],
