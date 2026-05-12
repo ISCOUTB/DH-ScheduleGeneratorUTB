@@ -45,7 +45,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = context.read<ScheduleProvider>();
       await provider.loadFavoriteTerms();
-      await provider.loadFavorites();
+      // Recargar siempre, pero sin flash de loading si ya hay datos
+      await provider.loadFavorites(
+        silent: provider.favoriteSchedules.isNotEmpty,
+      );
     });
   }
 

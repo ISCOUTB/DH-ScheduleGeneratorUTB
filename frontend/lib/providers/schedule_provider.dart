@@ -573,9 +573,12 @@ class ScheduleProvider extends ChangeNotifier {
   }
 
   /// Carga los favoritos del servidor para un término específico.
-  Future<void> loadFavorites({String? term}) async {
-    _isFavoritesLoading = true;
-    notifyListeners();
+  /// Si [silent] es true, no muestra indicador de carga (recarga en segundo plano).
+  Future<void> loadFavorites({String? term, bool silent = false}) async {
+    if (!silent) {
+      _isFavoritesLoading = true;
+      notifyListeners();
+    }
 
     try {
       final data = await _apiService.getFavorites(term: term ?? _selectedTerm);
