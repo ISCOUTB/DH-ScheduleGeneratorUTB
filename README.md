@@ -99,38 +99,25 @@ El proyecto sigue una arquitectura de microservicios contenerizados con Docker:
    cd DH-ScheduleGeneratorUTB
    ```
 
-2. **Configura las variables de entorno:**
+2. **Configura los archivos de desarrollo:**
    
-   Copia el archivo de ejemplo y configúralo:
+   El entorno local requiere archivos que están ignorados por Git (variables de entorno, configuración de Nginx para HTTP, y sobrescritura de Docker Compose). La guía completa con la estructura y contenido de cada archivo está en:
+   
+   📖 **[Guía de Desarrollo Local](./docs/desarrollo-local.md)**
+   
+   Resumen rápido:
    ```bash
-   cp backend/.env.example backend/.env
+   cp backend/.env.example backend/.env     # Variables de entorno (editar con tus credenciales)
+   # Crear docker-compose.override.yml      # Ver guía para contenido
+   # Crear frontend/nginx.dev.conf          # Ver guía para contenido
    ```
-   
-   Edita `backend/.env` con tus valores:
-   ```env
-   # Base de datos
-   POSTGRES_USER=tu_usuario
-   POSTGRES_PASSWORD=tu_contraseña
-   POSTGRES_DB=schedule_db
-   DATABASE_URL=postgresql://tu_usuario:tu_contraseña@db:5432/schedule_db
-   
-   # Autenticación Microsoft Entra ID (Azure AD)
-   AZURE_TENANT_ID=tu_tenant_id
-   AZURE_CLIENT_ID=tu_client_id
-   AZURE_CLIENT_SECRET=tu_client_secret
-   AZURE_REDIRECT_URI=http://localhost/api/auth/callback
-   FRONTEND_URL=http://localhost
-   AZURE_ALLOWED_TENANTS=tu_tenant_id
-   ```
-   
-   > 📝 Para obtener las credenciales de Azure, ve a [Azure Portal](https://portal.azure.com) > App registrations.
 
 3. **Levanta los servicios:**
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
-   > Docker Compose automáticamente utiliza `docker-compose.override.yml` para configuraciones de desarrollo (HTTP sin SSL, configuración de Nginx simplificada).
+   > Docker Compose automáticamente aplica `docker-compose.override.yml` para configuraciones de desarrollo (HTTP sin SSL, configuración de Nginx simplificada).
 
 4. **Accede a la aplicación:**
    - Frontend: http://localhost
@@ -215,6 +202,7 @@ DH-ScheduleGeneratorUTB/
 
 ## Documentación Adicional
 
+- [Guía de Desarrollo Local](./docs/desarrollo-local.md) - Setup completo del entorno de desarrollo, archivos ignorados y troubleshooting.
 - [Documentación del Backend](./docs/backend.md) - Arquitectura, endpoints y flujo de datos.
 - [Modelo de Datos](./docs/modelo_datos.md) - Esquema de la base de datos.
 - [Documentación del Frontend](./docs/frontend.md) - Arquitectura y componentes de la UI.
