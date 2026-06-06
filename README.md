@@ -123,6 +123,8 @@ El proyecto sigue una arquitectura de microservicios contenerizados con Docker:
    - Frontend: http://localhost
    - API Docs (Swagger): http://localhost/api/docs
 
+> **¿Solo cambias la interfaz?** No reconstruyas la imagen del frontend (tarda minutos). Compila Flutter en tu máquina con *hot reload*: `cd frontend && flutter run -d chrome --dart-define=DEV_SKIP_AUTH=true` (UI pura) o `./scripts/dev-frontend.sh` (UI con datos reales). Ver [Desarrollo Rápido de Interfaz](./docs/desarrollo-local.md#7-desarrollo-rápido-de-interfaz-sin-reconstruir-el-frontend).
+
 ### Despliegue en Producción
 
 Para producción, usa únicamente el archivo base:

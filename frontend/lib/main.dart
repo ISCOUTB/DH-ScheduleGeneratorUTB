@@ -5,6 +5,7 @@ import 'package:url_strategy/url_strategy.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
+import 'config/dev_config.dart';
 import 'config/theme.dart';
 import 'models/user.dart';
 import 'providers/schedule_provider.dart';
@@ -47,8 +48,19 @@ class _MyAppState extends State<MyApp> {
 
   /// Autenticación: verifica sesión existente o redirige al login.
   Future<void> _authenticate() async {
+    // Modo desarrollo: salta el login real y usa un usuario simulado.
+    // Solo se activa con --dart-define=DEV_SKIP_AUTH=true en modo debug.
+    if (DevConfig.skipAuth) {
+      debugPrint('[DEV] DEV_SKIP_AUTH activo: usando usuario simulado, sin login.');
+      setState(() {
+        _currentUser = DevConfig.mockUser;
+        _isLoading = false;
+      });
+      return;
+    }
+
     final authService = AuthService();
-    
+
     try {
       // Verificar si hay sesión activa (cookie de sesión)
       final user = await authService.checkSession();

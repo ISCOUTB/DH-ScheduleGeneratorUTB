@@ -284,6 +284,8 @@ docker compose up -d
 docker compose up -d --build backend
 
 # Reconstruir solo el frontend (después de cambios en Flutter)
+# LENTO: corre `flutter build web --release` dentro de la imagen (minutos).
+# Para iterar la interfaz rápidamente, ver la sección 7 (Desarrollo Rápido de Interfaz).
 docker compose up -d --build frontend
 
 # Ver logs en tiempo real
@@ -337,3 +339,92 @@ SQL
 
 ### Cambios en `init.sql` no se reflejan
 - Ver sección de [Migraciones de Esquema](#5-migraciones-de-esquema). El archivo solo se ejecuta al crear el volumen por primera vez.
+
+## 7. Desarrollo Rápido de Interfaz (sin reconstruir el frontend)
+
+Reconstruir la imagen del frontend (`docker compose up -d --build frontend`) corre `flutter build web --release` dentro de Docker y tarda **varios minutos**. Cuando un cambio afecta **solo a la interfaz** (no al Dockerfile, Nginx ni al backend), no es necesario pagar ese costo: se puede compilar Flutter en tu máquina con *hot reload* (segundos).
+
+Hay dos niveles según necesites o no datos reales del backend.
+
+### Comparación rápida
+
+| | Reconstruir imagen (lento) | Nivel 1 (UI pura) | Nivel 2 (UI + datos) |
+|---|---|---|---|
+| Comando | `docker compose up -d --build frontend` | `flutter run -d chrome --dart-define=DEV_SKIP_AUTH=true` | `./scripts/dev-frontend.sh --dart-define=DEV_SKIP_AUTH=true` |
+| Tiempo por cambio | minutos | ~1 s (hot reload) | ~1-3 s (recompila + refrescar) |
+| Necesita Docker | sí | no | sí (solo backend + db + proxy) |
+| Datos reales del backend | sí | no | sí |
+| Login Microsoft | sí | se salta (usuario mock) | real u opcionalmente mock |
+| Para qué sirve | verificar build de prod | layout, estilos, widgets, navegación | pantallas con materias/favoritos reales |
+
+### El flag `DEV_SKIP_AUTH`
+
+La app está detrás del *gate* de autenticación de Microsoft Entra ID: al arrancar (`main.dart`) verifica la sesión y, si no hay, **redirige al login**. Eso impide ver la UI sin autenticarse.
+
+Para desarrollo se añadió el flag `DEV_SKIP_AUTH` (ver `frontend/lib/config/dev_config.dart`): cuando se compila con `--dart-define=DEV_SKIP_AUTH=true`, se inyecta un **usuario simulado** y se omite el login.
+
+> **Seguridad:** el flag tiene doble candado — solo surte efecto si está presente **y** la app corre en modo debug (`kDebugMode`). Un build de producción (`flutter build web --release`) lo deja siempre en `false`, así que no puede usarse para saltarse la autenticación real.
+
+### Nivel 1 — UI pura (sin Docker)
+
+Para cambios puramente visuales (layout, estilos, widgets, navegación):
+
+```bash
+cd frontend
+flutter run -d chrome --dart-define=DEV_SKIP_AUTH=true
+```
+
+Edita el código y guarda → *hot reload* (`r`) o *hot restart* (`R`) en ~1 segundo.
+
+> **Limitación:** las llamadas a la API fallan (no hay backend en el mismo origen y, sin sesión, el navegador bloquea la petición *cross-origin* con credenciales por CORS). Verás la interfaz con estados vacíos o de error, pero **no datos reales**. Para datos, usa el Nivel 2.
+
+### Nivel 2 — UI con datos reales del backend
+
+Levanta en Docker **solo** `backend`, `db` y un **proxy Nginx liviano** (sin compilar Flutter), y corre el dev-server de Flutter en el host. Nginx hace proxy de `/` al dev-server y de `/api/` al backend, de modo que la app y la API quedan en el **mismo origen** (`http://localhost`): sin problemas de CORS, cookies ni redirecciones de OAuth.
+
+```
+  Navegador  -->  http://localhost  -->  Nginx (Docker, contenedor `web`)
+                                          |- /      --> host.docker.internal:8080  (flutter run en el host)
+                                          |- /api/  --> api:8000                    (backend en Docker)
+```
+
+**Opción A — script (recomendado):**
+
+```bash
+./scripts/dev-frontend.sh                                  # login real de Microsoft
+./scripts/dev-frontend.sh --dart-define=DEV_SKIP_AUTH=true # usuario mock
+```
+
+**Opción B — manual:**
+
+```bash
+# 1. Backend + db + proxy (no reconstruye el frontend)
+docker compose -f docker-compose.yml -f docker-compose.frontend-dev.yml \
+    up -d backend db frontend
+
+# 2. Dev-server de Flutter en el host
+cd frontend
+flutter run -d web-server --web-port 8080 --web-hostname 0.0.0.0
+```
+
+Abre **http://localhost** (no el puerto 8080: se accede a través del proxy). Tras editar el código, pulsa `R` en la terminal de Flutter y refresca el navegador.
+
+> Requiere que la DB esté poblada (servicio `initial-data`, ver sección 4) para que haya materias.
+
+### Archivos involucrados
+
+| Archivo | Versionado | Propósito |
+|---------|-----------|-----------|
+| `frontend/lib/config/dev_config.dart` | sí | Define el flag `DEV_SKIP_AUTH` y el usuario mock |
+| `frontend/nginx.frontend-dev.conf` | sí | Nginx que hace proxy a Flutter (host) + `/api/` al backend |
+| `docker-compose.frontend-dev.yml` | sí | Override que convierte `web` en proxy liviano (sin build) |
+| `scripts/dev-frontend.sh` | sí | Atajo que levanta Docker + Flutter para el Nivel 2 |
+
+> A diferencia de `docker-compose.override.yml` y `nginx.dev.conf` (ignorados por contener configuración local), estos archivos **sí se versionan**: no contienen secretos y definen un flujo de desarrollo compartido y reproducible.
+
+### Troubleshooting (modo rápido)
+
+- **`502 Bad Gateway` en http://localhost (Nivel 2):** el dev-server de Flutter no está corriendo o no terminó de compilar. Espera a que aparezca `is being served at` y refresca.
+- **Cambios no se reflejan (Nivel 2):** con `-d web-server` no hay recarga automática. Pulsa `R` en la terminal de Flutter y refresca el navegador.
+- **No carga ninguna materia (Nivel 2):** la DB está vacía. Corre `docker compose run --rm initial-data`.
+- **Cambié el `Dockerfile`, Nginx de producción o el backend:** estos modos no los cubren; reconstruye la imagen correspondiente (`docker compose up -d --build <servicio>`).

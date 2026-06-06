@@ -1,0 +1,40 @@
+# docker-compose.frontend-dev.yml
+#
+# Modo "Nivel 2": desarrollo rápido de la interfaz con datos reales.
+#
+# Convierte el contenedor `web` en un simple proxy Nginx que reenvía al
+# dev-server de Flutter corriendo en el HOST. Así NO se reconstruye la imagen
+# pesada del frontend (flutter build web --release) en cada cambio de UI.
+#
+# Uso (desde la raíz del proyecto):
+#   docker compose -f docker-compose.yml -f docker-compose.frontend-dev.yml \
+#       up -d backend db frontend
+#
+#   cd frontend
+#   flutter run -d web-server --web-port 8080 --web-hostname 0.0.0.0 \
+#       --dart-define=DEV_SKIP_AUTH=true        # quita el flag si quieres login real
+#
+#   Abrir http://localhost  (NO el puerto 8080: se accede vía el proxy).
+#
+# Atajo equivalente: ./scripts/dev-frontend.sh
+#
+# Nota: este archivo se invoca con -f explícito, por lo que NO se mezcla con
+# docker-compose.override.yml. Solo se levantan backend, db y el proxy.
+services:
+  frontend:
+    # Imagen liviana de Nginx; se anula el build de Flutter del compose base.
+    image: nginx:1.29.0-alpine
+    build: !reset null
+    container_name: web
+    restart: unless-stopped
+    ports: !override
+      - "80:80"
+    volumes: !override
+      - ./frontend/nginx.frontend-dev.conf:/etc/nginx/conf.d/default.conf
+    # Permite que Nginx (dentro de Docker) resuelva el host donde corre Flutter.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - backend
+    networks:
+      - schedule-net
