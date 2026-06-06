@@ -390,10 +390,21 @@ Levanta en Docker **solo** `backend`, `db` y un **proxy Nginx liviano** (sin com
 
 **Opción A — script (recomendado):**
 
+Linux / macOS / Git Bash / WSL:
+
 ```bash
 ./scripts/dev-frontend.sh                                  # login real de Microsoft
 ./scripts/dev-frontend.sh --dart-define=DEV_SKIP_AUTH=true # usuario mock
 ```
+
+Windows (PowerShell):
+
+```powershell
+./scripts/dev-frontend.ps1                                  # login real de Microsoft
+./scripts/dev-frontend.ps1 --dart-define=DEV_SKIP_AUTH=true # usuario mock
+```
+
+> El `.sh` solo corre en bash (Linux/macOS/Git Bash/WSL), no en PowerShell ni `cmd`. En Windows usa el `.ps1`, o ejecuta los comandos de la Opción B directamente (son nativos).
 
 **Opción B — manual:**
 
@@ -418,7 +429,8 @@ Abre **http://localhost** (no el puerto 8080: se accede a través del proxy). Tr
 | `frontend/lib/config/dev_config.dart` | sí | Define el flag `DEV_SKIP_AUTH` y el usuario mock |
 | `frontend/nginx.frontend-dev.conf` | sí | Nginx que hace proxy a Flutter (host) + `/api/` al backend |
 | `docker-compose.frontend-dev.yml` | sí | Override que convierte `web` en proxy liviano (sin build) |
-| `scripts/dev-frontend.sh` | sí | Atajo que levanta Docker + Flutter para el Nivel 2 |
+| `scripts/dev-frontend.sh` | sí | Atajo (bash) que levanta Docker + Flutter para el Nivel 2 |
+| `scripts/dev-frontend.ps1` | sí | Equivalente PowerShell del atajo, para Windows |
 
 > A diferencia de `docker-compose.override.yml` y `nginx.dev.conf` (ignorados por contener configuración local), estos archivos **sí se versionan**: no contienen secretos y definen un flujo de desarrollo compartido y reproducible.
 
