@@ -513,6 +513,11 @@ class ScheduleProvider extends ChangeNotifier {
   bool _isFavoritesLoading = false;
   bool get isFavoritesLoading => _isFavoritesLoading;
 
+  /// Si los favoritos se cargaron al menos una vez. Evita mostrar el
+  /// empty-state antes de la primera carga (causa de parpadeo al entrar).
+  bool _favoritesLoadedOnce = false;
+  bool get favoritesLoadedOnce => _favoritesLoadedOnce;
+
   /// Cantidad máxima de favoritos permitidos.
   int _maxFavoritesAllowed = 20;
   int get maxFavoritesAllowed => _maxFavoritesAllowed;
@@ -531,6 +536,19 @@ class ScheduleProvider extends ChangeNotifier {
   /// Términos disponibles con favoritos.
   List<String> _availableTerms = [];
   List<String> get availableTerms => List.unmodifiable(_availableTerms);
+
+  /// Estado de cupos del horario mostrado: `{ nrc: {available, total} }` (Fase 2).
+  Map<String, Map<String, int>> _selectedScheduleStatus = {};
+  Map<String, Map<String, int>> get selectedScheduleStatus =>
+      Map.unmodifiable(_selectedScheduleStatus);
+
+  /// Si la grilla de favoritos colorea por estado de cupos (true) o por materia.
+  bool _statusColorMode = false;
+  bool get statusColorMode => _statusColorMode;
+
+  /// Si se está cargando el estado de cupos.
+  bool _isStatusLoading = false;
+  bool get isStatusLoading => _isStatusLoading;
 
   // ============================================================
   // MÉTODOS: Favoritos
@@ -568,8 +586,42 @@ class ScheduleProvider extends ChangeNotifier {
   Future<void> switchFavoriteTerm(String term) async {
     if (term == _selectedTerm) return; // Sin cambio, no recargar
     _selectedTerm = term;
+    // El estado de cupos solo aplica al término actual; limpiar al cambiar.
+    _selectedScheduleStatus = {};
     notifyListeners();
     await loadFavorites(term: term);
+  }
+
+  /// Activa o desactiva el coloreo por estado de cupos.
+  void setStatusColorMode(bool value) {
+    if (_statusColorMode == value) return;
+    _statusColorMode = value;
+    notifyListeners();
+  }
+
+  /// Carga el estado de cupos de un horario. Solo aplica al término actual:
+  /// la tabla `Curso` solo tiene el periodo vigente y Banner reutiliza NRCs,
+  /// así que para periodos pasados se deja vacío (ver RFC Fase 2, §2.6).
+  Future<void> loadStatusForSchedule(List<ClassOption> schedule) async {
+    if (_selectedTerm != _currentTerm) {
+      _selectedScheduleStatus = {};
+      notifyListeners();
+      return;
+    }
+
+    final nrcs = schedule.map((c) => c.nrc).toList();
+    _isStatusLoading = true;
+    notifyListeners();
+
+    try {
+      _selectedScheduleStatus = await _apiService.getFavoritesStatus(nrcs);
+    } catch (e) {
+      debugPrint('Error cargando estado de cupos: $e');
+      _selectedScheduleStatus = {};
+    } finally {
+      _isStatusLoading = false;
+      notifyListeners();
+    }
   }
 
   /// Carga los favoritos del servidor para un término específico.
@@ -616,6 +668,7 @@ class ScheduleProvider extends ChangeNotifier {
       debugPrint('Error cargando favoritos: $e');
     } finally {
       _isFavoritesLoading = false;
+      _favoritesLoadedOnce = true;
       notifyListeners();
     }
   }

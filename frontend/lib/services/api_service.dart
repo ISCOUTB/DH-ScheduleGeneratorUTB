@@ -152,6 +152,38 @@ class ApiService {
     }
   }
 
+  /// Obtiene el estado actual de cupos de una lista de NRCs (Fase 2).
+  ///
+  /// Retorna `{ nrc: {available, total} }`. Los NRC inexistentes en `Curso`
+  /// no aparecen en la respuesta (el llamador los trata como eliminados).
+  /// Solo debe usarse para el término actual.
+  Future<Map<String, Map<String, int>>> getFavoritesStatus(
+      List<String> nrcs) async {
+    if (nrcs.isEmpty) return {};
+    final url =
+        Uri.parse('$_baseUrl/api/favorites/status?nrcs=${nrcs.join(',')}');
+    final client = _createClient();
+
+    try {
+      final response = await client.get(url);
+
+      if (response.statusCode == 200) {
+        final decoded = json.decode(utf8.decode(response.bodyBytes))
+            as Map<String, dynamic>;
+        return decoded.map((nrc, value) => MapEntry(nrc, {
+              'available': (value['available'] as num).toInt(),
+              'total': (value['total'] as num).toInt(),
+            }));
+      } else if (response.statusCode == 401) {
+        throw Exception('No autenticado');
+      } else {
+        throw Exception('Error del servidor: ${response.statusCode}');
+      }
+    } finally {
+      client.close();
+    }
+  }
+
   /// Obtiene los términos disponibles con favoritos + el término actual.
   Future<Map<String, dynamic>> getFavoriteTerms() async {
     final url = Uri.parse('$_baseUrl/api/favorites/terms');

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/class_option.dart';
 import '../models/schedule.dart';
+import '../models/course_status.dart';
 import '../providers/schedule_provider.dart';
+import 'color_mode_toggle.dart';
 import 'package:excel/excel.dart' as excel;
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:typed_data';
@@ -26,11 +28,27 @@ class ScheduleOverviewWidget extends StatefulWidget {
   /// Mapa de colores para las materias.
   final Map<String, Color> subjectColors;
 
+  /// Cupos actuales por NRC `{ nrc: {available, total} }`, para colorear por
+  /// estado. Solo se usa si [statusAvailable] es true.
+  final Map<String, Map<String, int>> seatsByNrc;
+
+  /// Si está disponible el coloreo por estado de cupos (solo término actual).
+  /// Cuando es false, no se muestra el toggle y se colorea por materia.
+  final bool statusAvailable;
+
+  /// Modo inicial al abrir: true = estado, false = materia. El detalle toma
+  /// este valor al abrirse y luego cambia de forma independiente (no afecta al
+  /// toggle de la pantalla de fondo).
+  final bool initialStatusMode;
+
   const ScheduleOverviewWidget({
     Key? key,
     required this.schedule,
     required this.onClose,
     required this.subjectColors,
+    this.seatsByNrc = const {},
+    this.statusAvailable = false,
+    this.initialStatusMode = false,
   }) : super(key: key);
 
   @override
@@ -58,6 +76,10 @@ String formattingSchedulesInPairs(List<Schedule> horarios) {
 class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   /// Mapa de colores asignados a cada materia para una fácil identificación visual.
   late Map<String, Color> subjectColors;
+
+  /// Modo de color propio del detalle (semi-independiente del de la pantalla):
+  /// toma el valor inicial al abrir y luego cambia por su cuenta.
+  late bool _statusMode;
 
   /// Lista de franjas horarias que se muestran en la cuadrícula del horario.
   final List<String> timeSlots = [
@@ -93,6 +115,8 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     super.initState();
     // Genera los colores para las materias al iniciar el widget.
     subjectColors = widget.subjectColors;
+    // Toma el modo del toggle de fondo al abrir; de aquí en adelante es propio.
+    _statusMode = widget.statusAvailable && widget.initialStatusMode;
   }
 
   @override
@@ -121,6 +145,49 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
               mainAxisSize: MainAxisSize.min, // Se ajusta al contenido
               children: [
                 _buildHeader(),
+                // Toggle propio del detalle (semi-independiente del de fondo).
+                if (widget.statusAvailable)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: isMobileLayout
+                        // Móvil: leyenda en dos filas de dos, al lado del
+                        // toggle y agrupados a la derecha (sin scroll).
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              if (_statusMode) ...[
+                                _buildStatusLegend(twoColumns: true),
+                                const SizedBox(width: 12),
+                              ],
+                              ColorModeToggle(
+                                statusSelected: _statusMode,
+                                statusEnabled: true,
+                                onChanged: (status) =>
+                                    setState(() => _statusMode = status),
+                              ),
+                            ],
+                          )
+                        // Desktop: leyenda inline a la izquierda del toggle.
+                        : Row(
+                            children: [
+                              Expanded(
+                                child: _statusMode
+                                    ? Align(
+                                        alignment: Alignment.centerRight,
+                                        child: _buildStatusLegend(),
+                                      )
+                                    : const SizedBox.shrink(),
+                              ),
+                              const SizedBox(width: 12),
+                              ColorModeToggle(
+                                statusSelected: _statusMode,
+                                statusEnabled: true,
+                                onChanged: (status) =>
+                                    setState(() => _statusMode = status),
+                              ),
+                            ],
+                          ),
+                  ),
                 const Divider(height: 24),
                 // El contenido se adapta al layout.
                 Flexible(
@@ -296,6 +363,66 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     );
   }
 
+  /// Leyenda compacta de colores de estado (la "paleta"), para explicar el
+  /// coloreo de la grilla cuando el detalle está en modo estado.
+  ///
+  /// En [twoColumns] (móvil) se muestra como dos filas de dos, en vez de una
+  /// sola fila que en pantallas angostas requeriría scroll horizontal.
+  Widget _buildStatusLegend({bool twoColumns = false}) {
+    Widget item(CourseStatus status) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 11,
+            height: 11,
+            decoration: BoxDecoration(
+              color: courseStatusColor(status),
+              borderRadius: BorderRadius.circular(3),
+            ),
+          ),
+          const SizedBox(width: 5),
+          Text(courseStatusLabel(status),
+              style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+        ],
+      );
+    }
+
+    if (twoColumns) {
+      // Dos filas de dos, compacto. La primera columna tiene ancho fijo para
+      // que la segunda quede alineada entre ambas filas.
+      Widget row(CourseStatus a, CourseStatus b) => Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(width: 92, child: item(a)),
+              item(b),
+            ],
+          );
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          row(CourseStatus.safe, CourseStatus.caution),
+          const SizedBox(height: 6),
+          row(CourseStatus.atRisk, CourseStatus.eliminated),
+        ],
+      );
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        item(CourseStatus.safe),
+        const SizedBox(width: 12),
+        item(CourseStatus.caution),
+        const SizedBox(width: 12),
+        item(CourseStatus.atRisk),
+        const SizedBox(width: 12),
+        item(CourseStatus.eliminated),
+      ],
+    );
+  }
+
   /// Construye la cuadrícula visual del horario con sus ejes de tiempo y días.
   Widget _buildScheduleGrid() {
     return Container(
@@ -437,9 +564,12 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       final left = dayIndex * dayColumnWidth;
 
       if (top >= 0 && height > 0) {
-        // Obtener el color de la primera clase (todas las clases superpuestas de la misma materia tendrán el mismo color)
-        final color =
-            subjectColors[overlappingClasses.first.subjectName] ?? Colors.grey;
+        // Color del bloque: por estado de cupos (modo estado) o por materia.
+        final Color color = _statusMode
+            ? courseStatusColor(
+                statusForClass(overlappingClasses.first, widget.seatsByNrc))
+            : (subjectColors[overlappingClasses.first.subjectName] ??
+                Colors.grey);
 
         // Crear un texto con todos los NRC separados por nueva línea
         String allNRCs =

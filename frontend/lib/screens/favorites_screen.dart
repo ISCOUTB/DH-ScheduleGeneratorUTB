@@ -9,8 +9,10 @@ import '../config/constants.dart';
 import '../models/user.dart';
 import '../providers/schedule_provider.dart';
 import '../models/class_option.dart';
+import '../models/course_status.dart';
 import '../widgets/schedule_grid_widget.dart';
 import '../widgets/schedule_overview_widget.dart';
+import '../widgets/color_mode_toggle.dart';
 import '../widgets/common/common.dart';
 import '../widgets/dialogs/dialogs.dart';
 import '../widgets/layout/layout.dart';
@@ -44,12 +46,31 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = context.read<ScheduleProvider>();
-      await provider.loadFavoriteTerms();
-      // Recargar siempre, pero sin flash de loading si ya hay datos
-      await provider.loadFavorites(
-        silent: provider.favoriteSchedules.isNotEmpty,
-      );
+      // HomeScreen ya carga los favoritos al iniciar y el provider se mantiene
+      // sincronizado (toggle/eliminar). Recargar la lista en cada entrada
+      // reemplaza las instancias y repinta la grilla (parpadeo): por eso solo
+      // se carga si aún no se ha hecho. Los términos sí se aseguran (los usa el
+      // selector y HomeScreen no los carga), pero eso no toca la lista.
+      if (!provider.favoritesLoadedOnce) {
+        await provider.loadFavoriteTerms();
+        await provider.loadFavorites();
+      } else if (provider.availableTerms.isEmpty) {
+        await provider.loadFavoriteTerms();
+      }
+      // Si el coloreo por estado ya estaba activo, cargar cupos del seleccionado.
+      _loadStatusIfNeeded(provider);
     });
+  }
+
+  /// Carga el estado de cupos del horario seleccionado si el coloreo por estado
+  /// está activo y el término seleccionado es el actual (ver RFC §2.6).
+  void _loadStatusIfNeeded(ScheduleProvider provider) {
+    if (provider.statusColorMode &&
+        provider.selectedTerm == provider.currentTerm &&
+        _selectedIndex < provider.favoriteSchedules.length) {
+      provider.loadStatusForSchedule(
+          provider.favoriteSchedules[_selectedIndex]);
+    }
   }
 
   /// Formatea un código de término para mostrar: "202610" → "2026-10"
@@ -203,7 +224,19 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               appBar: _buildAppBar(isMobileLayout),
               body: Stack(
                 children: [
-                  _buildBody(provider, isMobileLayout),
+                  // Fade-in suave del contenido al entrar (una sola vez por
+                  // entrada): da sensación de transición sin el parpadeo del
+                  // spinner. La animación no se reinicia en los rebuilds del
+                  // provider porque el tween no cambia.
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 220),
+                    curve: Curves.easeOut,
+                    builder: (context, value, _) => Opacity(
+                      opacity: value,
+                      child: _buildBody(provider, isMobileLayout),
+                    ),
+                  ),
                   // Modal overlay con fondo negro (mismo patrón que HomeScreen)
                   if (_showOverview &&
                       _selectedIndex < provider.favoriteSchedules.length)
@@ -219,6 +252,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                 setState(() => _showOverview = false),
                             subjectColors: _buildColorMap(
                                 provider.favoriteSchedules[_selectedIndex]),
+                            // El detalle hereda el modo del toggle de fondo al
+                            // abrir y luego cambia por su cuenta.
+                            statusAvailable: provider.selectedTerm ==
+                                provider.currentTerm,
+                            initialStatusMode: provider.statusColorMode,
+                            seatsByNrc: provider.selectedScheduleStatus,
                           ),
                         ),
                       ],
@@ -310,7 +349,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   // ============================================================
 
   Widget _buildBody(ScheduleProvider provider, bool isMobileLayout) {
-    if (provider.isFavoritesLoading) {
+    // Mostrar el spinner también antes de la primera carga: así no aparece el
+    // empty-state de forma prematura (evita el parpadeo al entrar sin datos).
+    if (provider.isFavoritesLoading || !provider.favoritesLoadedOnce) {
       return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -350,6 +391,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     final selectedSchedule = provider.favoriteSchedules[_selectedIndex];
     final colors = _buildColorMap(selectedSchedule);
     final selectedLabel = String.fromCharCode(65 + _selectedIndex);
+    // El estado de cupos solo aplica al término actual (ver RFC §2.6).
+    final bool statusApplies = provider.selectedTerm == provider.currentTerm;
+    final bool useStatus = provider.statusColorMode && statusApplies;
+    // Mientras se cargan los cupos se mantiene el color por materia (evita un
+    // parpadeo gris); al terminar se aplica el coloreo por estado.
+    final bool showStatusColors = useStatus && !provider.isStatusLoading;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -360,7 +407,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           selectedIndex: _selectedIndex,
           showInfo: _sidebarShowInfo,
           onToggleMode: () => setState(() => _sidebarShowInfo = !_sidebarShowInfo),
-          onSelect: (i) => setState(() => _selectedIndex = i),
+          onSelect: (i) {
+            setState(() => _selectedIndex = i);
+            _loadStatusIfNeeded(provider);
+          },
           onDelete: (i) async {
             // Confirmar si es un periodo diferente al actual
             if (provider.selectedTerm != provider.currentTerm) {
@@ -397,9 +447,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           availableTerms: provider.availableTerms,
           selectedTerm: provider.selectedTerm,
           currentTerm: provider.currentTerm,
-          onTermChanged: (term) {
+          onTermChanged: (term) async {
             setState(() => _selectedIndex = 0);
-            provider.switchFavoriteTerm(term);
+            await provider.switchFavoriteTerm(term);
+            _loadStatusIfNeeded(provider);
           },
           formatTerm: _formatTerm,
         ),
@@ -410,7 +461,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Header: "Opción A"
+                // Header: "Opción A" + leyenda (en modo estado) + toggle.
                 Row(
                   children: [
                     Container(
@@ -432,6 +483,23 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         color: Color(0xFF111827),
                       ),
                     ),
+                    const SizedBox(width: 16),
+                    // Leyenda a la izquierda del toggle (solo en modo estado).
+                    // Se ancla a la derecha y hace scroll si no cabe.
+                    Expanded(
+                      child: useStatus
+                          ? Align(
+                              alignment: Alignment.centerRight,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                reverse: true,
+                                child: _buildStatusLegend(),
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
+                    const SizedBox(width: 12),
+                    _buildColorModeToggle(provider, statusApplies),
                   ],
                 ),
                 const Padding(
@@ -452,9 +520,18 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     clipBehavior: Clip.antiAlias,
                     child: ScheduleGridWidget(
                       allSchedules: [selectedSchedule],
-                      onScheduleTap: (_) =>
-                          setState(() => _showOverview = true),
+                      onScheduleTap: (_) {
+                        setState(() => _showOverview = true);
+                        // Asegura los cupos para el toggle propio del detalle.
+                        if (statusApplies) {
+                          provider.loadStatusForSchedule(selectedSchedule);
+                        }
+                      },
                       subjectColors: colors,
+                      colorResolver: showStatusColors
+                          ? (co) => courseStatusColor(statusForClass(
+                              co, provider.selectedScheduleStatus))
+                          : null,
                       isMobileLayout: false,
                       isScrollable: false,
                       showFavoriteButton: false,
@@ -470,6 +547,67 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             ),
           ),
         ),
+      ],
+    );
+  }
+
+  // ============================================================
+  // TOGGLE Y LEYENDA DE MODO DE COLOR (Fase 2)
+  // ============================================================
+
+  /// Toggle materia ↔ estado de cupos. Deshabilitado (con tooltip) cuando el
+  /// término seleccionado no es el actual, porque la tabla `Curso` solo tiene
+  /// el periodo vigente (ver RFC §2.6).
+  Widget _buildColorModeToggle(ScheduleProvider provider, bool statusApplies) {
+    final toggle = ColorModeToggle(
+      statusSelected: provider.statusColorMode && statusApplies,
+      statusEnabled: statusApplies,
+      onChanged: (status) {
+        provider.setStatusColorMode(status);
+        if (status) _loadStatusIfNeeded(provider);
+      },
+    );
+
+    if (!statusApplies) {
+      return Tooltip(
+        message: 'Estado de cupos disponible solo para el periodo actual',
+        child: Opacity(opacity: 0.6, child: toggle),
+      );
+    }
+    return toggle;
+  }
+
+  /// Leyenda de colores de estado de cupos (versión compacta para el header).
+  Widget _buildStatusLegend() {
+    Widget item(CourseStatus status) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 12),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 11,
+              height: 11,
+              decoration: BoxDecoration(
+                color: courseStatusColor(status),
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+            const SizedBox(width: 5),
+            Text(courseStatusLabel(status),
+                style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+          ],
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        item(CourseStatus.safe),
+        item(CourseStatus.caution),
+        item(CourseStatus.atRisk),
+        item(CourseStatus.eliminated),
       ],
     );
   }
@@ -502,6 +640,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 _selectedIndex = index;
                 _showOverview = true;
               });
+              // Asegura los cupos para el toggle propio del detalle.
+              if (provider.selectedTerm == provider.currentTerm) {
+                provider.loadStatusForSchedule(
+                    provider.favoriteSchedules[index]);
+              }
             },
             subjectColors: _buildColorMapFromAll(provider.favoriteSchedules),
             isMobileLayout: true,

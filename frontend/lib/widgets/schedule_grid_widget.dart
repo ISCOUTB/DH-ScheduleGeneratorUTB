@@ -1,4 +1,5 @@
 // lib/widgets/schedule_grid_widget.dart
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/class_option.dart';
@@ -46,6 +47,12 @@ class ScheduleGridWidget extends StatefulWidget {
   /// Etiqueta personalizada para el modo fillParent (ej: 'A', 'B', 'C').
   final String? fillParentLabel;
 
+  /// Resuelve el color de relleno de cada bloque. Si se provee, tiene prioridad
+  /// sobre [subjectColors] (coloreo por materia). Se usa para colorear por
+  /// estado de cupos en los horarios destacados (Fase 2). Si es null, se
+  /// mantiene el coloreo por materia.
+  final Color Function(ClassOption)? colorResolver;
+
   const ScheduleGridWidget({
     Key? key,
     required this.allSchedules,
@@ -60,6 +67,7 @@ class ScheduleGridWidget extends StatefulWidget {
     this.useLetterLabels = false,
     this.fillParent = false,
     this.fillParentLabel,
+    this.colorResolver,
   }) : super(key: key);
 
   @override
@@ -92,8 +100,12 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
   @override
   void didUpdateWidget(covariant ScheduleGridWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Si la lista de horarios cambia o la página actual cambia, actualiza la vista.
-    if (widget.allSchedules != oldWidget.allSchedules ||
+    // Comparar por contenido (no por identidad de lista): los padres suelen
+    // reconstruir una lista nueva con los mismos horarios en cada rebuild
+    // (p. ej. `[selectedSchedule]`), y comparar por identidad recargaba la
+    // grilla en cada notificación del provider (parpadeo). listEquals evita
+    // recargar cuando los horarios no cambian realmente.
+    if (!listEquals(widget.allSchedules, oldWidget.allSchedules) ||
         widget.currentPage != oldWidget.currentPage ||
         widget.itemsPerPage != oldWidget.itemsPerPage) {
       _loadSchedulesForCurrentPage();
@@ -349,8 +361,12 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
                             children: days.map((day) {
                               ClassOption? classOption =
                                   scheduleMatrix[time]![day];
+                              // Si hay colorResolver (p. ej. estado de cupos),
+                              // tiene prioridad sobre el color por materia.
                               Color? subjectColor = classOption != null
-                                  ? subjectColors[classOption.subjectName]
+                                  ? (widget.colorResolver != null
+                                      ? widget.colorResolver!(classOption)
+                                      : subjectColors[classOption.subjectName])
                                   : null;
 
                               return Expanded(

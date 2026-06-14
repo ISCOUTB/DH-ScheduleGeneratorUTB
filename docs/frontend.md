@@ -157,6 +157,16 @@ Gestión de horarios destacados:
 - `removeFavoriteAt(index)`: Elimina un horario destacado
 - `isFavorite(schedule)`: Verifica si un horario ya está marcado
 
+### Estado visual de cupos (Fase 2)
+Colorea la grilla de horarios destacados según los cupos **actuales** de cada curso:
+- `models/course_status.dart`: enum `CourseStatus` (safe/caution/atRisk/eliminated), `computeCourseStatus`, `statusForClass` y colores/etiquetas. Umbrales: >50% seguro, 20–50% precaución, <20% en riesgo, 0 eliminado.
+- `api_service.getFavoritesStatus(nrcs)`: consulta `GET /api/favorites/status`.
+- `ScheduleProvider`: `statusColorMode`, `loadStatusForSchedule()` (solo término actual), `selectedScheduleStatus`.
+- `widgets/color_mode_toggle.dart`: toggle compartido "Materia ↔ Estado".
+- `ScheduleGridWidget`: parámetro opcional `colorResolver` para colorear por estado sin romper el coloreo por materia.
+- El detalle (`ScheduleOverviewWidget`) tiene su propio toggle semi-independiente: hereda el modo al abrir y luego cambia por su cuenta.
+- Solo aplica al término actual; en periodos pasados el toggle queda deshabilitado (la tabla `Curso` solo tiene el periodo vigente). Ver `docs/issues/12-05-2026-rfc-estados-cursos-notificaciones.md`.
+
 ## 6. Modelos de Datos
 
 ### User

@@ -204,10 +204,21 @@ El módulo `app/auth/` implementa autenticación OAuth 2.0 con **Authorization C
 |--------|----------|-------------|
 | `GET` | `/api/favorites?term=202610` | Lista los favoritos del usuario autenticado para un término |
 | `GET` | `/api/favorites/terms` | Retorna términos disponibles con favoritos + término actual |
+| `GET` | `/api/favorites/status?nrcs=12345,67890` | Estado de cupos actuales de una lista de NRCs (Fase 2) |
 | `POST` | `/api/favorites` | Crea un horario destacado |
 | `DELETE` | `/api/favorites/{id}` | Elimina un horario destacado (valida ownership) |
 
 **Autorización:** Todos los endpoints requieren la cookie `session_id` (sesión activa). Si no hay sesión → 401.
+
+**GET /api/favorites/status — Response:**
+```json
+{
+  "12345": { "available": 15, "total": 30 },
+  "67890": { "available": 0, "total": 25 }
+}
+```
+
+Consulta los cupos actuales en la tabla `Curso` (`CuposDisponibles`/`CuposTotales`). Los NRC inexistentes se omiten (el frontend los trata como "eliminado"). Solo refleja el **término actual** (la tabla `Curso` se reescribe en cada corrida del ETL); el frontend no lo invoca para periodos pasados. Ver `docs/issues/12-05-2026-rfc-estados-cursos-notificaciones.md`.
 
 **POST /api/favorites — Request Body:**
 ```json
