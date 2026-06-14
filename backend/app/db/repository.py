@@ -493,3 +493,39 @@ def get_favorite_terms(usuario_id: int) -> List[str]:
     finally:
         cursor.close()
         conn.close()
+
+
+# --- Funciones de Estado de Cursos (Fase 2: estado visual de cupos) ---
+
+def get_nrc_seats(nrcs: List[str]) -> Dict[str, Dict[str, int]]:
+    """
+    Consulta los cupos actuales de una lista de NRCs en la tabla Curso.
+
+    Solo refleja el término vigente: la tabla Curso se reescribe en cada corrida
+    del ETL, por lo que esta función únicamente tiene sentido para el término
+    actual (ver RFC Fase 2, sección 2.6).
+
+    Retorna { nrc(str): {"available": int, "total": int} }.
+    Los NRC no numéricos se ignoran; los inexistentes en Curso no aparecen
+    (el frontend los trata como 'eliminado').
+    """
+    # El NRC es entero en BD; descartamos lo no numérico antes de consultar.
+    nrc_ints = [int(n) for n in nrcs if str(n).isdigit()]
+    if not nrc_ints:
+        return {}
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(
+            "SELECT NRC, CuposDisponibles, CuposTotales FROM Curso WHERE NRC = ANY(%s)",
+            (nrc_ints,)
+        )
+        return {
+            str(nrc): {"available": disponibles, "total": totales}
+            for (nrc, disponibles, totales) in cursor.fetchall()
+        }
+    finally:
+        cursor.close()
+        conn.close()

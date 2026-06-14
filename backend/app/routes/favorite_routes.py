@@ -42,6 +42,32 @@ async def get_favorite_terms(
     }
 
 
+@router.get("/status")
+async def get_favorites_status(
+    nrcs: str = "",
+    session_id: Optional[str] = Cookie(default=None),
+):
+    """
+    Estado actual de cupos de una lista de NRCs (Fase 2: estado visual).
+
+    Query param `nrcs`: lista separada por comas (ej. "12345,67890").
+    Retorna un mapa { nrc: { available, total } }. Los NRC inexistentes en la
+    tabla Curso se omiten (el frontend los trata como 'eliminado').
+
+    Solo refleja el término actual; el frontend no lo invoca para periodos
+    pasados (ver RFC Fase 2, sección 2.6). Requiere sesión activa.
+    """
+    # Valida la sesión (lanza 401 si no hay). No se necesita el user_id: el
+    # estado de cupos no depende del usuario, pero el endpoint es privado.
+    get_authenticated_user(session_id)
+
+    nrc_list = [n.strip() for n in nrcs.split(",") if n.strip()]
+    if not nrc_list:
+        return {}
+
+    return await run_in_threadpool(repository.get_nrc_seats, nrc_list)
+
+
 class CreateFavoriteRequest(BaseModel):
     """Body para crear un favorito."""
     signature: str
