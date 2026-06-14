@@ -2,25 +2,38 @@
 #
 # Modo "Nivel 2": desarrollo rápido de la interfaz con datos reales.
 #
-# Convierte el contenedor `web` en un simple proxy Nginx que reenvía al
-# dev-server de Flutter corriendo en el HOST. Así NO se reconstruye la imagen
-# pesada del frontend (flutter build web --release) en cada cambio de UI.
+# El contenedor `web` se reduce a un proxy Nginx que expone /api hacia el
+# backend (sin reconstruir la imagen pesada del frontend). El dev-server de
+# Flutter se arranca aparte con `-d chrome`, que abre Chrome en
+# http://localhost:8080 con hot reload nativo (el proxy no interfiere con el
+# websocket de DWDS, que es lo que rompía la recarga al ir vía web-server).
+#
+# El backend recibe dos variables solo-dev:
+#   - CORS_ALLOW_ORIGINS: permite peticiones cross-origin con credenciales
+#       (cookies) desde el dev-server (http://localhost:8080).
+#   - FRONTEND_URL: tras el login de Microsoft, el callback redirige de vuelta
+#       a :8080 para no perder el origen con hot reload. El AZURE_REDIRECT_URI
+#       sigue en http://localhost/api/auth/callback (registrado en Entra).
 #
 # Uso (desde la raíz del proyecto):
 #   docker compose -f docker-compose.yml -f docker-compose.frontend-dev.yml \
-#       up -d backend db frontend
+#       up -d backend db cron-updater frontend
 #
 #   cd frontend
-#   flutter run -d web-server --web-port 8080 --web-hostname 0.0.0.0 \
-#       --dart-define=DEV_SKIP_AUTH=true        # quita el flag si quieres login real
+#   flutter run -d chrome --web-port 8080        # login real de Microsoft
 #
-#   Abrir http://localhost  (NO el puerto 8080: se accede vía el proxy).
-#
-# Atajo equivalente: ./scripts/dev-frontend.sh
+# Atajo equivalente: ./scripts/dev-frontend.sh  (o .ps1 en Windows).
 #
 # Nota: este archivo se invoca con -f explícito, por lo que NO se mezcla con
-# docker-compose.override.yml. Solo se levantan backend, db y el proxy.
+# docker-compose.override.yml.
 services:
+  # En dev el backend acepta el origen del dev-server de Flutter (cross-origin
+  # con cookies) y devuelve el login de Microsoft a ese mismo origen.
+  backend:
+    environment:
+      - CORS_ALLOW_ORIGINS=http://localhost:8080
+      - FRONTEND_URL=http://localhost:8080
+
   frontend:
     # Imagen liviana de Nginx; se anula el build de Flutter del compose base.
     image: nginx:1.29.0-alpine

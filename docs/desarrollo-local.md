@@ -346,15 +346,18 @@ Reconstruir la imagen del frontend (`docker compose up -d --build frontend`) cor
 
 Hay dos niveles según necesites o no datos reales del backend.
 
+> **Requisitos para este modo (además de los de arriba):** [Flutter SDK](https://docs.flutter.dev/get-started/install) instalado en tu máquina (`flutter doctor` sin errores) y **Google Chrome** (el device `-d chrome` lo lanza solo). Comprueba que Flutter ve el navegador con `flutter devices`.
+
 ### Comparación rápida
 
 | | Reconstruir imagen (lento) | Nivel 1 (UI pura) | Nivel 2 (UI + datos) |
 |---|---|---|---|
-| Comando | `docker compose up -d --build frontend` | `flutter run -d chrome --dart-define=DEV_SKIP_AUTH=true` | `./scripts/dev-frontend.sh --dart-define=DEV_SKIP_AUTH=true` |
-| Tiempo por cambio | minutos | ~1 s (hot reload) | ~1-3 s (recompila + refrescar) |
-| Necesita Docker | sí | no | sí (solo backend + db + proxy) |
+| Comando | `docker compose up -d --build frontend` | `flutter run -d chrome --dart-define=DEV_SKIP_AUTH=true` | `./scripts/dev-frontend.sh` |
+| Tiempo por cambio | minutos | ~1 s (hot reload) | ~1 s (hot reload) |
+| Necesita Docker | sí | no | sí (backend + db + cron-updater + proxy) |
 | Datos reales del backend | sí | no | sí |
-| Login Microsoft | sí | se salta (usuario mock) | real u opcionalmente mock |
+| Login Microsoft | sí | se salta (usuario mock) | real (o mock con `--dart-define=DEV_SKIP_AUTH=true`) |
+| Favoritos (horarios destacados) | sí | no (requiere sesión) | sí (con login real) |
 | Para qué sirve | verificar build de prod | layout, estilos, widgets, navegación | pantallas con materias/favoritos reales |
 
 ### El flag `DEV_SKIP_AUTH`
@@ -376,16 +379,24 @@ flutter run -d chrome --dart-define=DEV_SKIP_AUTH=true
 
 Edita el código y guarda → *hot reload* (`r`) o *hot restart* (`R`) en ~1 segundo.
 
-> **Limitación:** las llamadas a la API fallan (no hay backend en el mismo origen y, sin sesión, el navegador bloquea la petición *cross-origin* con credenciales por CORS). Verás la interfaz con estados vacíos o de error, pero **no datos reales**. Para datos, usa el Nivel 2.
+> **Limitación:** las llamadas a la API fallan (no hay backend levantado). Verás la interfaz con estados vacíos o de error, pero **no datos reales**. Para datos y favoritos, usa el Nivel 2.
 
 ### Nivel 2 — UI con datos reales del backend
 
-Levanta en Docker **solo** `backend`, `db` y un **proxy Nginx liviano** (sin compilar Flutter), y corre el dev-server de Flutter en el host. Nginx hace proxy de `/` al dev-server y de `/api/` al backend, de modo que la app y la API quedan en el **mismo origen** (`http://localhost`): sin problemas de CORS, cookies ni redirecciones de OAuth.
+Levanta en Docker **solo** `backend`, `db`, `cron-updater` y un **proxy Nginx liviano** (sin compilar Flutter), y corre Flutter con `-d chrome` en el host. Chrome abre solo en `http://localhost:8080` con *hot reload* nativo; la app llama a la API en `http://localhost/api` (puerto 80, el proxy → backend).
+
+Como la app (`:8080`) y la API (`:80`) están en puertos distintos, la petición es *cross-origin*. El backend lo habilita **solo en desarrollo** con dos variables que inyecta `docker-compose.frontend-dev.yml`:
+
+- `CORS_ALLOW_ORIGINS=http://localhost:8080` → permite la petición con credenciales (cookies). Así funcionan el login real y los favoritos.
+- `FRONTEND_URL=http://localhost:8080` → tras el login de Microsoft, el callback devuelve al usuario a `:8080` (no se pierde el origen con hot reload). El `AZURE_REDIRECT_URI` sigue siendo `http://localhost/api/auth/callback`, que es el registrado en Entra ID.
+
+> La cookie de sesión es port-agnóstica y `SameSite=lax`: `localhost:8080` y `localhost:80` son el **mismo site**, así que la cookie viaja en la petición cross-port.
 
 ```
-  Navegador  -->  http://localhost  -->  Nginx (Docker, contenedor `web`)
-                                          |- /      --> host.docker.internal:8080  (flutter run en el host)
-                                          |- /api/  --> api:8000                    (backend en Docker)
+  Chrome (http://localhost:8080)  ──►  Flutter dev-server en el host  (hot reload)
+        │
+        └── XHR /api ──►  http://localhost  ──►  Nginx (Docker, `web`)  ──►  api:8000
+                            (CORS dev permite el origen :8080 con cookies)
 ```
 
 **Opción A — script (recomendado):**
@@ -394,49 +405,59 @@ Linux / macOS / Git Bash / WSL:
 
 ```bash
 ./scripts/dev-frontend.sh                                  # login real de Microsoft
-./scripts/dev-frontend.sh --dart-define=DEV_SKIP_AUTH=true # usuario mock
+./scripts/dev-frontend.sh --seed                           # forzar repoblado de la DB
+./scripts/dev-frontend.sh --dart-define=DEV_SKIP_AUTH=true # usuario mock (sin login)
 ```
 
 Windows (PowerShell):
 
 ```powershell
 ./scripts/dev-frontend.ps1                                  # login real de Microsoft
-./scripts/dev-frontend.ps1 --dart-define=DEV_SKIP_AUTH=true # usuario mock
+./scripts/dev-frontend.ps1 --seed                           # forzar repoblado de la DB
+./scripts/dev-frontend.ps1 --dart-define=DEV_SKIP_AUTH=true # usuario mock (sin login)
 ```
 
 > El `.sh` solo corre en bash (Linux/macOS/Git Bash/WSL), no en PowerShell ni `cmd`. En Windows usa el `.ps1`, o ejecuta los comandos de la Opción B directamente (son nativos).
 
+**Poblado de la DB (automático):** el script espera a que la DB esté lista y consulta si la tabla `materia` está vacía. Si lo está, corre `initial-data` una vez (descarga de Banner, ~1-2 min). Si ya hay datos, no re-puebla — `cron-updater` los mantiene frescos. La flag `--seed` fuerza el repoblado aunque la DB tenga datos. Cualquier otro argumento se pasa tal cual a `flutter run`.
+
 **Opción B — manual:**
 
 ```bash
-# 1. Backend + db + proxy (no reconstruye el frontend)
+# 1. Backend + db + cron-updater + proxy (no reconstruye el frontend)
 docker compose -f docker-compose.yml -f docker-compose.frontend-dev.yml \
-    up -d backend db frontend
+    up -d backend db cron-updater frontend
 
-# 2. Dev-server de Flutter en el host
+# 2. (Solo si la DB está vacía) poblarla una vez
+docker compose -f docker-compose.yml -f docker-compose.frontend-dev.yml \
+    run --rm initial-data
+
+# 3. Flutter en Chrome (se abre solo en http://localhost:8080)
 cd frontend
-flutter run -d web-server --web-port 8080 --web-hostname 0.0.0.0
+flutter run -d chrome --web-port 8080
 ```
 
-Abre **http://localhost** (no el puerto 8080: se accede a través del proxy). Tras editar el código, pulsa `R` en la terminal de Flutter y refresca el navegador.
+Chrome abre solo en **http://localhost:8080**. Tras editar el código, pulsa `r` (hot reload) en la terminal de Flutter.
 
-> Requiere que la DB esté poblada (servicio `initial-data`, ver sección 4) para que haya materias.
+> `cron-updater` **no** puebla al arrancar: solo programa la actualización periódica (primer tick ~10 min). El llenado inmediato lo hace `initial-data` (paso 2), que es lo que el script de la Opción A automatiza.
 
 ### Archivos involucrados
 
 | Archivo | Versionado | Propósito |
 |---------|-----------|-----------|
 | `frontend/lib/config/dev_config.dart` | sí | Define el flag `DEV_SKIP_AUTH` y el usuario mock |
-| `frontend/nginx.frontend-dev.conf` | sí | Nginx que hace proxy a Flutter (host) + `/api/` al backend |
-| `docker-compose.frontend-dev.yml` | sí | Override que convierte `web` en proxy liviano (sin build) |
-| `scripts/dev-frontend.sh` | sí | Atajo (bash) que levanta Docker + Flutter para el Nivel 2 |
+| `frontend/nginx.frontend-dev.conf` | sí | Nginx liviano que expone `/api/` al backend (y respaldo `/` → Flutter) |
+| `docker-compose.frontend-dev.yml` | sí | Override: `web` pasa a proxy sin build e inyecta al backend `CORS_ALLOW_ORIGINS` y `FRONTEND_URL` solo-dev |
+| `scripts/dev-frontend.sh` | sí | Atajo (bash): levanta Docker, auto-puebla la DB si está vacía (`--seed` fuerza) y arranca Flutter en Chrome |
 | `scripts/dev-frontend.ps1` | sí | Equivalente PowerShell del atajo, para Windows |
+| `backend/app/main.py` (CORS) | sí | Lee `CORS_ALLOW_ORIGINS` de entorno; en prod queda vacío (mismo origen) |
 
 > A diferencia de `docker-compose.override.yml` y `nginx.dev.conf` (ignorados por contener configuración local), estos archivos **sí se versionan**: no contienen secretos y definen un flujo de desarrollo compartido y reproducible.
 
 ### Troubleshooting (modo rápido)
 
-- **`502 Bad Gateway` en http://localhost (Nivel 2):** el dev-server de Flutter no está corriendo o no terminó de compilar. Espera a que aparezca `is being served at` y refresca.
-- **Cambios no se reflejan (Nivel 2):** con `-d web-server` no hay recarga automática. Pulsa `R` en la terminal de Flutter y refresca el navegador.
-- **No carga ninguna materia (Nivel 2):** la DB está vacía. Corre `docker compose run --rm initial-data`.
+- **Cambios no se reflejan (Nivel 2):** pulsa `r` (hot reload) o `R` (hot restart) en la terminal de Flutter. Con `-d chrome` la recarga es nativa; no hace falta refrescar a mano.
+- **`No autenticado` al cargar favoritos (Nivel 2):** la petición cross-origin se bloqueó. Verifica que el backend se levantó con `docker-compose.frontend-dev.yml` (inyecta `CORS_ALLOW_ORIGINS`) y que arrancaste Flutter en el puerto `8080`. Si cambiaste el puerto, ajusta `CORS_ALLOW_ORIGINS` y `FRONTEND_URL` a ese mismo origen.
+- **El login no vuelve a la app / queda en :80:** confirma que el backend tiene `FRONTEND_URL=http://localhost:8080` (lo pone el compose de dev) y que `AZURE_REDIRECT_URI=http://localhost/api/auth/callback` está registrado en Entra ID.
+- **No carga ninguna materia (Nivel 2):** la DB está vacía. El script la puebla solo si detecta la tabla vacía; si los datos quedaron a medias, fuerza el repoblado con `./scripts/dev-frontend.sh --seed` (o `docker compose -f docker-compose.yml -f docker-compose.frontend-dev.yml run --rm initial-data`).
 - **Cambié el `Dockerfile`, Nginx de producción o el backend:** estos modos no los cubren; reconstruye la imagen correspondiente (`docker compose up -d --build <servicio>`).

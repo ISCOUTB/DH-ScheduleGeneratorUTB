@@ -19,10 +19,21 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Middleware para permitir que el frontend (que corre en otro dominio/puerto) se comunique con esta API.
+# CORS. En producción la app es de mismo origen (Nginx sirve el build y proxya
+# /api), por lo que no se necesita ningún origen cruzado y la lista queda vacía.
+# En desarrollo, el dev-server de Flutter corre en otro puerto (p. ej.
+# http://localhost:8080) y se habilita mediante la variable de entorno
+# CORS_ALLOW_ORIGINS (orígenes separados por coma). Se evita "*" porque, junto a
+# allow_credentials=True, obliga a reflejar cualquier origen (riesgo de
+# seguridad) y el navegador bloquea las peticiones con cookies.
+_cors_allow_origins = [
+    origin.strip()
+    for origin in os.getenv("CORS_ALLOW_ORIGINS", "").split(",")
+    if origin.strip()
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=_cors_allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
