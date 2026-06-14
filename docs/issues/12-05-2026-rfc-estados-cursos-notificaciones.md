@@ -8,6 +8,8 @@
 - Fases previas:
   - **Fase 1** ✅ — Persistencia y pantalla de visualización (`29-03-2026-rfc-horarios-destacados.md`, `12-05-2026-pantalla-horarios-destacados.md`)
 
+> **Revisión 2026-06-14 (antes de implementar Fase 2):** se corrigió la RFC contra el código real. Cambios: (1) los cupos viven en la tabla **`Curso`** (`CuposDisponibles`, `CuposTotales`), no existe `secciones`; (2) el repositorio usa **psycopg síncrono** + `run_in_threadpool`, no asyncpg; (3) el `NRC` es **entero** en BD (se expone como string en los modelos), hay que parsear; (4) el estado de cupos **solo aplica al término actual** — ver §2.6.
+
 ## 1. Contexto
 
 La feature "Horarios Destacados" se divide en tres fases:
@@ -43,8 +45,8 @@ Colorear cada bloque de clase en la grilla de favoritos según el estado actual 
 
 Ya se cuenta con la información necesaria:
 
-- **En BD:** La tabla `secciones` tiene columnas `cuposdisponibles` y `cupostotales`, actualizadas periódicamente por el cron ETL (`scripts/actualizar_datos.py`).
-- **En el modelo frontend:** `ClassOption` ya tiene `seatsAvailable` y `seatsMaximum`.
+- **En BD:** La tabla **`Curso`** tiene columnas `CuposDisponibles` y `CuposTotales` (PK `NRC`, tipo **entero**), actualizadas periódicamente por el cron ETL (`scripts/actualizar_datos.py`). El ETL **borra y reinserta** las tablas académicas en cada corrida, por lo que `Curso` contiene **solo el término actual**.
+- **En el modelo frontend:** `ClassOption` ya tiene `seatsAvailable` y `seatsMaximum` (y `nrc` como string).
 - **En el snapshot guardado:** El `schedule_json` del favorito contiene los cupos **al momento de guardar**, no los actuales.
 
 ### 2.4 Diseño Propuesto
@@ -53,10 +55,11 @@ Ya se cuenta con la información necesaria:
 
 **Nuevo endpoint: `GET /api/favorites/status?nrcs=12345,67890,11111`**
 
-- Recibe una lista de NRCs (comma-separated).
-- Consulta `cuposdisponibles` y `cupostotales` actuales de cada NRC en la tabla `secciones`.
-- Retorna un mapa `{ nrc: { available: int, total: int } }`.
-- Requiere sesión activa (cookie `session_id`).
+- Recibe una lista de NRCs (comma-separated). Se **parsean a entero** (el NRC es entero en BD; los NRC no numéricos se descartan).
+- Consulta `CuposDisponibles` y `CuposTotales` actuales de cada NRC en la tabla `Curso`.
+- Retorna un mapa `{ nrc: { available: int, total: int } }` (las claves son strings, como en JSON). Los NRC que no existan en `Curso` se omiten del mapa → el frontend los trata como `eliminated`.
+- Requiere sesión activa (cookie `session_id`); sigue el patrón de `favorite_routes.py` (`get_authenticated_user` + `run_in_threadpool`).
+- **Solo tiene sentido para el término actual** (ver §2.6); el frontend no lo invoca para términos pasados.
 
 ```json
 // Response
@@ -78,33 +81,63 @@ Ya se cuenta con la información necesaria:
 
 2. **Función `computeStatus(available, total) → CourseStatus`** que aplica los umbrales.
 
-3. **`FavoritesScreen`:** Al seleccionar un horario, llama al endpoint de status con los NRCs del horario y obtiene los cupos actuales.
+3. **`FavoritesScreen`:** Al seleccionar un horario **del término actual**, llama al endpoint de status con los NRCs del horario y obtiene los cupos actuales. Para términos pasados no se invoca (ver §2.6).
 
-4. **Grilla de favoritos:** Colorea los bloques según `CourseStatus` en lugar de por materia. Se necesita un modo de renderizado alterno en `buildSchedulePreview` (o un parámetro `colorMode`).
+4. **Grilla de favoritos:** Coloreo alterno por `CourseStatus` en `buildSchedulePreview`. Se añade un parámetro **opcional** `colorResolver` (`Color Function(ClassOption)?`): si se pasa, se usa; si no, se mantiene el coloreo por materia (`subjectColors[subjectName]`). Esto preserva la compatibilidad con todos los usos actuales de `ScheduleGridWidget` (generación, mobile, previews del sidebar). En modo estado se mantiene el texto con el nombre de la materia (solo cambia el color de fondo).
 
-5. **Leyenda de colores:** Pequeña leyenda debajo del título "Opción A" que explique qué significa cada color.
+5. **Leyenda de colores:** Pequeña leyenda debajo del título "Opción A" que explique qué significa cada color. Solo visible en modo estado.
 
-6. **Toggle de modo de color:** Opcional — permitir al usuario alternar entre coloreo por materia y por estado de cupos. Útil para no perder la referencia visual de qué materia es cada bloque.
+6. **Toggle de modo de color (materia ↔ estado):** Permite alternar entre coloreo por materia y por estado de cupos, para no perder la referencia visual de qué materia es cada bloque. **Deshabilitado** (gris + tooltip "Estado de cupos disponible solo para el periodo actual") cuando el término seleccionado no es el actual; en ese caso el coloreo se mantiene por materia.
 
 #### Repositorio
 
-Nueva función en `repository.py`:
+Nueva función en `repository.py`. **Síncrona con psycopg** (igual que el resto del repositorio; las rutas la llaman con `run_in_threadpool`):
 ```python
-async def get_nrc_seats(conn, nrcs: list[str]) -> dict:
-    """Consulta cupos actuales de una lista de NRCs."""
-    rows = await conn.fetch("""
-        SELECT nrc, cuposdisponibles, cupostotales
-        FROM secciones
-        WHERE nrc = ANY($1)
-    """, nrcs)
-    return {r['nrc']: {'available': r['cuposdisponibles'], 'total': r['cupostotales']} for r in rows}
+def get_nrc_seats(nrcs: list[str]) -> dict:
+    """Consulta cupos actuales de una lista de NRCs en la tabla Curso.
+
+    Devuelve { nrc(str): {'available': int, 'total': int} }.
+    Los NRC no numéricos se ignoran; los inexistentes en Curso no aparecen.
+    """
+    nrc_ints = [int(n) for n in nrcs if str(n).isdigit()]
+    if not nrc_ints:
+        return {}
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "SELECT NRC, CuposDisponibles, CuposTotales FROM Curso WHERE NRC = ANY(%s)",
+            (nrc_ints,),
+        )
+        return {
+            str(nrc): {"available": disp, "total": total}
+            for (nrc, disp, total) in cursor.fetchall()
+        }
+    finally:
+        cursor.close()
+        conn.close()
 ```
 
 ### 2.5 Consideraciones
 
 - Los cupos se actualizan con la frecuencia del cron ETL (actualmente cada ciertas horas). No es tiempo real.
-- Si un NRC del favorito ya no existe en `secciones` (e.g., sección eliminada de Banner), se trata como `eliminated`.
+- Si un NRC del favorito ya no existe en `Curso` (e.g., sección eliminada de Banner), se trata como `eliminated`.
 - El endpoint de status NO modifica datos; es solo lectura.
+
+### 2.6 Restricción al término actual
+
+La tabla `Curso` solo contiene el **término actual** (el ETL borra y reinserta en cada corrida). Esto tiene dos consecuencias para favoritos de **términos pasados**:
+
+1. **Sin datos:** sus NRCs probablemente ya no están en `Curso` → todo aparecería como `eliminated` (falso).
+2. **Datos engañosos:** Banner **reutiliza NRCs** entre términos. Un NRC de un favorito viejo puede coincidir con un curso **distinto** del término actual → el estado mostrado sería de otra materia.
+
+**Decisión:** el estado visual de cupos aplica **únicamente cuando `selectedTerm == currentTerm`**. Para términos pasados:
+- No se llama al endpoint de status.
+- El toggle materia/estado queda deshabilitado (con tooltip explicativo).
+- El coloreo se mantiene por materia (comportamiento de Fase 1).
+
+Esto evita mostrar información falsa y mantiene útil la pantalla para periodos anteriores.
 
 ---
 
@@ -222,13 +255,14 @@ notification-checker:
 
 | Paso | Componente | Descripción |
 |------|-----------|-------------|
-| 1 | Backend | Función `get_nrc_seats` en `repository.py` |
-| 2 | Backend | Endpoint `GET /api/favorites/status` en `favorite_routes.py` |
-| 3 | Frontend | Enum `CourseStatus` y función `computeStatus` |
-| 4 | Frontend | Integrar llamada al endpoint en `FavoritesScreen` |
-| 5 | Frontend | Modo de coloreo por estado en `buildSchedulePreview` |
-| 6 | Frontend | Leyenda de colores en la pantalla |
-| 7 | Docs | Actualizar `backend.md`, `frontend.md` |
+| 1 | Backend | Función **síncrona** `get_nrc_seats(nrcs)` en `repository.py` (tabla `Curso`) |
+| 2 | Backend | Endpoint `GET /api/favorites/status` en `favorite_routes.py` (auth + `run_in_threadpool`) |
+| 3 | Frontend | Colores de estado en `constants.dart`; enum `CourseStatus` y `computeStatus` |
+| 4 | Frontend | `getFavoritesStatus` en `api_service.dart` |
+| 5 | Frontend | Cargar status al seleccionar horario **solo si término actual**; estado en `ScheduleProvider` (mapa cupos + `colorMode`) |
+| 6 | Frontend | Parámetro opcional `colorResolver` en `buildSchedulePreview` (back-compat) |
+| 7 | Frontend | Leyenda + toggle materia/estado (deshabilitado en periodos pasados) en `FavoritesScreen` |
+| 8 | Docs | Actualizar `backend.md`, `frontend.md` |
 
 ### Fase 3 (Notificaciones)
 
@@ -250,7 +284,7 @@ notification-checker:
 | NRC eliminado de Banner | Tratar como `eliminated`, mostrar mensaje claro al usuario |
 | Spam de correos por fluctuaciones | Throttling por usuario + solo notificar transiciones graves |
 | Costo de servicio de email | Empezar con free tier, evaluar escala real |
-| Rendimiento de consulta masiva de NRCs | Índice en `secciones.nrc` (ya existe como PK/unique) |
+| Rendimiento de consulta masiva de NRCs | `NRC` es PK de `Curso` (índice único ya existe); el `WHERE NRC = ANY(%s)` lo aprovecha |
 
 ## 6. Criterios de Aceptación
 
@@ -258,6 +292,7 @@ notification-checker:
 1. Los bloques de la grilla de favoritos muestran colores según cupos actuales.
 2. Se muestra leyenda explicativa de los colores.
 3. Los cupos se consultan al backend, no se usan los del snapshot guardado.
+4. El estado solo aplica al término actual: en periodos pasados el toggle queda deshabilitado y el coloreo se mantiene por materia.
 
 ### Fase 3
 1. El usuario recibe correo cuando un curso pasa a "En riesgo" o "Eliminado".
@@ -266,7 +301,9 @@ notification-checker:
 
 ## 7. Decisiones Pendientes
 
-- [ ] Umbrales exactos para cada estado (50%/20% son propuestas).
-- [ ] Servicio de correo a utilizar.
-- [ ] ¿Notificar también transición Precaución → En riesgo, o solo los graves?
-- [ ] ¿Toggle de notificaciones por usuario desde la primera iteración?
+- [x] **Umbrales por estado (Fase 2):** confirmados los de §2.2 (>50% / 20–50% / <20% y >0 / 0). _(2026-06-14)_
+- [x] **Estado en periodos pasados (Fase 2):** solo término actual; toggle deshabilitado en periodos anteriores. Ver §2.6. _(2026-06-14)_
+- [x] **Toggle materia/estado (Fase 2):** incluido desde la primera iteración. _(2026-06-14)_
+- [ ] Servicio de correo a utilizar (Fase 3).
+- [ ] ¿Notificar también transición Precaución → En riesgo, o solo los graves? (Fase 3)
+- [ ] ¿Toggle de notificaciones por usuario desde la primera iteración? (Fase 3)
