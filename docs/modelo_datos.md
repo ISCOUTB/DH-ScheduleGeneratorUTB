@@ -250,7 +250,7 @@ Estado de implementación:
 
 ---
 
-### Horario Destacado (Propuesto)
+### Horario Destacado
 
 Representa un horario guardado por el usuario como favorito.
 
@@ -263,8 +263,13 @@ Representa un horario guardado por el usuario como favorito.
 | `schedule_json` | JSONB | Snapshot del horario tal como se mostró al usuario |
 | `created_at` | TIMESTAMP | Fecha de creación del favorito |
 
-Restricción sugerida:
-- `UNIQUE (usuario_id, term, signature)` para evitar duplicados por usuario.
+Restricción:
+- `UNIQUE (usuario_id, term, signature)` para evitar duplicados por usuario (implementada en `init.sql`).
+
+Estado de implementación:
+- La tabla y la restricción existen en `backend/init.sql`.
+- CRUD completo en `routes/favorite_routes.py` + `repository.py` (máx. 20 favoritos por término).
+- Pantalla dedicada con previsualización y estado de cupos en vivo (Fase 2). El estado se consulta con `GET /api/favorites/status` contra la tabla `Curso` y solo aplica al término actual.
 
 ## Relaciones
 
@@ -275,7 +280,7 @@ Restricción sugerida:
 | Curso → Clase | 1:N | Un curso tiene uno o más bloques horarios |
 | Curso → Curso | N:1 | Laboratorios se vinculan a su teórico via `nrcteorico` |
 | Usuario → Sesión de Usuario | 1:N | Un usuario tiene múltiples registros de inicio de sesión |
-| Usuario → Horario Destacado | 1:N | Un usuario puede guardar múltiples horarios (propuesto) |
+| Usuario → Horario Destacado | 1:N | Un usuario puede guardar múltiples horarios destacados |
 
 ## Tipos de Curso
 

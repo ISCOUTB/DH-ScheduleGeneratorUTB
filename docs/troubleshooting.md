@@ -6,6 +6,8 @@ Este documento mantiene un registro de los problemas encontrados durante el desa
 
 ## 2024-12-23: Filtros de NRC - Actualización Dinámica y Persistencia
 
+> **Nota (registro histórico):** la implementación actual de `getViableNrcsFromSchedules()` calcula los NRC viables a partir de los horarios base generados (`_baseSchedulesForNrcCalculation`), no con los métodos `_coursesHaveConflict()`/`_timeToMinutes()` descritos abajo. Este registro se conserva como historia de la decisión.
+
 ### Problema
 
 Los filtros de NRC no se comportaban correctamente cuando se agregaban múltiples materias con cruces de horario:

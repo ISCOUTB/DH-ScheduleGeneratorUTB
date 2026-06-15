@@ -32,6 +32,7 @@ frontend/lib/
 |   +-- subject_summary.dart  # Resumen ligero de materia
 |   +-- class_option.dart     # Opcion de clase individual
 |   +-- schedule.dart         # Bloque horario (dia + hora)
+|   +-- course_status.dart    # Estado de cupos (CourseStatus) y umbrales
 |
 +-- providers/                # Proveedores de estado (ChangeNotifier)
 |   +-- schedule_provider.dart # Estado global de materias, horarios y filtros
@@ -55,7 +56,9 @@ frontend/lib/
     +-- filter_widget.dart           # Panel de filtros
     +-- subjects_panel.dart          # Panel de materias seleccionadas
     +-- main_actions_panel.dart      # Acciones principales (buscar, filtrar, destacados)
-    +-- schedule_grid_widget.dart    # Grilla visual del horario (soporta letras y fillParent)
+    +-- schedule_grid_widget.dart    # Grilla visual del horario (paginacion, fillParent, colorResolver)
+    +-- schedule_preview_card.dart   # Tarjeta de un horario (preview + estrella), reutilizable
+    +-- color_mode_toggle.dart       # Toggle Materia/Estado (compartido)
     +-- schedule_overview_widget.dart # Resumen del horario (modal)
     +-- schedule_sort_widget.dart    # Ordenamiento de horarios
     +-- professor_filter_widget.dart # Filtro por profesor
@@ -146,16 +149,17 @@ Maneja autenticacion OAuth:
 Comunicacion con el backend:
 - `getAllSubjects()`: Lista de materias disponibles
 - `getSubjectDetails(code, name)`: Detalles de una materia
-- `generateSchedules(subjects, filters, creditLimit)`: Genera horarios
+- `generateSchedules(subjects, filters, creditLimit, isMobile)`: Genera horarios; devuelve `GenerateSchedulesResult` (lista + `truncated`)
+- `getFavoritesStatus(nrcs)`: Estado de cupos actuales (Fase 2)
 
 Ambos servicios usan `BrowserClient` con `withCredentials = true`.
 
 ### Favoritos (en ScheduleProvider)
 Gestión de horarios destacados:
-- `loadFavorites()`: Carga favoritos del usuario desde el backend
-- `addFavorite(schedule)`: Guarda un horario como destacado
-- `removeFavoriteAt(index)`: Elimina un horario destacado
-- `isFavorite(schedule)`: Verifica si un horario ya está marcado
+- `loadFavorites()` / `loadFavoriteTerms()`: Carga favoritos y términos del usuario desde el backend
+- `toggleFavorite(schedule)`: Marca o desmarca un horario como destacado
+- `removeFavoriteAt(index)`: Elimina un horario destacado por índice
+- `isFavorite(schedule)`: Verifica si un horario ya está marcado (por `signature`)
 
 ### Estado visual de cupos (Fase 2)
 Colorea la grilla de horarios destacados según los cupos **actuales** de cada curso:
