@@ -52,6 +52,10 @@ class ScheduleGridWidget extends StatefulWidget {
   /// mantiene el coloreo por materia.
   final Color Function(ClassOption)? colorResolver;
 
+  /// Si en móvil debe paginar (en vez de mostrar todos los horarios). Por
+  /// defecto false para no alterar otros usos.
+  final bool paginateOnMobile;
+
   const ScheduleGridWidget({
     Key? key,
     required this.allSchedules,
@@ -67,6 +71,7 @@ class ScheduleGridWidget extends StatefulWidget {
     this.fillParent = false,
     this.fillParentLabel,
     this.colorResolver,
+    this.paginateOnMobile = false,
   }) : super(key: key);
 
   @override
@@ -122,14 +127,14 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
 
   void _loadSchedulesForCurrentPage() {
     setState(() {
-      // En móvil, mostrar todos los horarios sin paginación
-      if (widget.isMobileLayout) {
+      // En móvil sin paginación explícita, mostrar todos los horarios.
+      if (widget.isMobileLayout && !widget.paginateOnMobile) {
         _displayedSchedules = widget.allSchedules;
       } else {
-        // En PC, aplicar paginación
+        // PC, o móvil con paginación: aplicar la página actual.
         final int startIndex = (widget.currentPage - 1) * widget.itemsPerPage;
         final int endIndex = (startIndex + widget.itemsPerPage).clamp(0, widget.allSchedules.length);
-        
+
         _displayedSchedules = widget.allSchedules.sublist(
           startIndex.clamp(0, widget.allSchedules.length),
           endIndex,

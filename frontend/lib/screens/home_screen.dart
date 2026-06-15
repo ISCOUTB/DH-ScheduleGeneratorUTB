@@ -18,7 +18,6 @@ import '../widgets/filter_widget.dart';
 import '../widgets/subjects_panel.dart';
 import '../widgets/main_actions_panel.dart';
 import '../widgets/schedule_grid_widget.dart';
-import '../widgets/schedule_preview_card.dart';
 import '../widgets/schedule_overview_widget.dart';
 import '../widgets/schedule_sort_widget.dart';
 import '../screens/favorites_screen.dart';
@@ -499,76 +498,86 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
 
-  // Vista móvil: un solo CustomScrollView. Los horarios van en un SliverGrid
-  // perezoso, que solo construye lo visible y recicla lo que sale de pantalla
-  // (scroll fluido y bajo consumo aunque haya cientos de horarios). Las
-  // cabeceras (ordenar, materias) hacen scroll junto con la lista.
-  Widget _buildMobileLayout(ScheduleProvider provider) {
-    final schedules = provider.allSchedules;
+  // Vista móvil: lista única (sort + materias + grilla paginada + barra de
+  // páginas). El backend ya limita el total de horarios (cap), así que cada
+  // página muestra pocos. Al cambiar de página se vuelve al inicio.
+  Widget _buildMobileLayout(ScheduleProvider provider) => ListView(
+        controller: _mobileScrollController,
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          ScheduleSortWidget(
+            currentOptimizations: provider.currentOptimizations,
+            onOptimizationChanged: provider.updateOptimizations,
+            isEnabled: provider.allSchedules.isNotEmpty,
+            isMobileLayout: true,
+          ),
+          const SizedBox(height: 16),
+          SubjectsPanel(
+            isFullExpandedView: provider.isFullExpandedView,
+            addedSubjects: provider.addedSubjects,
+            usedCredits: provider.usedCredits,
+            creditLimit: provider.creditLimit,
+            subjectColors: provider.subjectColorMap,
+            onShowPanel: () => provider.setFullExpandedView(false),
+            onHidePanel: () => provider.setFullExpandedView(true),
+            onAddSubject: () => provider.setSearchOpen(true),
+            onToggleExpandView: () => provider.toggleExpandedView(),
+            onRemoveSubject: _handleRemoveSubject,
+            isExpandedView: provider.isExpandedView,
+            isMobileLayout: true,
+          ),
+          const SizedBox(height: 16),
+          _buildScheduleArea(provider, isMobileLayout: true),
+          // Barra de páginas (solo si hay más de una página).
+          if (provider.allSchedules.isNotEmpty && provider.totalPages > 1) ...[
+            const SizedBox(height: 12),
+            _buildMobilePaginationBar(provider),
+          ],
+        ],
+      );
 
-    return CustomScrollView(
-      controller: _mobileScrollController,
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          sliver: SliverToBoxAdapter(
-            child: Column(
-              children: [
-                ScheduleSortWidget(
-                  currentOptimizations: provider.currentOptimizations,
-                  onOptimizationChanged: provider.updateOptimizations,
-                  isEnabled: schedules.isNotEmpty,
-                  isMobileLayout: true,
-                ),
-                const SizedBox(height: 16),
-                SubjectsPanel(
-                  isFullExpandedView: provider.isFullExpandedView,
-                  addedSubjects: provider.addedSubjects,
-                  usedCredits: provider.usedCredits,
-                  creditLimit: provider.creditLimit,
-                  subjectColors: provider.subjectColorMap,
-                  onShowPanel: () => provider.setFullExpandedView(false),
-                  onHidePanel: () => provider.setFullExpandedView(true),
-                  onAddSubject: () => provider.setSearchOpen(true),
-                  onToggleExpandView: () => provider.toggleExpandedView(),
-                  onRemoveSubject: _handleRemoveSubject,
-                  isExpandedView: provider.isExpandedView,
-                  isMobileLayout: true,
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
+  /// Barra compacta de paginación para la vista móvil. Al cambiar de página
+  /// vuelve al inicio de la lista (en vez de quedar al fondo).
+  Widget _buildMobilePaginationBar(ScheduleProvider provider) {
+    final int page = provider.currentPage;
+    final int totalPages = provider.totalPages;
+
+    void goTo(int target) {
+      provider.setCurrentPage(target);
+      if (_mobileScrollController.hasClients) {
+        _mobileScrollController.jumpTo(0);
+      }
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.chevron_left),
+            tooltip: 'Anterior',
+            onPressed: page > 1 ? () => goTo(page - 1) : null,
           ),
-        ),
-        if (schedules.isEmpty)
-          SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            sliver: SliverToBoxAdapter(
-              child: _emptySchedulePreview(isMobile: true),
-            ),
-          )
-        else
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 24),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                childAspectRatio: 1.8,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => SchedulePreviewCard(
-                  schedule: schedules[index],
-                  subjectColors: provider.subjectColorMap,
-                  scheduleIndex: index,
-                  onTap: () => provider.selectSchedule(index),
-                ),
-                childCount: schedules.length,
-              ),
-            ),
+          Text(
+            'Página $page de $totalPages',
+            style: const TextStyle(
+                fontSize: 14,
+                color: Color(0xFF374151),
+                fontWeight: FontWeight.w500),
           ),
-      ],
+          IconButton(
+            icon: const Icon(Icons.chevron_right),
+            tooltip: 'Siguiente',
+            onPressed: page < totalPages ? () => goTo(page + 1) : null,
+          ),
+        ],
+      ),
     );
   }
 
@@ -719,6 +728,7 @@ class _HomeScreenState extends State<HomeScreen> {
       allSchedules: provider.allSchedules,
       onScheduleTap: provider.selectSchedule,
       isMobileLayout: isMobileLayout,
+      paginateOnMobile: isMobileLayout,
       subjectColors: provider.subjectColorMap,
       currentPage: provider.currentPage,
       itemsPerPage: provider.itemsPerPage,
