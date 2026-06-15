@@ -167,6 +167,13 @@ Colorea la grilla de horarios destacados según los cupos **actuales** de cada c
 - El detalle (`ScheduleOverviewWidget`) tiene su propio toggle semi-independiente: hereda el modo al abrir y luego cambia por su cuenta.
 - Solo aplica al término actual; en periodos pasados el toggle queda deshabilitado (la tabla `Curso` solo tiene el periodo vigente). Ver `docs/issues/12-05-2026-rfc-estados-cursos-notificaciones.md`.
 
+### Comportamiento responsivo / UX
+- **Generación en móvil:** la grilla pagina por páginas (`paginateOnMobile` en `ScheduleGridWidget`) con barra `Página X de Y`; al cambiar de página vuelve al inicio de los horarios (`Scrollable.ensureVisible`). El backend limita los resultados solo en móvil (cap `MAX_SCHEDULES`); el contador muestra "N+" si se truncó.
+- **Tarjeta de horario:** extraída a `widgets/schedule_preview_card.dart` (`SchedulePreview`, `SchedulePreviewCard`, `ScheduleFavoriteStar`), reutilizada por la grilla.
+- **Modales (buscar/filtrar/detalle):** en escritorio se cierran al hacer clic fuera (sobre el fondo oscuro); en móvil solo con sus botones. El menú hamburguesa (móvil) se cierra al tocar fuera.
+- **Pantalla de destacados (móvil):** appbar con perfil + hamburguesa; la flecha de "volver al generador" vive en la barra de período.
+- **Búsqueda:** filtra por palabras (tokens), ignorando espacios extra; cada palabra debe coincidir (AND).
+
 ## 6. Modelos de Datos
 
 ### User

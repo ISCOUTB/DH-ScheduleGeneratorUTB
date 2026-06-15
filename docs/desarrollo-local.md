@@ -56,6 +56,10 @@ AZURE_ALLOWED_TENANTS=tu_tenant_id
 # Período académico actual (actualizar cada semestre)
 # Lo leen: API (favoritos), scripts de descarga e inserción de datos
 CURRENT_TERM=202610
+
+# Opcional: máximo de horarios devueltos a clientes móviles (default 500).
+# Evita que el navegador móvil se quede sin memoria con muchas combinaciones.
+# MAX_SCHEDULES=500
 ```
 
 > **Nota:** El `DATABASE_URL` usa `db` como host porque ese es el nombre del servicio/contenedor en Docker Compose. Dentro de la red Docker, los contenedores se resuelven por nombre de servicio.

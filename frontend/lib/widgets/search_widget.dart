@@ -61,18 +61,26 @@ class _SearchSubjectsWidgetState extends State<SearchSubjectsWidget> {
   /// La búsqueda no distingue mayúsculas/minúsculas ni acentos.
   void filterSubjects(String query) {
     setState(() {
-      String normalizedQuery = removeDiacritics(query.toLowerCase());
-      // Si la consulta está vacía, muestra todas las materias.
-      if (normalizedQuery.isEmpty) {
+      final String normalizedQuery = removeDiacritics(query.toLowerCase());
+      // Se divide en palabras, ignorando espacios extra (así un espacio final
+      // o doble no quita resultados). Cada palabra debe coincidir (AND), de
+      // modo que "integral" siga mostrando "Cálculo Integral", pero agregar
+      // otra palabra real sí acote.
+      final List<String> tokens = normalizedQuery
+          .split(RegExp(r'\s+'))
+          .where((t) => t.isNotEmpty)
+          .toList();
+
+      if (tokens.isEmpty) {
         _filteredSubjects = widget.allSubjects;
         return;
       }
-      // Filtra por nombre o código de la materia.
+
       _filteredSubjects = widget.allSubjects.where((subject) {
-        String subjectName = removeDiacritics(subject.name.toLowerCase());
-        String subjectCode = removeDiacritics(subject.code.toLowerCase());
-        return subjectName.contains(normalizedQuery) ||
-            subjectCode.contains(normalizedQuery);
+        final String subjectName = removeDiacritics(subject.name.toLowerCase());
+        final String subjectCode = removeDiacritics(subject.code.toLowerCase());
+        return tokens.every((token) =>
+            subjectName.contains(token) || subjectCode.contains(token));
       }).toList();
     });
   }

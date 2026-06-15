@@ -221,7 +221,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
             return Scaffold(
               backgroundColor: const Color(0xFFF5F6FA),
-              appBar: _buildAppBar(isMobileLayout),
+              appBar: _buildAppBar(isMobileLayout, provider),
               body: Stack(
                 children: [
                   // Fade-in suave del contenido al entrar (una sola vez por
@@ -242,8 +242,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       _selectedIndex < provider.favoriteSchedules.length)
                     Stack(
                       children: [
-                        const ModalBarrier(
-                            dismissible: false, color: Colors.black45),
+                        // En escritorio, clic fuera del detalle lo cierra; en
+                        // móvil solo bloquea (se cierra con su botón).
+                        Positioned.fill(
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: isMobileLayout
+                                ? null
+                                : () => setState(() => _showOverview = false),
+                            child: const ColoredBox(color: Colors.black45),
+                          ),
+                        ),
                         Center(
                           child: ScheduleOverviewWidget(
                             schedule:
@@ -262,6 +271,63 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         ),
                       ],
                     ),
+                  // Menú desplegable móvil (hamburguesa), igual que el generador.
+                  if (isMobileLayout && provider.isMobileMenuOpen) ...[
+                    // Capa para cerrar el menú al tocar fuera de él.
+                    Positioned.fill(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => provider.setMobileMenuOpen(false),
+                      ),
+                    ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: MobileMenu(
+                        items: [
+                          MobileMenuItem(
+                            label: 'Mi UTB',
+                            onTap: () {
+                              provider.setMobileMenuOpen(false);
+                              _launchURL('https://www.utb.edu.co/mi-utb/');
+                            },
+                          ),
+                          MobileMenuItem(
+                            label: 'Turnos',
+                            onTap: () {
+                              provider.setMobileMenuOpen(false);
+                              _launchURL(
+                                  'https://sites.google.com/view/turnos-de-matricula-web-utb/turnos?authuser=0');
+                            },
+                          ),
+                          MobileMenuItem(
+                            label: 'Mallas',
+                            onTap: () {
+                              provider.setMobileMenuOpen(false);
+                              _launchURL(
+                                  'https://sites.google.com/utb.edu.co/mallasutb/mallas-curriculares');
+                            },
+                          ),
+                          MobileMenuItem(
+                            label: 'Electivas',
+                            onTap: () {
+                              provider.setMobileMenuOpen(false);
+                              _launchURL(
+                                  'https://sites.google.com/utb.edu.co/stuplan-electivas/electivas');
+                            },
+                          ),
+                          MobileMenuItem(
+                            label: 'Reportar Error',
+                            onTap: () {
+                              provider.setMobileMenuOpen(false);
+                              _launchURL(
+                                  'https://docs.google.com/forms/d/e/1FAIpQLSeG6F1lWErfKEtTo4R8OmF6ZCpjrqKqosn_7KLgHpLCYTuDFw/viewform?usp=publish-editor');
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ],
               ),
             );
@@ -275,7 +341,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   // APPBAR — Reutiliza el mismo estilo de la app principal
   // ============================================================
 
-  PreferredSizeWidget _buildAppBar(bool isMobileLayout) {
+  PreferredSizeWidget _buildAppBar(bool isMobileLayout, ScheduleProvider provider) {
     return AppBar(
       backgroundColor: AppColors.primary,
       elevation: 0,
@@ -324,10 +390,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ),
         ],
         if (isMobileLayout) ...[
+          _buildMobileUserMenu(),
+          const SizedBox(width: 2),
           IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            tooltip: 'Volver al generador',
-            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.menu, color: Colors.white),
+            tooltip: 'Menú',
+            onPressed: () => provider.toggleMobileMenu(),
           ),
         ],
         const SizedBox(width: 16),
@@ -342,6 +410,58 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           cursor: SystemMouseCursors.click,
           child: NavLink(text: text),
         ),
+      );
+
+  /// Menú de usuario (perfil) para la appbar móvil, igual que en el generador.
+  Widget _buildMobileUserMenu() => PopupMenuButton<String>(
+        icon: CircleAvatar(
+          radius: 16,
+          backgroundColor: Colors.white,
+          child: Text(
+            widget.currentUser.initials,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: AppColors.primary,
+            ),
+          ),
+        ),
+        tooltip: widget.currentUser.displayName,
+        color: Colors.white,
+        offset: const Offset(0, 50),
+        itemBuilder: (context) => [
+          PopupMenuItem<String>(
+            enabled: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.currentUser.displayName,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                Text(
+                  widget.currentUser.email,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                ),
+                const Divider(),
+              ],
+            ),
+          ),
+          const PopupMenuItem<String>(
+            value: 'logout',
+            child: Row(
+              children: [
+                Icon(Icons.logout, color: Colors.red, size: 20),
+                SizedBox(width: 12),
+                Text('Cerrar sesión'),
+              ],
+            ),
+          ),
+        ],
+        onSelected: (value) {
+          if (value == 'logout') widget.onLogout();
+        },
       );
 
   // ============================================================
@@ -484,16 +604,22 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    // Leyenda a la izquierda del toggle (solo en modo estado).
-                    // Se ancla a la derecha y hace scroll si no cabe.
+                    // Leyenda a la izquierda del toggle. Siempre visible en el
+                    // término actual (atenuada en modo materia) para que el
+                    // layout no se reacomode al alternar; oculta en periodos
+                    // pasados (no hay estado de cupos). Se ancla a la derecha.
                     Expanded(
-                      child: useStatus
+                      child: statusApplies
                           ? Align(
                               alignment: Alignment.centerRight,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                reverse: true,
-                                child: _buildStatusLegend(),
+                              child: AnimatedOpacity(
+                                opacity: useStatus ? 1.0 : 0.3,
+                                duration: const Duration(milliseconds: 200),
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  reverse: true,
+                                  child: _buildStatusLegend(),
+                                ),
                               ),
                             )
                           : const SizedBox.shrink(),
@@ -630,6 +756,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               provider.switchFavoriteTerm(term);
             },
             formatTerm: _formatTerm,
+            onBack: () => Navigator.of(context).pop(),
           ),
         // Grilla
         Expanded(
@@ -1125,6 +1252,7 @@ class _TermSelectorBar extends StatelessWidget {
   final String currentTerm;
   final ValueChanged<String> onTermChanged;
   final String Function(String) formatTerm;
+  final VoidCallback onBack;
 
   const _TermSelectorBar({
     required this.availableTerms,
@@ -1132,18 +1260,29 @@ class _TermSelectorBar extends StatelessWidget {
     required this.currentTerm,
     required this.onTermChanged,
     required this.formatTerm,
+    required this.onBack,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(bottom: BorderSide(color: Color(0xFFE5E7EB))),
       ),
       child: Row(
         children: [
+          // Volver al generador (la flecha vive aquí para no mover el logo).
+          IconButton(
+            icon: const Icon(Icons.arrow_back, size: 20, color: Color(0xFF374151)),
+            tooltip: 'Volver al generador',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            visualDensity: VisualDensity.compact,
+            onPressed: onBack,
+          ),
+          const SizedBox(width: 10),
           const Icon(Icons.calendar_month, size: 16, color: Color(0xFF6B7280)),
           const SizedBox(width: 8),
           const Text('Periodo:', style: TextStyle(fontSize: 13, color: Color(0xFF6B7280))),

@@ -150,16 +150,24 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: isMobileLayout
-                        // Móvil: leyenda en dos filas de dos, al lado del
-                        // toggle y agrupados a la derecha (sin scroll).
+                        // Móvil: pantalla angosta → leyenda (2x2) a la
+                        // izquierda y el switch en vertical a la derecha
+                        // (estrecho), así caben lado a lado sin desbordar.
                         ? Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              if (_statusMode) ...[
-                                _buildStatusLegend(twoColumns: true),
-                                const SizedBox(width: 12),
-                              ],
+                              // La leyenda siempre ocupa su espacio (atenuada en
+                              // modo materia) para que el layout no se reacomode
+                              // al alternar el switch.
+                              AnimatedOpacity(
+                                opacity: _statusMode ? 1.0 : 0.3,
+                                duration: const Duration(milliseconds: 200),
+                                child: _buildStatusLegend(twoColumns: true),
+                              ),
+                              const SizedBox(width: 14),
                               ColorModeToggle(
+                                vertical: true,
                                 statusSelected: _statusMode,
                                 statusEnabled: true,
                                 onChanged: (status) =>
@@ -369,7 +377,12 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   /// En [twoColumns] (móvil) se muestra como dos filas de dos, en vez de una
   /// sola fila que en pantallas angostas requeriría scroll horizontal.
   Widget _buildStatusLegend({bool twoColumns = false}) {
-    Widget item(CourseStatus status) {
+    // `flexible` permite que la etiqueta se recorte con ellipsis cuando el
+    // ancho es limitado (modo dos columnas, dentro de un Expanded).
+    Widget item(CourseStatus status, {bool flexible = false}) {
+      final label = Text(courseStatusLabel(status),
+          overflow: flexible ? TextOverflow.ellipsis : TextOverflow.clip,
+          style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)));
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -382,19 +395,19 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
             ),
           ),
           const SizedBox(width: 5),
-          Text(courseStatusLabel(status),
-              style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+          flexible ? Flexible(child: label) : label,
         ],
       );
     }
 
     if (twoColumns) {
-      // Dos filas de dos, compacto. La primera columna tiene ancho fijo para
-      // que la segunda quede alineada entre ambas filas.
+      // Dos filas de dos, compacto y pegado a la izquierda. La primera columna
+      // tiene un ancho fijo ajustado para que la segunda quede cerca (no
+      // repartida a lo ancho).
       Widget row(CourseStatus a, CourseStatus b) => Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(width: 92, child: item(a)),
+              SizedBox(width: 80, child: item(a)),
               item(b),
             ],
           );

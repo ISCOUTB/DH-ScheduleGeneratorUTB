@@ -134,22 +134,28 @@ La API expone los siguientes endpoints para ser consumidos por el frontend:
       "optimizeGaps": true,
       "optimizeFreeDays": false
     },
-    "creditLimit": 25
+    "creditLimit": 25,
+    "isMobile": false
   }
   ```
 
-- **Respuesta Exitosa (200):** Una lista de horarios. Cada horario es una lista de objetos `ClassOption`.
+  `isMobile` (opcional, default `false`): si es `true`, el backend limita la cantidad de horarios devueltos (ver cap más abajo). El frontend lo envía según el User-Agent del dispositivo.
+
+- **Respuesta Exitosa (200):** Un objeto con los horarios y si la lista fue truncada.
 
   ```json
-  [
-    [
-      /* Horario 1: Lista de ClassOption */
+  {
+    "schedules": [
+      [ /* Horario 1: Lista de ClassOption */ ],
+      [ /* Horario 2: Lista de ClassOption */ ]
     ],
-    [
-      /* Horario 2: Lista de ClassOption */
-    ]
-  ]
+    "truncated": false
+  }
   ```
+
+  `truncated` es `true` cuando se aplicó el cap móvil y había más horarios de los devueltos (el frontend muestra "N+").
+
+- **Cap de resultados (solo móvil):** la explosión combinatoria puede producir decenas de miles de horarios; cargarlos todos agota la memoria del navegador móvil. Cuando `isMobile=true`, se devuelven como máximo `MAX_SCHEDULES` (env, default **500**); escritorio recibe todos. Como cualquier orden/filtro re-llama al generador, basta devolver los mejores N para el criterio actual.
 
 ---
 

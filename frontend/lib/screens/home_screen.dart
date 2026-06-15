@@ -404,6 +404,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Menú móvil
     if (isMobileLayout && provider.isMobileMenuOpen) {
+      // Capa para cerrar el menú al tocar fuera de él.
+      overlays.add(
+        Positioned.fill(
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => provider.setMobileMenuOpen(false),
+          ),
+        ),
+      );
       overlays.add(
         Positioned(
           top: 0,
@@ -428,25 +437,41 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Search
     if (provider.isSearchOpen) {
-      overlays.add(_buildSearchOverlay(provider));
+      overlays.add(_buildSearchOverlay(provider, isMobileLayout));
     }
 
     // Filter
     if (provider.isFilterOpen) {
-      overlays.add(_buildFilterOverlay(provider));
+      overlays.add(_buildFilterOverlay(provider, isMobileLayout));
     }
 
     // Schedule Overview
     if (provider.isOverviewOpen && provider.selectedScheduleIndex != null) {
-      overlays.add(_buildOverviewOverlay(provider));
+      overlays.add(_buildOverviewOverlay(provider, isMobileLayout));
     }
 
     return overlays;
   }
 
-  Widget _buildSearchOverlay(ScheduleProvider provider) => Stack(
+  /// Capa de fondo de los modales. En escritorio, al hacer clic fuera del
+  /// contenido se cierra; en móvil solo bloquea (se cierra con sus botones).
+  Widget _dismissibleBarrier({
+    required bool isMobileLayout,
+    required VoidCallback onClose,
+  }) =>
+      Positioned.fill(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: isMobileLayout ? null : onClose,
+          child: const ColoredBox(color: Colors.black45),
+        ),
+      );
+
+  Widget _buildSearchOverlay(ScheduleProvider provider, bool isMobileLayout) => Stack(
       children: [
-        const ModalBarrier(dismissible: false, color: Colors.black45),
+        _dismissibleBarrier(
+            isMobileLayout: isMobileLayout,
+            onClose: () => provider.setSearchOpen(false)),
         Center(
           child: provider.areSubjectsLoaded
               ? SearchSubjectsWidget(
@@ -475,9 +500,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
 
-  Widget _buildFilterOverlay(ScheduleProvider provider) => Stack(
+  Widget _buildFilterOverlay(ScheduleProvider provider, bool isMobileLayout) => Stack(
       children: [
-        const ModalBarrier(dismissible: false, color: Colors.black45),
+        _dismissibleBarrier(
+            isMobileLayout: isMobileLayout,
+            onClose: () => provider.setFilterOpen(false)),
         Center(
           child: FilterWidget(
             closeWindow: () => provider.setFilterOpen(false),
@@ -490,9 +517,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
 
-  Widget _buildOverviewOverlay(ScheduleProvider provider) => Stack(
+  Widget _buildOverviewOverlay(ScheduleProvider provider, bool isMobileLayout) => Stack(
       children: [
-        const ModalBarrier(dismissible: false, color: Colors.black45),
+        _dismissibleBarrier(
+            isMobileLayout: isMobileLayout,
+            onClose: provider.closeScheduleOverview),
         Center(
           child: ScheduleOverviewWidget(
             schedule: provider.allSchedules[provider.selectedScheduleIndex!],

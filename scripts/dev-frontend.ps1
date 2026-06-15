@@ -37,8 +37,8 @@ foreach ($arg in $args) {
     else { $FlutterArgs += $arg }
 }
 
-Write-Host "Levantando backend + db + cron-updater + proxy Nginx (sin reconstruir el frontend)..."
-docker @Compose up -d backend db cron-updater frontend
+Write-Host "Levantando backend + db + cron-updater + proxy Nginx (--build aplica cambios del backend; el frontend pesado no se reconstruye)..."
+docker @Compose up -d --build backend db cron-updater frontend
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Write-Host "Esperando a que la DB este lista..."
