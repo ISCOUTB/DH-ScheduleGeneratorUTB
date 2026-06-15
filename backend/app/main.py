@@ -6,7 +6,7 @@ from typing import List, Dict, Any
 import os
 
 # Importa módulos y modelos. El '.' indica que son del mismo paquete 'app'
-from .models import GenerateScheduleRequest, ClassOption
+from .models import GenerateScheduleRequest, GenerateScheduleResponse, ClassOption
 from .db import repository
 from .services import schedule_generator
 from .routes import subject_routes
@@ -65,23 +65,22 @@ def get_subjects_list():
     # Llama a la función síncrona del repositorio.
     return repository.get_all_subjects_summary()
 
-@app.post("/api/schedules/generate", response_model=List[List[ClassOption]], summary="Generar horarios válidos")
-def generate_schedules_endpoint(request: GenerateScheduleRequest) -> List[List[ClassOption]]:
+@app.post("/api/schedules/generate", response_model=GenerateScheduleResponse, summary="Generar horarios válidos")
+def generate_schedules_endpoint(request: GenerateScheduleRequest) -> GenerateScheduleResponse:
     """
     Recibe una lista de objetos de materia (código y nombre) y un diccionario de filtros.
-    
-    Ejecuta el algoritmo de backtracking y devuelve una lista de horarios válidos.
-    Cada horario es una lista de las opciones de clase que lo componen.
+
+    Ejecuta el algoritmo de backtracking y devuelve los horarios válidos junto con
+    `truncated`, que indica si se aplicó el cap móvil y había más resultados.
     """
     if not request.subjects:
         raise HTTPException(status_code=400, detail="La lista de materias no puede estar vacía.")
 
     subjects_data = [s.model_dump() for s in request.subjects]
     combinations = repository.get_combinations_for_subjects(subjects_data)
-    
+
     if not combinations or len(combinations) != len(request.subjects):
-        empty_result: List[List[ClassOption]] = []
-        return empty_result
+        return GenerateScheduleResponse(schedules=[], truncated=False)
 
 
     # Se define explícitamente el tipo del diccionario para Pylance.
@@ -96,12 +95,14 @@ def generate_schedules_endpoint(request: GenerateScheduleRequest) -> List[List[C
     )
 
     # Cap solo para clientes móviles: devuelve los mejores N (ya vienen
-    # ordenados del generador). Escritorio recibe todos.
+    # ordenados del generador). Escritorio recibe todos. `truncated` avisa al
+    # frontend que había más (para mostrar "N+").
+    truncated = False
     if request.is_mobile and 0 < _MAX_SCHEDULES < len(valid_schedules):
+        truncated = True
         valid_schedules = valid_schedules[:_MAX_SCHEDULES]
 
-    # Devuelve los resultados.
-    return valid_schedules
+    return GenerateScheduleResponse(schedules=valid_schedules, truncated=truncated)
 
 @app.get("/subjects")
 def get_subject_data():

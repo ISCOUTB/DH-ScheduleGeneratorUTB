@@ -52,3 +52,10 @@ class GenerateScheduleRequest(BaseModel):
     # ese caso (evita agotar la memoria del navegador móvil). Default false para
     # compatibilidad con clientes que no lo envíen.
     is_mobile: bool = Field(default=False, alias='isMobile')
+
+
+class GenerateScheduleResponse(BaseModel):
+    """Respuesta del generador: horarios + si la lista fue truncada por el cap."""
+    schedules: List[List[ClassOption]]
+    # True si se aplicó el cap móvil y había más horarios de los devueltos.
+    truncated: bool = False

@@ -55,6 +55,10 @@ class ScheduleProvider extends ChangeNotifier {
   List<List<ClassOption>> _allSchedules = [];
   List<List<ClassOption>> get allSchedules => List.unmodifiable(_allSchedules);
 
+  /// True si el backend truncó la lista por el cap móvil (había más).
+  bool _schedulesTruncated = false;
+  bool get schedulesTruncated => _schedulesTruncated;
+
   /// Horarios base sin filtros de NRC (usados para calcular NRCs viables).
   List<List<ClassOption>> _baseSchedulesForNrcCalculation = [];
 
@@ -219,6 +223,7 @@ class ScheduleProvider extends ChangeNotifier {
       generateSchedules();
     } else {
       _allSchedules.clear();
+      _schedulesTruncated = false;
       _baseSchedulesForNrcCalculation.clear();
       _selectedScheduleIndex = null;
       notifyListeners();
@@ -251,7 +256,7 @@ class ScheduleProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final schedules = await _apiService.generateSchedules(
+      final result = await _apiService.generateSchedules(
         subjects: _addedSubjects,
         filters: {
           ..._apiFiltersForGeneration,
@@ -261,8 +266,10 @@ class ScheduleProvider extends ChangeNotifier {
         // Solo los dispositivos móviles reciben el cap (memoria limitada).
         isMobile: PlatformService().isMobileUserAgent(),
       );
+      final schedules = result.schedules;
 
       _allSchedules = schedules;
+      _schedulesTruncated = result.truncated;
       _currentPage = 1;
       
       // Si NO hay filtros de NRC aplicados, guardar estos horarios como base
@@ -400,6 +407,7 @@ class ScheduleProvider extends ChangeNotifier {
   void clearAll() {
     _baseSchedulesForNrcCalculation.clear();
     _allSchedules.clear();
+    _schedulesTruncated = false;
     _selectedScheduleIndex = null;
     _addedSubjects.clear();
     _usedCredits = 0;

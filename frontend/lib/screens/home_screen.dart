@@ -54,6 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final PlatformService _platformService = PlatformService();
   final ScrollController _mobileScrollController = ScrollController();
   final TransformationController _transformationController = TransformationController();
+  // Marca el inicio del área de horarios (para el scroll al cambiar de página).
+  final GlobalKey _mobileScheduleAreaKey = GlobalKey();
   
   late FocusNode _focusNode;
   Orientation? _previousOrientation;
@@ -264,7 +266,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     Positioned(
                       bottom: 16,
                       left: 16,
-                      child: ScheduleCounterBadge(count: provider.allSchedules.length),
+                      child: ScheduleCounterBadge(
+                        count: provider.allSchedules.length,
+                        truncated: provider.schedulesTruncated,
+                      ),
                     ),
 
                   // Overlays
@@ -527,7 +532,10 @@ class _HomeScreenState extends State<HomeScreen> {
             isMobileLayout: true,
           ),
           const SizedBox(height: 16),
-          _buildScheduleArea(provider, isMobileLayout: true),
+          KeyedSubtree(
+            key: _mobileScheduleAreaKey,
+            child: _buildScheduleArea(provider, isMobileLayout: true),
+          ),
           // Barra de páginas (solo si hay más de una página).
           if (provider.allSchedules.isNotEmpty && provider.totalPages > 1) ...[
             const SizedBox(height: 12),
@@ -537,16 +545,27 @@ class _HomeScreenState extends State<HomeScreen> {
       );
 
   /// Barra compacta de paginación para la vista móvil. Al cambiar de página
-  /// vuelve al inicio de la lista (en vez de quedar al fondo).
+  /// desplaza hasta donde empiezan los horarios (no hasta el tope con el sort y
+  /// las materias).
   Widget _buildMobilePaginationBar(ScheduleProvider provider) {
     final int page = provider.currentPage;
     final int totalPages = provider.totalPages;
 
     void goTo(int target) {
       provider.setCurrentPage(target);
-      if (_mobileScrollController.hasClients) {
-        _mobileScrollController.jumpTo(0);
-      }
+      // Tras reconstruir con la nueva página, alinear el inicio del área de
+      // horarios con el tope visible.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final ctx = _mobileScheduleAreaKey.currentContext;
+        if (ctx != null) {
+          Scrollable.ensureVisible(
+            ctx,
+            alignment: 0.0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
     }
 
     return Container(

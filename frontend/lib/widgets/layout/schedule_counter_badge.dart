@@ -6,9 +6,13 @@ class ScheduleCounterBadge extends StatelessWidget {
   /// Número de horarios.
   final int count;
 
+  /// Si la lista fue truncada por el cap móvil (muestra "N+").
+  final bool truncated;
+
   const ScheduleCounterBadge({
     Key? key,
     required this.count,
+    this.truncated = false,
   }) : super(key: key);
 
   @override
@@ -29,7 +33,7 @@ class ScheduleCounterBadge extends StatelessWidget {
           ],
         ),
         child: Text(
-          '$count ${count == 1 ? "horario" : "horarios"}',
+          '$count${truncated ? "+" : ""} ${count == 1 ? "horario" : "horarios"}',
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,

@@ -7,6 +7,18 @@ import '../models/subject_summary.dart';
 
 import 'package:flutter/foundation.dart';
 
+/// Resultado de generar horarios: la lista + si el backend la truncó por el
+/// cap móvil (para mostrar "N+" en el contador).
+class GenerateSchedulesResult {
+  final List<List<ClassOption>> schedules;
+  final bool truncated;
+
+  const GenerateSchedulesResult({
+    required this.schedules,
+    required this.truncated,
+  });
+}
+
 class ApiService {
   // En desarrollo: localhost (nginx puerto 80 hace proxy a /api/*)
   // En producción: rutas relativas (mismo dominio)
@@ -76,7 +88,7 @@ class ApiService {
     }
   }
 
-  Future<List<List<ClassOption>>> generateSchedules({
+  Future<GenerateSchedulesResult> generateSchedules({
     required List<Subject> subjects,
     required Map<String, dynamic> filters,
     required int creditLimit,
@@ -110,13 +122,19 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        final decoded = json.decode(utf8.decode(response.bodyBytes))
+            as Map<String, dynamic>;
+        final List<dynamic> data = decoded['schedules'] as List<dynamic>;
+        final bool truncated = decoded['truncated'] as bool? ?? false;
 
-        return data.map<List<ClassOption>>((schedule) {
+        final schedules = data.map<List<ClassOption>>((schedule) {
           return (schedule as List).map<ClassOption>((classOption) {
             return ClassOption.fromJson(classOption as Map<String, dynamic>);
           }).toList();
         }).toList();
+
+        return GenerateSchedulesResult(
+            schedules: schedules, truncated: truncated);
       } else {
         print('Error del servidor: ${response.statusCode}');
         print('Cuerpo de la respuesta: ${response.body}');
