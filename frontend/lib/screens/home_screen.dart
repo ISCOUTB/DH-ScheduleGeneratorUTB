@@ -18,6 +18,7 @@ import '../widgets/filter_widget.dart';
 import '../widgets/subjects_panel.dart';
 import '../widgets/main_actions_panel.dart';
 import '../widgets/schedule_grid_widget.dart';
+import '../widgets/schedule_preview_card.dart';
 import '../widgets/schedule_overview_widget.dart';
 import '../widgets/schedule_sort_widget.dart';
 import '../screens/favorites_screen.dart';
@@ -498,35 +499,78 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
 
-  Widget _buildMobileLayout(ScheduleProvider provider) => ListView(
+  // Vista móvil: un solo CustomScrollView. Los horarios van en un SliverGrid
+  // perezoso, que solo construye lo visible y recicla lo que sale de pantalla
+  // (scroll fluido y bajo consumo aunque haya cientos de horarios). Las
+  // cabeceras (ordenar, materias) hacen scroll junto con la lista.
+  Widget _buildMobileLayout(ScheduleProvider provider) {
+    final schedules = provider.allSchedules;
+
+    return CustomScrollView(
       controller: _mobileScrollController,
-      padding: const EdgeInsets.all(16.0),
-      children: [
-        ScheduleSortWidget(
-          currentOptimizations: provider.currentOptimizations,
-          onOptimizationChanged: provider.updateOptimizations,
-          isEnabled: provider.allSchedules.isNotEmpty,
-          isMobileLayout: true,
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              children: [
+                ScheduleSortWidget(
+                  currentOptimizations: provider.currentOptimizations,
+                  onOptimizationChanged: provider.updateOptimizations,
+                  isEnabled: schedules.isNotEmpty,
+                  isMobileLayout: true,
+                ),
+                const SizedBox(height: 16),
+                SubjectsPanel(
+                  isFullExpandedView: provider.isFullExpandedView,
+                  addedSubjects: provider.addedSubjects,
+                  usedCredits: provider.usedCredits,
+                  creditLimit: provider.creditLimit,
+                  subjectColors: provider.subjectColorMap,
+                  onShowPanel: () => provider.setFullExpandedView(false),
+                  onHidePanel: () => provider.setFullExpandedView(true),
+                  onAddSubject: () => provider.setSearchOpen(true),
+                  onToggleExpandView: () => provider.toggleExpandedView(),
+                  onRemoveSubject: _handleRemoveSubject,
+                  isExpandedView: provider.isExpandedView,
+                  isMobileLayout: true,
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
         ),
-        const SizedBox(height: 16),
-        SubjectsPanel(
-          isFullExpandedView: provider.isFullExpandedView,
-          addedSubjects: provider.addedSubjects,
-          usedCredits: provider.usedCredits,
-          creditLimit: provider.creditLimit,
-          subjectColors: provider.subjectColorMap,
-          onShowPanel: () => provider.setFullExpandedView(false),
-          onHidePanel: () => provider.setFullExpandedView(true),
-          onAddSubject: () => provider.setSearchOpen(true),
-          onToggleExpandView: () => provider.toggleExpandedView(),
-          onRemoveSubject: _handleRemoveSubject,
-          isExpandedView: provider.isExpandedView,
-          isMobileLayout: true,
-        ),
-        const SizedBox(height: 16),
-        _buildScheduleArea(provider, isMobileLayout: true),
+        if (schedules.isEmpty)
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverToBoxAdapter(
+              child: _emptySchedulePreview(isMobile: true),
+            ),
+          )
+        else
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 24),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                childAspectRatio: 1.8,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => SchedulePreviewCard(
+                  schedule: schedules[index],
+                  subjectColors: provider.subjectColorMap,
+                  scheduleIndex: index,
+                  onTap: () => provider.selectSchedule(index),
+                ),
+                childCount: schedules.length,
+              ),
+            ),
+          ),
       ],
     );
+  }
 
   Widget _buildDesktopLayout(ScheduleProvider provider, bool isMobileLayout) {
     final currentOrientation = MediaQuery.of(context).orientation;
@@ -668,25 +712,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildScheduleArea(ScheduleProvider provider, {required bool isMobileLayout}) {
     if (provider.allSchedules.isEmpty) {
-      return Container(
-        height: isMobileLayout ? 300 : null,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: AppColors.background,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.grey.shade400, width: 2),
-        ),
-        child: Center(
-          child: Text(
-            "Vista previa del horario",
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      );
+      return _emptySchedulePreview(isMobile: isMobileLayout);
     }
 
     return ScheduleGridWidget(
@@ -698,6 +724,29 @@ class _HomeScreenState extends State<HomeScreen> {
       itemsPerPage: provider.itemsPerPage,
       isScrollable: !isMobileLayout,
       scrollController: isMobileLayout ? _mobileScrollController : null,
+    );
+  }
+
+  /// Recuadro "Vista previa del horario" cuando aún no hay horarios generados.
+  Widget _emptySchedulePreview({required bool isMobile}) {
+    return Container(
+      height: isMobile ? 300 : null,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.grey.shade400, width: 2),
+      ),
+      child: Center(
+        child: Text(
+          "Vista previa del horario",
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
     );
   }
 }
