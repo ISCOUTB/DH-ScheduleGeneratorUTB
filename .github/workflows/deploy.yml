@@ -4,7 +4,11 @@ name: Build and Deploy to VM
 on:
   push:
     branches:
-      - master # Se ejecuta cada vez que se haga un 'push' a la rama 'master'.
+      - master # Se ejecuta en cada 'push' a 'master'...
+    paths-ignore:
+      # ...salvo cuando el push toca SOLO documentación (no afecta el build).
+      - '**.md'
+      - 'docs/**'
 
 # Define los trabajos (jobs) que se ejecutarán.
 jobs:

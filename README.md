@@ -1,256 +1,205 @@
-# DH-ScheduleGeneratorUTB
+<div align="center">
 
-Generador de horarios académicos para estudiantes de la Universidad Tecnológica de Bolívar (UTB). Esta aplicación permite a los estudiantes seleccionar las materias que desean cursar y genera automáticamente todas las combinaciones de horarios posibles, aplicando filtros y optimizaciones según las preferencias del usuario.
+# 📅 DH Schedule Generator UTB
 
-🔗 **Aplicación en producción:** [horario.lab.utb.edu.co](https://horario.lab.utb.edu.co)
+**Generador de horarios académicos para la Universidad Tecnológica de Bolívar.**
+Selecciona tus materias y obtén automáticamente todas las combinaciones de horario válidas, con filtros, optimizaciones y horarios destacados.
 
-## Tabla de Contenidos
+[![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Python](https://img.shields.io/badge/Python%203.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
+[![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org)
 
-- [Características](#características)
-- [Arquitectura del Proyecto](#arquitectura-del-proyecto)
-- [Tecnologías Utilizadas](#tecnologías-utilizadas)
-- [Instalación y Despliegue](#instalación-y-despliegue)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Documentación Adicional](#documentación-adicional)
-- [Contribuciones](#contribuciones)
-- [Licencia](#licencia)
+### 🔗 [**Abrir la app en producción → horario.lab.utb.edu.co**](https://horario.lab.utb.edu.co)
 
-## Características
+</div>
 
-- **Autenticación segura:** Inicio de sesión con Microsoft Entra ID (Azure AD) para usuarios institucionales.
-- **Búsqueda de materias:** Busca y selecciona materias por código o nombre.
-- **Generación automática de horarios:** Algoritmo de backtracking que encuentra todas las combinaciones válidas sin conflictos de horario.
-- **Filtros avanzados:**
-  - Exclusión de profesores específicos.
-  - Restricción por rango de horas (evitar clases muy temprano o muy tarde).
-  - Límite de créditos por semestre.
-- **Optimización de horarios:**
-  - Maximizar días libres.
-  - Minimizar huecos entre clases.
-- **Visualización interactiva:** Vista de grilla semanal con los horarios generados.
-- **Exportación:** Descarga de horarios en formato PDF.
-- **Datos actualizados:** Sincronización automática con el sistema Banner de la universidad con alta frecuencia (cada 10 minutos en producción) para garantizar la frescura de la información sin afectar el historial de las preferencias de usuarios.
-- **Respaldo funcional:** Backups automáticos de la información de los usuarios cada 4 horas con retención extendida de historial físico frente a caídas.
+---
 
-## Arquitectura del Proyecto
+## ✨ Características
 
-El proyecto sigue una arquitectura de microservicios contenerizados con Docker:
+- 🔐 **Autenticación segura** — Inicio de sesión con Microsoft Entra ID (Azure AD) para usuarios institucionales.
+- 🔍 **Búsqueda de materias** — Encuentra y selecciona materias por código o nombre (búsqueda por palabras).
+- ⚙️ **Generación automática** — Algoritmo de *backtracking* que encuentra todas las combinaciones válidas sin cruces.
+- 🎯 **Filtros avanzados** — Excluir profesores, restringir rangos de horas y límite de créditos por semestre.
+- 🧠 **Optimización** — Maximizar días libres y minimizar huecos entre clases.
+- ⭐ **Horarios destacados** — Guarda tus horarios favoritos y revisa el **estado de cupos** en vivo (🟢 seguro / 🟡 precaución / 🔴 en riesgo / ⚫ eliminado).
+- 🎨 **Visualización interactiva** — Grilla semanal con código de colores.
+- 📄 **Exportación** — Descarga de horarios en PDF.
+- 📱 **Multiplataforma** — Web, móvil y escritorio, con layout responsivo.
+- 🔄 **Datos siempre frescos** — Sincronización automática con el sistema Banner de la UTB (cada ~10 min en producción).
+- 💾 **Respaldos** — Backups automáticos de los datos de usuario cada 4 horas.
+
+## 🏗️ Arquitectura
+
+Microservicios contenerizados con Docker, detrás de un único Nginx (reverse proxy + SSL):
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                              NGINX                                  │
-│                    (Reverse Proxy + SSL)                            │
+│                              NGINX                                    │
+│                    (Reverse Proxy + SSL)                              │
 ├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│    ┌──────────────────┐              ┌──────────────────┐          │
-│    │     Frontend     │              │     Backend      │          │
-│    │  (Flutter Web)   │◄────────────►│   (FastAPI)      │          │
-│    │                  │   /api/*     │                  │          │
-│    └──────────────────┘              └────────┬─────────┘          │
-│                                               │                     │
-│                                               ▼                     │
-│                                      ┌──────────────────┐          │
-│                                      │   PostgreSQL     │          │
-│                                      │   (Base de Datos)│          │
-│                                      └────────▲─────────┘          │
-│                                               │                     │
-│                                      ┌────────┴─────────┐          │
-│                                      │   Cron Updater   │          │
-│                                      │ (Actualización   │          │
-│                                      │   automática)    │          │
-│                                      └──────────────────┘          │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+│                                                                       │
+│    ┌──────────────────┐              ┌──────────────────┐            │
+│    │     Frontend     │              │     Backend      │            │
+│    │  (Flutter Web)   │◄────────────►│    (FastAPI)     │            │
+│    │                  │   /api/*     │                  │            │
+│    └──────────────────┘              └────────┬─────────┘            │
+│                                               │                       │
+│                                               ▼                       │
+│                                      ┌──────────────────┐            │
+│                                      │   PostgreSQL     │            │
+│                                      │  (Base de Datos) │            │
+│                                      └────────▲─────────┘            │
+│                                               │                       │
+│                                      ┌────────┴─────────┐            │
+│                                      │   Cron Updater   │            │
+│                                      │  (ETL Banner +   │            │
+│                                      │     backups)     │            │
+│                                      └──────────────────┘            │
+│                                                                       │
+└───────────────────────────────────────────────────────────────────────┘
 ```
 
-## Tecnologías Utilizadas
+## 🛠️ Tecnologías
 
-### Backend
-- **Python 3.13**
-- **FastAPI** - Framework web de alto rendimiento
-- **PostgreSQL** - Base de datos relacional
-- **psycopg3** - Driver de PostgreSQL para Python
-- **Pydantic** - Validación de datos
-- **python-jose** - Decodificación de JWT (tokens de Entra ID)
-- **httpx** - Cliente HTTP asíncrono para flujo OAuth
+| Capa | Stack |
+|------|-------|
+| 🎨 **Frontend** | Flutter 3 · Dart · Provider · Firebase Analytics |
+| ⚡ **Backend** | Python 3.13 · FastAPI · Pydantic · psycopg3 · python-jose · httpx |
+| 🗄️ **Datos** | PostgreSQL |
+| 📦 **Infra** | Docker & Docker Compose · Nginx · Let's Encrypt (SSL) |
+| 🔄 **CI/CD** | GitHub Actions (build + deploy por SSH a la VM) |
 
-### Frontend
-- **Flutter 3** - Framework de UI multiplataforma
-- **Dart** - Lenguaje de programación
-- **Firebase Analytics** - Análisis de uso
+## 🚀 Instalación y Despliegue
 
-### Infraestructura
-- **Docker & Docker Compose** - Contenerización y orquestación
-- **Nginx** - Servidor web y reverse proxy
-- **Let's Encrypt** - Certificados SSL
-
-## Instalación y Despliegue
-
-### Requisitos Previos
+### 📋 Requisitos
 
 - [Docker](https://docs.docker.com/get-docker/) (v20.10+)
 - [Docker Compose](https://docs.docker.com/compose/install/) (v2.0+)
 
-### Despliegue Local (Desarrollo)
-
-1. **Clona el repositorio:**
-   ```bash
-   git clone https://github.com/ISCOUTB/DH-ScheduleGeneratorUTB.git
-   cd DH-ScheduleGeneratorUTB
-   ```
-
-2. **Configura los archivos de desarrollo:**
-   
-   El entorno local requiere archivos que están ignorados por Git (variables de entorno, configuración de Nginx para HTTP, y sobrescritura de Docker Compose). La guía completa con la estructura y contenido de cada archivo está en:
-   
-   📖 **[Guía de Desarrollo Local](./docs/desarrollo-local.md)**
-   
-   Resumen rápido:
-   ```bash
-   cp backend/.env.example backend/.env     # Variables de entorno (editar con tus credenciales)
-   # Crear docker-compose.override.yml      # Ver guía para contenido
-   # Crear frontend/nginx.dev.conf          # Ver guía para contenido
-   ```
-
-3. **Levanta los servicios:**
-   ```bash
-   docker compose up --build
-   ```
-
-   > Docker Compose automáticamente aplica `docker-compose.override.yml` para configuraciones de desarrollo (HTTP sin SSL, configuración de Nginx simplificada).
-
-4. **Accede a la aplicación:**
-   - Frontend: http://localhost
-   - API Docs (Swagger): http://localhost/api/docs
-
-> **¿Solo cambias la interfaz?** No reconstruyas la imagen del frontend (tarda minutos). Compila Flutter en tu máquina con *hot reload*: `cd frontend && flutter run -d chrome --dart-define=DEV_SKIP_AUTH=true` (UI pura, sin backend) o `./scripts/dev-frontend.sh` (UI con datos reales, login de Microsoft y favoritos). Ver [Desarrollo Rápido de Interfaz](./docs/desarrollo-local.md#7-desarrollo-rápido-de-interfaz-sin-reconstruir-el-frontend).
-
-### Despliegue en Producción
-
-Para producción, usa únicamente el archivo base:
+### 💻 Desarrollo local
 
 ```bash
-docker-compose -f docker-compose.yml up --build -d
+# 1. Clonar
+git clone https://github.com/ISCOUTB/DH-ScheduleGeneratorUTB.git
+cd DH-ScheduleGeneratorUTB
+
+# 2. Configurar archivos ignorados por Git (ver guía 👇)
+cp backend/.env.example backend/.env     # editar con tus credenciales
+#   + docker-compose.override.yml y frontend/nginx.dev.conf (ver guía)
+
+# 3. Levantar todo
+docker compose up --build
 ```
 
-Esto habilita:
-- HTTPS con certificados Let's Encrypt
-- Renovación automática de certificados
-- Configuración de Nginx optimizada para producción
+- 🖥️ Frontend → http://localhost
+- 📚 API Docs (Swagger) → http://localhost/api/docs
 
-### Verificar Configuración
+> 📖 La estructura y contenido de los archivos de desarrollo está en la **[Guía de Desarrollo Local](./docs/desarrollo-local.md)**.
 
-Para ver la configuración final que Docker Compose utilizará:
+> ⚡ **¿Solo cambias la interfaz?** No reconstruyas la imagen del frontend (tarda minutos). Compila Flutter con *hot reload*: `cd frontend && flutter run -d chrome --dart-define=DEV_SKIP_AUTH=true` (UI pura) o `./scripts/dev-frontend.sh` (UI con datos reales, login y favoritos). Ver [Desarrollo Rápido de Interfaz](./docs/desarrollo-local.md#7-desarrollo-rápido-de-interfaz-sin-reconstruir-el-frontend).
+
+### ☁️ Producción
+
+Solo el archivo base (HTTPS + Let's Encrypt + Nginx de producción):
+
 ```bash
-docker-compose config
+docker compose -f docker-compose.yml up --build -d
 ```
 
-## Estructura del Proyecto
+El despliegue es automático: cada **push a `master`** dispara el workflow de GitHub Actions que reconstruye y publica en la VM.
 
-```
-DH-ScheduleGeneratorUTB/
-├── backend/                    # API y lógica del servidor
-│   ├── app/                    # Código fuente de FastAPI
-│   │   ├── main.py             # Punto de entrada de la API
-│   │   ├── models.py           # Modelos Pydantic
-│   │   ├── auth/               # Autenticación OAuth con Microsoft Entra ID
-│   │   │   └── routes.py       # Flujo OAuth con PKCE
-│   │   ├── db/                 # Capa de acceso a datos
-│   │   │   └── repository.py
-│   │   ├── routes/             # Rutas modulares
-│   │   │   └── subject_routes.py
-│   │   └── services/           # Lógica de negocio
-│   │       └── schedule_generator.py
-│   ├── scripts/                # Scripts de actualización y mantenimiento
-│   │   ├── actualizar_datos.py # Orquestador del pipeline ETL
-│   │   ├── descargar_json.py   # Web scraping de Banner
-│   │   ├── parser.py           # Procesamiento de datos
-│   │   ├── insertar_en_db.py   # Carga en PostgreSQL
-│   │   ├── backup.py           # Respaldos periódicos de datos de usuario
-│   │   ├── rescatador.py       # Recuperación de secciones ligadas
-│   │   ├── config.py           # Configuración compartida de scripts
-│   │   └── utils.py            # Utilidades compartidas
-│   ├── Dockerfile              # Imagen Docker de la API
-│   ├── scripts.Dockerfile      # Imagen Docker para scripts ETL y backups
-│   ├── requirements.txt
-│   └── init.sql                # Esquema inicial de la BD
-│
-├── frontend/                   # Aplicación Flutter
-│   ├── lib/                    # Código fuente Dart
-│   │   ├── main.dart           # Punto de entrada
-│   │   ├── models/             # Modelos de datos
-│   │   ├── providers/          # Manejo de estado (Provider)
-│   │   ├── screens/            # Pantallas principales
-│   │   ├── services/           # Servicios (API, Auth)
-│   │   ├── widgets/            # Componentes de UI
-│   │   └── utils/              # Utilidades
-│   ├── Dockerfile
-│   ├── nginx.conf              # Configuración Nginx (producción)
-│   ├── nginx.dev.conf          # Configuración Nginx (desarrollo)
-│   └── pubspec.yaml
-│
-├── docs/                       # Documentación adicional
-│   ├── backend.md              # Documentación del backend
-│   ├── frontend.md             # Documentación del frontend
-│   ├── modelo_datos.md         # Modelo de datos
-│   └── issues/                 # Registros técnicos de decisiones
-│
-├── tests/                      # Tests del backend
-│
-├── docker-compose.yml          # Configuración Docker (producción)
-├── docker-compose.override.yml # Sobrescritura para desarrollo
-└── README.md
-```
+## 🔌 API Endpoints
 
-## Documentación Adicional
-
-- [Guía de Desarrollo Local](./docs/desarrollo-local.md) - Setup completo del entorno de desarrollo, archivos ignorados y troubleshooting.
-- [Documentación del Backend](./docs/backend.md) - Arquitectura, endpoints y flujo de datos.
-- [Modelo de Datos](./docs/modelo_datos.md) - Esquema de la base de datos.
-- [Documentación del Frontend](./docs/frontend.md) - Arquitectura y componentes de la UI.
-
-## API Endpoints
-
-### Materias y Horarios
+### 📚 Materias y horarios
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
 | `GET` | `/api/subjects` | Lista todas las materias disponibles |
-| `GET` | `/api/subjects/{code}?name=...` | Obtiene detalles de una materia por código y nombre |
-| `POST` | `/api/schedules/generate` | Genera horarios válidos |
+| `GET` | `/api/subjects/{code}?name=...` | Detalles de una materia |
+| `POST` | `/api/schedules/generate` | Genera horarios válidos (devuelve `{ schedules, truncated }`) |
 
-### Autenticación (Microsoft Entra ID)
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| `GET` | `/api/auth/login` | Inicia flujo OAuth (redirige a Microsoft) |
-| `GET` | `/api/auth/callback` | Callback de Microsoft tras autenticación |
-| `GET` | `/api/auth/me` | Retorna información del usuario autenticado |
-| `POST` | `/api/auth/logout` | Cierra sesión del usuario |
-
-### Horarios Destacados (Favoritos)
+### 🔐 Autenticación (Microsoft Entra ID)
 
 | Método | Endpoint | Descripción |
 |--------|----------|-------------|
-| `GET` | `/api/favorites?term=202610` | Lista favoritos del usuario autenticado |
-| `GET` | `/api/favorites/terms` | Términos disponibles con favoritos + término actual |
-| `POST` | `/api/favorites` | Guarda un horario como destacado |
+| `GET` | `/api/auth/login` | Inicia el flujo OAuth (redirige a Microsoft) |
+| `GET` | `/api/auth/callback` | Callback tras autenticación |
+| `GET` | `/api/auth/me` | Usuario autenticado |
+| `POST` | `/api/auth/logout` | Cierra sesión |
+
+### ⭐ Horarios destacados (favoritos)
+
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| `GET` | `/api/favorites?term=202610` | Favoritos del usuario para un término |
+| `GET` | `/api/favorites/terms` | Términos con favoritos + término actual |
+| `GET` | `/api/favorites/status?nrcs=...` | Estado de cupos actuales de una lista de NRCs |
+| `POST` | `/api/favorites` | Guarda un horario destacado |
 | `DELETE` | `/api/favorites/{id}` | Elimina un horario destacado |
 
-> **Configuración:** El período académico actual se define con `CURRENT_TERM` en `backend/.env`.
+> 🗓️ El período académico actual se define con `CURRENT_TERM` en `backend/.env`. Documentación interactiva completa en `/api/docs`.
 
-Para documentación interactiva completa, accede a `/api/docs` cuando la API esté corriendo.
+## 📁 Estructura del Proyecto
 
-## Contribuciones
+```
+DH-ScheduleGeneratorUTB/
+├── 📂 backend/                  # API y lógica del servidor (FastAPI)
+│   ├── app/
+│   │   ├── main.py              # Punto de entrada de la API
+│   │   ├── models.py            # Modelos Pydantic
+│   │   ├── auth/                # OAuth con Microsoft Entra ID (PKCE)
+│   │   ├── db/repository.py     # Acceso a datos (psycopg)
+│   │   ├── routes/              # Rutas (materias, favoritos)
+│   │   └── services/            # Generador de horarios (backtracking)
+│   ├── scripts/                 # ETL de Banner, backups y mantenimiento
+│   ├── Dockerfile · scripts.Dockerfile
+│   └── init.sql                 # Esquema inicial de la BD
+│
+├── 📂 frontend/                 # Aplicación Flutter (Web/Mobile/Desktop)
+│   ├── lib/
+│   │   ├── models/ · providers/ · screens/ · services/ · widgets/ · utils/
+│   │   └── main.dart
+│   ├── nginx.conf               # Nginx de producción
+│   └── pubspec.yaml
+│
+├── 📂 docs/                     # Documentación (backend, frontend, RFCs)
+├── 📂 scripts/                  # Atajos de desarrollo (dev-frontend.sh/.ps1)
+├── 📂 tests/                    # Tests del backend
+├── 🐳 docker-compose.yml        # Producción
+└── 🐳 docker-compose.override.yml  # Desarrollo (HTTP, sin SSL)
+```
 
-Las contribuciones son bienvenidas. Por favor:
+## 📚 Documentación
 
-1. Haz fork del repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Haz commit de tus cambios (`git commit -m 'Añadir nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
+| Documento | Descripción |
+|-----------|-------------|
+| 🧰 [Desarrollo Local](./docs/desarrollo-local.md) | Setup del entorno, archivos ignorados, iteración rápida y troubleshooting |
+| ⚙️ [Backend](./docs/backend.md) | Arquitectura, endpoints y flujo de datos |
+| 🎨 [Frontend](./docs/frontend.md) | Arquitectura y componentes de la UI |
+| 🗃️ [Modelo de Datos](./docs/modelo_datos.md) | Esquema de la base de datos |
+| 📝 [Decisiones técnicas (RFCs)](./docs/issues/) | Registros de diseño e historia del proyecto |
 
-## Licencia
+## 🤝 Contribuciones
 
-Este proyecto está desarrollado por estudiantes de la Universidad Tecnológica de Bolívar como parte del programa de Ingeniería de Sistemas.
+¡Bienvenidas! 🎉
+
+1. 🍴 Haz fork del repositorio
+2. 🌿 Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
+3. 💾 Commitea tus cambios (`git commit -m 'feat: nueva funcionalidad'`)
+4. 🚀 Push a tu rama (`git push origin feature/nueva-funcionalidad`)
+5. 🔁 Abre un Pull Request
+
+## 📄 Licencia
+
+Desarrollado por estudiantes de **Ingeniería de Sistemas** de la Universidad Tecnológica de Bolívar.
+
+---
+
+<div align="center">
+  <sub>Hecho con ❤️ para los estudiantes de la UTB</sub>
+</div>
