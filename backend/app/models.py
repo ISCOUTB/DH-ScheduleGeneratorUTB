@@ -48,3 +48,7 @@ class GenerateScheduleRequest(BaseModel):
     filters: Dict[str, Any]
     # El frontend envía 'creditLimit' (camelCase), se usa un alias para que Pydantic lo entienda como 'credit_limit'.
     credit_limit: int = Field(..., alias='creditLimit')
+    # El cliente declara si es móvil; el backend limita los resultados solo en
+    # ese caso (evita agotar la memoria del navegador móvil). Default false para
+    # compatibilidad con clientes que no lo envíen.
+    is_mobile: bool = Field(default=False, alias='isMobile')

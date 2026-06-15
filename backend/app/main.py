@@ -39,11 +39,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Máximo de horarios devueltos por el generador. La explosión combinatoria puede
-# producir decenas de miles de combinaciones; cargarlas todas en el cliente
-# (sobre todo en móvil) agota la memoria y reinicia la pestaña. Como cualquier
-# orden/filtro re-llama al generador, basta devolver los mejores N para el
-# criterio actual. Configurable por env; 0 o negativo = sin límite.
+# Máximo de horarios devueltos a clientes MÓVILES. La explosión combinatoria
+# puede producir decenas de miles de combinaciones; cargarlas todas agota la
+# memoria del navegador móvil y reinicia la pestaña. Escritorio no se limita.
+# Como cualquier orden/filtro re-llama al generador, basta devolver los mejores
+# N para el criterio actual. Configurable por env; 0 o negativo = sin límite.
 _MAX_SCHEDULES = int(os.getenv("MAX_SCHEDULES", "500"))
 
 # Ruta añadida para resolver problemática
@@ -95,8 +95,9 @@ def generate_schedules_endpoint(request: GenerateScheduleRequest) -> List[List[C
         combinations, generation_params
     )
 
-    # Cap: devuelve solo los mejores N (ya vienen ordenados del generador).
-    if 0 < _MAX_SCHEDULES < len(valid_schedules):
+    # Cap solo para clientes móviles: devuelve los mejores N (ya vienen
+    # ordenados del generador). Escritorio recibe todos.
+    if request.is_mobile and 0 < _MAX_SCHEDULES < len(valid_schedules):
         valid_schedules = valid_schedules[:_MAX_SCHEDULES]
 
     # Devuelve los resultados.

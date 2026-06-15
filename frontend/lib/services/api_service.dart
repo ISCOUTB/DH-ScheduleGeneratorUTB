@@ -80,6 +80,7 @@ class ApiService {
     required List<Subject> subjects,
     required Map<String, dynamic> filters,
     required int creditLimit,
+    bool isMobile = false,
   }) async {
     final url = Uri.parse('$_baseUrl/api/schedules/generate');
     final client = _createClient();
@@ -97,6 +98,8 @@ class ApiService {
       "subjects": subjectsPayload,
       "filters": filters, // Los filtros se mantienen igual
       "creditLimit": creditLimit,
+      // El backend limita los resultados solo si el cliente es móvil.
+      "isMobile": isMobile,
     };
 
     try {

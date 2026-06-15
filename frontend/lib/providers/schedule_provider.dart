@@ -6,6 +6,8 @@ import '../models/subject.dart';
 import '../models/subject_summary.dart';
 import '../models/class_option.dart';
 import '../services/api_service.dart';
+import '../utils/platform_service_stub.dart'
+    if (dart.library.html) '../utils/platform_service_web.dart';
 
 /// Provider que maneja el estado global de la aplicación de horarios.
 /// 
@@ -256,6 +258,8 @@ class ScheduleProvider extends ChangeNotifier {
           ..._currentOptimizations,
         },
         creditLimit: creditLimit,
+        // Solo los dispositivos móviles reciben el cap (memoria limitada).
+        isMobile: PlatformService().isMobileUserAgent(),
       );
 
       _allSchedules = schedules;
