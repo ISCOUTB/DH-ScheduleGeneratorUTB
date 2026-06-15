@@ -175,16 +175,20 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                               ),
                             ],
                           )
-                        // Desktop: leyenda inline a la izquierda del toggle.
+                        // Desktop: leyenda inline a la izquierda del toggle,
+                        // siempre visible (atenuada en modo materia) para no
+                        // reacomodar el layout al alternar.
                         : Row(
                             children: [
                               Expanded(
-                                child: _statusMode
-                                    ? Align(
-                                        alignment: Alignment.centerRight,
-                                        child: _buildStatusLegend(),
-                                      )
-                                    : const SizedBox.shrink(),
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: AnimatedOpacity(
+                                    opacity: _statusMode ? 1.0 : 0.3,
+                                    duration: const Duration(milliseconds: 200),
+                                    child: _buildStatusLegend(),
+                                  ),
+                                ),
                               ),
                               const SizedBox(width: 12),
                               ColorModeToggle(
