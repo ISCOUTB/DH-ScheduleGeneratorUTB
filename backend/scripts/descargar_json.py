@@ -43,13 +43,18 @@ def descargar_json():
         search_results_url = f"{base_url}/searchResults/searchResults?txt_term={CURRENT_TERM}&startDatepicker=&endDatepicker=&pageOffset={page_offset}&pageMaxSize={page_max_size}&sortColumn=subjectDescription&sortDirection=asc"
         response = session.get(search_results_url, headers=headers, verify=False)
 
+        # Un error HTTP (ej. 502 de Banner) significa descarga INCOMPLETA: se
+        # aborta lanzando excepción para NO sobrescribir el cache válido ni dejar
+        # que el ETL limpie la base con datos parciales/vacíos.
         if response.status_code != 200:
-            print(f"Error en offset {page_offset}: {response.status_code}")
-            break
+            raise RuntimeError(
+                f"Banner devolvió {response.status_code} en offset {page_offset}. "
+                "Descarga abortada (datos incompletos); no se sobrescribe el JSON."
+            )
 
         page_data = response.json().get("data", [])
         if not page_data:
-            break
+            break  # Fin normal de la paginación (200 sin más resultados).
 
         print(f"Obtenidos {len(page_data)} registros desde offset {page_offset}")
 
@@ -57,7 +62,15 @@ def descargar_json():
         all_results.extend(page_data)
         page_offset += page_max_size
 
-    # Guardar todos los resultados en un archivo JSON
+    # Si no se obtuvo ningún curso, abortar sin escribir: un JSON vacío haría que
+    # el ETL borre la oferta académica. Probable caída/timeout de Banner.
+    if not all_results:
+        raise RuntimeError(
+            "Banner no devolvió cursos (0 resultados). Descarga abortada para no "
+            "sobrescribir datos válidos."
+        )
+
+    # Guardar todos los resultados en un archivo JSON (solo si hubo resultados).
     EXPORT_DIR = os.path.join(os.path.dirname(__file__), "data_scrapped")
     os.makedirs(EXPORT_DIR, exist_ok=True)
     with open(f"{EXPORT_DIR}/search_results_complete.json", "w", encoding="utf-8") as json_file:

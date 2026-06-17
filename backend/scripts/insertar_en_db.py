@@ -56,6 +56,23 @@ def actualizar_base():
     # El rescatador devuelve el conjunto de datos final y curado.
     datos_finales = procesar_rescate(json_data, log_path, term)
 
+    # --- GUARD DE SEGURIDAD (red de respaldo) ---
+    # Si el dataset llega sin oferta académica (ej. JSON vacío en disco), NO se
+    # debe limpiar la base: dejaría la app sin materias. Se aborta preservando
+    # los datos existentes. (La transacción atómica solo protege ante
+    # excepciones; un dataset vacío se "inserta" sin error y borraría todo.)
+    num_cursos = len(datos_finales["cursos"])
+    num_materias = len(datos_finales["materias"])
+    if num_cursos == 0 or num_materias == 0:
+        print(
+            "Actualización ABORTADA: dataset sin oferta académica "
+            f"(cursos={num_cursos}, materias={num_materias}). "
+            "Se preservan los datos existentes."
+        )
+        guardar_log(datos_finales["errores"], log_path)
+        conn.close()
+        return
+
     # --- INSERCIÓN Y CIERRE ---
     print("\nPaso 3: Aplicando actualización atómica de datos en la base de datos...")
     try:

@@ -7,7 +7,14 @@ from export_to_subject_json import exportar_subjects_a_json
 def main():
 
     print("Descargando JSON crudo desde Banner...")
-    descargar_json()  # Genera search_results_complete.json
+    try:
+        descargar_json()  # Genera search_results_complete.json
+    except Exception as e:
+        # Banner caído/incompleto: se omite este ciclo SIN tocar la base. El
+        # cron reintentará en la próxima corrida. NO se continúa al ETL porque
+        # limpiaría la oferta académica.
+        print(f"Actualización OMITIDA (descarga fallida, datos preservados): {e}")
+        return
     print("JSON descargado.")
 
     print("Insertando datos en la base...")
