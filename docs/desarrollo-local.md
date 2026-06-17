@@ -335,6 +335,26 @@ SQL
 - Confirma que el `Redirect URI` en Azure Portal coincida con el de `.env`.
 - Revisa que `FRONTEND_URL` sea `http://localhost` (sin trailing slash).
 
+### Cambié `backend/.env` y no se aplican los cambios (ej. sigue saliendo `your_tenant_id_here`, contraseña vieja de DB, o `FRONTEND_URL` equivocado)
+Las variables de `env_file` se inyectan al **crear** el contenedor. `docker compose restart` y `docker compose up` (sin recrear) **no** vuelven a leer `.env`; y `up --build` solo recrea si cambió la **imagen** (código), no si cambió `.env`. Por eso un `.env` correcto en el host puede convivir con un contenedor que corre con valores viejos.
+
+```bash
+# Verificar qué valor corre realmente el contenedor:
+docker exec api printenv AZURE_TENANT_ID FRONTEND_URL
+
+# Forzar que relea el .env actual:
+docker compose -f docker-compose.yml -f docker-compose.frontend-dev.yml up -d --force-recreate backend
+# (o, en full-stack, sin los -f)
+```
+
+| Cambié... | Comando |
+|-----------|---------|
+| Código del backend | `up -d --build backend` |
+| Solo `backend/.env` (tenant, contraseña, URLs) | `up -d --force-recreate backend` |
+| Ambos / por seguridad | `up -d --build --force-recreate backend` |
+
+> **Ojo al mezclar modos:** el modo *frontend-dev* inyecta `FRONTEND_URL=http://localhost:8080` y CORS extra al backend (vía `docker-compose.frontend-dev.yml`). Si luego levantas el stack completo reutilizando el contenedor anterior, conservará esos overrides. Recrea el backend al cambiar de modo. Los scripts `dev-frontend.sh`/`.ps1` ya usan `--force-recreate`.
+
 ### La DB no tiene datos (tablas vacías)
 - El servicio `initial-data` solo corre una vez. Si falló, ejecútalo de nuevo:
   ```bash

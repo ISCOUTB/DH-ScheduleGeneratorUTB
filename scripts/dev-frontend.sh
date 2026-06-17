@@ -36,8 +36,8 @@ for arg in "$@"; do
   esac
 done
 
-echo "Levantando backend + db + cron-updater + proxy Nginx (--build aplica cambios del backend; el frontend pesado no se reconstruye)..."
-"${COMPOSE[@]}" up -d --build backend db cron-updater frontend
+echo "Levantando backend + db + cron-updater + proxy Nginx (--build + --force-recreate aplican cambios de código y de .env; el frontend pesado no se reconstruye)..."
+"${COMPOSE[@]}" up -d --build --force-recreate backend db cron-updater frontend
 
 echo "Esperando a que la DB esté lista..."
 until [ "$(docker inspect -f '{{.State.Health.Status}}' db 2>/dev/null || true)" = "healthy" ]; do
