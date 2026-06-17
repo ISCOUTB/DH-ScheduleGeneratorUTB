@@ -654,28 +654,35 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       border: Border.all(color: const Color(0xFFE5E7EB)),
                     ),
                     clipBehavior: Clip.antiAlias,
-                    child: ScheduleGridWidget(
-                      allSchedules: [selectedSchedule],
-                      onScheduleTap: (_) {
-                        setState(() => _showOverview = true);
-                        // Asegura los cupos para el toggle propio del detalle.
-                        if (statusApplies) {
-                          provider.loadStatusForSchedule(selectedSchedule);
-                        }
-                      },
-                      subjectColors: colors,
-                      colorResolver: showStatusColors
-                          ? (co) => courseStatusColor(statusForClass(
-                              co, provider.selectedScheduleStatus))
-                          : null,
-                      isMobileLayout: false,
-                      isScrollable: false,
-                      showFavoriteButton: false,
-                      useLetterLabels: true,
-                      fillParent: true,
-                      fillParentLabel: selectedLabel,
-                      currentPage: 1,
-                      itemsPerPage: 1,
+                    child: Stack(
+                      children: [
+                        ScheduleGridWidget(
+                          allSchedules: [selectedSchedule],
+                          onScheduleTap: (_) {
+                            setState(() => _showOverview = true);
+                            // Asegura los cupos para el toggle propio del detalle.
+                            if (statusApplies) {
+                              provider.loadStatusForSchedule(selectedSchedule);
+                            }
+                          },
+                          subjectColors: colors,
+                          colorResolver: showStatusColors
+                              ? (co) => courseStatusColor(statusForClass(
+                                  co, provider.selectedScheduleStatus))
+                              : null,
+                          isMobileLayout: false,
+                          isScrollable: false,
+                          showFavoriteButton: false,
+                          useLetterLabels: true,
+                          fillParent: true,
+                          fillParentLabel: selectedLabel,
+                          currentPage: 1,
+                          itemsPerPage: 1,
+                        ),
+                        // En modo estado sin datos: aviso sobre la grilla (que
+                        // queda por materia detrás).
+                        if (statusUnavailable) _buildGridStatusOverlay(),
+                      ],
                     ),
                   ),
                 ),
@@ -763,6 +770,40 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                 color: Color(0xFFB45309),
                 fontWeight: FontWeight.w500)),
       ],
+    );
+  }
+
+  /// Aviso centrado sobre la grilla cuando el estado de cupos no se pudo
+  /// obtener. La grilla queda visible (por materia) detrás. No bloquea taps.
+  Widget _buildGridStatusOverlay() {
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.95),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFFE5E7EB)),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.cloud_off, size: 18, color: Color(0xFFB45309)),
+                SizedBox(width: 8),
+                Text('Estado de cupos no disponible',
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Color(0xFFB45309),
+                        fontWeight: FontWeight.w600)),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 

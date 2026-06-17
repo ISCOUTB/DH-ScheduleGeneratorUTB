@@ -499,7 +499,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
   /// Construye la cuadrícula visual del horario con sus ejes de tiempo y días.
   Widget _buildScheduleGrid() {
-    return Container(
+    final grid = Container(
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black, width: 1.0),
         borderRadius: BorderRadius.circular(8.0),
@@ -595,6 +595,44 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+
+    if (!_statusUnavailable) return grid;
+    // En modo estado sin datos: aviso sobre la grilla (que queda por materia).
+    return Stack(children: [grid, _buildGridStatusOverlay()]);
+  }
+
+  /// Aviso centrado sobre la grilla cuando no se pudo obtener el estado de
+  /// cupos. La grilla (por materia) queda visible detrás. No bloquea taps.
+  Widget _buildGridStatusOverlay() {
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.95),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFFE5E7EB)),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 8),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.cloud_off, size: 18, color: Color(0xFFB45309)),
+                SizedBox(width: 8),
+                Text('Estado de cupos no disponible',
+                    style: TextStyle(
+                        fontSize: 13,
+                        color: Color(0xFFB45309),
+                        fontWeight: FontWeight.w600)),
+              ],
+            ),
+          ),
         ),
       ),
     );
