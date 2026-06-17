@@ -19,6 +19,7 @@ Para mejorar mantenibilidad y trazabilidad, las decisiones relevantes se documen
 
 Registros vigentes:
 
+- `docs/issues/15-06-2026-incidente-wipe-oferta-etl-banner-caido.md`
 - `docs/issues/12-05-2026-rfc-estados-cursos-notificaciones.md`
 - `docs/issues/12-05-2026-pantalla-horarios-destacados.md`
 - `docs/issues/10-05-2026-registro-sesiones-usuario.md`

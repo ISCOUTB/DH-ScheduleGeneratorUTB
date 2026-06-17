@@ -4,6 +4,8 @@
 - Estado: Activo
 - Tipo: Riesgo de mantenibilidad y persistencia
 
+> **Revisión 2026-06-15:** la atomicidad descrita aquí solo protege ante **excepciones**. Un caso no cubierto —descarga de Banner con **0 cursos** (ej. 502)— "insertaba" un dataset vacío sin error y borraba la oferta académica. Corregido con guards en el pipeline (la descarga lanza ante 502/0, el orquestador omite el ciclo, y `actualizar_base` aborta si el dataset llega vacío). Ver `15-06-2026-incidente-wipe-oferta-etl-banner-caido.md`.
+
 ## 1. Problema
 
 El proceso ETL académico limpia tablas de oferta en cada actualización para recargar datos desde Banner.
