@@ -168,8 +168,13 @@ Colorea la grilla de horarios destacados según los cupos **actuales** de cada c
 - `ScheduleProvider`: `statusColorMode`, `loadStatusForSchedule()` (solo término actual), `selectedScheduleStatus`.
 - `widgets/color_mode_toggle.dart`: toggle compartido "Materia ↔ Estado".
 - `ScheduleGridWidget`: parámetro opcional `colorResolver` para colorear por estado sin romper el coloreo por materia.
-- El detalle (`ScheduleOverviewWidget`) tiene su propio toggle semi-independiente: hereda el modo al abrir y luego cambia por su cuenta.
+- El detalle (`ScheduleOverviewWidget`) tiene su propio toggle semi-independiente: hereda el modo al abrir y luego cambia por su cuenta. El texto `Cupos: X de Y` del detalle usa los cupos **en vivo** (de `/status`) cuando hay datos cargados; si no, el valor tal cual (snapshot / generación).
 - Solo aplica al término actual; en periodos pasados el toggle queda deshabilitado (la tabla `Curso` solo tiene el periodo vigente). Ver `docs/issues/12-05-2026-rfc-estados-cursos-notificaciones.md`.
+
+#### Cómo se enlaza y cuándo se pide (flujo)
+- **Llave = `NRC`.** Cada clase del `schedule_json` tiene su `nrc`. El endpoint recibe NRCs y consulta `Curso` (PK `NRC`) → `{ nrc: {available, total} }`. `statusForClass(clase, mapa)` busca `mapa[clase.nrc]`: presente → calcula estado; ausente → `eliminado`.
+- **Petición bajo demanda, por horario** (no al entrar, no masiva). `loadStatusForSchedule(horario)` toma los NRCs de **ese** horario y pide `/status` solo de esos. Se dispara al: activar "Estado", seleccionar otro horario en modo estado, abrir detalles, o cambiar de período. Solo si `selectedTerm == currentTerm`.
+- El resultado se guarda en `selectedScheduleStatus`; la grilla (`colorResolver`) y el detalle leen de ahí. Al cambiar de horario se pide de nuevo para sus NRCs.
 
 ### Comportamiento responsivo / UX
 - **Generación en móvil:** la grilla pagina por páginas (`paginateOnMobile` en `ScheduleGridWidget`) con barra `Página X de Y`; al cambiar de página vuelve al inicio de los horarios (`Scrollable.ensureVisible`). El backend limita los resultados solo en móvil (cap `MAX_SCHEDULES`); el contador muestra "N+" si se truncó.
