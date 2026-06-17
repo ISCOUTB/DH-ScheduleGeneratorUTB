@@ -343,7 +343,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                   ),
                 ),
               ),
-              if (classOptions.any((opt) => opt.seatsAvailable == 0)) ...[
+              if (classOptions.any(_optionUnavailable)) ...[
                 const SizedBox(width: 10),
                 const Icon(Icons.warning_amber_rounded,
                     color: Colors.red, size: 24),
@@ -356,7 +356,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
               contentPadding:
                   const EdgeInsets.only(left: 40, right: 16, bottom: 8),
               tileColor:
-                  option.seatsAvailable == 0 ? Colors.red.shade100 : null,
+                  _optionUnavailable(option) ? Colors.red.shade100 : null,
               title: Text(
                 '${option.type} (NRC: ${option.nrc})',
                 style: const TextStyle(fontWeight: FontWeight.w600),
@@ -365,7 +365,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                 'Profesor: ${option.professor}\n'
                 'Horario: ${formattingSchedulesInPairs(option.schedules)}\n'
                 'Campus: ${option.campus}\n'
-                'Cupos: ${option.seatsAvailable} de ${option.seatsMaximum}\n'
+                '${_cuposLabel(option)}\n'
                 'Créditos: ${option.credits}',
               ),
             );
@@ -373,6 +373,31 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         );
       },
     );
+  }
+
+  /// Etiqueta de cupos: en vivo (desde `/status`) si hay datos cargados; si no,
+  /// el snapshot guardado con el favorito.
+  String _cuposLabel(ClassOption option) {
+    final live = widget.seatsByNrc[option.nrc];
+    if (live != null) {
+      return 'Cupos: ${live['available']} de ${live['total']} (actuales)';
+    }
+    // Estado disponible y datos cargados, pero este NRC ya no está en la oferta.
+    if (widget.statusAvailable && widget.seatsByNrc.isNotEmpty) {
+      return 'Cupos: no disponible (curso sin oferta actual)';
+    }
+    // Sin contexto de estado en vivo (generación, otro término, aún cargando o
+    // Banner caído): se muestra el valor tal cual, sin etiqueta.
+    return 'Cupos: ${option.seatsAvailable} de ${option.seatsMaximum}';
+  }
+
+  /// Si la opción no tiene cupos / ya no se ofrece. Usa datos en vivo cuando
+  /// existen; si no, el snapshot.
+  bool _optionUnavailable(ClassOption option) {
+    final live = widget.seatsByNrc[option.nrc];
+    if (live != null) return (live['available'] ?? 0) <= 0;
+    if (widget.statusAvailable && widget.seatsByNrc.isNotEmpty) return true;
+    return option.seatsAvailable == 0;
   }
 
   /// Leyenda compacta de colores de estado (la "paleta"), para explicar el
