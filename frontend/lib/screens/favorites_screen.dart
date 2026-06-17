@@ -515,8 +515,15 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     final bool statusApplies = provider.selectedTerm == provider.currentTerm;
     final bool useStatus = provider.statusColorMode && statusApplies;
     // Mientras se cargan los cupos se mantiene el color por materia (evita un
-    // parpadeo gris); al terminar se aplica el coloreo por estado.
-    final bool showStatusColors = useStatus && !provider.isStatusLoading;
+    // parpadeo gris); al terminar se aplica el coloreo por estado, pero solo si
+    // hubo datos (mapa no vacío). Si quedó vacío (petición fallida / Banner),
+    // no se pinta por estado y se avisa, en vez de pintar todo gris (que diría
+    // "todo eliminado", falso).
+    final bool hasStatusData = provider.selectedScheduleStatus.isNotEmpty;
+    final bool showStatusColors =
+        useStatus && !provider.isStatusLoading && hasStatusData;
+    final bool statusUnavailable =
+        useStatus && !provider.isStatusLoading && !hasStatusData;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -612,15 +619,18 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       child: statusApplies
                           ? Align(
                               alignment: Alignment.centerRight,
-                              child: AnimatedOpacity(
-                                opacity: useStatus ? 1.0 : 0.3,
-                                duration: const Duration(milliseconds: 200),
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  reverse: true,
-                                  child: _buildStatusLegend(),
-                                ),
-                              ),
+                              child: statusUnavailable
+                                  ? _buildStatusUnavailableNotice()
+                                  : AnimatedOpacity(
+                                      opacity: useStatus ? 1.0 : 0.3,
+                                      duration:
+                                          const Duration(milliseconds: 200),
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        reverse: true,
+                                        child: _buildStatusLegend(),
+                                      ),
+                                    ),
                             )
                           : const SizedBox.shrink(),
                     ),
@@ -734,6 +744,24 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         item(CourseStatus.caution),
         item(CourseStatus.atRisk),
         item(CourseStatus.eliminated),
+      ],
+    );
+  }
+
+  /// Aviso cuando se activó "Estado" pero no se pudieron obtener los cupos
+  /// (petición fallida / sin datos). Evita pintar todo gris (que parecería
+  /// "todo eliminado") y deja claro que es algo temporal, no un error.
+  Widget _buildStatusUnavailableNotice() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: const [
+        Icon(Icons.cloud_off, size: 15, color: Color(0xFFB45309)),
+        SizedBox(width: 6),
+        Text('Estado no disponible',
+            style: TextStyle(
+                fontSize: 12,
+                color: Color(0xFFB45309),
+                fontWeight: FontWeight.w500)),
       ],
     );
   }

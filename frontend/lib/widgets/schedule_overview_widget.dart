@@ -119,6 +119,10 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     _statusMode = widget.statusAvailable && widget.initialStatusMode;
   }
 
+  /// En modo estado pero sin datos de cupos (petición fallida / Banner): no se
+  /// puede colorear por estado. Se avisa en vez de pintar todo gris.
+  bool get _statusUnavailable => _statusMode && widget.seatsByNrc.isEmpty;
+
   @override
   Widget build(BuildContext context) {
     // Usamos LayoutBuilder para detectar el tamaño y decidir el layout.
@@ -159,12 +163,17 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                             children: [
                               // La leyenda siempre ocupa su espacio (atenuada en
                               // modo materia) para que el layout no se reacomode
-                              // al alternar el switch.
-                              AnimatedOpacity(
-                                opacity: _statusMode ? 1.0 : 0.3,
-                                duration: const Duration(milliseconds: 200),
-                                child: _buildStatusLegend(twoColumns: true),
-                              ),
+                              // al alternar el switch. Si el estado no se pudo
+                              // obtener, se muestra un aviso en su lugar.
+                              _statusUnavailable
+                                  ? _buildStatusUnavailableNotice()
+                                  : AnimatedOpacity(
+                                      opacity: _statusMode ? 1.0 : 0.3,
+                                      duration:
+                                          const Duration(milliseconds: 200),
+                                      child:
+                                          _buildStatusLegend(twoColumns: true),
+                                    ),
                               const SizedBox(width: 14),
                               ColorModeToggle(
                                 vertical: true,
@@ -183,11 +192,14 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                               Expanded(
                                 child: Align(
                                   alignment: Alignment.centerRight,
-                                  child: AnimatedOpacity(
-                                    opacity: _statusMode ? 1.0 : 0.3,
-                                    duration: const Duration(milliseconds: 200),
-                                    child: _buildStatusLegend(),
-                                  ),
+                                  child: _statusUnavailable
+                                      ? _buildStatusUnavailableNotice()
+                                      : AnimatedOpacity(
+                                          opacity: _statusMode ? 1.0 : 0.3,
+                                          duration: const Duration(
+                                              milliseconds: 200),
+                                          child: _buildStatusLegend(),
+                                        ),
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -382,22 +394,42 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     if (live != null) {
       return 'Cupos: ${live['available']} de ${live['total']} (actuales)';
     }
-    // Estado disponible y datos cargados, pero este NRC ya no está en la oferta.
-    if (widget.statusAvailable && widget.seatsByNrc.isNotEmpty) {
-      return 'Cupos: no disponible (curso sin oferta actual)';
-    }
-    // Sin contexto de estado en vivo (generación, otro término, aún cargando o
-    // Banner caído): se muestra el valor tal cual, sin etiqueta.
+    // Favorito del término actual sin dato en vivo para este NRC: el curso ya
+    // no está en la oferta, o no se pudo consultar. En ambos casos no se
+    // muestra el snapshot viejo como si fuera actual.
+    if (widget.statusAvailable) return 'Cupos: no disponible';
+    // Generación o término pasado: se muestra el valor tal cual.
     return 'Cupos: ${option.seatsAvailable} de ${option.seatsMaximum}';
   }
 
   /// Si la opción no tiene cupos / ya no se ofrece. Usa datos en vivo cuando
-  /// existen; si no, el snapshot.
+  /// existen; si no, el snapshot. Si no se pudo consultar (mapa vacío en
+  /// término actual) no se marca en rojo: no se sabe.
   bool _optionUnavailable(ClassOption option) {
     final live = widget.seatsByNrc[option.nrc];
     if (live != null) return (live['available'] ?? 0) <= 0;
+    // Datos cargados pero este NRC ausente => eliminado de la oferta.
     if (widget.statusAvailable && widget.seatsByNrc.isNotEmpty) return true;
-    return option.seatsAvailable == 0;
+    // Mapa vacío (no se pudo consultar): no alarmar en rojo.
+    if (widget.statusAvailable) return false;
+    return option.seatsAvailable == 0; // generación / término pasado
+  }
+
+  /// Aviso cuando "Estado" está activo pero no se pudieron obtener los cupos
+  /// (en vez de pintar la grilla toda gris, que parecería "todo eliminado").
+  Widget _buildStatusUnavailableNotice() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: const [
+        Icon(Icons.cloud_off, size: 15, color: Color(0xFFB45309)),
+        SizedBox(width: 6),
+        Text('Estado no disponible',
+            style: TextStyle(
+                fontSize: 12,
+                color: Color(0xFFB45309),
+                fontWeight: FontWeight.w500)),
+      ],
+    );
   }
 
   /// Leyenda compacta de colores de estado (la "paleta"), para explicar el
@@ -606,8 +638,9 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       final left = dayIndex * dayColumnWidth;
 
       if (top >= 0 && height > 0) {
-        // Color del bloque: por estado de cupos (modo estado) o por materia.
-        final Color color = _statusMode
+        // Color del bloque: por estado de cupos (modo estado, solo si hay
+        // datos) o por materia. Sin datos en modo estado → materia (no gris).
+        final Color color = (_statusMode && widget.seatsByNrc.isNotEmpty)
             ? courseStatusColor(
                 statusForClass(overlappingClasses.first, widget.seatsByNrc))
             : (subjectColors[overlappingClasses.first.subjectName] ??
