@@ -88,7 +88,7 @@ class SubjectsPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("2026-1P",
+          const Text("2026-2P",
               style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -178,7 +178,7 @@ class SubjectsPanel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("2026-1P",
+        const Text("2026-2P",
             style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,

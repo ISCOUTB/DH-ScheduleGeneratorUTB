@@ -41,13 +41,6 @@ class CreatorsDialog extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               const Text(
-                'Equipo del prototipo inicial:',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
-              const SizedBox(height: 6),
-              ..._buildTeamList(_initialTeam),
-              const SizedBox(height: 12),
-              const Text(
                 'Equipo de desarrollo actual:',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
@@ -76,14 +69,6 @@ class CreatorsDialog extends StatelessWidget {
         .map((name) => Text(' • $name', style: const TextStyle(fontSize: 13)))
         .toList();
   }
-
-  static const List<String> _initialTeam = [
-    'Gabriel Alejandro Mantilla Clavijo',
-    'Melany Marcela Saez Acuña',
-    'Eddy Josue Lara Cermeno',
-    'Julio de Jesús Denubila Vergara',
-    'Diego Peña Páez',
-  ];
 
   static const List<String> _currentTeam = [
     'Gabriel Alejandro Mantilla Clavijo',
