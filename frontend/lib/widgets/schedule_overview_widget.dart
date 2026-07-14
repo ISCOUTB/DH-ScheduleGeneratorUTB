@@ -81,6 +81,11 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   /// toma el valor inicial al abrir y luego cambia por su cuenta.
   late bool _statusMode;
 
+  /// Número que identifica a cada materia (1..N) cuando se colorea por estado.
+  /// Ahí el color pasa a significar cupos, así que la referencia entre la lista
+  /// y la grilla es este número (reemplaza al punto de color y al NRC).
+  late Map<String, int> _subjectNumbers;
+
   /// Lista de franjas horarias que se muestran en la cuadrícula del horario.
   final List<String> timeSlots = [
     '07:00',
@@ -117,11 +122,23 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     subjectColors = widget.subjectColors;
     // Toma el modo del toggle de fondo al abrir; de aquí en adelante es propio.
     _statusMode = widget.statusAvailable && widget.initialStatusMode;
+    // Numera las materias en el mismo orden en que aparecen en la lista de
+    // detalles (groupBy conserva el orden de aparición en el horario).
+    final subjects =
+        groupBy(widget.schedule, (ClassOption o) => o.subjectName).keys.toList();
+    _subjectNumbers = {
+      for (var i = 0; i < subjects.length; i++) subjects[i]: i + 1,
+    };
   }
 
   /// En modo estado pero sin datos de cupos (petición fallida / Banner): no se
   /// puede colorear por estado. Se avisa en vez de pintar todo gris.
   bool get _statusUnavailable => _statusMode && widget.seatsByNrc.isEmpty;
+
+  /// Si la grilla se está coloreando realmente por estado de cupos. Cuando es
+  /// true el color ya no identifica la materia, así que la lista y la grilla
+  /// usan el número de materia en vez del punto de color y del NRC.
+  bool get _statusColoring => _statusMode && widget.seatsByNrc.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -336,14 +353,16 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         final color = subjectColors[subjectName] ?? Colors.grey;
 
         return ExpansionTile(
-          leading: Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
-          ),
+          leading: _statusColoring
+              ? _buildSubjectNumber(subjectName)
+              : Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
           title: Row(
             children: [
               Flexible(
@@ -384,6 +403,24 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
           }).toList(),
         );
       },
+    );
+  }
+
+  /// Número de la materia en la lista de detalles, en el lugar del punto de
+  /// color (que en modo estado ya no identificaría a la materia). El mismo
+  /// número rotula sus bloques en la grilla.
+  Widget _buildSubjectNumber(String subjectName) {
+    return SizedBox(
+      width: 24,
+      child: Text(
+        '${_subjectNumbers[subjectName] ?? '?'}',
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+        ),
+      ),
     );
   }
 
@@ -678,15 +715,20 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       if (top >= 0 && height > 0) {
         // Color del bloque: por estado de cupos (modo estado, solo si hay
         // datos) o por materia. Sin datos en modo estado → materia (no gris).
-        final Color color = (_statusMode && widget.seatsByNrc.isNotEmpty)
+        final Color color = _statusColoring
             ? courseStatusColor(
                 statusForClass(overlappingClasses.first, widget.seatsByNrc))
             : (subjectColors[overlappingClasses.first.subjectName] ??
                 Colors.grey);
 
-        // Crear un texto con todos los NRC separados por nueva línea
-        String allNRCs =
-            overlappingClasses.map((classOption) => classOption.nrc).join('\n');
+        // Rótulo del bloque: en modo estado, el número de la materia (el color
+        // ya indica los cupos); si no, los NRC. Uno por línea.
+        final List<String> labels = _statusColoring
+            ? overlappingClasses
+                .map((c) => '${_subjectNumbers[c.subjectName] ?? '?'}')
+                .toSet() // dos clases de la misma materia comparten número
+                .toList()
+            : overlappingClasses.map((c) => c.nrc).toList();
 
         blocks.add(
           Positioned(
@@ -702,15 +744,14 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                allNRCs,
-                style: const TextStyle(
+                labels.join('\n'),
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 10,
+                  fontSize: _statusColoring ? 13 : 10,
                   fontWeight: FontWeight.bold,
                 ),
                 overflow: TextOverflow.ellipsis,
-                maxLines: overlappingClasses
-                    .length, // Permitir tantas líneas como NRC haya
+                maxLines: labels.length, // Una línea por rótulo
                 textAlign: TextAlign.left,
               ),
             ),
