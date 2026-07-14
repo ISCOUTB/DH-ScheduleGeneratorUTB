@@ -13,6 +13,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart'; // Para kIsWeb
 import '../utils/file_utils.dart';
+import '../utils/credit_utils.dart';
 
 /// Un widget que muestra una vista detallada de un horario específico.
 ///
@@ -397,7 +398,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                 'Horario: ${formattingSchedulesInPairs(option.schedules)}\n'
                 'Campus: ${option.campus}\n'
                 '${_cuposLabel(option)}\n'
-                'Créditos: ${option.credits}',
+                'Créditos: ${formatCredits(option.credits)}',
               ),
             );
           }).toList(),

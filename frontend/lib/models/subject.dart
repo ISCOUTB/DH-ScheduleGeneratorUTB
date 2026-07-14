@@ -1,10 +1,13 @@
 // lib/models/subject.dart
 import 'class_option.dart';
+import '../utils/credit_utils.dart';
 
 class Subject {
   final String code;
   final String name;
-  final int credits;
+
+  /// Créditos de la materia. Decimal: hay materias de 0.5 créditos.
+  final double credits;
   final List<ClassOption> classOptions;
 
   Subject({
@@ -18,7 +21,7 @@ class Subject {
     return Subject(
       code: json['code'],
       name: json['name'],
-      credits: json['credits'],
+      credits: parseCredits(json['credits']),
       classOptions: (json['classOptions'] as List)
           .map((e) => ClassOption.fromJson(e))
           .toList(),

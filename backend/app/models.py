@@ -19,7 +19,8 @@ class ClassOption(BaseModel):
     
     nrc: str
     group_id: int = Field(..., alias='groupId')
-    credits: int
+    # Decimal: hay materias de créditos fraccionarios (ej. 0.5) en Banner.
+    credits: float
     campus: str
     seats_available: int = Field(..., alias='seatsAvailable')
     seats_maximum: int = Field(..., alias='seatsMaximum')
@@ -31,7 +32,7 @@ class Subject(BaseModel):
 
     code: str
     name: str
-    credits: int
+    credits: float
     class_options: List[ClassOption] = Field(..., alias='classOptions')
 
 
@@ -47,7 +48,8 @@ class GenerateScheduleRequest(BaseModel):
     subjects: List[SubjectIdentifier]
     filters: Dict[str, Any]
     # El frontend envía 'creditLimit' (camelCase), se usa un alias para que Pydantic lo entienda como 'credit_limit'.
-    credit_limit: int = Field(..., alias='creditLimit')
+    # Float porque las materias pueden sumar medios créditos (ej. 19.5).
+    credit_limit: float = Field(..., alias='creditLimit')
     # El cliente declara si es móvil; el backend limita los resultados solo en
     # ese caso (evita agotar la memoria del navegador móvil). Default false para
     # compatibilidad con clientes que no lo envíen.

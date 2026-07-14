@@ -1,10 +1,16 @@
-import os 
+import os
 import sys
 from descargar_json import descargar_json
 from insertar_en_db import actualizar_base
 from export_to_subject_json import exportar_subjects_a_json
+from migrar_esquema import aplicar_migraciones
 
 def main():
+
+    # Antes de tocar los datos: el esquema de una base ya creada no lo actualiza
+    # init.sql (solo corre con el volumen vacío). Es idempotente.
+    print("Verificando esquema de la base...")
+    aplicar_migraciones()
 
     print("Descargando JSON crudo desde Banner...")
     try:

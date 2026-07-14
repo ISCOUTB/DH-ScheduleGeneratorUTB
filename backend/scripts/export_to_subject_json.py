@@ -63,6 +63,9 @@ def exportar_subjects_a_json():
             ) = row
             
             nrc = str(nrc_val)
+            # Creditos es NUMERIC en la base (créditos fraccionarios): psycopg lo
+            # devuelve como Decimal y los modelos lo esperan como float.
+            credits = float(credits)
 
             # Si la materia no existe en nuestro diccionario, la creamos.
             if code not in subjects_dict:

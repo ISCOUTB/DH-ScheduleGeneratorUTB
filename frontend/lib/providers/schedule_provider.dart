@@ -6,6 +6,7 @@ import '../models/subject.dart';
 import '../models/subject_summary.dart';
 import '../models/class_option.dart';
 import '../services/api_service.dart';
+import '../utils/credit_utils.dart';
 import '../utils/platform_service_stub.dart'
     if (dart.library.html) '../utils/platform_service_web.dart';
 
@@ -36,12 +37,12 @@ class ScheduleProvider extends ChangeNotifier {
   bool _areSubjectsLoaded = false;
   bool get areSubjectsLoaded => _areSubjectsLoaded;
 
-  /// Créditos actualmente en uso.
-  int _usedCredits = 0;
-  int get usedCredits => _usedCredits;
+  /// Créditos actualmente en uso. Decimal: hay materias de 0.5 créditos.
+  double _usedCredits = 0;
+  double get usedCredits => _usedCredits;
 
   /// Límite de créditos.
-  final int creditLimit = AppConfig.defaultCreditLimit;
+  final double creditLimit = AppConfig.defaultCreditLimit;
 
   /// Mapa de colores asignados a cada materia.
   final Map<String, Color> _subjectColorMap = {};
@@ -166,8 +167,9 @@ class ScheduleProvider extends ChangeNotifier {
       return 'La materia ya ha sido agregada';
     }
 
-    // Verificar límite de créditos
-    int newTotalCredits = _usedCredits + subject.credits;
+    // Verificar límite de créditos. Se redondea la suma para que acumular medios
+    // créditos no deje 20.000000000000004 y rechace una materia que sí cabe.
+    final double newTotalCredits = roundCredits(_usedCredits + subject.credits);
     if (newTotalCredits > creditLimit) {
       return 'Límite de créditos alcanzado';
     }
@@ -214,7 +216,7 @@ class ScheduleProvider extends ChangeNotifier {
 
     // Eliminar materia
     _addedSubjects.removeWhere((s) => s.code == subject.code && s.name == subject.name);
-    _usedCredits -= subject.credits;
+    _usedCredits = roundCredits(_usedCredits - subject.credits);
 
     notifyListeners();
 

@@ -19,6 +19,7 @@ Para mejorar mantenibilidad y trazabilidad, las decisiones relevantes se documen
 
 Registros vigentes:
 
+- `docs/issues/14-07-2026-creditos-decimales.md`
 - `docs/issues/15-06-2026-incidente-wipe-oferta-etl-banner-caido.md`
 - `docs/issues/12-05-2026-rfc-estados-cursos-notificaciones.md`
 - `docs/issues/12-05-2026-pantalla-horarios-destacados.md`
@@ -168,9 +169,12 @@ La API expone los siguientes endpoints para ser consumidos por el frontend:
   ```json
   [
     { "code": "DE123", "name": "CÁLCULO I", "credits": 4 },
-    { "code": "IS456", "name": "PROGRAMACIÓN AVANZADA", "credits": 3 }
+    { "code": "IS456", "name": "PROGRAMACIÓN AVANZADA", "credits": 3 },
+    { "code": "RU789", "name": "SEMINARIO DE DESARROLLO PERSONAL", "credits": 0.5 }
   ]
   ```
+
+  `credits` es decimal: hay materias de créditos fraccionarios (ej. 0.5).
 
 ---
 

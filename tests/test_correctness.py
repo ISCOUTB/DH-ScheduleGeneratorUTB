@@ -38,7 +38,11 @@ def create_class_group(
                 professor=nrc_info["professor"],
                 nrc=nrc_info["nrc"],
                 groupId=nrc_info["groupId"],
-                schedules=[Schedule(**s) for s in nrc_info["schedules"]]
+                schedules=[Schedule(**s) for s in nrc_info["schedules"]],
+                # Irrelevantes para el backtracking, pero el modelo los exige.
+                campus=nrc_info.get("campus", "Campus Tecnológico"),
+                seatsAvailable=nrc_info.get("seatsAvailable", 10),
+                seatsMaximum=nrc_info.get("seatsMaximum", 30),
             ))
         class_groups.append(group)
     return class_groups

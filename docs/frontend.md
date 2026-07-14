@@ -200,7 +200,7 @@ class User {
 class Subject {
   final String code;
   final String name;
-  final int credits;
+  final double credits;   // Decimal: hay materias de 0.5 creditos
   final List<ClassOption> classOptions;
 }
 ```
@@ -217,7 +217,7 @@ class ClassOption {
   final String campus;
   final int seatsAvailable;
   final int seatsMaximum;
-  final int credits;
+  final double credits;    // Decimal: hay materias de 0.5 creditos
   final List<Schedule> schedules;
 }
 ```

@@ -142,9 +142,13 @@ def find_valid_schedules(
     
     valid_schedules: List[List[ClassOption]] = []
     # El límite de créditos se obtiene de los filtros, con un valor por defecto.
-    max_credits = filters.get("max_credits", 20)
+    # Es float: las materias pueden tener créditos fraccionarios (ej. 0.5), así
+    # que un horario puede sumar 19.5. EPSILON absorbe el error de coma flotante
+    # para que una suma que da exactamente el tope no se descarte.
+    max_credits = float(filters.get("max_credits", 20))
+    EPSILON = 1e-9
 
-    def _backtrack(level: int, current_schedule: List[ClassOption], current_credits: int):
+    def _backtrack(level: int, current_schedule: List[ClassOption], current_credits: float):
         """Función recursiva que construye los horarios paso a paso."""
         # Condición de éxito: se ha procesado una combinación para cada materia.
         if level == len(combinations_per_subject):
@@ -158,7 +162,7 @@ def find_valid_schedules(
             
             # Poda por créditos: si añadir esta materia excede el límite, se descarta.
             credits_for_this_group = option_group[0].credits
-            if current_credits + credits_for_this_group > max_credits:
+            if current_credits + credits_for_this_group > max_credits + EPSILON:
                 continue
 
             # Si no hay conflicto de horario, se añade el grupo y se sigue al siguiente nivel.
@@ -170,7 +174,7 @@ def find_valid_schedules(
                     current_schedule.pop()
 
     # Inicia el algoritmo de backtracking.
-    _backtrack(0, [], 0)
+    _backtrack(0, [], 0.0)
     
     # --- PASO DE FUSIÓN DE HORARIOS ---
     # Agrupa horarios por su "huella digital" para fusionar NRCs de opciones idénticas.

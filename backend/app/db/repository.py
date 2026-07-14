@@ -146,7 +146,9 @@ def get_combinations_for_subjects(subjects_payload: List[Dict[str, str]]) -> Lis
                 professor=profesor or "Por Asignar",
                 nrc=nrc,
                 groupId=group_id,
-                credits=credits,
+                # Creditos es NUMERIC en la base (créditos fraccionarios) y psycopg
+                # lo devuelve como Decimal, que no se puede sumar con floats.
+                credits=float(credits),
                 campus=campus,
                 seatsAvailable=cupos_disponibles,
                 seatsMaximum=cupos_totales
@@ -222,7 +224,7 @@ def get_subject_by_code(subject_code: str, subject_name: str) -> Subject | None:
     subject_details = {
         "code": rows[0][0],
         "name": rows[0][1],
-        "credits": rows[0][2],
+        "credits": float(rows[0][2]),
         "classOptions": []
     }
     class_options_dict: Dict[str, ClassOption] = {}
@@ -244,7 +246,7 @@ def get_subject_by_code(subject_code: str, subject_name: str) -> Subject | None:
                 professor=profesor or "Por Asignar",
                 nrc=nrc,
                 groupId=group_id,
-                credits=credits,
+                credits=float(credits),
                 campus=campus,
                 seatsAvailable=cupos_disponibles,
                 seatsMaximum=cupos_totales
@@ -277,7 +279,9 @@ def get_all_subjects_summary() -> List[Dict[str, Any]]:
     cursor.close()
     conn.close()
 
-    return [dict(s) for s in subjects]
+    # Creditos es NUMERIC (créditos fraccionarios): se expone como número JSON,
+    # no como el Decimal que devuelve psycopg.
+    return [{**s, "credits": float(s["credits"])} for s in subjects]
 
 
 # --- Funciones de Usuario ---

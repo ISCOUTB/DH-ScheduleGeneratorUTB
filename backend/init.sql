@@ -77,7 +77,9 @@ ALTER TABLE public.curso OWNER TO pg_database_owner;
 
 CREATE TABLE public.materia (
     codigomateria character varying NOT NULL,
-    creditos integer NOT NULL,
+    -- Decimal: Banner publica materias de créditos fraccionarios (ej. 0.5).
+    -- Con INTEGER, Postgres redondeaba el valor al insertar (0.5 -> 0).
+    creditos numeric(4,2) NOT NULL,
     nombre character varying NOT NULL
 );
 

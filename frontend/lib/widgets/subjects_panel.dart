@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/subject.dart';
+import '../utils/credit_utils.dart';
 
 /// Un panel que muestra las materias seleccionadas y el conteo de créditos.
 ///
@@ -12,11 +13,11 @@ class SubjectsPanel extends StatelessWidget {
   /// La lista de materias que el usuario ha agregado.
   final List<Subject> addedSubjects;
 
-  /// El número de créditos actualmente en uso.
-  final int usedCredits;
+  /// El número de créditos actualmente en uso (decimal: hay materias de 0.5).
+  final double usedCredits;
 
   /// El límite de créditos permitido.
-  final int creditLimit;
+  final double creditLimit;
 
   /// Mapa de colores para las materias.
   final Map<String, Color> subjectColors;
@@ -278,7 +279,7 @@ class SubjectsPanel extends StatelessWidget {
             style: TextStyle(fontSize: 16, color: Colors.black),
           ),
           TextSpan(
-            text: "$usedCredits/$creditLimit",
+            text: "${formatCredits(usedCredits)}/${formatCredits(creditLimit)}",
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,

@@ -91,7 +91,7 @@ class ApiService {
   Future<GenerateSchedulesResult> generateSchedules({
     required List<Subject> subjects,
     required Map<String, dynamic> filters,
-    required int creditLimit,
+    required double creditLimit,
     bool isMobile = false,
   }) async {
     final url = Uri.parse('$_baseUrl/api/schedules/generate');

@@ -1,11 +1,13 @@
 // lib/models/subject_summary.dart
-
+import '../utils/credit_utils.dart';
 
 // Modelo ligero de datos, tal como la devuelve el endpoint /api/subjects.
 class SubjectSummary {
   final String code;
   final String name;
-  final int credits;
+
+  /// Créditos de la materia. Decimal: hay materias de 0.5 créditos.
+  final double credits;
 
   SubjectSummary({
     required this.code,
@@ -18,7 +20,7 @@ class SubjectSummary {
     return SubjectSummary(
       code: json['code'],
       name: json['name'],
-      credits: json['credits'],
+      credits: parseCredits(json['credits']),
     );
   }
 }

@@ -3,15 +3,28 @@ from utils import limpiar_nombre, formatear_hora, obtener_dias
 from typing import Any, Optional, TypedDict
 
 class ProcesarJsonResponse(TypedDict):
-    materias: list[tuple[str, int, str]]
+    materias: list[tuple[str, float, str]]
     profesores: list[tuple[str, str]]
     cursos: list[tuple[int, str, str, Optional[str], Optional[int], int, str, int, int, str]]
     clases: list[tuple[int, Optional[str], Optional[str], Optional[str], str]]
     errores: list[str]
 
+
+def obtener_creditos(entrada: dict[str, Any]) -> float:
+    """Créditos de una materia según Banner.
+
+    Se conserva el decimal: hay materias de créditos fraccionarios (ej. 0.5) y
+    truncarlas a entero las dejaba en 0.
+    """
+    valor = entrada.get('creditHourHigh') or entrada.get('creditHourLow') or 0
+    try:
+        return float(valor)
+    except (TypeError, ValueError):
+        return 0.0
+
 def procesar_json(data: dict[str, list[dict[str, Any]]]) -> ProcesarJsonResponse:
 
-    materias: dict[tuple[str, str], tuple[str, int, str]] = {}
+    materias: dict[tuple[str, str], tuple[str, float, str]] = {}
     profesores: dict[str, tuple[str, str]] = {}
     cursos: list[tuple[int, str, str, Optional[str], Optional[int], int, str, int, int, str]] = []
     clases: list[tuple[int, Optional[str], Optional[str], Optional[str], str]] = []
@@ -88,7 +101,7 @@ def procesar_json(data: dict[str, list[dict[str, Any]]]) -> ProcesarJsonResponse
         nombre_materia = limpiar_nombre(entrada['courseTitle'])
 
         if (subject_course, nombre_materia) not in materias:
-            creditos = entrada.get('creditHourHigh') or entrada.get('creditHourLow', 0)
+            creditos = obtener_creditos(entrada)
             materias[(subject_course, nombre_materia)] = (subject_course, creditos, nombre_materia)
 
         profesor_id = None

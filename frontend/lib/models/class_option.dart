@@ -1,5 +1,6 @@
 // lib/models/class_option.dart
 import 'schedule.dart';
+import '../utils/credit_utils.dart';
 
 class ClassOption {
   final String subjectName;
@@ -9,7 +10,9 @@ class ClassOption {
   final String professor;
   final String nrc;
   final int groupId;
-  final int credits;
+
+  /// Créditos de la materia. Decimal: hay materias de 0.5 créditos.
+  final double credits;
   final String campus;
   final int seatsAvailable;
   final int seatsMaximum;
@@ -38,7 +41,7 @@ class ClassOption {
       professor: json['professor'],
       nrc: json['nrc'],
       groupId: json['groupId'],
-      credits: json['credits'],
+      credits: parseCredits(json['credits']),
       campus: json['campus'],
       seatsAvailable: json['seatsAvailable'],
       seatsMaximum: json['seatsMaximum'],

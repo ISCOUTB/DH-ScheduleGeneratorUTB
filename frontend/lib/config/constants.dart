@@ -94,8 +94,10 @@ class AppColors {
 class AppConfig {
   AppConfig._();
 
-  static const int defaultCreditLimit = 20;
-  static const int warningCreditThreshold = 18;
+  // Decimales: las materias pueden tener créditos fraccionarios (ej. 0.5), así
+  // que el acumulado del usuario puede quedar en 19.5.
+  static const double defaultCreditLimit = 20;
+  static const double warningCreditThreshold = 18;
   static const int defaultItemsPerPage = 10;
   static const double mobileBreakpoint = 600.0;
 }

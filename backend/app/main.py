@@ -84,9 +84,10 @@ def generate_schedules_endpoint(request: GenerateScheduleRequest) -> GenerateSch
 
 
     # Se define explícitamente el tipo del diccionario para Pylance.
+    # El generador lee el tope bajo la clave 'max_credits'.
     generation_params: Dict[str, Any] = {
         **request.filters,
-        "credit_limit": request.credit_limit
+        "max_credits": request.credit_limit
     }
 
     # 2. Se pasan los dos argumentos que la función expecta.

@@ -17,7 +17,7 @@ erDiagram
     MATERIA {
         varchar codigomateria PK
         varchar nombre PK
-        int creditos
+        numeric creditos
     }
 
     CURSO {
@@ -88,7 +88,7 @@ erDiagram
     MATERIA {
         varchar codigomateria PK
         varchar nombre PK
-        int creditos
+        numeric creditos
     }
 
     CURSO {
@@ -158,7 +158,7 @@ Representa una asignatura académica del plan de estudios.
 |-------|------|-------------|
 | `codigomateria` | VARCHAR | Código único de la materia (PK) |
 | `nombre` | VARCHAR | Nombre de la materia (PK) |
-| `creditos` | INTEGER | Número de créditos académicos |
+| `creditos` | NUMERIC(4,2) | Número de créditos académicos. Decimal: hay materias de créditos fraccionarios (ej. 0.5) y con INTEGER se redondeaban a 0 |
 
 > La clave primaria es compuesta (`codigomateria`, `nombre`) porque una misma materia puede tener diferentes nombres según el programa (ej: "ÉTICA Y CIUDADANÍA" vs "ÉTICA PROFESIONAL" con el mismo código).
 
