@@ -176,6 +176,16 @@ Colorea la grilla de horarios destacados según los cupos **actuales** de cada c
 - **Petición bajo demanda, por horario** (no al entrar, no masiva). `loadStatusForSchedule(horario)` toma los NRCs de **ese** horario y pide `/status` solo de esos. Se dispara al: activar "Estado", seleccionar otro horario en modo estado, abrir detalles, o cambiar de período. Solo si `selectedTerm == currentTerm`.
 - El resultado se guarda en `selectedScheduleStatus`; la grilla (`colorResolver`) y el detalle leen de ahí. Al cambiar de horario se pide de nuevo para sus NRCs.
 
+### Exportación a PDF y Excel (`services/schedule_export.dart`)
+`buildSchedulePdf()` y `buildScheduleExcel()` generan los archivos que descarga el detalle del horario. Ambos parten del mismo layout (`_buildLayout`), que decide **qué dibujar**:
+- Rango horario fijo **07:00–20:00** (igual que la grilla de la app), ampliado hacia afuera solo si hay alguna clase fuera de ese rango, para no recortarla.
+- Días: Lunes–Viernes siempre; sábado y domingo solo si tienen clase.
+- Un bloque por franja, con las clases solapadas agrupadas (antes se perdía una de las dos).
+
+Cada archivo reproduce la grilla semanal con el color de la materia, una **leyenda** (chip por materia con su color y créditos, con el mismo estilo del bloque para que el color se reconozca entre leyenda, grilla y tabla) y una tabla con el detalle de cada clase (NRC, profesor, campus, créditos, horario) y el total de créditos. El fondo de los bloques usa el color de la materia aclarado (`_tint`, opacidad ~0.36) para que el texto en negro se lea también al imprimir.
+- **PDF:** A4 apaisada. La grilla se dibuja con `pw.Stack` + `pw.Positioned` (bloques del alto de su duración, como en la app); el detalle va en su propia página (`pw.NewPage()`) para que el título no quede huérfano al pie de la grilla. Ojo: el paquete `pdf` no admite `borderRadius` con bordes no uniformes; el bold es un asset aparte (`Roboto-Bold.ttf`) que degrada a la regular si no está empaquetado.
+- **Excel:** hoja `Horario` (grilla, con los bloques como celdas **fusionadas** verticalmente) + hoja `Detalle`. Ojo: `Sheet.merge()` descarta contenido y estilo de las celdas del rango, así que hay que **fusionar primero y escribir después** (`updateCell` reconoce la fusión y escribe en la celda ancla).
+
 ### Comportamiento responsivo / UX
 - **Generación en móvil:** la grilla pagina por páginas (`paginateOnMobile` en `ScheduleGridWidget`) con barra `Página X de Y`; al cambiar de página vuelve al inicio de los horarios (`Scrollable.ensureVisible`). El backend limita los resultados solo en móvil (cap `MAX_SCHEDULES`); el contador muestra "N+" si se truncó.
 - **Tarjeta de horario:** extraída a `widgets/schedule_preview_card.dart` (`SchedulePreview`, `SchedulePreviewCard`, `ScheduleFavoriteStar`), reutilizada por la grilla.

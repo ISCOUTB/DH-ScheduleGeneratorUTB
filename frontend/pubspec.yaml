@@ -31,11 +31,17 @@ dependencies:
   web: ^1.1.1
   flutter_svg: ^2.0.10+1
 
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
 flutter:
   uses-material-design: true
 
   assets:
     - assets/fonts/Roboto-Regular.ttf
+    # La usa el PDF exportado para los títulos y encabezados.
+    - assets/fonts/Roboto-Bold.ttf
     - images/logo.png
     - images/logo_utb.svg
     - images/utb.png

@@ -6,14 +6,11 @@ import '../models/schedule.dart';
 import '../models/course_status.dart';
 import '../providers/schedule_provider.dart';
 import 'color_mode_toggle.dart';
-import 'package:excel/excel.dart' as excel;
-import 'package:pdf/widgets.dart' as pw;
-import 'dart:typed_data';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart'; // Para kIsWeb
+import '../services/schedule_export.dart';
 import '../utils/file_utils.dart';
 import '../utils/credit_utils.dart';
+import '../utils/time_utils.dart';
 
 /// Un widget que muestra una vista detallada de un horario específico.
 ///
@@ -705,7 +702,7 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       if (dayIndex == -1) continue;
 
       // Calcula la posición y el tamaño del bloque en función de la hora y el día.
-      final timeRange = parseTimeRange(time);
+      final timeRange = TimeUtils.parseTimeRange(time);
       final startHour = timeRange.start.hour + timeRange.start.minute / 60.0;
       final endHour = timeRange.end.hour + (timeRange.end.minute + 10) / 60.0;
 
@@ -766,21 +763,20 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   /// Inicia la descarga del horario en formato Excel.
   Future<void> downloadScheduleAsExcel() async {
     try {
-      var bytes = await _generateExcel({
-        'schedule': widget.schedule,
-        'timeSlots': timeSlots,
-        'days': days,
-      });
+      final bytes = await buildScheduleExcel(
+        schedule: widget.schedule,
+        subjectColors: subjectColors,
+      );
 
-      await saveAndOpenFile(bytes, 'horario.xlsx');
+      await saveAndOpenFile(bytes, 'Horario_UTB.xlsx');
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Archivo Excel generado exitosamente')),
+        const SnackBar(content: Text('Archivo Excel generado exitosamente')),
       );
     } catch (e) {
-      print('Error al generar el Excel: $e');
+      debugPrint('Error al generar el Excel: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al generar el Excel')),
+        const SnackBar(content: Text('Error al generar el Excel')),
       );
     }
   }
@@ -788,176 +784,21 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   /// Inicia la descarga del horario en formato PDF.
   Future<void> downloadScheduleAsPDF() async {
     try {
-      final bytes = await _generatePDF({
-        'schedule': widget.schedule,
-        'timeSlots': timeSlots,
-        'days': days,
-      });
+      final bytes = await buildSchedulePdf(
+        schedule: widget.schedule,
+        subjectColors: subjectColors,
+      );
 
-      await saveAndOpenFile(bytes, 'horario.pdf');
+      await saveAndOpenFile(bytes, 'Horario_UTB.pdf');
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Archivo PDF generado exitosamente')),
+        const SnackBar(content: Text('Archivo PDF generado exitosamente')),
       );
     } catch (e) {
-      print('Error al generar el PDF: $e');
+      debugPrint('Error al generar el PDF: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error al generar el PDF')),
+        const SnackBar(content: Text('Error al generar el PDF')),
       );
     }
   }
-
-  // --- Funciones auxiliares para la generación de archivos ---
-
-  /// Genera los bytes de un archivo Excel a partir de los datos del horario.
-  Future<Uint8List> _generateExcel(Map<String, dynamic> params) async {
-    List<ClassOption> schedule = params['schedule'];
-    List<String> timeSlots = params['timeSlots'];
-    List<String> days = params['days'];
-
-    // Crea un nuevo archivo y hoja de Excel.
-    var excelFile = excel.Excel.createExcel();
-    excel.Sheet sheetObject = excelFile['Horario'];
-
-    // Agrega la fila de encabezado.
-    sheetObject.appendRow(
-        ['Horario', ...days].map((day) => excel.TextCellValue(day)).toList());
-
-    // Llena cada fila con la materia correspondiente a la hora y día.
-    for (var timeSlot in timeSlots) {
-      List<excel.CellValue?> row = [excel.TextCellValue(timeSlot)];
-      TimeOfDay timeSlotTime = parseTimeOfDay(timeSlot);
-      for (var day in days) {
-        ClassOption? classOption = schedule.firstWhereOrNull(
-          (co) => co.schedules.any(
-            (s) {
-              if (s.day != day) return false;
-              TimeOfDayRange range = parseTimeRange(s.time);
-              return isTimeWithinRange(timeSlotTime, range);
-            },
-          ),
-        );
-        // Concatenar subjectName y nrc si existe la opción
-        if (classOption != null) {
-          row.add(excel.TextCellValue(
-              '${classOption.subjectName}\nNRC: ${classOption.nrc}'));
-        } else {
-          row.add(null); // Añade una celda vacía
-        }
-      }
-      sheetObject.appendRow(row);
-    }
-
-    // Codifica y retorna los bytes del archivo.
-    List<int>? excelBytes = excelFile.encode();
-
-    // Retorna los bytes como Uint8List
-    return Uint8List.fromList(excelBytes!);
-  }
-
-  /// Genera los bytes de un archivo PDF a partir de los datos del horario.
-  Future<Uint8List> _generatePDF(Map<String, dynamic> params) async {
-    List<ClassOption> schedule = params['schedule'];
-    List<String> timeSlots = params['timeSlots'];
-    List<String> days = params['days'];
-
-    final pdf = pw.Document();
-
-    // Carga una fuente compatible con PDF.
-    final fontData = await rootBundle.load("assets/fonts/Roboto-Regular.ttf");
-    final ttf = pw.Font.ttf(fontData.buffer.asByteData());
-
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          // Crea una tabla con los datos del horario.
-          return pw.Table.fromTextArray(
-            headers: ['Horario', ...days],
-            data: [
-              for (var timeSlot in timeSlots)
-                [
-                  timeSlot,
-                  ...days.map((day) {
-                    TimeOfDay timeSlotTime = parseTimeOfDay(timeSlot);
-                    ClassOption? classOption = schedule.firstWhereOrNull(
-                      (co) => co.schedules.any(
-                        (s) {
-                          if (s.day != day) return false;
-                          TimeOfDayRange range = parseTimeRange(s.time);
-                          return isTimeWithinRange(timeSlotTime, range);
-                        },
-                      ),
-                    );
-                    if (classOption != null) {
-                      return '${classOption.subjectName}\nNRC: ${classOption.nrc}';
-                    } else
-                      return '';
-                  }).toList(),
-                ]
-            ],
-            cellStyle: pw.TextStyle(font: ttf, fontSize: 10),
-            headerStyle: pw.TextStyle(
-                font: ttf, fontWeight: pw.FontWeight.bold, fontSize: 12),
-            cellAlignment: pw.Alignment.center,
-            headerAlignment: pw.Alignment.center,
-          );
-        },
-      ),
-    );
-    // Guarda y retorna los bytes del documento PDF.
-    return await pdf.save();
-  }
-
-  // --- Funciones auxiliares de utilidad ---
-
-  /// Verifica si una hora específica se encuentra dentro de un rango de tiempo.
-  bool isTimeWithinRange(TimeOfDay time, TimeOfDayRange range) =>
-      (time.hour * 60 + time.minute) >=
-          (range.start.hour * 60 + range.start.minute) &&
-      (time.hour * 60 + time.minute) < (range.end.hour * 60 + range.end.minute);
-
-  /// Parsea una cadena de rango de tiempo (ej. "07:00 - 09:00") a un objeto TimeOfDayRange.
-  TimeOfDayRange parseTimeRange(String timeRange) {
-    final List<String> parts = timeRange.split(' - ');
-    final TimeOfDay start = parseTimeOfDay(parts[0].trim());
-    final TimeOfDay end = parseTimeOfDay(parts[1].trim());
-    return TimeOfDayRange(start, end);
-  }
-
-  /// Parsea una cadena de tiempo (ej. "7:00 AM") a un objeto TimeOfDay en formato de 24 horas.
-  TimeOfDay parseTimeOfDay(String timeString) {
-    // Eliminar espacios y convertir a mayúsculas
-    timeString = timeString.trim().toUpperCase();
-
-    // Verificar si contiene 'AM' o 'PM'
-    final bool isPM = timeString.contains('PM');
-    final bool isAM = timeString.contains('AM');
-
-    // Eliminar 'AM' y 'PM' si están presentes
-    timeString = timeString.replaceAll('AM', '').replaceAll('PM', '').trim();
-
-    // Separar horas y minutos
-    final List<String> timeParts = timeString.split(':');
-    int hour = int.parse(timeParts[0]);
-    final int minute = timeParts.length > 1 ? int.parse(timeParts[1]) : 0;
-
-    // Convertir a formato de 24 horas si es necesario
-    if (isPM && hour < 12) {
-      hour += 12;
-    }
-    if (isAM && hour == 12) {
-      // Medianoche (12 AM) es la hora 0
-      hour = 0;
-    }
-
-    return TimeOfDay(hour: hour, minute: minute);
-  }
-}
-
-/// Representa un rango de tiempo con una hora de inicio y fin.
-class TimeOfDayRange {
-  final TimeOfDay start;
-  final TimeOfDay end;
-
-  TimeOfDayRange(this.start, this.end);
 }
