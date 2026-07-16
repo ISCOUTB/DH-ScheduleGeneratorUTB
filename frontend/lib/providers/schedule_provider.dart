@@ -485,6 +485,45 @@ class ScheduleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // --- Navegación entre horarios de la MISMA página (detalle en generación) ---
+
+  /// Índice (en allSchedules) del primer horario de la página actual.
+  int get _pageStartIndex => (_currentPage - 1) * _itemsPerPage;
+
+  /// Índice (exclusivo) donde termina la página actual.
+  int get _pageEndIndex =>
+      (_pageStartIndex + _itemsPerPage).clamp(0, _allSchedules.length);
+
+  /// Si el detalle puede ir al horario anterior sin salir de la página actual.
+  bool get canSelectPrevInPage =>
+      _isOverviewOpen &&
+      _selectedScheduleIndex != null &&
+      _selectedScheduleIndex! > _pageStartIndex;
+
+  /// Si el detalle puede ir al horario siguiente sin salir de la página actual.
+  bool get canSelectNextInPage =>
+      _isOverviewOpen &&
+      _selectedScheduleIndex != null &&
+      _selectedScheduleIndex! < _pageEndIndex - 1;
+
+  /// Mueve la selección del detalle al horario anterior de la misma página.
+  /// No cruza de página ni hace wrap.
+  void selectPrevInPage() {
+    if (canSelectPrevInPage) {
+      _selectedScheduleIndex = _selectedScheduleIndex! - 1;
+      notifyListeners();
+    }
+  }
+
+  /// Mueve la selección del detalle al horario siguiente de la misma página.
+  /// No cruza de página ni hace wrap.
+  void selectNextInPage() {
+    if (canSelectNextInPage) {
+      _selectedScheduleIndex = _selectedScheduleIndex! + 1;
+      notifyListeners();
+    }
+  }
+
   // ============================================================
   // MÉTODOS: Paginación
   // ============================================================

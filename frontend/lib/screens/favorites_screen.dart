@@ -1,6 +1,7 @@
 // lib/screens/favorites_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -499,8 +500,43 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     if (isMobileLayout) {
       return _buildMobileLayout(provider);
     } else {
-      return _buildDesktopLayout(provider);
+      // Escritorio: ↑/↓ pasan entre horarios destacados cuando NO se está en el
+      // detalle. El Focus es ancestro de toda la lista, así que recibe las
+      // teclas aunque el foco esté en una tarjeta (el evento sube antes del
+      // traversal direccional por defecto).
+      return Focus(
+        autofocus: true,
+        onKeyEvent: (node, event) => _handleDesktopKey(event, provider),
+        child: _buildDesktopLayout(provider),
+      );
     }
+  }
+
+  /// Maneja ↑/↓ para navegar entre destacados en escritorio. Ignora las teclas
+  /// mientras el detalle está abierto (ahí la navegación no aplica).
+  KeyEventResult _handleDesktopKey(KeyEvent event, ScheduleProvider provider) {
+    if (_showOverview) return KeyEventResult.ignored;
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    final int count = provider.favoriteSchedules.length;
+    if (count == 0) return KeyEventResult.ignored;
+
+    if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+      if (_selectedIndex > 0) {
+        setState(() => _selectedIndex -= 1);
+        _loadStatusIfNeeded(provider);
+      }
+      return KeyEventResult.handled;
+    }
+    if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+      if (_selectedIndex < count - 1) {
+        setState(() => _selectedIndex += 1);
+        _loadStatusIfNeeded(provider);
+      }
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
   }
 
   // ============================================================

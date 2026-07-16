@@ -1,6 +1,7 @@
 // lib/screens/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -517,20 +518,114 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
 
-  Widget _buildOverviewOverlay(ScheduleProvider provider, bool isMobileLayout) => Stack(
+  Widget _buildOverviewOverlay(ScheduleProvider provider, bool isMobileLayout) {
+    final overview = Stack(
       children: [
         _dismissibleBarrier(
             isMobileLayout: isMobileLayout,
             onClose: provider.closeScheduleOverview),
         Center(
+          // Key por índice: al navegar con las flechas el detalle se reconstruye
+          // desde cero (recalcula numeración de materias, etc.).
           child: ScheduleOverviewWidget(
+            key: ValueKey(provider.selectedScheduleIndex),
             schedule: provider.allSchedules[provider.selectedScheduleIndex!],
             onClose: provider.closeScheduleOverview,
             subjectColors: provider.subjectColorMap,
           ),
         ),
+        // Flechas para pasar entre horarios de la MISMA página (solo escritorio).
+        if (!isMobileLayout) ...[
+          _navArrowButton(
+            alignment: Alignment.centerLeft,
+            icon: Icons.chevron_left,
+            tooltip: 'Horario anterior (←)',
+            onPressed:
+                provider.canSelectPrevInPage ? provider.selectPrevInPage : null,
+          ),
+          _navArrowButton(
+            alignment: Alignment.centerRight,
+            icon: Icons.chevron_right,
+            tooltip: 'Horario siguiente (→)',
+            onPressed:
+                provider.canSelectNextInPage ? provider.selectNextInPage : null,
+          ),
+        ],
       ],
     );
+
+    // Móvil: sin teclado ni flechas (feature solo de escritorio y solo aquí,
+    // en generación — destacados no lleva esta navegación).
+    if (isMobileLayout) return overview;
+
+    // Escritorio: capturar ← / → para navegar entre horarios de la misma
+    // página. El Focus es ancestro del contenido, así que recibe las teclas
+    // aunque el foco esté en un botón interno (el evento sube antes del
+    // traversal direccional por defecto).
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+          return KeyEventResult.ignored;
+        }
+        if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+          provider.selectPrevInPage();
+          return KeyEventResult.handled;
+        }
+        if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+          provider.selectNextInPage();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: overview,
+    );
+  }
+
+  /// Botón circular de navegación (flechas) superpuesto al detalle en
+  /// escritorio. En los extremos de la página queda deshabilitado (atenuado) y
+  /// no captura toques (deja pasar el clic al fondo para cerrar).
+  Widget _navArrowButton({
+    required Alignment alignment,
+    required IconData icon,
+    required String tooltip,
+    required VoidCallback? onPressed,
+  }) {
+    final bool enabled = onPressed != null;
+    return Positioned.fill(
+      child: IgnorePointer(
+        ignoring: !enabled,
+        child: Align(
+          alignment: alignment,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Tooltip(
+              message: tooltip,
+              child: Material(
+                color: enabled ? Colors.white : const Color(0x66FFFFFF),
+                shape: const CircleBorder(),
+                elevation: enabled ? 4 : 0,
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: onPressed,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Icon(
+                      icon,
+                      size: 30,
+                      color: enabled
+                          ? const Color(0xFF2742F5)
+                          : Colors.grey.shade400,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   // Vista móvil: lista única (sort + materias + grilla paginada + barra de
   // páginas). El backend ya limita el total de horarios (cap), así que cada
