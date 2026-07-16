@@ -661,7 +661,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           textAlign: TextAlign.center,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: _schedLabelFontSize,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF111827),
                           ),
@@ -689,12 +689,26 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 4),
           Text(
             'Página ${provider.currentPage} de ${provider.totalPages}',
-            style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
+            style: const TextStyle(
+              fontSize: _pageIndicatorFontSize,
+              color: Color(0xFF6B7280),
+            ),
           ),
         ],
       ),
     );
   }
+
+  // ── Tamaño del bloque central: flechas de horario + "Horario N de M" ─────
+  // Ajústalos a gusto: solo afectan al centro del panel, NO a los botones de
+  // página de los extremos (esos son _pageBtnIconSize / _pageBtnFontSize).
+  static const double _schedArrowIconSize = 30;
+  static const double _schedLabelFontSize = 15;
+  static const EdgeInsets _schedArrowPadding = EdgeInsets.all(4);
+
+  // Indicador "Página X de Y" (la línea de abajo del panel). Arranca igual que
+  // el "Horario N de M" de arriba; se puede mover aparte.
+  static const double _pageIndicatorFontSize = 15;
 
   /// Flecha de navegación horario a horario (centro del panel).
   Widget _scheduleArrow({
@@ -709,10 +723,10 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(6),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(2),
+          padding: _schedArrowPadding,
           child: Icon(
             icon,
-            size: 24,
+            size: _schedArrowIconSize,
             color: enabled ? const Color(0xFF2742F5) : Colors.grey.shade300,
           ),
         ),
