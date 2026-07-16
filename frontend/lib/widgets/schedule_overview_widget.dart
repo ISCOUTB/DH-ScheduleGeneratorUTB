@@ -39,6 +39,11 @@ class ScheduleOverviewWidget extends StatefulWidget {
   /// toggle de la pantalla de fondo).
   final bool initialStatusMode;
 
+  /// Panel opcional al pie de la columna derecha (la de la lista de materias).
+  /// Lo usa la generación en escritorio para la paginación entre horarios; en
+  /// destacados no se pasa. Solo se pinta en el layout de escritorio.
+  final Widget? footer;
+
   const ScheduleOverviewWidget({
     Key? key,
     required this.schedule,
@@ -47,6 +52,7 @@ class ScheduleOverviewWidget extends StatefulWidget {
     this.seatsByNrc = const {},
     this.statusAvailable = false,
     this.initialStatusMode = false,
+    this.footer,
   }) : super(key: key);
 
   @override
@@ -309,7 +315,15 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         const VerticalDivider(width: 24),
         Expanded(
           flex: 2,
-          child: _buildDetailsList(isMobile: false),
+          // El footer (paginación) va al pie de esta columna; la lista de
+          // materias ocupa el resto.
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: _buildDetailsList(isMobile: false)),
+              if (widget.footer != null) widget.footer!,
+            ],
+          ),
         ),
       ],
     );

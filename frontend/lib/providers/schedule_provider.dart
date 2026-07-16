@@ -524,16 +524,16 @@ class ScheduleProvider extends ChangeNotifier {
     }
   }
 
-  /// Si, estando en el detalle y en el ÚLTIMO horario de la página, existe una
-  /// página siguiente a la que saltar (habilita el botón "Siguiente página").
+  /// Si desde el detalle hay una página siguiente a la que saltar. Activo en
+  /// CUALQUIER horario de la página (no solo en el último): el botón de página
+  /// es un salto libre, no la continuación del recorrido horario a horario.
   bool get canGoToNextPageFromOverview =>
       _isOverviewOpen &&
       _selectedScheduleIndex != null &&
-      !canSelectNextInPage &&
       _currentPage < totalPages;
 
-  /// Avanza a la página siguiente desde el detalle y selecciona su primer
-  /// horario (mantiene el detalle abierto).
+  /// Salta a la página siguiente y selecciona su PRIMER horario (el detalle
+  /// sigue abierto).
   void goToNextPageFromOverview() {
     if (!canGoToNextPageFromOverview) return;
     _currentPage += 1;
@@ -541,20 +541,19 @@ class ScheduleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Si, estando en el detalle y en el PRIMER horario de la página, existe una
-  /// página anterior a la que volver (habilita el botón "Página anterior").
+  /// Si desde el detalle hay una página anterior a la que volver. Activo en
+  /// CUALQUIER horario de la página.
   bool get canGoToPrevPageFromOverview =>
       _isOverviewOpen &&
       _selectedScheduleIndex != null &&
-      !canSelectPrevInPage &&
       _currentPage > 1;
 
-  /// Retrocede a la página anterior desde el detalle y selecciona su ÚLTIMO
-  /// horario (continúa la navegación hacia atrás sin salto; detalle abierto).
+  /// Vuelve a la página anterior y selecciona su PRIMER horario (el detalle
+  /// sigue abierto).
   void goToPrevPageFromOverview() {
     if (!canGoToPrevPageFromOverview) return;
     _currentPage -= 1;
-    _selectedScheduleIndex = _pageEndIndex - 1;
+    _selectedScheduleIndex = _pageStartIndex;
     notifyListeners();
   }
 
