@@ -189,6 +189,7 @@ Cada archivo reproduce la grilla semanal con el color de la materia, una **leyen
 
 ### Comportamiento responsivo / UX
 - **Generación en móvil:** la grilla pagina por páginas (`paginateOnMobile` en `ScheduleGridWidget`) con barra `Página X de Y`; al cambiar de página vuelve al inicio de los horarios (`Scrollable.ensureVisible`). El backend limita los resultados solo en móvil (cap `MAX_SCHEDULES`); el contador muestra "N+" si se truncó.
+- **Generación en escritorio:** aquí la grilla es la que scrollea (`isScrollable`, controlador interno de `ScheduleGridWidget`) y pagina con `PaginationControl`. Al cambiar de página, `didUpdateWidget` resetea el scroll al inicio (`jumpTo(0)`); sin esto la página siguiente aparecía desplazada al punto donde quedó la anterior (a diferencia de móvil, donde el reset lo hace el padre sobre el ListView externo).
 - **Tarjeta de horario:** extraída a `widgets/schedule_preview_card.dart` (`SchedulePreview`, `SchedulePreviewCard`, `ScheduleFavoriteStar`), reutilizada por la grilla.
 - **Modales (buscar/filtrar/detalle):** en escritorio se cierran al hacer clic fuera (sobre el fondo oscuro); en móvil solo con sus botones. El menú hamburguesa (móvil) se cierra al tocar fuera.
 - **Pantalla de destacados (móvil):** appbar con perfil + hamburguesa; la flecha de "volver al generador" vive en la barra de período.

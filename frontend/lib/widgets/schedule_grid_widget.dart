@@ -109,10 +109,24 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
     // (p. ej. `[selectedSchedule]`), y comparar por identidad recargaba la
     // grilla en cada notificación del provider (parpadeo). listEquals evita
     // recargar cuando los horarios no cambian realmente.
+    final bool pageChanged = widget.currentPage != oldWidget.currentPage;
     if (!listEquals(widget.allSchedules, oldWidget.allSchedules) ||
-        widget.currentPage != oldWidget.currentPage ||
+        pageChanged ||
         widget.itemsPerPage != oldWidget.itemsPerPage) {
       _loadSchedulesForCurrentPage();
+      // Al cambiar de página, la grilla scrolleable (escritorio) debe volver
+      // al inicio: si no, la página siguiente aparece desplazada al punto
+      // donde quedó la anterior. En móvil el reset lo hace el padre con
+      // Scrollable.ensureVisible sobre el ListView externo (aquí la grilla no
+      // es scrolleable), así que solo aplica cuando este widget es el que
+      // scrollea.
+      if (pageChanged && widget.isScrollable) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.jumpTo(0);
+          }
+        });
+      }
     }
   }
 
