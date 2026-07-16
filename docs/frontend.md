@@ -188,6 +188,12 @@ Cada archivo reproduce la grilla semanal con el color de la materia, una **leyen
 - **PDF:** A4 apaisada. La grilla se dibuja con `pw.Stack` + `pw.Positioned` (bloques del alto de su duración, como en la app); el detalle va en su propia página (`pw.NewPage()`) para que el título no quede huérfano al pie de la grilla. Ojo: el paquete `pdf` no admite `borderRadius` con bordes no uniformes; el bold es un asset aparte (`Roboto-Bold.ttf`) que degrada a la regular si no está empaquetado.
 - **Excel:** hoja `Horario` (grilla, con los bloques como celdas **fusionadas** verticalmente) + hoja `Detalle`. Ojo: `Sheet.merge()` descarta contenido y estilo de las celdas del rango, así que hay que **fusionar primero y escribir después** (`updateCell` reconoce la fusión y escribe en la celda ancla).
 
+#### Descarga en web (`utils/file_utils_web.dart`)
+`saveAndOpenFile` arma un `Blob` y dispara un `<a download>`. Tres detalles que importan (los tres salieron de un bug en **Safari iOS**, donde el PDF se abría en línea y se llevaba la página mientras el Excel sí se descargaba):
+- **MIME `application/octet-stream` a propósito**, no `application/pdf`: Safari sabe renderizar PDF y lo previsualiza en vez de descargarlo. Con octet-stream no puede, y respeta la descarga. El Excel nunca falló justamente porque Safari no sabe renderizar `.xlsx`. El tipo real lo deduce el sistema por la extensión del archivo.
+- **El `<a>` debe estar en el DOM** (`document.body.append`) antes del `click()`; Safari ignora el atributo `download` si el ancla está suelta.
+- **`revokeObjectUrl` se difiere** (~1 s): revocarlo justo después del `click()` corta la descarga por carrera.
+
 ### Comportamiento responsivo / UX
 - **Generación en móvil:** la grilla pagina por páginas (`paginateOnMobile` en `ScheduleGridWidget`) con barra `Página X de Y`; al cambiar de página vuelve al inicio de los horarios (`Scrollable.ensureVisible`). El backend limita los resultados solo en móvil (cap `MAX_SCHEDULES`); el contador muestra "N+" si se truncó.
 - **Generación en escritorio:** aquí la grilla es la que scrollea (`isScrollable`, controlador interno de `ScheduleGridWidget`) y pagina con `PaginationControl`. Al cambiar de página, `didUpdateWidget` resetea el scroll al inicio (`jumpTo(0)`); sin esto la página siguiente aparecía desplazada al punto donde quedó la anterior (a diferencia de móvil, donde el reset lo hace el padre sobre el ListView externo).
