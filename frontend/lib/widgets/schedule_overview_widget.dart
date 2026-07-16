@@ -457,12 +457,14 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
       }
     }
     if (sinCupos && eliminada) {
-      return 'Alguna opción no tiene cupos disponibles y otra ya no está en la '
-          'oferta actual (NRC eliminado o cambiado en Banner).';
+      return 'Alguna opción no tiene cupos y otra ya no aparece en la oferta '
+          'actual (posiblemente se llenó, se canceló o le cambiaron el NRC).';
     }
     if (eliminada) {
-      return 'Alguna opción de esta materia ya no está en la oferta actual '
-          '(NRC eliminado o cambiado en Banner).';
+      // Banner suele SACAR de la oferta las secciones llenas (rara vez muestra
+      // "0 cupos"), así que "ya no aparece" muchas veces significa que se llenó.
+      return 'Esta opción ya no aparece en la oferta actual: posiblemente se '
+          'llenó, se canceló o le cambiaron el NRC en Banner.';
     }
     return 'Alguna opción de esta materia no tiene cupos disponibles.';
   }
