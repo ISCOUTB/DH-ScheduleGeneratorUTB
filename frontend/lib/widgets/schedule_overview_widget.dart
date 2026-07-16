@@ -374,8 +374,11 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
               ),
               if (classOptions.any(_optionUnavailable)) ...[
                 const SizedBox(width: 10),
-                const Icon(Icons.warning_amber_rounded,
-                    color: Colors.red, size: 24),
+                Tooltip(
+                  message: _unavailableReason(classOptions),
+                  child: const Icon(Icons.warning_amber_rounded,
+                      color: Colors.red, size: 24),
+                ),
               ],
             ],
           ),
@@ -435,6 +438,33 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     if (widget.statusAvailable) return 'Cupos: no disponible';
     // Generación o término pasado: se muestra el valor tal cual.
     return 'Cupos: ${option.seatsAvailable} de ${option.seatsMaximum}';
+  }
+
+  /// Motivo por el que se marca la alerta de una materia, para el tooltip.
+  /// Distingue "sin cupos" (lleno) de "ya no está en la oferta" (NRC ausente en
+  /// el término actual), y combina ambos si aplica.
+  String _unavailableReason(List<ClassOption> classOptions) {
+    bool sinCupos = false;
+    bool eliminada = false;
+    for (final option in classOptions) {
+      final live = widget.seatsByNrc[option.nrc];
+      if (live != null) {
+        if ((live['available'] ?? 0) <= 0) sinCupos = true;
+      } else if (widget.statusAvailable && widget.seatsByNrc.isNotEmpty) {
+        eliminada = true; // NRC ausente en la oferta actual
+      } else if (!widget.statusAvailable && option.seatsAvailable == 0) {
+        sinCupos = true; // generación / término pasado (snapshot)
+      }
+    }
+    if (sinCupos && eliminada) {
+      return 'Alguna opción no tiene cupos disponibles y otra ya no está en la '
+          'oferta actual (NRC eliminado o cambiado en Banner).';
+    }
+    if (eliminada) {
+      return 'Alguna opción de esta materia ya no está en la oferta actual '
+          '(NRC eliminado o cambiado en Banner).';
+    }
+    return 'Alguna opción de esta materia no tiene cupos disponibles.';
   }
 
   /// Si la opción no tiene cupos / ya no se ofrece. Usa datos en vivo cuando
