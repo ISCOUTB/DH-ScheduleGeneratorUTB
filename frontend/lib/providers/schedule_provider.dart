@@ -524,6 +524,40 @@ class ScheduleProvider extends ChangeNotifier {
     }
   }
 
+  /// Si, estando en el detalle y en el ÚLTIMO horario de la página, existe una
+  /// página siguiente a la que saltar (habilita el botón "Siguiente página").
+  bool get canGoToNextPageFromOverview =>
+      _isOverviewOpen &&
+      _selectedScheduleIndex != null &&
+      !canSelectNextInPage &&
+      _currentPage < totalPages;
+
+  /// Avanza a la página siguiente desde el detalle y selecciona su primer
+  /// horario (mantiene el detalle abierto).
+  void goToNextPageFromOverview() {
+    if (!canGoToNextPageFromOverview) return;
+    _currentPage += 1;
+    _selectedScheduleIndex = _pageStartIndex;
+    notifyListeners();
+  }
+
+  /// Si, estando en el detalle y en el PRIMER horario de la página, existe una
+  /// página anterior a la que volver (habilita el botón "Página anterior").
+  bool get canGoToPrevPageFromOverview =>
+      _isOverviewOpen &&
+      _selectedScheduleIndex != null &&
+      !canSelectPrevInPage &&
+      _currentPage > 1;
+
+  /// Retrocede a la página anterior desde el detalle y selecciona su ÚLTIMO
+  /// horario (continúa la navegación hacia atrás sin salto; detalle abierto).
+  void goToPrevPageFromOverview() {
+    if (!canGoToPrevPageFromOverview) return;
+    _currentPage -= 1;
+    _selectedScheduleIndex = _pageEndIndex - 1;
+    notifyListeners();
+  }
+
   // ============================================================
   // MÉTODOS: Paginación
   // ============================================================

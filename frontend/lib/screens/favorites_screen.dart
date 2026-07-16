@@ -42,6 +42,34 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   bool _showOverview = false;
   bool _sidebarShowInfo = false;
 
+  /// Una GlobalKey por tarjeta del sidebar, para poder desplazar la lista y
+  /// mantener a la vista la seleccionada al navegar con ↑/↓.
+  List<GlobalKey> _cardKeys = [];
+
+  /// Asegura que haya tantas keys como horarios (regenera si cambió la cantidad).
+  void _ensureCardKeys(int count) {
+    if (_cardKeys.length != count) {
+      _cardKeys = List.generate(count, (_) => GlobalKey());
+    }
+  }
+
+  /// Desplaza el sidebar para dejar centrada (y por tanto visible) la tarjeta
+  /// seleccionada. Se llama tras mover la selección con el teclado.
+  void _scrollSelectedCardIntoView() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_selectedIndex < 0 || _selectedIndex >= _cardKeys.length) return;
+      final ctx = _cardKeys[_selectedIndex].currentContext;
+      if (ctx != null) {
+        Scrollable.ensureVisible(
+          ctx,
+          alignment: 0.5,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -228,7 +256,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             return Scaffold(
               backgroundColor: const Color(0xFFF5F6FA),
               appBar: _buildAppBar(isMobileLayout, provider),
-              body: Stack(
+              // Escritorio: ↑/↓ pasan entre destacados (en la lista y dentro del
+              // detalle). El Focus envuelve TODO el body (incluido el overlay del
+              // detalle), así que captura las teclas aunque el foco esté en una
+              // tarjeta o dentro del modal. En móvil no hace nada.
+              body: Focus(
+                autofocus: !isMobileLayout,
+                onKeyEvent: (node, event) => isMobileLayout
+                    ? KeyEventResult.ignored
+                    : _handleDesktopKey(event, provider),
+                child: Stack(
                 children: [
                   // Fade-in suave del contenido al entrar (una sola vez por
                   // entrada): da sensación de transición sin el parpadeo del
@@ -261,6 +298,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         ),
                         Center(
                           child: ScheduleOverviewWidget(
+                            // Key por índice: al navegar con ↑/↓ dentro del
+                            // detalle se reconstruye con el nuevo horario.
+                            key: ValueKey(_selectedIndex),
                             schedule:
                                 provider.favoriteSchedules[_selectedIndex],
                             onClose: () =>
@@ -335,6 +375,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     ),
                   ],
                 ],
+                ),
               ),
             );
           },
@@ -500,43 +541,46 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     if (isMobileLayout) {
       return _buildMobileLayout(provider);
     } else {
-      // Escritorio: ↑/↓ pasan entre horarios destacados cuando NO se está en el
-      // detalle. El Focus es ancestro de toda la lista, así que recibe las
-      // teclas aunque el foco esté en una tarjeta (el evento sube antes del
-      // traversal direccional por defecto).
-      return Focus(
-        autofocus: true,
-        onKeyEvent: (node, event) => _handleDesktopKey(event, provider),
-        child: _buildDesktopLayout(provider),
-      );
+      return _buildDesktopLayout(provider);
     }
   }
 
-  /// Maneja ↑/↓ para navegar entre destacados en escritorio. Ignora las teclas
-  /// mientras el detalle está abierto (ahí la navegación no aplica).
+  /// Maneja ↑/↓ para navegar entre destacados en escritorio. Funciona tanto en
+  /// la lista como dentro del detalle; en ambos casos desplaza el sidebar para
+  /// mantener a la vista la tarjeta seleccionada.
   KeyEventResult _handleDesktopKey(KeyEvent event, ScheduleProvider provider) {
-    if (_showOverview) return KeyEventResult.ignored;
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
       return KeyEventResult.ignored;
     }
     final int count = provider.favoriteSchedules.length;
     if (count == 0) return KeyEventResult.ignored;
 
+    int? target;
     if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-      if (_selectedIndex > 0) {
-        setState(() => _selectedIndex -= 1);
-        _loadStatusIfNeeded(provider);
-      }
-      return KeyEventResult.handled;
+      target = _selectedIndex > 0 ? _selectedIndex - 1 : null;
+    } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+      target = _selectedIndex < count - 1 ? _selectedIndex + 1 : null;
+    } else {
+      return KeyEventResult.ignored;
     }
-    if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-      if (_selectedIndex < count - 1) {
-        setState(() => _selectedIndex += 1);
-        _loadStatusIfNeeded(provider);
+
+    // En un extremo: consumir la tecla igual (no navegar) para no disparar el
+    // traversal de foco por defecto.
+    if (target == null) return KeyEventResult.handled;
+
+    setState(() => _selectedIndex = target!);
+    _scrollSelectedCardIntoView();
+
+    // Cargar cupos del nuevo horario: en el detalle siempre (como al abrir por
+    // tap); fuera del detalle, solo si el coloreo por estado está activo.
+    if (_showOverview) {
+      if (provider.selectedTerm == provider.currentTerm) {
+        provider.loadStatusForSchedule(provider.favoriteSchedules[target!]);
       }
-      return KeyEventResult.handled;
+    } else {
+      _loadStatusIfNeeded(provider);
     }
-    return KeyEventResult.ignored;
+    return KeyEventResult.handled;
   }
 
   // ============================================================
@@ -548,6 +592,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       _selectedIndex =
           (provider.favoriteSchedules.length - 1).clamp(0, provider.favoriteSchedules.length);
     }
+
+    _ensureCardKeys(provider.favoriteSchedules.length);
 
     final selectedSchedule = provider.favoriteSchedules[_selectedIndex];
     final colors = _buildColorMap(selectedSchedule);
@@ -572,6 +618,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         // Sidebar con mini previews / info
         _FavoritesSidebar(
           schedules: provider.favoriteSchedules,
+          cardKeys: _cardKeys,
           selectedIndex: _selectedIndex,
           showInfo: _sidebarShowInfo,
           onToggleMode: () => setState(() => _sidebarShowInfo = !_sidebarShowInfo),
@@ -956,6 +1003,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
 class _FavoritesSidebar extends StatelessWidget {
   final List<List<ClassOption>> schedules;
+  final List<GlobalKey> cardKeys;
   final int selectedIndex;
   final bool showInfo;
   final VoidCallback onToggleMode;
@@ -974,6 +1022,7 @@ class _FavoritesSidebar extends StatelessWidget {
 
   const _FavoritesSidebar({
     required this.schedules,
+    required this.cardKeys,
     required this.selectedIndex,
     required this.showInfo,
     required this.onToggleMode,
@@ -1102,6 +1151,7 @@ class _FavoritesSidebar extends StatelessWidget {
                 children: [
                   for (int i = 0; i < schedules.length; i++) ...[
                     _SidebarCard(
+                      key: i < cardKeys.length ? cardKeys[i] : null,
                       index: i,
                       isSelected: i == selectedIndex,
                       showInfo: showInfo,
@@ -1155,6 +1205,7 @@ class _SidebarCard extends StatelessWidget {
   final List<String> subjectNames;
 
   const _SidebarCard({
+    super.key,
     required this.index,
     required this.isSelected,
     required this.showInfo,

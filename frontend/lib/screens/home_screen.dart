@@ -550,6 +550,19 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed:
                 provider.canSelectNextInPage ? provider.selectNextInPage : null,
           ),
+          // Botones de página: siempre visibles abajo (anterior a la izquierda,
+          // siguiente a la derecha). Se habilitan al llegar al primer/último
+          // horario de la página, si hay página en esa dirección.
+          _buildPageJumpButton(
+            isNext: false,
+            enabled: provider.canGoToPrevPageFromOverview,
+            onTap: provider.goToPrevPageFromOverview,
+          ),
+          _buildPageJumpButton(
+            isNext: true,
+            enabled: provider.canGoToNextPageFromOverview,
+            onTap: provider.goToNextPageFromOverview,
+          ),
         ],
       ],
     );
@@ -619,6 +632,59 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Botón de salto de página en el detalle (escritorio). [isNext] elige lado y
+  /// sentido: siguiente (abajo derecha, flecha al final) o anterior (abajo
+  /// izquierda, flecha al inicio). Se habilita solo al llegar al último/primer
+  /// horario de la página habiendo página en ese sentido; el detalle sigue
+  /// abierto tras el salto.
+  Widget _buildPageJumpButton({
+    required bool isNext,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    final Color fg = enabled ? Colors.white : Colors.white70;
+    final Widget label = Text(
+      isNext ? 'Siguiente página' : 'Página anterior',
+      style: TextStyle(color: fg, fontWeight: FontWeight.w600, fontSize: 14),
+    );
+    final Widget arrow = Icon(
+      isNext ? Icons.arrow_forward : Icons.arrow_back,
+      size: 18,
+      color: fg,
+    );
+    return Positioned(
+      left: isNext ? null : 24,
+      right: isNext ? 24 : null,
+      bottom: 24,
+      child: Tooltip(
+        message: enabled
+            ? (isNext ? 'Ir a la página siguiente' : 'Ir a la página anterior')
+            : (isNext
+                ? 'Llega al último horario de la página para pasar a la siguiente'
+                : 'Llega al primer horario de la página para volver a la anterior'),
+        child: Material(
+          color: enabled ? const Color(0xFF2742F5) : const Color(0x552742F5),
+          borderRadius: BorderRadius.circular(24),
+          elevation: enabled ? 4 : 0,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(24),
+            onTap: enabled ? onTap : null,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: isNext
+                    ? [label, const SizedBox(width: 6), arrow]
+                    : [arrow, const SizedBox(width: 6), label],
               ),
             ),
           ),
