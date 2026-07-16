@@ -49,12 +49,17 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       // HomeScreen ya carga los favoritos al iniciar y el provider se mantiene
       // sincronizado (toggle/eliminar). Recargar la lista en cada entrada
       // reemplaza las instancias y repinta la grilla (parpadeo): por eso solo
-      // se carga si aún no se ha hecho. Los términos sí se aseguran (los usa el
-      // selector y HomeScreen no los carga), pero eso no toca la lista.
+      // se carga si aún no se ha hecho.
       if (!provider.favoritesLoadedOnce) {
         await provider.loadFavoriteTerms();
         await provider.loadFavorites();
-      } else if (provider.availableTerms.isEmpty) {
+      } else {
+        // Los términos SIEMPRE se reconsultan al entrar. HomeScreen solo llama
+        // a loadFavorites, que vía fallback deja `availableTerms` con SOLO el
+        // término actual; usar `availableTerms.isEmpty` como guardián dejaba los
+        // periodos anteriores sin descubrir (el selector se quedaba con un único
+        // periodo). loadFavoriteTerms pega a /api/favorites/terms (SELECT DISTINCT
+        // term) y no toca la lista de horarios → sin parpadeo.
         await provider.loadFavoriteTerms();
       }
       // Si el coloreo por estado ya estaba activo, cargar cupos del seleccionado.

@@ -160,6 +160,7 @@ Gestión de horarios destacados:
 - `toggleFavorite(schedule)`: Marca o desmarca un horario como destacado
 - `removeFavoriteAt(index)`: Elimina un horario destacado por índice
 - `isFavorite(schedule)`: Verifica si un horario ya está marcado (por `signature`)
+- **Selector de periodos:** al entrar a la pantalla de destacados se reconsultan **siempre** los términos (`loadFavoriteTerms` → `GET /api/favorites/terms`, que hace `SELECT DISTINCT term`). Usar `availableTerms.isEmpty` como guardián no basta: `HomeScreen` solo llama a `loadFavorites`, que por *fallback* deja `availableTerms` con **solo** el término actual, así que los periodos anteriores no se descubrían y el selector se quedaba con un único periodo. Reconsultar términos no toca la lista de horarios → sin parpadeo.
 
 ### Estado visual de cupos (Fase 2)
 Colorea la grilla de horarios destacados según los cupos **actuales** de cada curso:
