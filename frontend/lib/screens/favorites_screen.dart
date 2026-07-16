@@ -545,13 +545,22 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     }
   }
 
-  /// Maneja ↑/↓ para navegar entre destacados en escritorio. Funciona tanto en
-  /// la lista como dentro del detalle; en ambos casos desplaza el sidebar para
-  /// mantener a la vista la tarjeta seleccionada.
+  /// Maneja el teclado en escritorio: Esc cierra el detalle, y ↑/↓ navegan
+  /// entre destacados (tanto en la lista como dentro del detalle; en ambos
+  /// casos desplaza el sidebar para mantener a la vista la tarjeta
+  /// seleccionada).
   KeyEventResult _handleDesktopKey(KeyEvent event, ScheduleProvider provider) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
       return KeyEventResult.ignored;
     }
+
+    // Esc cierra el detalle. Fuera del detalle no hace nada (se deja pasar).
+    if (event.logicalKey == LogicalKeyboardKey.escape) {
+      if (!_showOverview) return KeyEventResult.ignored;
+      setState(() => _showOverview = false);
+      return KeyEventResult.handled;
+    }
+
     final int count = provider.favoriteSchedules.length;
     if (count == 0) return KeyEventResult.ignored;
 
@@ -575,7 +584,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     // tap); fuera del detalle, solo si el coloreo por estado está activo.
     if (_showOverview) {
       if (provider.selectedTerm == provider.currentTerm) {
-        provider.loadStatusForSchedule(provider.favoriteSchedules[target!]);
+        provider.loadStatusForSchedule(provider.favoriteSchedules[target]);
       }
     } else {
       _loadStatusIfNeeded(provider);

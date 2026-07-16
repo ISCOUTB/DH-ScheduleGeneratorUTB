@@ -588,14 +588,18 @@ class _HomeScreenState extends State<HomeScreen> {
     if (isMobileLayout) return overview;
 
     // Escritorio: capturar ← / → para navegar entre horarios de la misma
-    // página. El Focus es ancestro del contenido, así que recibe las teclas
-    // aunque el foco esté en un botón interno (el evento sube antes del
-    // traversal direccional por defecto).
+    // página, y Esc para cerrar. El Focus es ancestro del contenido, así que
+    // recibe las teclas aunque el foco esté en un botón interno (el evento sube
+    // antes del traversal direccional por defecto).
     return Focus(
       autofocus: true,
       onKeyEvent: (node, event) {
         if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
           return KeyEventResult.ignored;
+        }
+        if (event.logicalKey == LogicalKeyboardKey.escape) {
+          provider.closeScheduleOverview();
+          return KeyEventResult.handled;
         }
         if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
           provider.selectPrevInPage();
