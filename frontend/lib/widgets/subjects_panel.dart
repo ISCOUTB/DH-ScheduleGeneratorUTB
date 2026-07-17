@@ -129,7 +129,7 @@ class SubjectsPanel extends StatelessWidget {
                       width: 14,
                       height: 14,
                       decoration: BoxDecoration(
-                        color: subjectColors[subject.name] ?? Colors.grey,
+                        color: subjectColors[subject.key] ?? Colors.grey,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -215,7 +215,7 @@ class SubjectsPanel extends StatelessWidget {
                         width: 14,
                         height: 14,
                         decoration: BoxDecoration(
-                          color: subjectColors[subject.name] ?? Colors.grey,
+                          color: subjectColors[subject.key] ?? Colors.grey,
                           shape: BoxShape.circle,
                         ),
                       ),

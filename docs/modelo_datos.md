@@ -6,6 +6,36 @@ Este documento describe el esquema de la base de datos PostgreSQL utilizada por 
 
 Este documento describe el esquema completo de la base de datos, incluyendo las tablas de datos académicos, gestión de usuarios, registro de sesiones y horarios destacados (favoritos).
 
+## Identidad de una materia: el par (código, nombre)
+
+> **Regla:** una materia se identifica por **`(codigomateria, nombre)`**, nunca por uno de los dos por separado. Es exactamente lo que declara su PK compuesta:
+>
+> ```sql
+> CONSTRAINT materia_pkey PRIMARY KEY (codigomateria, nombre)
+> ```
+>
+> La PK es compuesta por una razón: en la oferta real (580 materias) **ninguno de los dos es único**.
+>
+> | Colisión | Cuántas | Ejemplo |
+> |---|---|---|
+> | Un **nombre** en varios códigos | 24 nombres → **56 materias** (~10%) | "Práctica Profesional" existe en **14** carreras; "Materiales I" es `IMECM01A` y `DISET01B` |
+> | Un **código** con varios nombres | 5 códigos | `RULEI02B` = "Inglés Ii" e "Inglés Ii - Derecho"; `CBASE03A` tiene 3 variantes de "Estadística I" |
+>
+> **Qué pasa al romper la regla** (ambas cosas ocurrieron y se corrigieron):
+>
+> - Llavear por **nombre** → dos materias distintas comparten color y se fusionan en un solo bloque del detalle; el PDF/Excel además les cuenta los créditos una sola vez.
+> - Llavear por **código** → el filtro de una materia se le aplica a la otra, y quitar una le borra los filtros a la vecina.
+>
+> La llave canónica es `"{codigo}|{nombre}"` y está definida en tres lugares que **deben** coincidir, porque es la llave con la que viajan los filtros por materia en la API:
+>
+> | Dónde | Qué |
+> |---|---|
+> | `frontend/lib/models/subject.dart` | `Subject.key` |
+> | `frontend/lib/models/class_option.dart` | `ClassOption.subjectKey` |
+> | `backend/app/services/schedule_generator.py` | `subject_key()` |
+>
+> La API ya respetaba la regla desde antes: `SubjectIdentifier` exige `code` **y** `name`, y el `WHERE` de `get_combinations_for_subjects` compara los dos.
+
 ## Diagrama Entidad-Relación (Estado Actual)
 
 ```mermaid

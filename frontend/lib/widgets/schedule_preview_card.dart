@@ -155,7 +155,7 @@ class SchedulePreview extends StatelessWidget {
                               final Color? subjectColor = classOption != null
                                   ? (colorResolver != null
                                       ? colorResolver!(classOption)
-                                      : subjectColors[classOption.subjectName])
+                                      : subjectColors[classOption.subjectKey])
                                   : null;
 
                               return Expanded(

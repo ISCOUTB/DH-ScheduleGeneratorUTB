@@ -195,23 +195,26 @@ class ScheduleProvider extends ChangeNotifier {
 
   /// Elimina una materia de la lista de seleccionadas.
   void removeSubject(Subject subject) {
-    final subjectCode = subject.code;
+    // Los filtros están llaveados por el par (código, nombre). Borrarlos por el
+    // código solo le tumbaba los filtros a la materia vecina que compartiera
+    // código (ej. RULEI02B = "Inglés Ii" e "Inglés Ii - Derecho").
+    final subjectKey = subject.key;
 
     // Limpiar filtros asociados
     if (_appliedFilters['professors'] != null && _appliedFilters['professors'] is Map) {
-      (_appliedFilters['professors'] as Map).remove(subjectCode);
+      (_appliedFilters['professors'] as Map).remove(subjectKey);
     }
     if (_appliedFilters['nrcs'] != null && _appliedFilters['nrcs'] is Map) {
-      (_appliedFilters['nrcs'] as Map).remove(subjectCode);
+      (_appliedFilters['nrcs'] as Map).remove(subjectKey);
     }
     if (_apiFiltersForGeneration['include_professors'] != null) {
-      (_apiFiltersForGeneration['include_professors'] as Map).remove(subjectCode);
+      (_apiFiltersForGeneration['include_professors'] as Map).remove(subjectKey);
     }
     if (_apiFiltersForGeneration['exclude_professors'] != null) {
-      (_apiFiltersForGeneration['exclude_professors'] as Map).remove(subjectCode);
+      (_apiFiltersForGeneration['exclude_professors'] as Map).remove(subjectKey);
     }
     if (_apiFiltersForGeneration['selected_nrcs'] != null) {
-      (_apiFiltersForGeneration['selected_nrcs'] as Map).remove(subjectCode);
+      (_apiFiltersForGeneration['selected_nrcs'] as Map).remove(subjectKey);
     }
 
     // Eliminar materia
@@ -233,10 +236,15 @@ class ScheduleProvider extends ChangeNotifier {
   }
 
   /// Asigna un color a una materia si aún no tiene uno.
+  ///
+  /// La llave es `Subject.key` —el par (código, nombre)—, no el nombre: hay
+  /// materias distintas que se llaman igual (ej. "Materiales I" existe como
+  /// `IMECM01A` y `DISET01B`) y con el nombre como llave la segunda heredaba el
+  /// color de la primera, quedando indistinguibles en la grilla.
   void _assignColorToSubject(Subject subject) {
-    if (!_subjectColorMap.containsKey(subject.name)) {
+    if (!_subjectColorMap.containsKey(subject.key)) {
       final color = kSubjectColors[_subjectColorMap.length % kSubjectColors.length];
-      _subjectColorMap[subject.name] = color;
+      _subjectColorMap[subject.key] = color;
     }
   }
 
@@ -368,21 +376,24 @@ class ScheduleProvider extends ChangeNotifier {
   }
 
   /// Obtiene los NRCs viables para cada materia basándose en los horarios generados.
-  /// 
-  /// Retorna un mapa donde la clave es el código de la materia y el valor
-  /// es un conjunto de NRCs que aparecen en al menos uno de los horarios generados por la API.
-  /// 
+  ///
+  /// Retorna un mapa donde la clave es `Subject.key` —el par (código, nombre)—
+  /// y el valor es un conjunto de NRCs que aparecen en al menos uno de los
+  /// horarios generados por la API. La llave es el par y no el código porque el
+  /// código no identifica una materia por sí solo (ver `Subject.key`); con el
+  /// código, dos materias homónimas mezclaban sus NRCs viables.
+  ///
   /// IMPORTANTE: Usa los horarios BASE (sin filtros de NRC) para calcular viabilidad.
   /// Esto permite que al aplicar un filtro de NRC, los demás NRCs sigan visibles
   /// y el usuario pueda cambiar de combinación sin que desaparezcan opciones.
   Map<String, Set<String>> getViableNrcsFromSchedules() {
     final Map<String, Set<String>> viableNrcsMap = {};
-    
+
     // Si no hay horarios base generados, retornar todos los NRCs disponibles
     // (esto permite que el usuario vea todas las opciones antes de generar)
     if (_baseSchedulesForNrcCalculation.isEmpty) {
       for (var subject in _addedSubjects) {
-        viableNrcsMap[subject.code] = subject.classOptions.map((c) => c.nrc).toSet();
+        viableNrcsMap[subject.key] = subject.classOptions.map((c) => c.nrc).toSet();
       }
       return viableNrcsMap;
     }
@@ -393,7 +404,7 @@ class ScheduleProvider extends ChangeNotifier {
       for (var classOption in schedule) {
         // Agregar el NRC de cada clase al conjunto viable de su materia
         viableNrcsMap
-            .putIfAbsent(classOption.subjectCode, () => <String>{})
+            .putIfAbsent(classOption.subjectKey, () => <String>{})
             .add(classOption.nrc);
       }
     }

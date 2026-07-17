@@ -25,6 +25,23 @@ def _parse_time_range(time_range_str: str) -> Tuple[time, time]:
     return _parse_time(start_str.strip()), _parse_time(end_str.strip())
 
 # --- Función para verificar solapamientos de horarios ---
+def subject_key(option: ClassOption) -> str:
+    """
+    Identidad de la materia de una clase: el par (código, nombre).
+
+    Ninguno de los dos identifica una materia por sí solo —así lo declara la PK
+    compuesta `materia_pkey (codigomateria, nombre)` y por eso la API pide
+    ambos—: hay nombres repartidos entre varios códigos ("Práctica Profesional"
+    aparece en 14 carreras) y códigos con varios nombres (`RULEI02B` es "Inglés
+    Ii" e "Inglés Ii - Derecho"). Agrupar los filtros por el código solo hacía
+    que el filtro de una materia se le aplicara a la otra.
+
+    Debe coincidir con `Subject.key` / `ClassOption.subjectKey` del frontend: es
+    la llave con la que llegan los filtros por materia.
+    """
+    return f"{option.subject_code}|{option.subject_name}"
+
+
 def _schedules_overlap(schedule1: Schedule, schedule2: Schedule) -> bool:
     """Verifica si dos bloques de clase se solapan en el tiempo."""
     if schedule1.day != schedule2.day:
@@ -75,13 +92,14 @@ def _expand_selected_nrcs(
     for subject_combinations in combinations_per_subject:
         if not subject_combinations:
             continue
-            
-        # Obtener el código de la materia del primer option_group
-        subject_code = subject_combinations[0][0].subject_code
-        
+
+        # Identidad de la materia: el par (código, nombre), igual que la llave
+        # con la que llegan los filtros. Ver `subject_key`.
+        subject_code = subject_key(subject_combinations[0][0])
+
         if subject_code not in selected_nrcs_filter:
             continue
-            
+
         selected_nrcs = set(selected_nrcs_filter[subject_code])
         expanded_set = set(selected_nrcs)
         
@@ -287,10 +305,11 @@ def _meets_filters(schedule: List[ClassOption], filters: Dict[str, Any]) -> bool
     unavailable_slots_input = cast(Dict[str, List[str]], filters.get('unavailable_slots', {}))
     unavailable_slots_lower = {day.lower(): times for day, times in unavailable_slots_input.items()}
 
-    # 2. Agrupar clases por materia para una validación eficiente.
+    # 2. Agrupar clases por materia para una validación eficiente. La llave es el
+    # par (código, nombre): ver `subject_key`.
     schedule_by_subject: Dict[str, List[ClassOption]] = {}
     for option in schedule:
-        schedule_by_subject.setdefault(option.subject_code, []).append(option)
+        schedule_by_subject.setdefault(subject_key(option), []).append(option)
 
     # 3. Verificación de filtros de NRCs específicos.
     # Si se especifican NRCs para una materia, solo se aceptan horarios con esos NRCs.

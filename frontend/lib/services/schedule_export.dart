@@ -109,8 +109,14 @@ _Layout _buildLayout(List<ClassOption> schedule) {
 
 /// Materias del horario (una entrada por materia, no por clase) en el orden en
 /// que aparecen. Es el orden que usan la leyenda y la tabla de detalle.
+///
+/// La llave es `subjectKey` (código+nombre), no el nombre: dos materias
+/// distintas que se llaman igual son dos entradas. Agrupar por nombre las
+/// fusionaba en una, lo que además hacía que `_totalCredits` contara los
+/// créditos de una sola. Ojo: la llave **no** es texto para mostrar; para eso
+/// va `entry.value.first.subjectName`.
 Map<String, List<ClassOption>> _subjectsOf(List<ClassOption> schedule) =>
-    groupBy(schedule, (ClassOption o) => o.subjectName);
+    groupBy(schedule, (ClassOption o) => o.subjectKey);
 
 /// Créditos totales del horario: se cuentan una vez por materia (el teórico y su
 /// laboratorio comparten los créditos de la materia, no se suman dos veces).
@@ -258,7 +264,7 @@ pw.Widget _pdfLegend(
         color: _pdf(_tint(color)),
         border: pw.Border(left: pw.BorderSide(color: _pdf(color), width: 3)),
       ),
-      child: pw.Text('${entry.key}  ·  $credits cr.',
+      child: pw.Text('${entry.value.first.subjectName}  ·  $credits cr.',
           style: pw.TextStyle(fontSize: 7.5, color: _pdfInk)),
     );
   }).toList();
@@ -326,7 +332,7 @@ pw.Widget _pdfGrid(_Layout layout, Map<String, Color> subjectColors) {
     final dayIndex = layout.days.indexOf(block.day);
     if (dayIndex == -1) return pw.SizedBox();
 
-    final color = subjectColors[block.first.subjectName] ?? Colors.grey;
+    final color = subjectColors[block.first.subjectKey] ?? Colors.grey;
     final top = (block.start - layout.startHour) * rowHeight;
     final height = (block.end - block.start) * rowHeight;
     final nrcs = block.options.map((o) => o.nrc).join(' / ');
@@ -605,7 +611,7 @@ void _excelGridSheet(
     final endRow = headerRow + (block.end.ceil() - layout.startHour);
     if (startRow < headerRow + 1 || endRow < startRow) continue;
 
-    final color = subjectColors[block.first.subjectName] ?? Colors.grey;
+    final color = subjectColors[block.first.subjectKey] ?? Colors.grey;
     final nrcs = block.options.map((o) => o.nrc).join(' / ');
     final types = block.options.map((o) => o.type).toSet().join(' / ');
     final text = '${block.first.subjectName}\n'

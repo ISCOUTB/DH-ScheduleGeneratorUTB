@@ -210,11 +210,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     return names.toList();
   }
 
+  // Los colores se llavean por `subjectKey` (código+nombre), no por nombre: hay
+  // materias distintas que se llaman igual y compartirían color. Ver `Subject.key`.
   Map<String, Color> _buildColorMap(List<ClassOption> schedule) {
     final Map<String, Color> colors = {};
     for (final option in schedule) {
-      if (!colors.containsKey(option.subjectName)) {
-        colors[option.subjectName] =
+      if (!colors.containsKey(option.subjectKey)) {
+        colors[option.subjectKey] =
             kSubjectColors[colors.length % kSubjectColors.length];
       }
     }
@@ -225,8 +227,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     final Map<String, Color> colors = {};
     for (final schedule in schedules) {
       for (final option in schedule) {
-        if (!colors.containsKey(option.subjectName)) {
-          colors[option.subjectName] =
+        if (!colors.containsKey(option.subjectKey)) {
+          colors[option.subjectKey] =
               kSubjectColors[colors.length % kSubjectColors.length];
         }
       }

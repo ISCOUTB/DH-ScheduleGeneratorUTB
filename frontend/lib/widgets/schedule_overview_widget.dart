@@ -127,9 +127,11 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     // Toma el modo del toggle de fondo al abrir; de aquí en adelante es propio.
     _statusMode = widget.statusAvailable && widget.initialStatusMode;
     // Numera las materias en el mismo orden en que aparecen en la lista de
-    // detalles (groupBy conserva el orden de aparición en el horario).
+    // detalles (groupBy conserva el orden de aparición en el horario). Se agrupa
+    // por `subjectKey` (código+nombre) y no por nombre: dos materias distintas
+    // que se llaman igual son dos entradas, no una.
     final subjects =
-        groupBy(widget.schedule, (ClassOption o) => o.subjectName).keys.toList();
+        groupBy(widget.schedule, (ClassOption o) => o.subjectKey).keys.toList();
     _subjectNumbers = {
       for (var i = 0; i < subjects.length; i++) subjects[i]: i + 1,
     };
@@ -351,22 +353,33 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
   /// Construye la lista de detalles de las materias.
   Widget _buildDetailsList({bool isMobile = false}) {
-    //
+    // Agrupado por `subjectKey` (código+nombre): dos materias distintas que se
+    // llaman igual deben salir como dos bloques, no fusionadas en uno.
     final Map<String, List<ClassOption>> groupedSubjects =
-        groupBy(widget.schedule, (ClassOption option) => option.subjectName);
+        groupBy(widget.schedule, (ClassOption option) => option.subjectKey);
+
+    // Si un nombre se repite entre las materias del horario, el nombre solo no
+    // alcanza para distinguirlas: se muestra también el código.
+    final Map<String, int> nameCount = {};
+    for (final options in groupedSubjects.values) {
+      final name = options.first.subjectName;
+      nameCount[name] = (nameCount[name] ?? 0) + 1;
+    }
 
     return ListView.builder(
       shrinkWrap: isMobile,
       physics: isMobile ? const NeverScrollableScrollPhysics() : null,
       itemCount: groupedSubjects.length,
       itemBuilder: (context, index) {
-        final subjectName = groupedSubjects.keys.elementAt(index);
-        final classOptions = groupedSubjects[subjectName]!;
-        final color = subjectColors[subjectName] ?? Colors.grey;
+        final subjectKey = groupedSubjects.keys.elementAt(index);
+        final classOptions = groupedSubjects[subjectKey]!;
+        final subjectName = classOptions.first.subjectName;
+        final color = subjectColors[subjectKey] ?? Colors.grey;
+        final bool ambiguo = (nameCount[subjectName] ?? 0) > 1;
 
         return ExpansionTile(
           leading: _statusColoring
-              ? _buildSubjectNumber(subjectName)
+              ? _buildSubjectNumber(subjectKey)
               : Container(
                   width: 12,
                   height: 12,
@@ -375,6 +388,12 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                     shape: BoxShape.circle,
                   ),
                 ),
+          subtitle: ambiguo
+              ? Text(
+                  classOptions.first.subjectCode,
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                )
+              : null,
           title: Row(
             children: [
               Flexible(
@@ -423,12 +442,13 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
 
   /// Número de la materia en la lista de detalles, en el lugar del punto de
   /// color (que en modo estado ya no identificaría a la materia). El mismo
-  /// número rotula sus bloques en la grilla.
-  Widget _buildSubjectNumber(String subjectName) {
+  /// número rotula sus bloques en la grilla. Recibe el `subjectKey`, no el
+  /// nombre: dos materias homónimas llevan números distintos.
+  Widget _buildSubjectNumber(String subjectKey) {
     return SizedBox(
       width: 24,
       child: Text(
-        '${_subjectNumbers[subjectName] ?? '?'}',
+        '${_subjectNumbers[subjectKey] ?? '?'}',
         textAlign: TextAlign.center,
         style: const TextStyle(
           color: Colors.black,
@@ -762,14 +782,14 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         final Color color = _statusColoring
             ? courseStatusColor(
                 statusForClass(overlappingClasses.first, widget.seatsByNrc))
-            : (subjectColors[overlappingClasses.first.subjectName] ??
+            : (subjectColors[overlappingClasses.first.subjectKey] ??
                 Colors.grey);
 
         // Rótulo del bloque: en modo estado, el número de la materia (el color
         // ya indica los cupos); si no, los NRC. Uno por línea.
         final List<String> labels = _statusColoring
             ? overlappingClasses
-                .map((c) => '${_subjectNumbers[c.subjectName] ?? '?'}')
+                .map((c) => '${_subjectNumbers[c.subjectKey] ?? '?'}')
                 .toSet() // dos clases de la misma materia comparten número
                 .toList()
             : overlappingClasses.map((c) => c.nrc).toList();

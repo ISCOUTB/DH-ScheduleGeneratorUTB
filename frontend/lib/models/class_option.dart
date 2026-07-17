@@ -31,6 +31,12 @@ class ClassOption {
     required this.seatsMaximum,
   });
 
+  /// Identidad de la materia a la que pertenece esta clase: el par
+  /// (código, nombre). Ver `Subject.key` para el porqué. Es la llave para
+  /// colorear y agrupar: hacerlo solo por nombre junta materias distintas que
+  /// se llaman igual.
+  String get subjectKey => '$subjectCode|$subjectName';
+
   factory ClassOption.fromJson(Map<String, dynamic> json) {
     return ClassOption(
       subjectName: json['subjectName'],

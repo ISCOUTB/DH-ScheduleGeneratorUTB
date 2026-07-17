@@ -122,7 +122,7 @@ class _FilterWidgetState extends State<FilterWidget> {
   // Procesa los filtros de profesores para la API.
   void _applyFilters() {
     Map<String, dynamic> finalProfessorFiltersForApi = {};
-    _professorsFilters.forEach((subjectCode, filterData) {
+    _professorsFilters.forEach((subjectKey, filterData) {
       String filterType = filterData['filterType'];
       List<String> professors = List<String>.from(filterData['professors']);
 
@@ -133,20 +133,20 @@ class _FilterWidgetState extends State<FilterWidget> {
         if (finalProfessorFiltersForApi[key] == null) {
           finalProfessorFiltersForApi[key] = {};
         }
-        finalProfessorFiltersForApi[key][subjectCode] = professors;
+        finalProfessorFiltersForApi[key][subjectKey] = professors;
       }
     });
 
     // Procesa los filtros de NRC para la API.
     Map<String, List<String>> nrcFiltersForApi = {};
-    _nrcFilters.forEach((subjectCode, nrcMap) {
+    _nrcFilters.forEach((subjectKey, nrcMap) {
       List<String> selectedNrcs = nrcMap.entries
           .where((entry) => entry.value == true)
           .map((entry) => entry.key)
           .toList();
       
       if (selectedNrcs.isNotEmpty) {
-        nrcFiltersForApi[subjectCode] = selectedNrcs;
+        nrcFiltersForApi[subjectKey] = selectedNrcs;
       }
     });
 
@@ -240,16 +240,20 @@ class _FilterWidgetState extends State<FilterWidget> {
                         title: Text('Filtros por Materia',
                             style: TextStyle(color: textColor)),
                         children: widget.addedSubjects.map((subject) {
-                          String subjectCode = subject.code;
+                          // Los filtros se llavean por el par (código, nombre),
+                          // no por el código: hay códigos con varios nombres
+                          // (ej. RULEI02B = "Inglés Ii" e "Inglés Ii - Derecho")
+                          // que terminaban compartiendo filtros. Ver `Subject.key`.
+                          String subjectKey = subject.key;
                           // Aseguramos que el filtro para la materia exista
-                          if (_professorsFilters[subjectCode] == null) {
-                            _professorsFilters[subjectCode] = {
+                          if (_professorsFilters[subjectKey] == null) {
+                            _professorsFilters[subjectKey] = {
                               'filterType': 'include',
                               'professors': <String>[]
                             };
                           }
                           Map<String, dynamic> subjectFilter =
-                              _professorsFilters[subjectCode];
+                              _professorsFilters[subjectKey];
 
                           return Theme(
                             data: Theme.of(context).copyWith(
@@ -277,7 +281,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                       onChanged: (value) {
                                         setState(() {
                                           subjectFilter['filterType'] = value!;
-                                          _professorsFilters[subjectCode] =
+                                          _professorsFilters[subjectKey] =
                                               subjectFilter;
                                         });
                                       },
@@ -292,7 +296,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                       onChanged: (value) {
                                         setState(() {
                                           subjectFilter['filterType'] = value!;
-                                          _professorsFilters[subjectCode] =
+                                          _professorsFilters[subjectKey] =
                                               subjectFilter;
                                         });
                                       },
@@ -312,7 +316,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                       // Actualiza la lista de profesores seleccionados
                                       subjectFilter['professors'] =
                                           selectedProfessors;
-                                      _professorsFilters[subjectCode] =
+                                      _professorsFilters[subjectKey] =
                                           subjectFilter;
                                     },
                                   ),
@@ -339,11 +343,11 @@ class _FilterWidgetState extends State<FilterWidget> {
                         title: Text('Filtro por NRC',
                             style: TextStyle(color: textColor)),
                         children: widget.addedSubjects.map((subject) {
-                          String subjectCode = subject.code;
+                          String subjectKey = subject.code;
                           
                           // Inicializar el mapa de NRCs para esta materia si no existe
-                          if (_nrcFilters[subjectCode] == null) {
-                            _nrcFilters[subjectCode] = {};
+                          if (_nrcFilters[subjectKey] == null) {
+                            _nrcFilters[subjectKey] = {};
                           }
 
                           // Usar Consumer para recalcular NRCs viables dinámicamente
@@ -351,7 +355,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                             builder: (context, provider, child) {
                               // Calcular NRCs viables desde los horarios generados
                               var viableNrcsMap = provider.getViableNrcsFromSchedules();
-                              var viableNrcs = viableNrcsMap[subjectCode];
+                              var viableNrcs = viableNrcsMap[subjectKey];
 
                               return Theme(
                                 data: Theme.of(context).copyWith(
@@ -371,13 +375,13 @@ class _FilterWidgetState extends State<FilterWidget> {
                                       width: 500,
                                       height: 250,
                                       child: NrcFilterWidget(
-                                        key: ValueKey('${subjectCode}_${viableNrcs?.length ?? 0}'),
+                                        key: ValueKey('${subjectKey}_${viableNrcs?.length ?? 0}'),
                                         subject: subject,
-                                        selectedNrcs: _nrcFilters[subjectCode]!,
+                                        selectedNrcs: _nrcFilters[subjectKey]!,
                                         viableNrcs: viableNrcs,
                                         onSelectionChanged: (selectedNrcs) {
                                           setState(() {
-                                            _nrcFilters[subjectCode] = selectedNrcs;
+                                            _nrcFilters[subjectKey] = selectedNrcs;
                                           });
                                         },
                                       ),
