@@ -48,11 +48,48 @@ def _migrar_creditos_decimales(conn: psycopg.Connection) -> None:
         cursor.close()
 
 
+def _crear_tabla_curso_personalizado(conn: psycopg.Connection) -> None:
+    """Crea `curso_personalizado` si no existe (cursos personalizados por usuario).
+
+    `init.sql` solo corre en bases vacías; en la de producción esta tabla llega
+    por esta migración. Idempotente vía `CREATE TABLE IF NOT EXISTS`.
+    """
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS public.curso_personalizado (
+                id SERIAL PRIMARY KEY,
+                usuario_id INTEGER NOT NULL REFERENCES public.usuario(id),
+                codigomateria VARCHAR NOT NULL,
+                nombremateria VARCHAR NOT NULL,
+                nrc VARCHAR,
+                tipo VARCHAR,
+                profesor VARCHAR,
+                campus VARCHAR,
+                activo BOOLEAN NOT NULL DEFAULT TRUE,
+                bloques JSONB NOT NULL,
+                created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+                FOREIGN KEY (codigomateria, nombremateria)
+                    REFERENCES public.materia(codigomateria, nombre)
+            )
+            """
+        )
+        cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_curso_pers_usuario "
+            "ON public.curso_personalizado(usuario_id)"
+        )
+        conn.commit()
+    finally:
+        cursor.close()
+
+
 def aplicar_migraciones() -> None:
     """Aplica todas las migraciones pendientes. Seguro de ejecutar siempre."""
     conn = get_connection()
     try:
         _migrar_creditos_decimales(conn)
+        _crear_tabla_curso_personalizado(conn)
     finally:
         conn.close()
 

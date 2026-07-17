@@ -25,6 +25,7 @@ PRESERVED_APP_TABLES = (
     "sesion_usuario",
     "horario_destacado",
     "materia",
+    "curso_personalizado",
 )
 
 

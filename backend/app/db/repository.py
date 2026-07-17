@@ -570,3 +570,190 @@ def get_nrc_seats(nrcs: List[str]) -> Dict[str, Dict[str, int]]:
     finally:
         cursor.close()
         conn.close()
+
+
+# --- Cursos personalizados (por usuario) ---
+
+def _shape_custom_course(row: Dict[str, Any]) -> Dict[str, Any]:
+    """Da forma a una fila de `curso_personalizado` para la API.
+
+    El NRC efectivo es el del usuario o, si no lo puso, uno sintético ``CP{id}``:
+    estable y sin colisión con los NRC reales (numéricos). Ese prefijo también
+    sirve para distinguir un curso personalizado del resto (ej. no marcarlo como
+    'fuera de la oferta' en el aviso de destacados).
+    """
+    return {
+        "id": row["id"],
+        "code": row["codigomateria"],
+        "name": row["nombremateria"],
+        "credits": float(row["creditos"]) if row.get("creditos") is not None else 0.0,
+        "nrc": row["nrc"] or f"CP{row['id']}",
+        "type": row.get("tipo"),
+        "professor": row.get("profesor"),
+        "campus": row.get("campus"),
+        "activo": row["activo"],
+        "bloques": row["bloques"],
+        "created_at": str(row["created_at"]) if row.get("created_at") else None,
+    }
+
+
+def materia_exists(codigo: str, nombre: str) -> bool:
+    """¿Existe la materia (par código, nombre) en el catálogo?"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "SELECT 1 FROM Materia WHERE CodigoMateria = %s AND Nombre = %s",
+            (codigo, nombre),
+        )
+        return cursor.fetchone() is not None
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def _fetch_custom_course(cursor, id_: int, usuario_id: int):
+    """Lee un curso personalizado con los créditos de su materia. Valida dueño."""
+    cursor.execute(
+        """
+        SELECT cp.*, m.Creditos AS creditos
+        FROM curso_personalizado cp
+        LEFT JOIN Materia m
+          ON m.CodigoMateria = cp.codigomateria AND m.Nombre = cp.nombremateria
+        WHERE cp.id = %s AND cp.usuario_id = %s
+        """,
+        (id_, usuario_id),
+    )
+    row = cursor.fetchone()
+    return _shape_custom_course(row) if row else None
+
+
+def count_custom_courses(usuario_id: int) -> int:
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "SELECT COUNT(*) FROM curso_personalizado WHERE usuario_id = %s",
+            (usuario_id,),
+        )
+        return cursor.fetchone()[0]
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_custom_courses(usuario_id: int) -> List[Dict[str, Any]]:
+    """Todos los cursos personalizados del usuario, agrupables por materia."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            """
+            SELECT cp.*, m.Creditos AS creditos
+            FROM curso_personalizado cp
+            LEFT JOIN Materia m
+              ON m.CodigoMateria = cp.codigomateria AND m.Nombre = cp.nombremateria
+            WHERE cp.usuario_id = %s
+            ORDER BY cp.nombremateria, cp.id
+            """,
+            (usuario_id,),
+        )
+        return [_shape_custom_course(r) for r in cursor.fetchall()]
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def create_custom_course(
+    usuario_id: int, codigo: str, nombre: str, bloques: list,
+    nrc: str = None, tipo: str = None, profesor: str = None,
+    campus: str = None, activo: bool = True,
+) -> Dict[str, Any]:
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            """
+            INSERT INTO curso_personalizado
+                (usuario_id, codigomateria, nombremateria, nrc, tipo, profesor, campus, activo, bloques)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb)
+            RETURNING id
+            """,
+            (usuario_id, codigo, nombre, nrc, tipo, profesor, campus, activo, json.dumps(bloques)),
+        )
+        new_id = cursor.fetchone()["id"]
+        result = _fetch_custom_course(cursor, new_id, usuario_id)
+        conn.commit()
+        return result
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def update_custom_course(
+    id_: int, usuario_id: int, bloques=None, nrc=None, tipo=None,
+    profesor=None, campus=None, activo=None,
+) -> Dict[str, Any] | None:
+    """Actualiza los campos provistos (None = no tocar). Valida dueño.
+
+    Retorna el curso actualizado, o None si no existe / no es del usuario.
+    """
+    sets: List[str] = []
+    params: List[Any] = []
+    if bloques is not None:
+        sets.append("bloques = %s::jsonb")
+        params.append(json.dumps(bloques))
+    if nrc is not None:
+        sets.append("nrc = %s")
+        params.append(nrc)
+    if tipo is not None:
+        sets.append("tipo = %s")
+        params.append(tipo)
+    if profesor is not None:
+        sets.append("profesor = %s")
+        params.append(profesor)
+    if campus is not None:
+        sets.append("campus = %s")
+        params.append(campus)
+    if activo is not None:
+        sets.append("activo = %s")
+        params.append(activo)
+
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        if not sets:
+            # Nada que cambiar; devolver el actual (o None si no es suyo).
+            return _fetch_custom_course(cursor, id_, usuario_id)
+
+        cursor.execute(
+            # Los fragmentos de `sets` son fijos (nombres de columna del código);
+            # todos los valores van parametrizados.
+            f"UPDATE curso_personalizado SET {', '.join(sets)} WHERE id = %s AND usuario_id = %s",
+            params + [id_, usuario_id],
+        )
+        if cursor.rowcount == 0:
+            conn.rollback()
+            return None
+        result = _fetch_custom_course(cursor, id_, usuario_id)
+        conn.commit()
+        return result
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def delete_custom_course(id_: int, usuario_id: int) -> bool:
+    """Elimina un curso personalizado. Valida dueño."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "DELETE FROM curso_personalizado WHERE id = %s AND usuario_id = %s",
+            (id_, usuario_id),
+        )
+        conn.commit()
+        return cursor.rowcount > 0
+    finally:
+        cursor.close()
+        conn.close()

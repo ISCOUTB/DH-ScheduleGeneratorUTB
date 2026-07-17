@@ -219,3 +219,31 @@ ALTER TABLE public.horario_destacado OWNER TO pg_database_owner;
 
 CREATE INDEX IF NOT EXISTS idx_horario_dest_usuario ON public.horario_destacado(usuario_id);
 CREATE INDEX IF NOT EXISTS idx_horario_dest_term ON public.horario_destacado(usuario_id, term);
+
+--
+-- Tabla de cursos personalizados por usuario
+-- Un curso que el usuario declara (uno que ya matriculó / decidió, o una
+-- variación) para que el generador arme el horario a su alrededor. Cuelga de una
+-- materia existente del catálogo (FK a Materia) — por eso Materia persiste.
+-- Ver docs/issues/17-07-2026-rfc-cursos-personalizados.md
+--
+
+CREATE TABLE IF NOT EXISTS public.curso_personalizado (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL REFERENCES public.usuario(id),
+    codigomateria VARCHAR NOT NULL,
+    nombremateria VARCHAR NOT NULL,
+    nrc VARCHAR,                -- opcional; si es NULL se expone uno sintético "CP{id}"
+    tipo VARCHAR,
+    profesor VARCHAR,
+    campus VARCHAR,
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+    bloques JSONB NOT NULL,     -- [{"day": "Martes", "time": "08:00 - 09:50"}]
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    FOREIGN KEY (codigomateria, nombremateria)
+        REFERENCES public.materia(codigomateria, nombre)
+);
+
+ALTER TABLE public.curso_personalizado OWNER TO pg_database_owner;
+
+CREATE INDEX IF NOT EXISTS idx_curso_pers_usuario ON public.curso_personalizado(usuario_id);

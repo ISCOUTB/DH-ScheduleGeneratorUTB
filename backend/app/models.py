@@ -42,6 +42,24 @@ class SubjectIdentifier(BaseModel):
     code: str
     name: str
 
+
+class CustomCourseInput(BaseModel):
+    """Curso personalizado **activo** que viaja en el request de generación.
+
+    Cuando una materia trae al menos uno de estos, su dominio en el generador
+    pasa a ser exactamente estos cursos (reemplaza la oferta real, no se suma).
+    Ver docs/issues/17-07-2026-rfc-cursos-personalizados.md §5.
+    """
+    code: str
+    name: str
+    credits: float
+    nrc: str
+    bloques: List[Schedule]                 # reusa {day, time}
+    type: Optional[str] = None
+    professor: Optional[str] = None
+    campus: Optional[str] = None
+
+
 # 2. Se actualiza el modelo de la petición para que use el nuevo modelo y acepte el límite de créditos.
 class GenerateScheduleRequest(BaseModel):
     # Ahora se espera una lista de objetos SubjectIdentifier
@@ -54,6 +72,9 @@ class GenerateScheduleRequest(BaseModel):
     # ese caso (evita agotar la memoria del navegador móvil). Default false para
     # compatibilidad con clientes que no lo envíen.
     is_mobile: bool = Field(default=False, alias='isMobile')
+    # Cursos personalizados activos (opcional). El frontend manda solo los que el
+    # usuario dejó activos; el backend arma el dominio de esas materias con ellos.
+    custom_courses: List[CustomCourseInput] = Field(default_factory=list, alias='customCourses')
 
 
 class FilterLabel(BaseModel):
