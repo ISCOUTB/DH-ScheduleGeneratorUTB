@@ -343,8 +343,11 @@ class _FilterWidgetState extends State<FilterWidget> {
                         title: Text('Filtro por NRC',
                             style: TextStyle(color: textColor)),
                         children: widget.addedSubjects.map((subject) {
-                          String subjectKey = subject.code;
-                          
+                          // Mismo par (código, nombre) que el resto de filtros:
+                          // es la llave con la que el backend los lee y con la
+                          // que el provider indexa los NRC viables.
+                          String subjectKey = subject.key;
+
                           // Inicializar el mapa de NRCs para esta materia si no existe
                           if (_nrcFilters[subjectKey] == null) {
                             _nrcFilters[subjectKey] = {};
