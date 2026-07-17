@@ -5,8 +5,22 @@ from parser import ProcesarJsonResponse
 def insertar_datos(conn: psycopg.Connection, datos: ProcesarJsonResponse, auto_commit: bool = True) -> None:
     cursor = conn.cursor()
 
+    # `Materia` ya no se limpia entre ETLs (es catálogo persistente, ver
+    # backup.py). Por eso el INSERT es un upsert: si la materia ya existe
+    # (misma PK código+nombre) se conserva y solo se refrescan los créditos.
+    # No se "actualiza el nombre": un renombre en Banner es indistinguible de
+    # una variante nueva (mismo código, otro nombre), así que crea una fila
+    # nueva y la vieja queda como descontinuada. Ver RFC §3.1.
     for m in datos['materias']:
-        cursor.execute("INSERT INTO Materia (CodigoMateria, Creditos, Nombre) VALUES (%s, %s, %s)", m)
+        cursor.execute(
+            """
+            INSERT INTO Materia (CodigoMateria, Creditos, Nombre)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (CodigoMateria, Nombre)
+            DO UPDATE SET Creditos = EXCLUDED.Creditos
+            """,
+            m,
+        )
 
     for p in datos['profesores']:
         cursor.execute("INSERT INTO Profesor (BannerID, Nombre) VALUES (%s, %s)", p)

@@ -7,18 +7,24 @@ from config import get_connection, DATABASE_URL
 from utils import timestamp_actual
 
 
+# Oferta del periodo: se limpia y se reinserta en cada ETL. NO incluye `Materia`:
+# desde los cursos personalizados, `Materia` es un catálogo persistente (una
+# materia debe sobrevivir aunque pierda todos sus cursos, para que un curso
+# personalizado la pueda referenciar). Ver docs/issues/17-07-2026-rfc-cursos-personalizados.md
+# El orden respeta las FK: Clase->Curso, Curso->Profesor/Materia.
 ACADEMIC_TABLES = (
     "Clase",
     "Curso",
     "Profesor",
-    "Materia",
 )
 
 # Tablas funcionales de la aplicación que no deben limpiarse durante ETL académico.
+# `Materia` va aquí ahora: es catálogo, no oferta.
 PRESERVED_APP_TABLES = (
     "usuario",
     "sesion_usuario",
     "horario_destacado",
+    "materia",
 )
 
 

@@ -267,12 +267,26 @@ def get_subject_by_code(subject_code: str, subject_name: str) -> Subject | None:
 
 def get_all_subjects_summary() -> List[Dict[str, Any]]:
     """
-    Obtiene una lista de resúmenes de todas las materias (código, nombre, créditos).
+    Materias que tienen oferta en el periodo actual (código, nombre, créditos).
+
+    Es la lista del buscador. Antes salía de `Materia` a secas, pero desde que
+    `Materia` es catálogo persistente (ver RFC cursos personalizados) puede tener
+    materias sin cursos; el buscador solo debe mostrar las que sí se ofertan, así
+    que se une con `Curso`. Para el catálogo completo, ver
+    `get_all_subjects_catalog`.
     """
     conn = get_db_connection()
     cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
 
-    cursor.execute("SELECT CodigoMateria as code, Nombre as name, Creditos as credits FROM Materia ORDER BY Nombre;")
+    cursor.execute(
+        """
+        SELECT DISTINCT m.CodigoMateria AS code, m.Nombre AS name, m.Creditos AS credits
+        FROM Materia m
+        JOIN Curso c
+          ON c.CodigoMateria = m.CodigoMateria AND c.NombreMateria = m.Nombre
+        ORDER BY m.Nombre;
+        """
+    )
 
     subjects = cursor.fetchall()
 
@@ -281,6 +295,29 @@ def get_all_subjects_summary() -> List[Dict[str, Any]]:
 
     # Creditos es NUMERIC (créditos fraccionarios): se expone como número JSON,
     # no como el Decimal que devuelve psycopg.
+    return [{**s, "credits": float(s["credits"])} for s in subjects]
+
+
+def get_all_subjects_catalog() -> List[Dict[str, Any]]:
+    """
+    TODAS las materias del catálogo, tengan oferta o no (código, nombre, créditos).
+
+    Es la lista para el selector de materia de un curso personalizado: ahí sí se
+    permite elegir una materia que ya no tiene cursos en la oferta actual (ese es
+    justamente el caso de uso). El buscador normal usa `get_all_subjects_summary`.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+
+    cursor.execute(
+        "SELECT CodigoMateria AS code, Nombre AS name, Creditos AS credits FROM Materia ORDER BY Nombre;"
+    )
+
+    subjects = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
     return [{**s, "credits": float(s["credits"])} for s in subjects]
 
 
