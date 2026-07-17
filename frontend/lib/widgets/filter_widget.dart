@@ -115,6 +115,42 @@ class _FilterWidgetState extends State<FilterWidget> {
         Map<String, dynamic>.from(widget.currentFilters['timeFilters'] ?? {});
   }
 
+  /// Título de una sección de filtros. Va en negrita para separarlo de las
+  /// materias que cuelgan de él: son niveles distintos y antes pesaban igual.
+  Widget _sectionTitle(String text, Color color) => Text(
+        text,
+        style: TextStyle(color: color, fontWeight: FontWeight.w600),
+      );
+
+  /// Envuelve las materias de una sección con una línea guía vertical.
+  ///
+  /// Hace falta porque el `leading` del `ExpansionTile` padre le reserva ~56px
+  /// y empuja su título, mientras que los hijos caen en el padding por defecto
+  /// (16): sin esto los hijos quedaban **a la izquierda** del título del padre y
+  /// la jerarquía se leía al revés. La línea agrupa visualmente y el
+  /// `childrenPadding` los mete hacia adentro.
+  Widget _nestedGroup(List<Widget> children) => Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            left: BorderSide(color: Color(0xFFD1D5DB), width: 2),
+          ),
+        ),
+        child: Column(mainAxisSize: MainAxisSize.min, children: children),
+      );
+
+  /// Padding izquierdo de las materias dentro de una sección.
+  static const EdgeInsets _sectionChildrenPadding = EdgeInsets.only(left: 16);
+
+  /// Padding de cada materia dentro del grupo anidado.
+  ///
+  /// La derecha lleva más que el default (16) a propósito: mete el chevron del
+  /// hijo **hacia adentro** del chevron del padre. Sin eso los hijos quedaban
+  /// indentados por la izquierda pero llegando hasta el mismo borde derecho que
+  /// el padre, y el bloque se leía desbordado en vez de contenido. Con ambos
+  /// lados metidos queda simétrico con la línea guía.
+  static const EdgeInsets _nestedTilePadding =
+      EdgeInsets.only(left: 16, right: 32);
+
   /// Función para aplicar los filtros y actualizar el estado del widget.
   /// Procesa y aplica los filtros, generando dos formatos:
   /// 1. Para el estado de la UI (conserva la selección del usuario).
@@ -237,9 +273,10 @@ class _FilterWidgetState extends State<FilterWidget> {
                       ),
                       child: ExpansionTile(
                         leading: Icon(Icons.book, color: textColor),
-                        title: Text('Filtros por Materia',
-                            style: TextStyle(color: textColor)),
-                        children: widget.addedSubjects.map((subject) {
+                        title: _sectionTitle('Filtros por Materia', textColor),
+                        childrenPadding: _sectionChildrenPadding,
+                        children: [
+                          _nestedGroup(widget.addedSubjects.map((subject) {
                           // Los filtros se llavean por el par (código, nombre),
                           // no por el código: hay códigos con varios nombres
                           // (ej. RULEI02B = "Inglés Ii" e "Inglés Ii - Derecho")
@@ -265,6 +302,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                       ),
                             ),
                             child: ExpansionTile(
+                              tilePadding: _nestedTilePadding,
                               title: Text(subject.name,
                                   style: TextStyle(color: textColor)),
                               children: [
@@ -324,7 +362,8 @@ class _FilterWidgetState extends State<FilterWidget> {
                               ],
                             ),
                           );
-                        }).toList(),
+                          }).toList()),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -340,9 +379,10 @@ class _FilterWidgetState extends State<FilterWidget> {
                       ),
                       child: ExpansionTile(
                         leading: Icon(Icons.numbers, color: textColor),
-                        title: Text('Filtro por NRC',
-                            style: TextStyle(color: textColor)),
-                        children: widget.addedSubjects.map((subject) {
+                        title: _sectionTitle('Filtro por NRC', textColor),
+                        childrenPadding: _sectionChildrenPadding,
+                        children: [
+                          _nestedGroup(widget.addedSubjects.map((subject) {
                           // Mismo par (código, nombre) que el resto de filtros:
                           // es la llave con la que el backend los lee y con la
                           // que el provider indexa los NRC viables.
@@ -370,6 +410,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                           ),
                                 ),
                                 child: ExpansionTile(
+                                  tilePadding: _nestedTilePadding,
                                   title: Text(subject.name,
                                       style: TextStyle(color: textColor)),
                                   children: [
@@ -394,7 +435,8 @@ class _FilterWidgetState extends State<FilterWidget> {
                               );
                             },
                           );
-                        }).toList(),
+                          }).toList()),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -410,8 +452,10 @@ class _FilterWidgetState extends State<FilterWidget> {
                       ),
                       child: ExpansionTile(
                         leading: Icon(Icons.access_time, color: textColor),
-                        title: Text('Filtros de Horas Disponibles',
-                            style: TextStyle(color: textColor)),
+                        // No lleva materias anidadas (es una grilla de horas),
+                        // así que solo se iguala el peso del título.
+                        title:
+                            _sectionTitle('Filtros de Horas Disponibles', textColor),
                         children: [
                           // Chips para seleccionar días de la semana
                           Wrap(
