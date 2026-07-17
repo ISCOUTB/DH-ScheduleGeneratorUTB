@@ -358,14 +358,6 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
     final Map<String, List<ClassOption>> groupedSubjects =
         groupBy(widget.schedule, (ClassOption option) => option.subjectKey);
 
-    // Si un nombre se repite entre las materias del horario, el nombre solo no
-    // alcanza para distinguirlas: se muestra también el código.
-    final Map<String, int> nameCount = {};
-    for (final options in groupedSubjects.values) {
-      final name = options.first.subjectName;
-      nameCount[name] = (nameCount[name] ?? 0) + 1;
-    }
-
     return ListView.builder(
       shrinkWrap: isMobile,
       physics: isMobile ? const NeverScrollableScrollPhysics() : null,
@@ -375,7 +367,6 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
         final classOptions = groupedSubjects[subjectKey]!;
         final subjectName = classOptions.first.subjectName;
         final color = subjectColors[subjectKey] ?? Colors.grey;
-        final bool ambiguo = (nameCount[subjectName] ?? 0) > 1;
 
         return ExpansionTile(
           leading: _statusColoring
@@ -388,12 +379,14 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
                     shape: BoxShape.circle,
                   ),
                 ),
-          subtitle: ambiguo
-              ? Text(
-                  classOptions.first.subjectCode,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                )
-              : null,
+          // El código va siempre, no solo cuando hay nombres repetidos: es parte
+          // de la identidad de la materia y el usuario lo necesita para
+          // matricular, así que mostrarlo condicionalmente solo lo hacía
+          // impredecible.
+          subtitle: Text(
+            classOptions.first.subjectCode,
+            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+          ),
           title: Row(
             children: [
               Flexible(
