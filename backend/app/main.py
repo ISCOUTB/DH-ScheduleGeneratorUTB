@@ -6,9 +6,15 @@ from typing import List, Dict, Any
 import os
 
 # Importa módulos y modelos. El '.' indica que son del mismo paquete 'app'
-from .models import GenerateScheduleRequest, GenerateScheduleResponse, ClassOption
+from .models import (
+    GenerateScheduleRequest,
+    GenerateScheduleResponse,
+    ScheduleDiagnosis,
+    ClassOption,
+)
 from .db import repository
 from .services import schedule_generator
+from .services import schedule_diagnostics
 from .routes import subject_routes
 from .routes import favorite_routes
 from .auth.routes import router as auth_router
@@ -79,8 +85,30 @@ def generate_schedules_endpoint(request: GenerateScheduleRequest) -> GenerateSch
     subjects_data = [s.model_dump() for s in request.subjects]
     combinations = repository.get_combinations_for_subjects(subjects_data)
 
+    # Si alguna materia no trajo cursos, el generador ni siquiera puede correr.
+    # No es un cruce: la materia no está en la oferta del término (ver RFC §6.1).
+    # Antes esto devolvía el mismo vacío que un cruce y el front lo reportaba
+    # como "puede haber cruces", que es falso.
     if not combinations or len(combinations) != len(request.subjects):
-        return GenerateScheduleResponse(schedules=[], truncated=False)
+        found = {
+            (opt.subject_code, opt.subject_name)
+            for subject_combos in combinations
+            for group in subject_combos
+            for opt in group
+        }
+        missing = [
+            s.name for s in request.subjects if (s.code, s.name) not in found
+        ]
+        return GenerateScheduleResponse(
+            schedules=[],
+            truncated=False,
+            diagnosis=ScheduleDiagnosis(
+                shape="sin_oferta",
+                blame="datos",
+                subjects=missing,
+                removalOptions=missing,
+            ),
+        )
 
 
     # Se define explícitamente el tipo del diccionario para Pylance.
@@ -94,6 +122,16 @@ def generate_schedules_endpoint(request: GenerateScheduleRequest) -> GenerateSch
     valid_schedules = schedule_generator.find_valid_schedules(
         combinations, generation_params
     )
+
+    # Sin horarios: se explica por qué (materia sin opciones, par incompatible o
+    # el conjunto). Solo se calcula en este camino, así que no cuesta nada cuando
+    # sí hay resultados. Ver docs/issues/17-07-2026-rfc-diagnostico-sin-horarios.md
+    if not valid_schedules:
+        return GenerateScheduleResponse(
+            schedules=[],
+            truncated=False,
+            diagnosis=schedule_diagnostics.diagnose(combinations, generation_params),
+        )
 
     # Cap solo para clientes móviles: devuelve los mejores N (ya vienen
     # ordenados del generador). Escritorio recibe todos. `truncated` avisa al

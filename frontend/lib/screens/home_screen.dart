@@ -172,22 +172,30 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
 
+    // Si la materia entró o no se decide por el estado, no por el texto del
+    // mensaje: `addSubject` devuelve tanto rechazos (duplicada, tope de
+    // créditos, cruce sin resolver) como avisos de una materia que sí entró
+    // (pasar de 18 créditos), y distinguirlos con `contains` era frágil —
+    // cualquier rechazo cuyo texto no matcheara terminaba anunciando
+    // "Materia agregada" sin haberla agregado.
+    final int before = provider.addedSubjects.length;
     final message = provider.addSubject(subject);
+    final bool added = provider.addedSubjects.length > before;
+
+    if (!added) {
+      showCustomNotification(
+        context,
+        message ?? 'No se pudo agregar la materia',
+        icon: Icons.error,
+        color: Colors.red,
+      );
+      return;
+    }
 
     if (message != null) {
-      if (message.contains('Advertencia')) {
-        showCustomNotification(context, message,
-            icon: Icons.info, color: Colors.orange);
-      } else if (message.contains('agregada') ||
-          message.contains('alcanzado')) {
-        showCustomNotification(
-          context,
-          message,
-          icon: Icons.info,
-          color: message.contains('alcanzado') ? Colors.red : Colors.green,
-        );
-        return;
-      }
+      // Entró, pero con advertencia.
+      showCustomNotification(context, message,
+          icon: Icons.info, color: Colors.orange);
     }
 
     ScaffoldMessenger.of(context).showSnackBar(

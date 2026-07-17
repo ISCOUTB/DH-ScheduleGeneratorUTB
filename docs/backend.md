@@ -45,7 +45,8 @@ backend/
 │   ├── routes/
 │   │   └── subject_routes.py # Rutas modulares para la gestión de materias.
 │   └── services/
-│       └── schedule_generator.py # Algoritmo de generación de horarios.
+│       ├── schedule_generator.py    # Algoritmo de generación de horarios.
+│       └── schedule_diagnostics.py  # Explica por qué no se generó ninguno.
 │
 ├── scripts/              # Scripts para la actualización y mantenimiento de datos.
 │   ├── actualizar_datos.py # Orquesta todo el proceso de actualización.
@@ -156,6 +157,29 @@ La API expone los siguientes endpoints para ser consumidos por el frontend:
   ```
 
   `truncated` es `true` cuando se aplicó el cap móvil y había más horarios de los devueltos (el frontend muestra "N+").
+
+- **Respuesta sin horarios (200):** cuando `schedules` viene vacío se agrega `diagnosis`, que explica **por qué**. Es `null` cuando sí hay horarios (no se calcula: costo cero en el camino feliz).
+
+  ```json
+  {
+    "schedules": [],
+    "truncated": false,
+    "diagnosis": {
+      "shape": "par_incompatible",
+      "blame": "estructural",
+      "subjects": [],
+      "pairs": [["Física", "Cálculo"]],
+      "removalOptions": ["Física", "Cálculo"],
+      "blockingFilters": []
+    }
+  }
+  ```
+
+  Dos ejes independientes: `shape` dice **dónde vive** el conflicto (`sin_oferta`, `materia_sin_opciones`, `par_incompatible`, `conjunto_incompatible`) y `blame` **de quién es la culpa** (`datos`, `filtros`, `estructural`). `removalOptions` son alternativas (basta quitar una); vacío = quitar una sola no alcanza. `blockingFilters` solo aplica con `blame=filtros`; vacío ahí = es la combinación de filtros, no uno puntual.
+
+  Lo calcula `services/schedule_diagnostics.py` sobre las combinaciones **completas y sin fusionar** (la respuesta del generador no sirve: viene fusionada y capada). Se apoya en `schedule_generator.has_any_schedule`, que es el backtracking con **salida temprana** al primer horario válido — a diferencia de `find_valid_schedules`, que enumera todo.
+
+  Ver `docs/issues/17-07-2026-rfc-diagnostico-sin-horarios.md` para la taxonomía completa y por qué es exhaustiva.
 
 - **Cap de resultados (solo móvil):** la explosión combinatoria puede producir decenas de miles de horarios; cargarlos todos agota la memoria del navegador móvil. Cuando `isMobile=true`, se devuelven como máximo `MAX_SCHEDULES` (env, default **500**); escritorio recibe todos. Como cualquier orden/filtro re-llama al generador, basta devolver los mejores N para el criterio actual.
 

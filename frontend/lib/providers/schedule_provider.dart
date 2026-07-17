@@ -5,6 +5,7 @@ import '../config/constants.dart';
 import '../models/subject.dart';
 import '../models/subject_summary.dart';
 import '../models/class_option.dart';
+import '../models/schedule_diagnosis.dart';
 import '../services/api_service.dart';
 import '../utils/credit_utils.dart';
 import '../utils/platform_service_stub.dart'
@@ -62,6 +63,19 @@ class ScheduleProvider extends ChangeNotifier {
 
   /// Horarios base sin filtros de NRC (usados para calcular NRCs viables).
   List<List<ClassOption>> _baseSchedulesForNrcCalculation = [];
+
+  /// Explicación del último resultado vacío (null si hay horarios).
+  ScheduleDiagnosis? _lastDiagnosis;
+  ScheduleDiagnosis? get lastDiagnosis => _lastDiagnosis;
+
+  /// Estado roto: hay materias agregadas pero el generador no encontró ningún
+  /// horario. Mientras dure, no se permite agregar más materias (ver RFC §3):
+  /// si ya no hay horarios, agregar otra jamás los va a crear, y además se
+  /// perdería la invariante de que el estado anterior siempre fue satisfacible
+  /// —que es lo que permite señalar culpables—. Se desbloquea solo, porque
+  /// quitar una materia o relajar un filtro regenera al instante.
+  bool get isBlockedByConflict =>
+      _addedSubjects.isNotEmpty && _allSchedules.isEmpty && !_isLoading;
 
   /// Índice del horario seleccionado para vista detallada.
   int? _selectedScheduleIndex;
@@ -167,6 +181,12 @@ class ScheduleProvider extends ChangeNotifier {
       return 'La materia ya ha sido agregada';
     }
 
+    // Estado roto: agregar otra materia no puede crear horarios donde ya no los
+    // hay, y rompería la invariante que permite señalar culpables (RFC §3).
+    if (isBlockedByConflict) {
+      return 'Resuelve el cruce actual antes de agregar otra materia.';
+    }
+
     // Verificar límite de créditos. Se redondea la suma para que acumular medios
     // créditos no deje 20.000000000000004 y rechace una materia que sí cabe.
     final double newTotalCredits = roundCredits(_usedCredits + subject.credits);
@@ -255,6 +275,98 @@ class ScheduleProvider extends ChangeNotifier {
   // MÉTODOS: Generación de horarios
   // ============================================================
 
+  /// Une nombres en lenguaje natural: "A", "A y B", "A, B y C".
+  String _joinNames(List<String> names) {
+    if (names.length <= 1) return names.isEmpty ? '' : names.first;
+    return '${names.sublist(0, names.length - 1).join(', ')} y ${names.last}';
+  }
+
+  /// Une alternativas: "A", "A o B", "A, B o C". Las opciones de quitado son
+  /// excluyentes (basta una), así que van con "o" y no con "y".
+  String _joinAlternatives(List<String> names) {
+    if (names.length <= 1) return names.isEmpty ? '' : names.first;
+    return '${names.sublist(0, names.length - 1).join(', ')} o ${names.last}';
+  }
+
+  /// La materia que aparece en TODOS los pares, si existe: es el caso de "una
+  /// materia choca con varias" y permite nombrarla como el eje del problema.
+  String? _commonSubjectInPairs(List<List<String>> pairs) {
+    if (pairs.isEmpty) return null;
+    for (final candidate in pairs.first) {
+      if (pairs.every((p) => p.contains(candidate))) return candidate;
+    }
+    return null;
+  }
+
+  /// Arma el mensaje a partir del diagnóstico del backend (ver RFC §8).
+  ///
+  /// Dos reglas: en la columna **estructural** no se mencionan los filtros (son
+  /// irrelevantes y solo confunden), y en la columna **filtros** siempre se dan
+  /// las dos salidas —relajar el filtro **o** quitar la materia—, porque hay
+  /// usuarios que no piensan ceder el filtro.
+  String _messageForDiagnosis(ScheduleDiagnosis? d) {
+    if (d == null) {
+      // El backend no mandó diagnóstico (versión vieja o caso no previsto).
+      return 'No se pueden generar horarios con estas materias.';
+    }
+
+    // Menú de quitado: son alternativas, basta una.
+    final salida = d.removalOptions.isEmpty
+        ? ''
+        : ' Si quitas ${_joinAlternatives(d.removalOptions)}, sí hay horarios.';
+
+    // Solo con blame=filtros. Vacío ahí significa que es la combinación de
+    // filtros y no uno puntual, así que no se señala a ninguno.
+    final filtro = d.blockingFilters.isEmpty
+        ? ''
+        : ' Relajando ${_joinAlternatives(d.blockingFilters.map((f) => f.label).toList())} también se resuelve.';
+
+    switch (d.shape) {
+      case 'sin_oferta':
+        final cuales = _joinNames(d.subjects);
+        return d.subjects.length > 1
+            ? '$cuales no tienen cursos en la oferta de este periodo. Quítalas para continuar.'
+            : '$cuales no tiene cursos en la oferta de este periodo. Quítala para continuar.';
+
+      case 'materia_sin_opciones':
+        final cuales = _joinNames(d.subjects);
+        return 'Tus filtros no dejan ningún curso disponible de $cuales.'
+            ' Relaja el filtro o quita la materia.$filtro';
+
+      case 'par_incompatible':
+        final comun = _commonSubjectInPairs(d.pairs);
+        final conFiltros = d.blame != 'estructural';
+        final prefijo = conFiltros ? 'Con tus filtros actuales, ' : '';
+
+        if (d.pairs.length == 1) {
+          final p = d.pairs.first;
+          // Nombrar el par ya dice qué hacer (quitar una de las dos): no se
+          // agrega el menú de quitado, sería ruido.
+          final cola = conFiltros ? '' : ': no hay forma de tomarlas juntas';
+          return '$prefijo${p[0]} se cruza con ${p[1]}$cola.'
+              ' Quita una de las dos.$filtro';
+        }
+
+        if (comun != null) {
+          // Una materia contra varias: ella es el eje del problema.
+          final otras =
+              d.pairs.map((p) => p[0] == comun ? p[1] : p[0]).toList();
+          return '$prefijo$comun se cruza con ${_joinNames(otras)}.'
+              ' Tendrías que quitarlas todas, o quitar $comun.$filtro';
+        }
+
+        final pares = d.pairs.map((p) => '${p[0]} con ${p[1]}').toList();
+        return '${prefijo}se cruzan ${_joinNames(pares)}.$salida$filtro';
+
+      case 'conjunto_incompatible':
+      default:
+        final base = d.blame == 'estructural'
+            ? 'Estas materias no caben todas juntas (de a dos sí cabrían).'
+            : 'Tus filtros dejan sin opciones a esta combinación de materias.';
+        return '$base$salida$filtro';
+    }
+  }
+
   /// Genera horarios con las materias y filtros actuales.
   Future<String?> generateSchedules() async {
     if (_addedSubjects.isEmpty) {
@@ -296,30 +408,17 @@ class ScheduleProvider extends ChangeNotifier {
       notifyListeners();
 
       if (schedules.isEmpty) {
-        bool hasFilters = _apiFiltersForGeneration.isNotEmpty &&
-            _apiFiltersForGeneration.values.any((value) => 
-                value != false && value != null && value != '');
-
-        String message;
-        IconData icon;
-        Color color;
-
-        if (hasFilters) {
-          message = 'No se encontraron horarios con los filtros aplicados. Intenta relajar algunos filtros; pero si lo que hiciste fue agregar una materia nueva, posiblemente se trate de un cruce de horario.';
-          icon = Icons.filter_alt_off;
-          color = Colors.orange;
-        } else {
-          message = 'No se pueden generar horarios con estas materias. Puede haber cruces de horarios o incompatibilidades.';
-          icon = Icons.schedule_send;
-          color = Colors.red.shade600;
-        }
+        _lastDiagnosis = result.diagnosis;
+        final message = _messageForDiagnosis(result.diagnosis);
+        final bool byFilters = result.diagnosis?.isFiltersFault ?? false;
 
         _errorMessage = message;
-        _errorIcon = icon;
-        _errorColor = color;
+        _errorIcon = byFilters ? Icons.filter_alt_off : Icons.schedule_send;
+        _errorColor = byFilters ? Colors.orange : Colors.red.shade600;
         return message;
       }
 
+      _lastDiagnosis = null;
       return null;
     } catch (e) {
       _isLoading = false;

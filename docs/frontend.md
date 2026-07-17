@@ -154,6 +154,13 @@ Comunicacion con el backend:
 
 Ambos servicios usan `BrowserClient` con `withCredentials = true`.
 
+### Diagnóstico de "no hay horarios"
+Cuando el backend devuelve 0 horarios manda un `diagnosis` explicando por qué (ver `docs/issues/17-07-2026-rfc-diagnostico-sin-horarios.md` y `docs/backend.md`). El front solo **compone el mensaje**; la lógica vive en el backend.
+- `models/schedule_diagnosis.dart`: `ScheduleDiagnosis` (ejes `shape` = dónde vive el conflicto, `blame` = de quién es la culpa) y `DiagnosisFilter.label`, que traduce el filtro señalado a texto ("las horas no disponibles del martes").
+- `ScheduleProvider._messageForDiagnosis`: arma el texto. Dos reglas: con `blame=estructural` **no se mencionan los filtros** (son irrelevantes y solo confunden), y con `blame=filtros` siempre se dan **las dos salidas** —relajar el filtro **o** quitar la materia—, porque hay usuarios que no piensan ceder el filtro. Las opciones de quitado se unen con "o" (son alternativas, basta una), no con "y".
+- `ScheduleProvider.isBlockedByConflict`: con materias agregadas y 0 horarios, `addSubject` rechaza agregar más. No es solo UX: garantiza que el estado anterior siempre fue satisfacible, que es la invariante que permite señalar culpables (RFC §3). Se desbloquea solo, porque quitar una materia o relajar un filtro regenera al instante.
+- `home_screen._handleAddSubject` decide si la materia entró comparando la **cantidad de materias antes/después**, no por el texto del mensaje: `addSubject` devuelve tanto rechazos como avisos de una materia que sí entró, y distinguirlos con `contains` hacía que cualquier rechazo no contemplado terminara anunciando "Materia agregada" sin haberla agregado.
+
 ### Favoritos (en ScheduleProvider)
 Gestión de horarios destacados:
 - `loadFavorites()` / `loadFavoriteTerms()`: Carga favoritos y términos del usuario desde el backend

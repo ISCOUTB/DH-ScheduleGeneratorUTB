@@ -230,6 +230,55 @@ def find_valid_schedules(
     return merged_schedules
 
 
+def has_any_schedule(
+    combinations_per_subject: List[List[List[ClassOption]]],
+    filters: Dict[str, Any]
+) -> bool:
+    """
+    ¿Existe AL MENOS UN horario válido? Corta al encontrar el primero.
+
+    Es el oráculo del diagnóstico (ver `schedule_diagnostics`). A diferencia de
+    `find_valid_schedules`, no enumera, ni fusiona, ni ordena: en cuanto llega a
+    una hoja válida responde True. Eso es lo que hace viable llamarlo decenas de
+    veces sobre subconjuntos.
+
+    Replica **exactamente** la noción de validez del generador (mismas podas y el
+    mismo `_meets_filters`); si divergiera, el diagnóstico podría contradecir al
+    resultado que se le está explicando.
+    """
+    if not combinations_per_subject:
+        return False
+
+    if 'selected_nrcs' in filters:
+        expanded_nrcs = _expand_selected_nrcs(
+            combinations_per_subject, filters['selected_nrcs']
+        )
+        filters = {**filters, 'selected_nrcs': expanded_nrcs}
+
+    max_credits = float(filters.get("max_credits", 20))
+    EPSILON = 1e-9
+
+    def _probe(level: int, current_schedule: List[ClassOption], current_credits: float) -> bool:
+        if level == len(combinations_per_subject):
+            return _meets_filters(current_schedule, filters)
+
+        for option_group in combinations_per_subject[level]:
+            credits_for_this_group = option_group[0].credits
+            if current_credits + credits_for_this_group > max_credits + EPSILON:
+                continue
+
+            if not _has_conflict(current_schedule, option_group):
+                current_schedule.extend(option_group)
+                if _probe(level + 1, current_schedule, current_credits + credits_for_this_group):
+                    return True
+                for _ in range(len(option_group)):
+                    current_schedule.pop()
+
+        return False
+
+    return _probe(0, [], 0.0)
+
+
 def _has_conflict(current_schedule: List[ClassOption], new_option_group: List[ClassOption]) -> bool:
     """Verifica si un nuevo grupo de clases tiene conflicto de horario con el horario actual."""
     for existing_option in current_schedule:

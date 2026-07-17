@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/browser_client.dart';
 import '../models/class_option.dart';
+import '../models/schedule_diagnosis.dart';
 import '../models/subject.dart';
 import '../models/subject_summary.dart';
 
@@ -13,9 +14,13 @@ class GenerateSchedulesResult {
   final List<List<ClassOption>> schedules;
   final bool truncated;
 
+  /// Solo cuando [schedules] viene vacío: explica por qué. Null si hay horarios.
+  final ScheduleDiagnosis? diagnosis;
+
   const GenerateSchedulesResult({
     required this.schedules,
     required this.truncated,
+    this.diagnosis,
   });
 }
 
@@ -133,8 +138,16 @@ class ApiService {
           }).toList();
         }).toList();
 
+        // Solo viene cuando no hubo horarios; explica por qué.
+        final rawDiagnosis = decoded['diagnosis'];
         return GenerateSchedulesResult(
-            schedules: schedules, truncated: truncated);
+          schedules: schedules,
+          truncated: truncated,
+          diagnosis: rawDiagnosis == null
+              ? null
+              : ScheduleDiagnosis.fromJson(
+                  rawDiagnosis as Map<String, dynamic>),
+        );
       } else {
         print('Error del servidor: ${response.statusCode}');
         print('Cuerpo de la respuesta: ${response.body}');
