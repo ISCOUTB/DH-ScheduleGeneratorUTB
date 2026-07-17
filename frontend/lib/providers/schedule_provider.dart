@@ -738,6 +738,16 @@ class ScheduleProvider extends ChangeNotifier {
   Map<String, Map<String, int>> get selectedScheduleStatus =>
       Map.unmodifiable(_selectedScheduleStatus);
 
+  /// Cupos de los NRC de **todos** los favoritos del término actual:
+  /// `{ nrc: {available, total} }`.
+  ///
+  /// Es lo que permite marcar con un aviso cada tarjeta del sidebar sin tener
+  /// que abrir su detalle: `selectedScheduleStatus` solo cubre el horario que se
+  /// está viendo. Se llena de una sola vez (el endpoint recibe la lista de NRC).
+  Map<String, Map<String, int>> _allFavoritesStatus = {};
+  Map<String, Map<String, int>> get allFavoritesStatus =>
+      Map.unmodifiable(_allFavoritesStatus);
+
   /// Si la grilla de favoritos colorea por estado de cupos (true) o por materia.
   bool _statusColorMode = false;
   bool get statusColorMode => _statusColorMode;
@@ -784,14 +794,47 @@ class ScheduleProvider extends ChangeNotifier {
     _selectedTerm = term;
     // El estado de cupos solo aplica al término actual; limpiar al cambiar.
     _selectedScheduleStatus = {};
+    _allFavoritesStatus = {};
     notifyListeners();
     await loadFavorites(term: term);
+    // Los favoritos del término nuevo tienen otros NRC: recalcular los avisos.
+    await loadStatusForAllFavorites();
   }
 
   /// Activa o desactiva el coloreo por estado de cupos.
   void setStatusColorMode(bool value) {
     if (_statusColorMode == value) return;
     _statusColorMode = value;
+    notifyListeners();
+  }
+
+  /// Carga los cupos de **todos** los favoritos en una sola llamada, para poder
+  /// avisar cuáles tienen problemas sin abrirlos uno por uno.
+  ///
+  /// Solo aplica al término actual: la tabla `Curso` solo tiene el periodo
+  /// vigente y Banner reutiliza NRCs, así que en periodos pasados el mapa queda
+  /// vacío y no se marca nada (ver RFC Fase 2, §2.6).
+  Future<void> loadStatusForAllFavorites() async {
+    if (_selectedTerm != _currentTerm || _favoriteSchedules.isEmpty) {
+      _allFavoritesStatus = {};
+      notifyListeners();
+      return;
+    }
+
+    // Set: varios favoritos comparten NRCs y no tiene sentido pedirlos repetidos.
+    final nrcs = <String>{
+      for (final schedule in _favoriteSchedules)
+        for (final option in schedule) option.nrc
+    }.toList();
+
+    try {
+      _allFavoritesStatus = await _apiService.getFavoritesStatus(nrcs);
+    } catch (e) {
+      debugPrint('Error cargando estado de cupos de favoritos: $e');
+      // Mapa vacío = no se pudo consultar; el aviso no se muestra en vez de
+      // alarmar con datos que no se tienen.
+      _allFavoritesStatus = {};
+    }
     notifyListeners();
   }
 

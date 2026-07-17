@@ -179,6 +179,13 @@ Colorea la grilla de horarios destacados según los cupos **actuales** de cada c
 - El detalle (`ScheduleOverviewWidget`) tiene su propio toggle semi-independiente: hereda el modo al abrir y luego cambia por su cuenta. El texto `Cupos: X de Y` del detalle usa los cupos **en vivo** (de `/status`) cuando hay datos cargados; si no, el valor tal cual (snapshot / generación).
 - Solo aplica al término actual; en periodos pasados el toggle queda deshabilitado (la tabla `Curso` solo tiene el periodo vigente). Ver `docs/issues/12-05-2026-rfc-estados-cursos-notificaciones.md`.
 
+#### Aviso de horario con problemas (sidebar y header)
+Cada tarjeta del sidebar de destacados marca con un ⚠️ (esquina superior **izquierda**, espejo del basurero) si ese horario tiene clases **sin cupos** o **fuera de la oferta**; el header del contenido muestra además el conteo (`N clases con problema`). El hover dice qué y cuántas: *"1 clase sin cupos y 1 clase que ya no está en la oferta. Abre el detalle para ver cuáles."*
+- La lógica es pura y vive en `models/course_status.dart`: `ScheduleIssues`, `issuesForSchedule(schedule, seatsByNrc)` y `scheduleIssuesMessage(issues)`.
+- **Requiere los cupos de TODOS los favoritos**, no solo del abierto: `selectedScheduleStatus` solo cubre el horario que se está viendo. Por eso `ScheduleProvider.loadStatusForAllFavorites()` junta los NRC de todos los favoritos (en un `Set`, varios comparten NRC) y hace **una sola** llamada a `/api/favorites/status`. El resultado vive en `allFavoritesStatus`.
+- Solo aplica al **término actual** (§2.6): en periodos pasados el mapa queda vacío y no se marca nada.
+- **Con el mapa vacío no se avisa nada.** Mismo criterio que el detalle: si no se pudo consultar el estado, no se alarma con datos que no se tienen. Ojo con la ambigüedad: un mapa vacío también podría significar "todos los NRC se cayeron de la oferta", caso en el que tampoco se avisa. Se acepta a cambio de no mentir cuando Banner está caído.
+
 #### Cómo se enlaza y cuándo se pide (flujo)
 - **Llave = `NRC`.** Cada clase del `schedule_json` tiene su `nrc`. El endpoint recibe NRCs y consulta `Curso` (PK `NRC`) → `{ nrc: {available, total} }`. `statusForClass(clase, mapa)` busca `mapa[clase.nrc]`: presente → calcula estado; ausente → `eliminado`.
 - **Petición bajo demanda, por horario** (no al entrar, no masiva). `loadStatusForSchedule(horario)` toma los NRCs de **ese** horario y pide `/status` solo de esos. Se dispara al: activar "Estado", seleccionar otro horario en modo estado, abrir detalles, o cambiar de período. Solo si `selectedTerm == currentTerm`.

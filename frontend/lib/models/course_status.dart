@@ -33,6 +33,61 @@ CourseStatus statusForClass(
   return computeCourseStatus(seats['available'] ?? 0, seats['total'] ?? 0);
 }
 
+/// Problemas de un horario guardado frente a los cupos **actuales**.
+class ScheduleIssues {
+  /// Clases que siguen en la oferta pero se quedaron sin cupos.
+  final int noSeats;
+
+  /// Clases cuyo NRC ya no aparece en la oferta (se cayó o le cambiaron el NRC).
+  final int notOffered;
+
+  const ScheduleIssues({this.noSeats = 0, this.notOffered = 0});
+
+  bool get any => noSeats > 0 || notOffered > 0;
+  int get total => noSeats + notOffered;
+}
+
+/// Cuenta los problemas de un horario según el mapa de cupos `{nrc: {...}}`.
+///
+/// Con el mapa **vacío** devuelve "sin problemas": significa que no se pudo
+/// consultar el estado, y no se alarma con datos que no se tienen (mismo
+/// criterio que el detalle, que en ese caso avisa en vez de pintar todo gris).
+ScheduleIssues issuesForSchedule(
+  List<ClassOption> schedule,
+  Map<String, Map<String, int>> seatsByNrc,
+) {
+  if (seatsByNrc.isEmpty) return const ScheduleIssues();
+
+  int noSeats = 0;
+  int notOffered = 0;
+  for (final option in schedule) {
+    final seats = seatsByNrc[option.nrc];
+    if (seats == null) {
+      notOffered++;
+    } else if ((seats['available'] ?? 0) <= 0) {
+      noSeats++;
+    }
+  }
+  return ScheduleIssues(noSeats: noSeats, notOffered: notOffered);
+}
+
+/// Texto del aviso de un horario con problemas. Dice **qué** y **cuántas**, en
+/// vez de un "hay un problema" genérico: el dato ya se tiene.
+String scheduleIssuesMessage(ScheduleIssues issues) {
+  final partes = <String>[];
+  if (issues.noSeats > 0) {
+    partes.add(issues.noSeats == 1
+        ? '1 clase sin cupos'
+        : '${issues.noSeats} clases sin cupos');
+  }
+  if (issues.notOffered > 0) {
+    partes.add(issues.notOffered == 1
+        ? '1 clase que ya no está en la oferta'
+        : '${issues.notOffered} clases que ya no están en la oferta');
+  }
+  return '${partes.join(' y ')}. Abre el detalle para ver cuáles.';
+}
+
 /// Color de relleno del bloque en la grilla. Se usan los tonos saturados de la
 /// RFC (borde) como relleno: en celdas pequeñas leen mejor que los fondos
 /// claros y mantienen texto blanco legible.

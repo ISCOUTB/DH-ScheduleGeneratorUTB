@@ -91,6 +91,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         // term) y no toca la lista de horarios → sin parpadeo.
         await provider.loadFavoriteTerms();
       }
+      // Cupos de TODOS los favoritos: es lo que alimenta el aviso de cada
+      // tarjeta. Va aparte del coloreo por estado, que solo mira el abierto.
+      await provider.loadStatusForAllFavorites();
       // Si el coloreo por estado ya estaba activo, cargar cupos del seleccionado.
       _loadStatusIfNeeded(provider);
     });
@@ -609,6 +612,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     final selectedSchedule = provider.favoriteSchedules[_selectedIndex];
     final colors = _buildColorMap(selectedSchedule);
     final selectedLabel = String.fromCharCode(65 + _selectedIndex);
+    // Problemas del horario abierto, para el aviso del header.
+    final selectedIssues =
+        issuesForSchedule(selectedSchedule, provider.allFavoritesStatus);
     // El estado de cupos solo aplica al término actual (ver RFC §2.6).
     final bool statusApplies = provider.selectedTerm == provider.currentTerm;
     final bool useStatus = provider.statusColorMode && statusApplies;
@@ -630,6 +636,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         _FavoritesSidebar(
           schedules: provider.favoriteSchedules,
           cardKeys: _cardKeys,
+          seatsByNrc: provider.allFavoritesStatus,
           selectedIndex: _selectedIndex,
           showInfo: _sidebarShowInfo,
           onToggleMode: () => setState(() => _sidebarShowInfo = !_sidebarShowInfo),
@@ -709,6 +716,41 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                         color: Color(0xFF111827),
                       ),
                     ),
+                    // Aviso del horario que se está viendo. En el sidebar es un
+                    // ícono (no hay espacio); aquí sí cabe el conteo.
+                    if (selectedIssues.any) ...[
+                      const SizedBox(width: 12),
+                      Tooltip(
+                        message: scheduleIssuesMessage(selectedIssues),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF8D7DA),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: const Color(0xFFDC3545)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.warning_amber_rounded,
+                                  size: 16, color: Color(0xFFDC3545)),
+                              const SizedBox(width: 4),
+                              Text(
+                                selectedIssues.total == 1
+                                    ? '1 clase con problema'
+                                    : '${selectedIssues.total} clases con problema',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF842029),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(width: 16),
                     // Leyenda a la izquierda del toggle. Siempre visible en el
                     // término actual (atenuada en modo materia) para que el
@@ -1015,6 +1057,11 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 class _FavoritesSidebar extends StatelessWidget {
   final List<List<ClassOption>> schedules;
   final List<GlobalKey> cardKeys;
+
+  /// Cupos actuales de todos los favoritos, para marcar cuáles tienen
+  /// problemas. Vacío en periodos pasados o si no se pudo consultar.
+  final Map<String, Map<String, int>> seatsByNrc;
+
   final int selectedIndex;
   final bool showInfo;
   final VoidCallback onToggleMode;
@@ -1034,6 +1081,7 @@ class _FavoritesSidebar extends StatelessWidget {
   const _FavoritesSidebar({
     required this.schedules,
     required this.cardKeys,
+    required this.seatsByNrc,
     required this.selectedIndex,
     required this.showInfo,
     required this.onToggleMode,
@@ -1173,6 +1221,7 @@ class _FavoritesSidebar extends StatelessWidget {
                       huecos: calculateGaps(schedules[i]),
                       diasLibres: calculateFreeDays(schedules[i]),
                       subjectNames: getSubjectNames(schedules[i]),
+                      issues: issuesForSchedule(schedules[i], seatsByNrc),
                     ),
                     const SizedBox(height: 10),
                   ],
@@ -1215,6 +1264,10 @@ class _SidebarCard extends StatelessWidget {
   final int diasLibres;
   final List<String> subjectNames;
 
+  /// Problemas del horario según los cupos actuales (vacío = sin problemas o
+  /// sin datos para saberlo).
+  final ScheduleIssues issues;
+
   const _SidebarCard({
     super.key,
     required this.index,
@@ -1227,6 +1280,7 @@ class _SidebarCard extends StatelessWidget {
     required this.huecos,
     required this.diasLibres,
     required this.subjectNames,
+    required this.issues,
   });
 
   String get _label => String.fromCharCode(65 + index);
@@ -1265,6 +1319,26 @@ class _SidebarCard extends StatelessWidget {
                 ),
               ),
             ),
+            // Aviso de problema: espejo del basurero, en la esquina opuesta.
+            // Solo aparece si el horario tiene clases sin cupos o fuera de la
+            // oferta; con el estado no consultable no se muestra nada.
+            if (issues.any)
+              Positioned(
+                top: 4,
+                left: 4,
+                child: Tooltip(
+                  message: scheduleIssuesMessage(issues),
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDC3545).withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Icon(Icons.warning_amber_rounded,
+                        size: 12, color: Colors.white),
+                  ),
+                ),
+              ),
             // Botón eliminar
             Positioned(
               top: 4,
