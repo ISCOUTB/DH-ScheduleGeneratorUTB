@@ -7,7 +7,7 @@ import psycopg.rows
 import json
 import os
 from dotenv import load_dotenv
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from psycopg.sql import SQL
 from ..models import ClassOption, Schedule, Subject
 
@@ -595,6 +595,29 @@ def _shape_custom_course(row: Dict[str, Any]) -> Dict[str, Any]:
         "bloques": row["bloques"],
         "created_at": str(row["created_at"]) if row.get("created_at") else None,
     }
+
+
+def get_nrc_subject(nrc: str) -> Optional[Dict[str, str]]:
+    """Materia (código, nombre) que ocupa un NRC en la oferta actual, o None.
+
+    Sirve para bloquear un curso personalizado con un NRC que ya existe: no se
+    puede reusar un NRC real. El NRC es entero en BD; lo no numérico nunca
+    colisiona (un NRC sintético 'CP...' no aplica).
+    """
+    if not str(nrc).isdigit():
+        return None
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            "SELECT CodigoMateria AS code, NombreMateria AS name FROM Curso WHERE NRC = %s LIMIT 1",
+            (int(nrc),),
+        )
+        row = cursor.fetchone()
+        return dict(row) if row else None
+    finally:
+        cursor.close()
+        conn.close()
 
 
 def materia_exists(codigo: str, nombre: str) -> bool:

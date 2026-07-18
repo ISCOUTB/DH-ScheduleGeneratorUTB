@@ -63,6 +63,20 @@ async def list_custom_courses(session_id: Optional[str] = Cookie(default=None)):
     return {"customCourses": cursos}
 
 
+@router.get("/nrc-check")
+async def check_nrc(nrc: str, session_id: Optional[str] = Cookie(default=None)):
+    """¿El NRC ya existe en la oferta real? Devuelve la materia que lo ocupa.
+
+    Lo usa el formulario para avisar en vivo que un NRC está tomado (no se puede
+    reusar). `{ "taken": bool, "code": ..., "name": ... }`.
+    """
+    _user_id(session_id)
+    subj = await run_in_threadpool(repository.get_nrc_subject, nrc.strip())
+    if subj:
+        return {"taken": True, "code": subj["code"], "name": subj["name"]}
+    return {"taken": False}
+
+
 @router.post("")
 async def create_custom_course(
     body: CreateCustomCourseRequest,
@@ -78,6 +92,15 @@ async def create_custom_course(
     exists = await run_in_threadpool(repository.materia_exists, body.code, body.name)
     if not exists:
         raise HTTPException(status_code=404, detail="La materia no existe en el catálogo.")
+
+    # NRC no puede reusar uno de la oferta real (bloqueo duro).
+    if body.nrc and body.nrc.strip():
+        taken = await run_in_threadpool(repository.get_nrc_subject, body.nrc.strip())
+        if taken:
+            raise HTTPException(
+                status_code=409,
+                detail=f"El NRC {body.nrc.strip()} ya existe en la materia {taken['name']}. Usa otro.",
+            )
 
     count = await run_in_threadpool(repository.count_custom_courses, uid)
     if count >= MAX_CUSTOM_COURSES:
@@ -103,6 +126,13 @@ async def update_custom_course(
 ):
     """Actualiza campos de un curso personalizado (incluye el switch `activo`)."""
     uid = _user_id(session_id)
+    if body.nrc and body.nrc.strip():
+        taken = await run_in_threadpool(repository.get_nrc_subject, body.nrc.strip())
+        if taken:
+            raise HTTPException(
+                status_code=409,
+                detail=f"El NRC {body.nrc.strip()} ya existe en la materia {taken['name']}. Usa otro.",
+            )
     bloques = [b.model_dump() for b in body.bloques] if body.bloques is not None else None
     result = await run_in_threadpool(
         repository.update_custom_course,
