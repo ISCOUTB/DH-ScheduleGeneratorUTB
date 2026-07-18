@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:http/browser_client.dart';
 import '../models/class_option.dart';
+import '../models/custom_course.dart';
+import '../models/schedule.dart';
 import '../models/schedule_diagnosis.dart';
 import '../models/subject.dart';
 import '../models/subject_summary.dart';
@@ -98,6 +100,7 @@ class ApiService {
     required Map<String, dynamic> filters,
     required double creditLimit,
     bool isMobile = false,
+    List<CustomCourse> activeCustomCourses = const [],
   }) async {
     final url = Uri.parse('$_baseUrl/api/schedules/generate');
     final client = _createClient();
@@ -117,6 +120,9 @@ class ApiService {
       "creditLimit": creditLimit,
       // El backend limita los resultados solo si el cliente es móvil.
       "isMobile": isMobile,
+      // Cursos personalizados activos: reemplazan la oferta de su materia.
+      "customCourses":
+          activeCustomCourses.map((c) => c.toGenerationJson()).toList(),
     };
 
     try {
@@ -289,6 +295,181 @@ class ApiService {
       } else {
         throw Exception('Error del servidor: ${response.statusCode}');
       }
+    } finally {
+      client.close();
+    }
+  }
+
+  // ============================================================
+  // Cursos personalizados
+  // ============================================================
+
+  /// Catálogo completo de materias (con y sin oferta) para el selector de un
+  /// curso personalizado. El buscador normal usa [getAllSubjects].
+  Future<List<SubjectSummary>> getSubjectsCatalog() async {
+    final url = Uri.parse('$_baseUrl/api/subjects-catalog');
+    final client = _createClient();
+    try {
+      final response = await client.get(url);
+      if (response.statusCode == 200) {
+        final List<dynamic> decoded =
+            json.decode(utf8.decode(response.bodyBytes));
+        return decoded.map((j) => SubjectSummary.fromJson(j)).toList();
+      }
+      throw Exception('Error del servidor: ${response.statusCode}');
+    } finally {
+      client.close();
+    }
+  }
+
+  /// Lista los cursos personalizados del usuario.
+  Future<List<CustomCourse>> getCustomCourses() async {
+    final url = Uri.parse('$_baseUrl/api/custom-courses');
+    final client = _createClient();
+    try {
+      final response = await client.get(url);
+      if (response.statusCode == 200) {
+        final decoded = json.decode(utf8.decode(response.bodyBytes))
+            as Map<String, dynamic>;
+        return (decoded['customCourses'] as List)
+            .map((j) => CustomCourse.fromJson(j as Map<String, dynamic>))
+            .toList();
+      } else if (response.statusCode == 401) {
+        throw Exception('No autenticado');
+      }
+      throw Exception('Error del servidor: ${response.statusCode}');
+    } finally {
+      client.close();
+    }
+  }
+
+  /// Crea un curso personalizado para una materia del catálogo.
+  Future<CustomCourse> createCustomCourse({
+    required String code,
+    required String name,
+    required List<Schedule> bloques,
+    String? nrc,
+    String? type,
+    String? professor,
+    String? campus,
+    bool activo = true,
+  }) async {
+    final url = Uri.parse('$_baseUrl/api/custom-courses');
+    final client = _createClient();
+    try {
+      final response = await client.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "code": code,
+          "name": name,
+          "bloques": bloques.map((s) => s.toJson()).toList(),
+          "nrc": nrc,
+          "type": type,
+          "professor": professor,
+          "campus": campus,
+          "activo": activo,
+        }),
+      );
+      if (response.statusCode == 200) {
+        final decoded = json.decode(utf8.decode(response.bodyBytes))
+            as Map<String, dynamic>;
+        return CustomCourse.fromJson(
+            decoded['customCourse'] as Map<String, dynamic>);
+      } else if (response.statusCode == 401) {
+        throw Exception('No autenticado');
+      }
+      // 404 (materia inexistente), 409 (NRC ya existe), 429 (límite): el backend
+      // manda un `detail` con el mensaje exacto (incl. qué materia ocupa el NRC).
+      throw Exception(_detailOr(response, 'Error del servidor: ${response.statusCode}'));
+    } finally {
+      client.close();
+    }
+  }
+
+  /// Extrae `detail` del cuerpo de error de FastAPI, o un mensaje por defecto.
+  String _detailOr(http.Response response, String fallback) {
+    try {
+      final d = json.decode(utf8.decode(response.bodyBytes));
+      if (d is Map && d['detail'] is String) return d['detail'] as String;
+    } catch (_) {}
+    return fallback;
+  }
+
+  /// ¿El NRC ya existe en la oferta real? Devuelve el nombre de la materia que
+  /// lo ocupa, o null si está libre. Para validar en vivo en el formulario.
+  Future<String?> checkNrcTaken(String nrc) async {
+    final url = Uri.parse(
+        '$_baseUrl/api/custom-courses/nrc-check?nrc=${Uri.encodeComponent(nrc)}');
+    final client = _createClient();
+    try {
+      final response = await client.get(url);
+      if (response.statusCode == 200) {
+        final d = json.decode(utf8.decode(response.bodyBytes))
+            as Map<String, dynamic>;
+        return d['taken'] == true ? d['name'] as String? : null;
+      }
+      return null;
+    } catch (_) {
+      return null;
+    } finally {
+      client.close();
+    }
+  }
+
+  /// Actualiza campos de un curso personalizado (incluye el switch `activo`).
+  /// Solo se envían los campos no nulos.
+  Future<CustomCourse> updateCustomCourse(
+    int id, {
+    List<Schedule>? bloques,
+    String? nrc,
+    String? type,
+    String? professor,
+    String? campus,
+    bool? activo,
+  }) async {
+    final url = Uri.parse('$_baseUrl/api/custom-courses/$id');
+    final client = _createClient();
+    final body = <String, dynamic>{};
+    if (bloques != null) body['bloques'] = bloques.map((s) => s.toJson()).toList();
+    if (nrc != null) body['nrc'] = nrc;
+    if (type != null) body['type'] = type;
+    if (professor != null) body['professor'] = professor;
+    if (campus != null) body['campus'] = campus;
+    if (activo != null) body['activo'] = activo;
+    try {
+      final response = await client.patch(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode(body),
+      );
+      if (response.statusCode == 200) {
+        final decoded = json.decode(utf8.decode(response.bodyBytes))
+            as Map<String, dynamic>;
+        return CustomCourse.fromJson(
+            decoded['customCourse'] as Map<String, dynamic>);
+      } else if (response.statusCode == 401) {
+        throw Exception('No autenticado');
+      }
+      throw Exception(_detailOr(response, 'Error del servidor: ${response.statusCode}'));
+    } finally {
+      client.close();
+    }
+  }
+
+  /// Elimina un curso personalizado por ID.
+  Future<void> deleteCustomCourse(int id) async {
+    final url = Uri.parse('$_baseUrl/api/custom-courses/$id');
+    final client = _createClient();
+    try {
+      final response = await client.delete(url);
+      if (response.statusCode == 200) return;
+      if (response.statusCode == 404) {
+        throw Exception('Curso personalizado no encontrado');
+      } else if (response.statusCode == 401) {
+        throw Exception('No autenticado');
+      }
+      throw Exception('Error del servidor: ${response.statusCode}');
     } finally {
       client.close();
     }

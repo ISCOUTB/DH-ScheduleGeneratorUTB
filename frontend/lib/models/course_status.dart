@@ -61,6 +61,10 @@ ScheduleIssues issuesForSchedule(
   int noSeats = 0;
   int notOffered = 0;
   for (final option in schedule) {
+    // Los cursos personalizados (NRC sintético "CP...") están fuera de la oferta
+    // a propósito: no son un problema. Excluirlos evita un falso "fuera de oferta".
+    if (option.nrc.startsWith('CP')) continue;
+
     final seats = seatsByNrc[option.nrc];
     if (seats == null) {
       notOffered++;

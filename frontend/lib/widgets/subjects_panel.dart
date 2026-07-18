@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../config/constants.dart';
+import '../models/custom_course.dart';
 import '../models/subject.dart';
 import '../utils/credit_utils.dart';
 
@@ -31,6 +33,18 @@ class SubjectsPanel extends StatelessWidget {
   /// Callback para iniciar el proceso de agregar una nueva materia.
   final VoidCallback onAddSubject;
 
+  /// Callback para abrir el panel de gestión de cursos personalizados.
+  final VoidCallback onOpenCustomCourses;
+
+  /// Cantidad de cursos personalizados del usuario (para el aviso del header).
+  final int customCoursesCount;
+
+  /// Cursos personalizados por materia (`subjectKey`), para el anidado + switch.
+  final Map<String, List<CustomCourse>> customCoursesByKey;
+
+  /// Enciende/apaga un curso personalizado desde el anidado.
+  final void Function(int id, bool activo) onToggleCustomCourse;
+
   /// Callback para alternar la vista de la cuadrícula de horarios.
   final VoidCallback onToggleExpandView;
 
@@ -53,6 +67,10 @@ class SubjectsPanel extends StatelessWidget {
     required this.onShowPanel,
     required this.onHidePanel,
     required this.onAddSubject,
+    required this.onOpenCustomCourses,
+    this.customCoursesCount = 0,
+    this.customCoursesByKey = const {},
+    required this.onToggleCustomCourse,
     required this.onToggleExpandView,
     required this.onRemoveSubject,
     required this.isExpandedView,
@@ -89,11 +107,15 @@ class SubjectsPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text("2026-2P",
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black54)),
+          Row(
+            children: [
+              const Text("2026-2P",
+                  style: TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black54)),
+              const Spacer(),
+              _headerCustomAviso(),
+            ],
+          ),
           const SizedBox(height: 4),
           const Text("Materias seleccionadas",
               style: TextStyle(
@@ -116,34 +138,7 @@ class SubjectsPanel extends StatelessWidget {
               ),
             )
           else
-            Column(
-              children: addedSubjects.asMap().entries.map((entry) {
-                final subject = entry.value;
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: ListTile(
-                    leading: Container(
-                      width: 14,
-                      height: 14,
-                      decoration: BoxDecoration(
-                        color: subjectColors[subject.key] ?? Colors.grey,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    title: Text(subject.name,
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.remove_circle_outline,
-                          color: Colors.red),
-                      onPressed: () => onRemoveSubject(subject),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+            Column(children: addedSubjects.map(_subjectCard).toList()),
           const SizedBox(height: 16),
           // Contador de créditos alineado a la derecha.
           Align(
@@ -174,16 +169,53 @@ class SubjectsPanel extends StatelessWidget {
     );
   }
 
+  /// Aviso clickeable con el conteo de cursos personalizados, para el header
+  /// (extremo opuesto al término). Vacío si no hay ninguno.
+  Widget _headerCustomAviso() {
+    if (customCoursesCount <= 0) return const SizedBox.shrink();
+    return InkWell(
+      onTap: onOpenCustomCourses,
+      borderRadius: BorderRadius.circular(6),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.event_note, size: 14, color: AppColors.primary),
+            const SizedBox(width: 4),
+            Text(
+              customCoursesCount == 1 ? '1 personalizado' : '$customCoursesCount personalizados',
+              style: const TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Tarjeta de una materia con sus cursos personalizados anidados (colapsables).
+  Widget _subjectCard(Subject subject) => _SubjectCard(
+        subject: subject,
+        color: subjectColors[subject.key] ?? Colors.grey,
+        customs: customCoursesByKey[subject.key] ?? const <CustomCourse>[],
+        onRemove: () => onRemoveSubject(subject),
+        onToggleCustom: onToggleCustomCourse,
+      );
+
   /// Construye la vista expandida del panel de escritorio.
   Widget _buildExpandedView() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("2026-2P",
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black54)),
+        Row(
+          children: [
+            const Text("2026-2P",
+                style: TextStyle(
+                    fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black54)),
+            const Spacer(),
+            _headerCustomAviso(),
+          ],
+        ),
         const SizedBox(height: 4),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -206,36 +238,22 @@ class SubjectsPanel extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                ...addedSubjects.asMap().entries.map((entry) {
-                  final subject = entry.value;
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    child: ListTile(
-                      leading: Container(
-                        width: 14,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: subjectColors[subject.key] ?? Colors.grey,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      title: Text(subject.name,
-                          style: const TextStyle(fontWeight: FontWeight.w600)),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.remove, color: Colors.red),
-                        onPressed: () => onRemoveSubject(subject),
-                      ),
-                    ),
-                  );
-                }),
+                ...addedSubjects.map(_subjectCard),
                 const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: OutlinedButton.icon(
-                    onPressed: onAddSubject,
-                    icon: const Icon(Icons.add),
-                    label: const Text("Agregar materia"),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: onAddSubject,
+                      icon: const Icon(Icons.add),
+                      label: const Text("Agregar materia"),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: onOpenCustomCourses,
+                      icon: const Icon(Icons.event_note, size: 18),
+                      label: const Text("Crear curso"),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -287,6 +305,121 @@ class SubjectsPanel extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Tarjeta de una materia con sus cursos personalizados anidados debajo. Los
+/// cursos se pueden **expandir/contraer** con un chevron (solo si los hay).
+class _SubjectCard extends StatefulWidget {
+  final Subject subject;
+  final Color color;
+  final List<CustomCourse> customs;
+  final VoidCallback onRemove;
+  final void Function(int id, bool activo) onToggleCustom;
+
+  const _SubjectCard({
+    required this.subject,
+    required this.color,
+    required this.customs,
+    required this.onRemove,
+    required this.onToggleCustom,
+  });
+
+  @override
+  State<_SubjectCard> createState() => _SubjectCardState();
+}
+
+class _SubjectCardState extends State<_SubjectCard> {
+  bool _expanded = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasCustoms = widget.customs.isNotEmpty;
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            leading: Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(color: widget.color, shape: BoxShape.circle),
+            ),
+            title: Text(widget.subject.name,
+                style: const TextStyle(fontWeight: FontWeight.w600)),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (hasCustoms)
+                  IconButton(
+                    icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+                    tooltip: _expanded
+                        ? 'Ocultar cursos personalizados'
+                        : 'Ver cursos personalizados',
+                    onPressed: () => setState(() => _expanded = !_expanded),
+                  ),
+                IconButton(
+                  icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+                  tooltip: 'Quitar materia',
+                  onPressed: widget.onRemove,
+                ),
+              ],
+            ),
+          ),
+          if (hasCustoms && _expanded) ...[
+            ...widget.customs.map(_customTile),
+            const SizedBox(height: 4),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _customTile(CustomCourse c) {
+    final bloques =
+        c.bloques.map((b) => '${b.day.substring(0, 3)} ${b.time}').join(' · ');
+    return Container(
+      margin: const EdgeInsets.only(left: 16, right: 8, bottom: 6),
+      decoration: const BoxDecoration(
+        border: Border(left: BorderSide(color: Color(0xFFD1D5DB), width: 2)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 10),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.event_note, size: 13, color: AppColors.primary),
+                      const SizedBox(width: 4),
+                      Text('Curso personalizado',
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade800)),
+                    ],
+                  ),
+                  Text(bloques, style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+                ],
+              ),
+            ),
+            Transform.scale(
+              scale: 0.8,
+              child: Switch(
+                value: c.activo,
+                activeColor: AppColors.primary,
+                onChanged: (v) => widget.onToggleCustom(c.id, v),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

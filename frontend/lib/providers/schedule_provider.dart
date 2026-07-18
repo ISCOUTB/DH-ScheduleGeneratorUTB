@@ -5,6 +5,8 @@ import '../config/constants.dart';
 import '../models/subject.dart';
 import '../models/subject_summary.dart';
 import '../models/class_option.dart';
+import '../models/custom_course.dart';
+import '../models/schedule.dart';
 import '../models/schedule_diagnosis.dart';
 import '../services/api_service.dart';
 import '../utils/credit_utils.dart';
@@ -48,6 +50,39 @@ class ScheduleProvider extends ChangeNotifier {
   /// Mapa de colores asignados a cada materia.
   final Map<String, Color> _subjectColorMap = {};
   Map<String, Color> get subjectColorMap => Map.unmodifiable(_subjectColorMap);
+
+  // ============================================================
+  // ESTADO: Cursos personalizados
+  // ============================================================
+
+  /// Cursos personalizados del usuario (todos, se agrupan por materia).
+  List<CustomCourse> _customCourses = [];
+  List<CustomCourse> get customCourses => List.unmodifiable(_customCourses);
+
+  /// Cursos personalizados de una materia (por su `subjectKey`).
+  List<CustomCourse> customCoursesForKey(String subjectKey) =>
+      _customCourses.where((c) => c.subjectKey == subjectKey).toList();
+
+  /// Cuántos cursos personalizados hay (para el aviso del header).
+  int get customCoursesCount => _customCourses.length;
+
+  /// Cursos personalizados agrupados por materia (`subjectKey`), para el anidado.
+  Map<String, List<CustomCourse>> get customCoursesByKey {
+    final map = <String, List<CustomCourse>>{};
+    for (final c in _customCourses) {
+      map.putIfAbsent(c.subjectKey, () => []).add(c);
+    }
+    return map;
+  }
+
+  /// Los que entran a la generación: activos y cuya materia está en la lista de
+  /// trabajo. Un curso de una materia no seleccionada no afecta el horario.
+  List<CustomCourse> get _activeCustomsForGeneration {
+    final keys = _addedSubjects.map((s) => s.key).toSet();
+    return _customCourses
+        .where((c) => c.activo && keys.contains(c.subjectKey))
+        .toList();
+  }
 
   // ============================================================
   // ESTADO: Horarios
@@ -169,11 +204,138 @@ class ScheduleProvider extends ChangeNotifier {
   }
 
   // ============================================================
+  // MÉTODOS: Cursos personalizados
+  // ============================================================
+
+  /// Carga los cursos personalizados del usuario.
+  Future<void> loadCustomCourses() async {
+    try {
+      _customCourses = await _apiService.getCustomCourses();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error cargando cursos personalizados: $e');
+    }
+  }
+
+  /// Si un cambio en cursos personalizados afecta la generación actual
+  /// (la materia está en la lista de trabajo), regenera.
+  void _regenerateIfAffects(String subjectKey) {
+    if (_addedSubjects.any((s) => s.key == subjectKey)) {
+      generateSchedules();
+    }
+  }
+
+  void _setError(String message) {
+    _errorMessage = message;
+    _errorIcon = Icons.error;
+    _errorColor = Colors.red;
+    notifyListeners();
+  }
+
+  /// Crea un curso personalizado y **agrega su materia a la lista de trabajo**
+  /// si no estaba, para que el curso entre a la generación enseguida. Retorna
+  /// el curso, o null si falló.
+  Future<CustomCourse?> createCustomCourse({
+    required String code,
+    required String name,
+    required List<Schedule> bloques,
+    String? nrc,
+    String? type,
+    String? professor,
+    String? campus,
+    bool activo = true,
+  }) async {
+    try {
+      final cc = await _apiService.createCustomCourse(
+        code: code, name: name, bloques: bloques, nrc: nrc,
+        type: type, professor: professor, campus: campus, activo: activo,
+      );
+      _customCourses = [..._customCourses, cc];
+      if (!isSubjectInList(cc.subjectKey)) {
+        // addSubject notifica y regenera con el nuevo curso ya presente.
+        addSubjectFromCustom(cc);
+      } else {
+        notifyListeners();
+        _regenerateIfAffects(cc.subjectKey);
+      }
+      return cc;
+    } catch (e) {
+      _setError('No se pudo crear el curso personalizado: ${e.toString()}');
+      return null;
+    }
+  }
+
+  /// Actualiza un curso personalizado (bloques, datos, o el switch `activo`).
+  Future<void> updateCustomCourse(
+    int id, {
+    List<Schedule>? bloques,
+    String? nrc,
+    String? type,
+    String? professor,
+    String? campus,
+    bool? activo,
+  }) async {
+    try {
+      final updated = await _apiService.updateCustomCourse(
+        id, bloques: bloques, nrc: nrc, type: type,
+        professor: professor, campus: campus, activo: activo,
+      );
+      _customCourses = [
+        for (final c in _customCourses) if (c.id == id) updated else c
+      ];
+      notifyListeners();
+      _regenerateIfAffects(updated.subjectKey);
+    } catch (e) {
+      _setError('No se pudo actualizar el curso personalizado: ${e.toString()}');
+    }
+  }
+
+  /// Enciende/apaga el switch de un curso personalizado.
+  Future<void> toggleCustomCourse(int id, bool activo) =>
+      updateCustomCourse(id, activo: activo);
+
+  /// Elimina un curso personalizado.
+  Future<void> deleteCustomCourse(int id) async {
+    final idx = _customCourses.indexWhere((c) => c.id == id);
+    if (idx < 0) return;
+    final key = _customCourses[idx].subjectKey;
+    try {
+      await _apiService.deleteCustomCourse(id);
+      _customCourses = [
+        for (final c in _customCourses) if (c.id != id) c
+      ];
+      notifyListeners();
+      _regenerateIfAffects(key);
+    } catch (e) {
+      _setError('No se pudo eliminar el curso personalizado: ${e.toString()}');
+    }
+  }
+
+  // ============================================================
   // MÉTODOS: Gestión de materias
   // ============================================================
 
+  /// Agrega a la lista de trabajo la materia de un curso personalizado.
+  ///
+  /// La materia puede no tener oferta (ese es el caso de uso), así que se
+  /// construye un `Subject` mínimo sin `classOptions`: para la generación basta,
+  /// porque su dominio lo aporta el curso personalizado activo. Retorna mensaje
+  /// de error o null.
+  String? addSubjectFromCustom(CustomCourse cc) {
+    return addSubject(Subject(
+      code: cc.code,
+      name: cc.name,
+      credits: cc.credits,
+      classOptions: const [],
+    ));
+  }
+
+  /// Si la materia de un curso personalizado ya está en la lista de trabajo.
+  bool isSubjectInList(String subjectKey) =>
+      _addedSubjects.any((s) => s.key == subjectKey);
+
   /// Añade una materia a la lista de seleccionadas.
-  /// 
+  ///
   /// Retorna un mensaje de error si no se puede agregar, null si fue exitoso.
   String? addSubject(Subject subject) {
     // Verificar duplicados
@@ -387,6 +549,8 @@ class ScheduleProvider extends ChangeNotifier {
         creditLimit: creditLimit,
         // Solo los dispositivos móviles reciben el cap (memoria limitada).
         isMobile: PlatformService().isMobileUserAgent(),
+        // Cursos personalizados activos de las materias en la lista.
+        activeCustomCourses: _activeCustomsForGeneration,
       );
       final schedules = result.schedules;
 

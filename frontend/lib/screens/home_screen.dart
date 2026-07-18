@@ -21,6 +21,7 @@ import '../widgets/main_actions_panel.dart';
 import '../widgets/schedule_grid_widget.dart';
 import '../widgets/schedule_overview_widget.dart';
 import '../widgets/schedule_sort_widget.dart';
+import '../widgets/custom_course/custom_courses_panel.dart';
 import '../screens/favorites_screen.dart';
 
 // Nuevos widgets extraídos
@@ -74,10 +75,11 @@ class _HomeScreenState extends State<HomeScreen> {
       _focusNode.requestFocus();
       _checkAndShowImportantNotice();
 
-      // Cargar materias y favoritos usando el provider
+      // Cargar materias, favoritos y cursos personalizados usando el provider
       final provider = context.read<ScheduleProvider>();
       provider.loadAllSubjects();
       provider.loadFavorites();
+      provider.loadCustomCourses();
     });
   }
 
@@ -282,6 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onShowCreators: () => CreatorsDialog.show(context),
                           onClear: _handleClearSchedules,
                           onFavorites: _navigateToFavorites,
+                          onCustomCourses: () => CustomCoursesPanel.show(context),
                         ),
                       ),
 
@@ -824,6 +827,10 @@ class _HomeScreenState extends State<HomeScreen> {
             onShowPanel: () => provider.setFullExpandedView(false),
             onHidePanel: () => provider.setFullExpandedView(true),
             onAddSubject: () => provider.setSearchOpen(true),
+            onOpenCustomCourses: () => CustomCoursesPanel.show(context),
+            customCoursesCount: provider.customCoursesCount,
+            customCoursesByKey: provider.customCoursesByKey,
+            onToggleCustomCourse: provider.toggleCustomCourse,
             onToggleExpandView: () => provider.toggleExpandedView(),
             onRemoveSubject: _handleRemoveSubject,
             isExpandedView: provider.isExpandedView,
@@ -977,6 +984,10 @@ class _HomeScreenState extends State<HomeScreen> {
               onShowPanel: () => provider.setFullExpandedView(false),
               onHidePanel: () => provider.setFullExpandedView(true),
               onAddSubject: () => provider.setSearchOpen(true),
+            onOpenCustomCourses: () => CustomCoursesPanel.show(context),
+            customCoursesCount: provider.customCoursesCount,
+            customCoursesByKey: provider.customCoursesByKey,
+            onToggleCustomCourse: provider.toggleCustomCourse,
               onToggleExpandView: () => provider.toggleExpandedView(),
               onRemoveSubject: _handleRemoveSubject,
               isExpandedView: provider.isExpandedView,

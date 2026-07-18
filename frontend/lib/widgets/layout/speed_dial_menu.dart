@@ -23,6 +23,9 @@ class SpeedDialMenu extends StatelessWidget {
   /// Callback para abrir horarios destacados.
   final VoidCallback? onFavorites;
 
+  /// Callback para abrir el panel de cursos personalizados.
+  final VoidCallback? onCustomCourses;
+
   const SpeedDialMenu({
     Key? key,
     required this.onSearch,
@@ -31,6 +34,7 @@ class SpeedDialMenu extends StatelessWidget {
     required this.onShowCreators,
     required this.onClear,
     this.onFavorites,
+    this.onCustomCourses,
   }) : super(key: key);
 
   @override
@@ -66,6 +70,12 @@ class SpeedDialMenu extends StatelessWidget {
             child: const Icon(Icons.star, color: Colors.amber),
             label: 'Mis Horarios',
             onTap: onFavorites,
+          ),
+        if (onCustomCourses != null)
+          SpeedDialChild(
+            child: const Icon(Icons.event_note),
+            label: 'Cursos Personalizados',
+            onTap: onCustomCourses,
           ),
         SpeedDialChild(
           child: const Icon(Icons.delete_forever, color: Colors.white),
