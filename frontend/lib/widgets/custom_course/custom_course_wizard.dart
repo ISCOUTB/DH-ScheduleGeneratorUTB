@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:diacritic/diacritic.dart';
 
 import '../../config/constants.dart';
 import '../../models/custom_course.dart';
@@ -41,6 +42,7 @@ class CustomCourseWizard extends StatefulWidget {
 
 class _CustomCourseWizardState extends State<CustomCourseWizard> {
   final ApiService _api = ApiService();
+  final TextEditingController _labelController = TextEditingController();
   final TextEditingController _profController = TextEditingController();
   final TextEditingController _nrcController = TextEditingController();
 
@@ -64,18 +66,47 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
     final ex = widget.existing;
     if (ex != null) {
       _materia = SubjectSummary(code: ex.code, name: ex.name, credits: ex.credits);
+      _labelController.text = ex.etiqueta ?? '';
       _profController.text = ex.professor ?? '';
       _nrcController.text = ex.nrc.startsWith('CP') ? '' : ex.nrc;
       _selected.addAll(_selectedFromBloques(ex.bloques));
+    } else {
+      // Nombre por defecto: "Curso Creado A", o la siguiente letra libre.
+      _labelController.text = _defaultLabel();
     }
   }
 
   @override
   void dispose() {
     _nrcDebounce?.cancel();
+    _labelController.dispose();
     _profController.dispose();
     _nrcController.dispose();
     super.dispose();
+  }
+
+  /// Primer "Curso Creado X" (A, B, … Z, AA, …) que no choque con los que ya tiene.
+  String _defaultLabel() {
+    final taken = context
+        .read<ScheduleProvider>()
+        .customCourses
+        .map((c) => c.etiqueta)
+        .whereType<String>()
+        .toSet();
+    for (int i = 0;; i++) {
+      final label = 'Curso Creado ${_excelLetter(i)}';
+      if (!taken.contains(label)) return label;
+    }
+  }
+
+  // 0->A, 25->Z, 26->AA (estilo columna de Excel), por si pasan de 26.
+  String _excelLetter(int n) {
+    String s = '';
+    do {
+      s = String.fromCharCode(65 + (n % 26)) + s;
+      n = (n ~/ 26) - 1;
+    } while (n >= 0);
+    return s;
   }
 
   Future<void> _loadCatalog() async {
@@ -159,12 +190,16 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
     final bloques = _buildBloques();
     final prof = _profController.text.trim();
     final nrc = _nrcController.text.trim();
+    // Si borró el nombre, se le pone el default para que nunca quede sin uno.
+    final label = _labelController.text.trim();
+    final etiqueta = label.isEmpty ? _defaultLabel() : label;
     final provider = context.read<ScheduleProvider>();
 
     if (_isEdit) {
       await provider.updateCustomCourse(
         widget.existing!.id,
         bloques: bloques,
+        etiqueta: etiqueta,
         professor: prof.isEmpty ? null : prof,
         nrc: nrc.isEmpty ? null : nrc,
       );
@@ -173,6 +208,7 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
         code: _materia!.code,
         name: _materia!.name,
         bloques: bloques,
+        etiqueta: etiqueta,
         professor: prof.isEmpty ? null : prof,
         nrc: nrc.isEmpty ? null : nrc,
       );
@@ -307,10 +343,12 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
         Autocomplete<SubjectSummary>(
           displayStringForOption: (s) => '${s.name} (${s.code})',
           optionsBuilder: (value) {
-            final q = value.text.toLowerCase().trim();
+            // Insensible a mayúsculas y tildes (igual que el buscador principal).
+            final q = removeDiacritics(value.text.toLowerCase().trim());
             if (q.isEmpty) return const Iterable<SubjectSummary>.empty();
             return _catalog.where((s) =>
-                s.name.toLowerCase().contains(q) || s.code.toLowerCase().contains(q));
+                removeDiacritics(s.name.toLowerCase()).contains(q) ||
+                removeDiacritics(s.code.toLowerCase()).contains(q));
           },
           onSelected: (s) => setState(() => _materia = s),
           fieldViewBuilder: (context, controller, focusNode, onSubmit) {
@@ -363,6 +401,13 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
         children: [
           const Text('Datos opcionales', style: TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 12),
+          const Text('Nombre del curso', style: TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+          const SizedBox(height: 4),
+          TextField(
+            controller: _labelController,
+            decoration: _dec('Ej. Curso Creado A'),
+          ),
+          const SizedBox(height: 16),
           const Text('Profesor', style: TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
           const SizedBox(height: 4),
           TextField(controller: _profController, decoration: _dec('Ej. Juan Pérez')),

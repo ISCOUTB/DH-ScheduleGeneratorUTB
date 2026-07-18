@@ -233,6 +233,7 @@ CREATE TABLE IF NOT EXISTS public.curso_personalizado (
     usuario_id INTEGER NOT NULL REFERENCES public.usuario(id),
     codigomateria VARCHAR NOT NULL,
     nombremateria VARCHAR NOT NULL,
+    etiqueta VARCHAR,           -- nombre visible que el usuario le da al curso (ej. "Curso Creado A")
     nrc VARCHAR,                -- opcional; si es NULL se expone uno sintético "CP{id}"
     tipo VARCHAR,
     profesor VARCHAR,

@@ -97,7 +97,7 @@ def _custom_option_group(cc: CustomCourseInput) -> List[ClassOption]:
         ClassOption(
             subjectName=cc.name,
             subjectCode=cc.code,
-            type=cc.type or "Personalizado",
+            type=cc.etiqueta or cc.type or "Personalizado",
             schedules=cc.bloques,
             professor=cc.professor or "Personalizado",
             nrc=cc.nrc,

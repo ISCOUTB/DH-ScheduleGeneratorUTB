@@ -63,6 +63,7 @@ def _crear_tabla_curso_personalizado(conn: psycopg.Connection) -> None:
                 usuario_id INTEGER NOT NULL REFERENCES public.usuario(id),
                 codigomateria VARCHAR NOT NULL,
                 nombremateria VARCHAR NOT NULL,
+                etiqueta VARCHAR,
                 nrc VARCHAR,
                 tipo VARCHAR,
                 profesor VARCHAR,
@@ -84,12 +85,30 @@ def _crear_tabla_curso_personalizado(conn: psycopg.Connection) -> None:
         cursor.close()
 
 
+def _agregar_etiqueta_curso_personalizado(conn: psycopg.Connection) -> None:
+    """Agrega la columna `etiqueta` a `curso_personalizado` si falta.
+
+    En tablas ya creadas (prod), `CREATE TABLE IF NOT EXISTS` no altera nada, así
+    que la columna nueva llega por este `ADD COLUMN IF NOT EXISTS`. Idempotente.
+    """
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "ALTER TABLE public.curso_personalizado "
+            "ADD COLUMN IF NOT EXISTS etiqueta VARCHAR"
+        )
+        conn.commit()
+    finally:
+        cursor.close()
+
+
 def aplicar_migraciones() -> None:
     """Aplica todas las migraciones pendientes. Seguro de ejecutar siempre."""
     conn = get_connection()
     try:
         _migrar_creditos_decimales(conn)
         _crear_tabla_curso_personalizado(conn)
+        _agregar_etiqueta_curso_personalizado(conn)
     finally:
         conn.close()
 

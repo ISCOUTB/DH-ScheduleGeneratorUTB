@@ -587,6 +587,7 @@ def _shape_custom_course(row: Dict[str, Any]) -> Dict[str, Any]:
         "code": row["codigomateria"],
         "name": row["nombremateria"],
         "credits": float(row["creditos"]) if row.get("creditos") is not None else 0.0,
+        "etiqueta": row.get("etiqueta"),
         "nrc": row["nrc"] or f"CP{row['id']}",
         "type": row.get("tipo"),
         "professor": row.get("profesor"),
@@ -690,7 +691,7 @@ def get_custom_courses(usuario_id: int) -> List[Dict[str, Any]]:
 def create_custom_course(
     usuario_id: int, codigo: str, nombre: str, bloques: list,
     nrc: str = None, tipo: str = None, profesor: str = None,
-    campus: str = None, activo: bool = True,
+    campus: str = None, activo: bool = True, etiqueta: str = None,
 ) -> Dict[str, Any]:
     conn = get_db_connection()
     cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
@@ -698,11 +699,11 @@ def create_custom_course(
         cursor.execute(
             """
             INSERT INTO curso_personalizado
-                (usuario_id, codigomateria, nombremateria, nrc, tipo, profesor, campus, activo, bloques)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb)
+                (usuario_id, codigomateria, nombremateria, etiqueta, nrc, tipo, profesor, campus, activo, bloques)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s::jsonb)
             RETURNING id
             """,
-            (usuario_id, codigo, nombre, nrc, tipo, profesor, campus, activo, json.dumps(bloques)),
+            (usuario_id, codigo, nombre, etiqueta, nrc, tipo, profesor, campus, activo, json.dumps(bloques)),
         )
         new_id = cursor.fetchone()["id"]
         result = _fetch_custom_course(cursor, new_id, usuario_id)
@@ -715,7 +716,7 @@ def create_custom_course(
 
 def update_custom_course(
     id_: int, usuario_id: int, bloques=None, nrc=None, tipo=None,
-    profesor=None, campus=None, activo=None,
+    profesor=None, campus=None, activo=None, etiqueta=None,
 ) -> Dict[str, Any] | None:
     """Actualiza los campos provistos (None = no tocar). Valida dueño.
 
@@ -726,6 +727,9 @@ def update_custom_course(
     if bloques is not None:
         sets.append("bloques = %s::jsonb")
         params.append(json.dumps(bloques))
+    if etiqueta is not None:
+        sets.append("etiqueta = %s")
+        params.append(etiqueta)
     if nrc is not None:
         sets.append("nrc = %s")
         params.append(nrc)

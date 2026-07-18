@@ -239,6 +239,7 @@ class ScheduleProvider extends ChangeNotifier {
     required String code,
     required String name,
     required List<Schedule> bloques,
+    String? etiqueta,
     String? nrc,
     String? type,
     String? professor,
@@ -247,7 +248,7 @@ class ScheduleProvider extends ChangeNotifier {
   }) async {
     try {
       final cc = await _apiService.createCustomCourse(
-        code: code, name: name, bloques: bloques, nrc: nrc,
+        code: code, name: name, bloques: bloques, etiqueta: etiqueta, nrc: nrc,
         type: type, professor: professor, campus: campus, activo: activo,
       );
       _customCourses = [..._customCourses, cc];
@@ -269,6 +270,7 @@ class ScheduleProvider extends ChangeNotifier {
   Future<void> updateCustomCourse(
     int id, {
     List<Schedule>? bloques,
+    String? etiqueta,
     String? nrc,
     String? type,
     String? professor,
@@ -277,7 +279,7 @@ class ScheduleProvider extends ChangeNotifier {
   }) async {
     try {
       final updated = await _apiService.updateCustomCourse(
-        id, bloques: bloques, nrc: nrc, type: type,
+        id, bloques: bloques, etiqueta: etiqueta, nrc: nrc, type: type,
         professor: professor, campus: campus, activo: activo,
       );
       _customCourses = [

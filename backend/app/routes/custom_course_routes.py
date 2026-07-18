@@ -31,6 +31,7 @@ class CreateCustomCourseRequest(BaseModel):
     code: str
     name: str
     bloques: List[Bloque]
+    etiqueta: Optional[str] = None
     nrc: Optional[str] = None
     tipo: Optional[str] = None
     professor: Optional[str] = None
@@ -40,6 +41,7 @@ class CreateCustomCourseRequest(BaseModel):
 
 class UpdateCustomCourseRequest(BaseModel):
     bloques: Optional[List[Bloque]] = None
+    etiqueta: Optional[str] = None
     nrc: Optional[str] = None
     tipo: Optional[str] = None
     professor: Optional[str] = None
@@ -114,6 +116,7 @@ async def create_custom_course(
         repository.create_custom_course,
         uid, body.code, body.name, bloques,
         body.nrc, body.tipo, body.professor, body.campus, body.activo,
+        body.etiqueta,
     )
     return {"customCourse": result}
 
@@ -137,7 +140,7 @@ async def update_custom_course(
     result = await run_in_threadpool(
         repository.update_custom_course,
         course_id, uid, bloques, body.nrc, body.tipo,
-        body.professor, body.campus, body.activo,
+        body.professor, body.campus, body.activo, body.etiqueta,
     )
     if result is None:
         raise HTTPException(status_code=404, detail="Curso personalizado no encontrado.")

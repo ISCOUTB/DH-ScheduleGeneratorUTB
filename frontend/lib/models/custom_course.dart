@@ -14,6 +14,9 @@ class CustomCourse {
   final String name;
   final double credits;
 
+  /// Nombre visible que el usuario le dio al curso (ej. "Curso Creado A").
+  final String? etiqueta;
+
   /// NRC efectivo: el que puso el usuario o uno sintético `CP{id}` del backend.
   final String nrc;
 
@@ -35,6 +38,7 @@ class CustomCourse {
     required this.nrc,
     required this.activo,
     required this.bloques,
+    this.etiqueta,
     this.type,
     this.professor,
     this.campus,
@@ -49,6 +53,7 @@ class CustomCourse {
       code: json['code'] as String,
       name: json['name'] as String,
       credits: (json['credits'] as num).toDouble(),
+      etiqueta: json['etiqueta'] as String?,
       nrc: json['nrc'] as String,
       activo: json['activo'] as bool? ?? true,
       type: json['type'] as String?,
@@ -66,6 +71,7 @@ class CustomCourse {
         'code': code,
         'name': name,
         'credits': credits,
+        'etiqueta': etiqueta,
         'nrc': nrc,
         'type': type,
         'professor': professor,

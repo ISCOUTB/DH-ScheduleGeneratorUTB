@@ -55,6 +55,7 @@ class CustomCourseInput(BaseModel):
     credits: float
     nrc: str
     bloques: List[Schedule]                 # reusa {day, time}
+    etiqueta: Optional[str] = None          # nombre visible del curso (ej. "Curso Creado A")
     type: Optional[str] = None
     professor: Optional[str] = None
     campus: Optional[str] = None

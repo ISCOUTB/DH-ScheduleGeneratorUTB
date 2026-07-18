@@ -185,12 +185,16 @@ class CustomCoursesPanel extends StatelessWidget {
     final bloques = c.bloques
         .map((b) => '${b.day.substring(0, 3)} ${b.time}')
         .join(' · ');
+    final titulo = c.etiqueta?.trim().isNotEmpty == true
+        ? c.etiqueta!
+        : 'Curso personalizado';
     return ListTile(
       dense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-      title: Text(bloques, style: const TextStyle(fontSize: 13)),
+      title: Text(titulo, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
       subtitle: Text(
         [
+          bloques,
           'NRC: ${c.nrc}',
           if (c.professor != null && c.professor!.isNotEmpty) c.professor!,
           '${c.credits.toStringAsFixed(c.credits.truncateToDouble() == c.credits ? 0 : 1)} cr.',
@@ -207,6 +211,8 @@ class CustomCoursesPanel extends StatelessWidget {
             child: Switch(
               value: c.activo,
               activeColor: AppColors.primary,
+              inactiveThumbColor: Colors.grey.shade400,
+              inactiveTrackColor: Colors.grey.shade300,
               onChanged: (v) => provider.toggleCustomCourse(c.id, v),
             ),
           ),

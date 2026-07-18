@@ -240,8 +240,10 @@ class SubjectsPanel extends StatelessWidget {
               children: [
                 ...addedSubjects.map(_subjectCard),
                 const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 12,
+                  runSpacing: 8,
                   children: [
                     OutlinedButton.icon(
                       onPressed: onAddSubject,
@@ -399,11 +401,18 @@ class _SubjectCardState extends State<_SubjectCard> {
                     children: [
                       const Icon(Icons.event_note, size: 13, color: AppColors.primary),
                       const SizedBox(width: 4),
-                      Text('Curso personalizado',
+                      Expanded(
+                        child: Text(
+                          c.etiqueta?.trim().isNotEmpty == true
+                              ? c.etiqueta!
+                              : 'Curso personalizado',
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: Colors.grey.shade800)),
+                              color: Colors.grey.shade800),
+                        ),
+                      ),
                     ],
                   ),
                   Text(bloques, style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
@@ -415,6 +424,8 @@ class _SubjectCardState extends State<_SubjectCard> {
               child: Switch(
                 value: c.activo,
                 activeColor: AppColors.primary,
+                inactiveThumbColor: Colors.grey.shade400,
+                inactiveTrackColor: Colors.grey.shade300,
                 onChanged: (v) => widget.onToggleCustom(c.id, v),
               ),
             ),

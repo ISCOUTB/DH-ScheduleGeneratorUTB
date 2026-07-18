@@ -348,6 +348,7 @@ class ApiService {
     required String code,
     required String name,
     required List<Schedule> bloques,
+    String? etiqueta,
     String? nrc,
     String? type,
     String? professor,
@@ -364,6 +365,7 @@ class ApiService {
           "code": code,
           "name": name,
           "bloques": bloques.map((s) => s.toJson()).toList(),
+          "etiqueta": etiqueta,
           "nrc": nrc,
           "type": type,
           "professor": professor,
@@ -422,6 +424,7 @@ class ApiService {
   Future<CustomCourse> updateCustomCourse(
     int id, {
     List<Schedule>? bloques,
+    String? etiqueta,
     String? nrc,
     String? type,
     String? professor,
@@ -432,6 +435,7 @@ class ApiService {
     final client = _createClient();
     final body = <String, dynamic>{};
     if (bloques != null) body['bloques'] = bloques.map((s) => s.toJson()).toList();
+    if (etiqueta != null) body['etiqueta'] = etiqueta;
     if (nrc != null) body['nrc'] = nrc;
     if (type != null) body['type'] = type;
     if (professor != null) body['professor'] = professor;
