@@ -59,7 +59,11 @@ fi
 
 if [ "$need_seed" = true ]; then
   echo "Poblando la base de datos con initial-data (puede tardar ~1-2 min)..."
-  "${COMPOSE[@]}" run --rm initial-data
+  # --build: el seeder DEBE reconstruirse con el código actual. Sin esto, `run`
+  # usa la imagen cacheada de initial-data (que no entra en el --build de arriba),
+  # y un backup.py viejo puede borrar `materia` y romper la FK de
+  # curso_personalizado. Ver docs/issues/17-07-2026-rfc-cursos-personalizados.md §11.
+  "${COMPOSE[@]}" run --rm --build initial-data
 fi
 
 echo "Iniciando Flutter en Chrome (se abre solo en http://localhost:8080)."

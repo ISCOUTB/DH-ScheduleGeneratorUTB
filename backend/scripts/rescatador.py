@@ -1,6 +1,6 @@
 import requests
 import re
-from typing import Any, Optional, Dict
+from typing import Any, Dict, List
 from parser import ProcesarJsonResponse, procesar_json
 
 def extraer_nrc_del_log(log_path: str) -> set[str]:
@@ -17,31 +17,43 @@ def extraer_nrc_del_log(log_path: str) -> set[str]:
         print(f"Advertencia: No se encontró el archivo de log en {log_path}")
     return nrcs
 
-def rescatar_curso_ligado(session: requests.Session, term: str, nrc: str) -> Optional[Dict[str, Any]]:
+def rescatar_cursos_ligados(session: requests.Session, term: str, nrc: str) -> List[Dict[str, Any]]:
     """
-    Usa la petición 'fetchLinkedSections' para obtener la información de un curso ligado.
+    Usa la petición 'fetchLinkedSections' para obtener TODAS las secciones ligadas
+    de un curso.
+
+    `linkedData` es una lista de grupos, y cada grupo una lista de secciones: un
+    curso puede tener varias secciones ligadas alternativas (p. ej. dos grupos de
+    laboratorio). Se aplanan todos los grupos y se devuelven todas las secciones
+    (dedupe por NRC). Antes se devolvía solo `linkedData[0][0]`, lo que descartaba
+    el resto y dejaba esos NRC fuera de la oferta.
     """
     url = "https://bannerssbregistro.utb.edu.co:8443/StudentRegistrationSsb/ssb/searchResults/fetchLinkedSections"
     params = {
         "term": term,
         "courseReferenceNumber": nrc
     }
+    rescatados: List[Dict[str, Any]] = []
     try:
         response = session.get(url, params=params, verify=False, timeout=10)
         response.raise_for_status()
-        
+
         data = response.json()
-        
-        # Navega a la estructura correcta del JSON: data -> "linkedData" -> lista[0] -> lista[0]
-        linked_data = data.get("linkedData")
-        if linked_data and linked_data[0]:
-            return linked_data[0][0] # Devuelve el primer curso de la lista anidada
+
+        linked_data = data.get("linkedData") or []
+        vistos: set[str] = set()
+        for grupo in linked_data:
+            for seccion in grupo:
+                crn = seccion.get("courseReferenceNumber")
+                if crn and crn not in vistos:
+                    vistos.add(crn)
+                    rescatados.append(seccion)
 
     except requests.exceptions.RequestException as e:
         print(f"Error al rescatar NRC {nrc}: {e}")
-    except (KeyError, IndexError) as e:
+    except (KeyError, IndexError, TypeError) as e:
         print(f"Error al parsear la respuesta para NRC {nrc}. Estructura inesperada: {e}")
-    return None
+    return rescatados
 
 def procesar_rescate(json_original: Dict[str, Any], log_path: str, term: str) -> ProcesarJsonResponse:
     """
@@ -63,17 +75,19 @@ def procesar_rescate(json_original: Dict[str, Any], log_path: str, term: str) ->
 
     for nrc in nrcs_a_rescatar:
         print(f"Intentando rescatar par para NRC {nrc}...")
-        curso_rescatado_json = rescatar_curso_ligado(session, term, nrc)
-        
-        if curso_rescatado_json:
-            nrc_rescatado = curso_rescatado_json.get('courseReferenceNumber')
-            print(f"  -> ¡Éxito! Se encontró el par para NRC {nrc}. NRC rescatado: {nrc_rescatado}")
-            
-            # Añadimos el curso rescatado al JSON original si no estaba ya
-            if nrc_rescatado not in nrcs_existentes:
-                json_data_list.append(curso_rescatado_json)
-                nrcs_existentes.add(nrc_rescatado)
-                cursos_rescatados_con_exito += 1
+        rescatados = rescatar_cursos_ligados(session, term, nrc)
+
+        if rescatados:
+            nrcs_rescatados = [c.get('courseReferenceNumber') for c in rescatados]
+            print(f"  -> ¡Éxito! Secciones ligadas de NRC {nrc}: {', '.join(nrcs_rescatados)}")
+
+            # Añadimos cada sección ligada al JSON original si no estaba ya.
+            for curso in rescatados:
+                crn = curso.get('courseReferenceNumber')
+                if crn and crn not in nrcs_existentes:
+                    json_data_list.append(curso)
+                    nrcs_existentes.add(crn)
+                    cursos_rescatados_con_exito += 1
         else:
             # Este NRC no tiene par, el segundo parseo lo marcará como error definitivo.
             print(f"  -> Fallo. No se encontró par para NRC {nrc}. Se marcará como error final.")

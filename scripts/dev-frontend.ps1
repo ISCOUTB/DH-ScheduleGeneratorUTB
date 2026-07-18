@@ -61,7 +61,11 @@ if (-not $Seed) {
 
 if ($needSeed) {
     Write-Host "Poblando la base de datos con initial-data (puede tardar ~1-2 min)..."
-    docker @Compose run --rm initial-data
+    # --build: el seeder DEBE reconstruirse con el codigo actual. Sin esto,
+    # `run` usa la imagen cacheada de initial-data (que no entra en el --build de
+    # arriba), y un backup.py viejo puede borrar `materia` y romper la FK de
+    # curso_personalizado. Ver docs/issues/17-07-2026-rfc-cursos-personalizados.md §11.
+    docker @Compose run --rm --build initial-data
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
