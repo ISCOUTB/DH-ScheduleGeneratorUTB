@@ -254,7 +254,7 @@ class ScheduleProvider extends ChangeNotifier {
       _customCourses = [..._customCourses, cc];
       if (!isSubjectInList(cc.subjectKey)) {
         // addSubject notifica y regenera con el nuevo curso ya presente.
-        addSubjectFromCustom(cc);
+        await addSubjectFromCustom(cc);
       } else {
         notifyListeners();
         _regenerateIfAffects(cc.subjectKey);
@@ -319,17 +319,26 @@ class ScheduleProvider extends ChangeNotifier {
 
   /// Agrega a la lista de trabajo la materia de un curso personalizado.
   ///
-  /// La materia puede no tener oferta (ese es el caso de uso), así que se
-  /// construye un `Subject` mínimo sin `classOptions`: para la generación basta,
-  /// porque su dominio lo aporta el curso personalizado activo. Retorna mensaje
-  /// de error o null.
-  String? addSubjectFromCustom(CustomCourse cc) {
-    return addSubject(Subject(
-      code: cc.code,
-      name: cc.name,
-      credits: cc.credits,
-      classOptions: const [],
-    ));
+  /// Trae la **oferta real** de la materia (igual que el buscador) para que sus
+  /// `classOptions` alimenten los filtros de NRC/profesor. Si la materia no
+  /// tiene oferta (ese es un caso de uso válido), o no se puede consultar, se
+  /// agrega con `classOptions` vacío: para la generación basta, porque su
+  /// dominio lo aporta el curso personalizado activo. Retorna mensaje de error
+  /// o null.
+  Future<String?> addSubjectFromCustom(CustomCourse cc) async {
+    Subject subject;
+    try {
+      // getSubjectDetails devuelve el Subject con sus classOptions de la oferta.
+      subject = await _apiService.getSubjectDetails(cc.code, cc.name);
+    } catch (_) {
+      subject = Subject(
+        code: cc.code,
+        name: cc.name,
+        credits: cc.credits,
+        classOptions: const [],
+      );
+    }
+    return addSubject(subject);
   }
 
   /// Si la materia de un curso personalizado ya está en la lista de trabajo.

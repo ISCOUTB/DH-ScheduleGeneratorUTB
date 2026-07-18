@@ -28,6 +28,10 @@ CourseStatus statusForClass(
   ClassOption option,
   Map<String, Map<String, int>> seatsByNrc,
 ) {
+  // Un curso personalizado no está en la oferta a propósito: no tiene cupos que
+  // vigilar, así que nunca es "eliminado" ni alarma. Se trata como seguro.
+  // (`CP...` cubre favoritos viejos guardados sin el flag `isCustom`.)
+  if (option.isCustom || option.nrc.startsWith('CP')) return CourseStatus.safe;
   final seats = seatsByNrc[option.nrc];
   if (seats == null) return CourseStatus.eliminated;
   return computeCourseStatus(seats['available'] ?? 0, seats['total'] ?? 0);
@@ -61,9 +65,10 @@ ScheduleIssues issuesForSchedule(
   int noSeats = 0;
   int notOffered = 0;
   for (final option in schedule) {
-    // Los cursos personalizados (NRC sintético "CP...") están fuera de la oferta
-    // a propósito: no son un problema. Excluirlos evita un falso "fuera de oferta".
-    if (option.nrc.startsWith('CP')) continue;
+    // Los cursos personalizados están fuera de la oferta a propósito: no son un
+    // problema. Se excluyen por el flag `isCustom` (el NRC puede ser uno real
+    // que puso el usuario); `CP...` cubre favoritos viejos sin el flag.
+    if (option.isCustom || option.nrc.startsWith('CP')) continue;
 
     final seats = seatsByNrc[option.nrc];
     if (seats == null) {

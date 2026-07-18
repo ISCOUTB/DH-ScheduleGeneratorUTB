@@ -69,6 +69,8 @@ class CustomCoursesPanel extends StatelessWidget {
                       label: const Text('Agregar curso'),
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  _infoBanner(),
                   const Divider(height: 20),
                   Expanded(
                     child: byKey.isEmpty
@@ -87,6 +89,30 @@ class CustomCoursesPanel extends StatelessWidget {
       ),
     );
   }
+
+  /// Aviso azul que explica para qué sirve el panel (como el de "Buscar Materia").
+  Widget _infoBanner() => Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.blue.shade50,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.blue.shade200),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.info_outline, color: Colors.blue.shade600, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Un curso personalizado fija un curso que ya tienes o decidiste '
+                '(aunque no esté en la oferta). Marca sus horas y el generador '
+                'arma el resto del horario a su alrededor.',
+                style: TextStyle(color: Colors.blue.shade700, fontSize: 12, height: 1.3),
+              ),
+            ),
+          ],
+        ),
+      );
 
   Widget _emptyState() => Center(
         child: Column(
@@ -161,9 +187,9 @@ class CustomCoursesPanel extends StatelessWidget {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
-                      final err = provider.addSubjectFromCustom(first);
-                      if (err != null) {
+                    onPressed: () async {
+                      final err = await provider.addSubjectFromCustom(first);
+                      if (err != null && context.mounted) {
                         showCustomNotification(context, err,
                             icon: Icons.info, color: Colors.orange);
                       }

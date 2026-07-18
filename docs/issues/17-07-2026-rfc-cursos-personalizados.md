@@ -256,3 +256,48 @@ Lo entregado y en qué archivo vive. Los puntos marcan dónde la implementación
 
 ### Nota de despliegue (ETL)
 `backup.py` y el esquema `curso_personalizado` **deben desplegarse juntos**. Si el contenedor `cron-updater` corre un `backup.py` viejo (con `Materia` aún en `ACADEMIC_TABLES`) contra una BD que ya tiene la tabla nueva, el `DELETE FROM Materia` rompe la FK `curso_personalizado_...fkey` y el ETL aborta (la transacción hace rollback, sin pérdida de datos, pero no actualiza la oferta). En local: `docker compose up -d --build backend cron-updater`.
+
+> **Trampa del seeder (2026-07-18):** el mismo crash reapareció aunque `cron-updater` estaba fresco, porque el **poblado** corre en un servicio **distinto**, `initial-data` (mismo `scripts.Dockerfile`), y `dev-frontend.ps1/.sh` lo lanzaba con `docker compose run --rm initial-data` **sin `--build`**. Esa imagen quedaba stale (con `backup.py` viejo) y borraba `materia`. **Fix:** el seed ahora usa `run --rm --build initial-data`. No era el volumen de la BD ni `--seed`; era la imagen de `initial-data` sin reconstruir. Regla general: **cualquier** servicio del `scripts.Dockerfile` que corra el ETL (`cron-updater`, `initial-data`) debe reconstruirse con el código actual.
+
+## 12. Iteración de UI y correcciones (2026-07-18, post-commit `4df7293`)
+
+Ronda de pulido y arreglos sobre lo ya implementado. Agrupado por tema.
+
+### 12.1 Diferenciar el curso personalizado en las grillas (`isCustom`)
+Antes no se distinguía visualmente un curso personalizado del resto en el horario. Se agregó un flag **`isCustom`** de punta a punta:
+- Backend: `ClassOption.is_custom` (alias `isCustom`) en `models.py`; `_custom_option_group` en `main.py` lo pone `True`.
+- Frontend: `ClassOption.isCustom` (`class_option.dart`), serializado en `toJson` para que **sobreviva en favoritos**.
+- Render: en la grilla de resultados/preview (`schedule_preview_card.dart`) y en el detalle (`schedule_overview_widget.dart`) el bloque personalizado se pinta con **relleno translúcido + borde de su color** (conserva el color que identifica la materia), y texto en el color oscurecido. Así se distingue también en **horarios destacados**.
+
+### 12.2 Detalle y descargas: qué se muestra de un curso personalizado
+Un curso personalizado no tiene campus ni cupos "oficiales". En el **detalle** (`schedule_overview_widget.dart`) y en las **descargas PDF/Excel** (`schedule_export.dart`):
+- **Sin campus** y **sin cupos**.
+- **Profesor** solo si el estudiante lo puso; **NRC** solo si lo puso (el sintético `CP{id}` no se muestra).
+- Donde iría el profesor se rotula **"Curso Personalizado"** (y como "Tipo" en las tablas; en la grilla del PDF/Excel el bloque dice "Curso Personalizado").
+- El backend ahora manda `professor=""` (no `"Personalizado"`) cuando no hay profesor. Como blindaje, el frontend además trata el literal `"Personalizado"` como "sin profesor" (por si corre contra un backend sin redeploy).
+- En el detalle, un curso personalizado **nunca** se marca en rojo "sin cupos/eliminado".
+
+### 12.3 Estado/alertas: excluir por `isCustom`, no por prefijo `CP` (bug)
+La exclusión de cursos personalizados del modo "Estado" y del aviso de destacados se hacía por `nrc.startsWith('CP')`. Al permitir **NRC real** del usuario (4 dígitos), esos cursos volvían a marcarse **"Eliminado"** (gris) y disparaban la alerta ⚠. **Fix** en `course_status.dart` y `schedule_overview_widget.dart`: excluir por **`isCustom`** (se deja el `CP` también, para favoritos viejos sin el flag). `statusForClass` devuelve `safe` para un curso personalizado.
+
+### 12.4 Filtros vacíos para materias agregadas por curso personalizado (bug)
+`addSubjectFromCustom` agregaba la materia con `classOptions: []`, así que los filtros de **NRC/profesor** no tenían opciones (a diferencia de agregarla por "Buscar materia", que trae la oferta). **Fix** (`schedule_provider.dart`): ahora `addSubjectFromCustom` es `async` y **trae la oferta real** con `getSubjectDetails` (fallback a vacío si la materia no tiene oferta). Los llamadores (`createCustomCourse`, "Agregar a mi lista") pasan a `await`.
+
+### 12.5 Wizard: pulido de formulario
+- **Aviso azul** de "para qué sirve" movido del wizard al **panel de gestión** (`custom_courses_panel.dart`), estilo "Buscar Materia".
+- Campos marcados **"(opcional)"** (Nombre, Profesor, NRC).
+- **Nombre del curso:** el default ya no se escribe en el campo. El label dice **"Nombre del curso (Por defecto: Curso A)"** y el placeholder es el default (`Curso A`); el esquema pasó de "Curso Creado A" a **"Curso A"** (siguiente letra libre). Se aplica al guardar si queda vacío.
+- **NRC:** solo dígitos, máx 4 (`inputFormatters`); si mete 1–3 dígitos → error y bloqueo; solo consulta al backend con 4. Ícono **ℹ️ con tooltip** (3 líneas) explicando que el NRC es único por periodo: si ya existe, ese curso está en la oferta (o te equivocaste al digitar).
+- Labels de campo **más oscuros** (`#374151`, negrita) para que resalten más que el texto interno.
+
+### 12.6 Grilla de horario (paso 2): selección por rango + arreglo del arrastre
+- Antes el arrastre fijaba el modo (marcar/borrar) en la primera celda y no se podía deshacer arrastrando de vuelta. Ahora es **selección por rango**: la celda ancla y la del cursor definen un rectángulo; **arrastrar de vuelta lo encoge** (corrige el sobrepaso). El modo lo fija el ancla (vacía → marca; llena → borra). Reaplica sobre un snapshot tomado al `pointer-down`.
+- El arrastre **respondía con retraso** (~1 s) porque `GestureDetector` (pan) competía en la arena de gestos con el tap y el scroll. **Fix:** se cambió a **`Listener`** (eventos de puntero crudos, sin arena) → respuesta inmediata.
+
+### 12.7 Botones "Agregar materia" / "Crear curso"
+Van **contiguos en una fila, centrados como grupo** (`Row` dentro de `Center`+`FittedBox(scaleDown)`): muestran el texto completo y, si no cupieran, escalan el grupo en vez de cortar la palabra o apilarse.
+
+### 12.8 Archivos tocados en esta ronda
+`backend/app/models.py`, `backend/app/main.py`, `frontend/lib/models/class_option.dart`, `frontend/lib/models/course_status.dart`, `frontend/lib/widgets/schedule_preview_card.dart`, `frontend/lib/widgets/schedule_overview_widget.dart`, `frontend/lib/services/schedule_export.dart`, `frontend/lib/widgets/custom_course/custom_course_wizard.dart`, `frontend/lib/widgets/custom_course/custom_courses_panel.dart`, `frontend/lib/widgets/subjects_panel.dart`, `frontend/lib/providers/schedule_provider.dart`.
+
+> Nota de datos: los favoritos guardados **antes** de `isCustom` no traen el flag → se ven como curso normal. Solo aplica a horarios nuevos. Sin migración de datos (no vale la pena).

@@ -152,6 +152,33 @@ String _todayLabel() {
   return '$d/$m/${now.year}';
 }
 
+// Presentación de un curso personalizado en detalle/descargas: tipo fijo
+// "Curso Personalizado", y sin NRC/profesor/campus/cupos salvo que el usuario
+// los haya puesto (el NRC sintético "CP{id}" no se muestra).
+bool _customRealNrc(ClassOption o) => o.nrc.isNotEmpty && !o.nrc.startsWith('CP');
+String _typeLabel(ClassOption o) => o.isCustom ? 'Curso Personalizado' : o.type;
+String _nrcLabel(ClassOption o) => (o.isCustom && !_customRealNrc(o)) ? '' : o.nrc;
+String _profLabel(ClassOption o) {
+  // "Personalizado" es el placeholder del backend viejo: no es un profesor real.
+  final p = o.professor.trim();
+  if (o.isCustom && (p.isEmpty || p == 'Personalizado')) return '';
+  return o.professor;
+}
+String _campusLabel(ClassOption o) => o.isCustom ? '' : o.campus;
+
+/// Línea meta de un bloque en la grilla (PDF/Excel): "Tipo · NRC ...". Para un
+/// curso personalizado: "Curso Personalizado" (+ NRC solo si el usuario lo puso).
+String _blockMeta(_Block block) {
+  if (block.first.isCustom) {
+    return _customRealNrc(block.first)
+        ? 'Curso Personalizado · NRC ${block.first.nrc}'
+        : 'Curso Personalizado';
+  }
+  final types = block.options.map((o) => o.type).toSet().join(' / ');
+  final nrcs = block.options.map((o) => o.nrc).join(' / ');
+  return '$types · NRC $nrcs';
+}
+
 /// Resumen del horario para las cabeceras: "6 materias · 18 créditos".
 String _summary(List<ClassOption> schedule) {
   final subjects = _subjectsOf(schedule).length;
@@ -335,8 +362,6 @@ pw.Widget _pdfGrid(_Layout layout, Map<String, Color> subjectColors) {
     final color = subjectColors[block.first.subjectKey] ?? Colors.grey;
     final top = (block.start - layout.startHour) * rowHeight;
     final height = (block.end - block.start) * rowHeight;
-    final nrcs = block.options.map((o) => o.nrc).join(' / ');
-    final types = block.options.map((o) => o.type).toSet().join(' / ');
 
     return pw.Positioned(
       top: top,
@@ -362,7 +387,7 @@ pw.Widget _pdfGrid(_Layout layout, Map<String, Color> subjectColors) {
               overflow: pw.TextOverflow.clip,
               style: pw.TextStyle(fontSize: 6.5, fontWeight: pw.FontWeight.bold),
             ),
-            pw.Text('$types · NRC $nrcs',
+            pw.Text(_blockMeta(block),
                 maxLines: 1, style: pw.TextStyle(fontSize: 5.5, color: _pdfInk)),
             pw.Text(_blockRange(block),
                 maxLines: 1, style: pw.TextStyle(fontSize: 5.5, color: _pdfInk)),
@@ -460,10 +485,10 @@ pw.Widget _pdfDetails(List<ClassOption> schedule, Map<String, Color> subjectColo
         ),
         children: [
           cell(option.subjectName, bold: true),
-          cell(option.type),
-          cell(option.nrc),
-          cell(option.professor),
-          cell(option.campus),
+          cell(_typeLabel(option)),
+          cell(_nrcLabel(option)),
+          cell(_profLabel(option)),
+          cell(_campusLabel(option)),
           cell(formatCredits(option.credits)),
           cell(horario, color: _pdfMuted),
         ],
@@ -612,10 +637,8 @@ void _excelGridSheet(
     if (startRow < headerRow + 1 || endRow < startRow) continue;
 
     final color = subjectColors[block.first.subjectKey] ?? Colors.grey;
-    final nrcs = block.options.map((o) => o.nrc).join(' / ');
-    final types = block.options.map((o) => o.type).toSet().join(' / ');
     final text = '${block.first.subjectName}\n'
-        '$types · NRC $nrcs\n'
+        '${_blockMeta(block)}\n'
         '${_blockRange(block)}';
 
     final style = xls.CellStyle(
@@ -679,12 +702,13 @@ void _excelDetailsSheet(xls.Excel book, List<ClassOption> schedule) {
     for (final option in entry.value) {
       final values = <xls.CellValue>[
         xls.TextCellValue(option.subjectName),
-        xls.TextCellValue(option.type),
-        xls.TextCellValue(option.nrc),
-        xls.TextCellValue(option.professor),
-        xls.TextCellValue(option.campus),
+        xls.TextCellValue(_typeLabel(option)),
+        xls.TextCellValue(_nrcLabel(option)),
+        xls.TextCellValue(_profLabel(option)),
+        xls.TextCellValue(_campusLabel(option)),
         xls.TextCellValue(formatCredits(option.credits)),
-        xls.TextCellValue('${option.seatsAvailable} de ${option.seatsMaximum}'),
+        xls.TextCellValue(
+            option.isCustom ? '' : '${option.seatsAvailable} de ${option.seatsMaximum}'),
         xls.TextCellValue(
             option.schedules.map((s) => '${s.day} ${s.time}').join(' | ')),
       ];

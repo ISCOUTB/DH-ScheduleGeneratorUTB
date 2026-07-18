@@ -410,22 +410,44 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
           ),
           // Muestra los detalles de la clase (NRC, profesor, etc.) al expandir.
           children: classOptions.map((option) {
+            // Curso personalizado: no tiene campus/cupos "oficiales" y el
+            // profesor/NRC solo se muestran si el usuario los puso. En el lugar
+            // del profesor se rotula "Curso Personalizado".
+            final bool custom = option.isCustom;
+            final bool realNrc =
+                option.nrc.isNotEmpty && !option.nrc.startsWith('CP');
+            // "Personalizado" es el placeholder del backend viejo: se trata como
+            // "sin profesor" para no mostrar "Profesor: Personalizado".
+            final String prof = option.professor.trim();
+            final bool hasProf = prof.isNotEmpty && prof != 'Personalizado';
+
+            final String titleText = (custom && !realNrc)
+                ? option.type
+                : '${option.type} (NRC: ${option.nrc})';
+
+            final String subtitleText = custom
+                ? [
+                    'Curso Personalizado',
+                    if (hasProf) 'Profesor: ${option.professor}',
+                    'Horario: ${formattingSchedulesInPairs(option.schedules)}',
+                    'Créditos: ${formatCredits(option.credits)}',
+                  ].join('\n')
+                : 'Profesor: ${option.professor}\n'
+                    'Horario: ${formattingSchedulesInPairs(option.schedules)}\n'
+                    'Campus: ${option.campus}\n'
+                    '${_cuposLabel(option)}\n'
+                    'Créditos: ${formatCredits(option.credits)}';
+
             return ListTile(
               contentPadding:
                   const EdgeInsets.only(left: 40, right: 16, bottom: 8),
               tileColor:
                   _optionUnavailable(option) ? Colors.red.shade100 : null,
               title: Text(
-                '${option.type} (NRC: ${option.nrc})',
+                titleText,
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
-              subtitle: Text(
-                'Profesor: ${option.professor}\n'
-                'Horario: ${formattingSchedulesInPairs(option.schedules)}\n'
-                'Campus: ${option.campus}\n'
-                '${_cuposLabel(option)}\n'
-                'Créditos: ${formatCredits(option.credits)}',
-              ),
+              subtitle: Text(subtitleText),
             );
           }).toList(),
         );
@@ -500,6 +522,10 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
   /// existen; si no, el snapshot. Si no se pudo consultar (mapa vacío en
   /// término actual) no se marca en rojo: no se sabe.
   bool _optionUnavailable(ClassOption option) {
+    // Un curso personalizado no está en la oferta a propósito: nunca es "sin
+    // cupos" ni "eliminado" (sus cupos 1/1 son ficticios). `CP...` cubre
+    // favoritos viejos guardados sin el flag `isCustom`.
+    if (option.isCustom || option.nrc.startsWith('CP')) return false;
     final live = widget.seatsByNrc[option.nrc];
     if (live != null) return (live['available'] ?? 0) <= 0;
     // Datos cargados pero este NRC ausente => eliminado de la oferta.
@@ -778,14 +804,22 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
             : (subjectColors[overlappingClasses.first.subjectKey] ??
                 Colors.grey);
 
+        // Curso personalizado: se distingue con relleno translúcido + borde de
+        // su color (igual que en la grilla de resultados).
+        final bool isCustom = overlappingClasses.first.isCustom;
+
         // Rótulo del bloque: en modo estado, el número de la materia (el color
-        // ya indica los cupos); si no, los NRC. Uno por línea.
+        // ya indica los cupos); si no, los NRC. Un curso personalizado sin NRC
+        // propio muestra su nombre (type), no el sintético "CP...".
         final List<String> labels = _statusColoring
             ? overlappingClasses
                 .map((c) => '${_subjectNumbers[c.subjectKey] ?? '?'}')
                 .toSet() // dos clases de la misma materia comparten número
                 .toList()
-            : overlappingClasses.map((c) => c.nrc).toList();
+            : overlappingClasses.map((c) {
+                if (c.isCustom && c.nrc.startsWith('CP')) return c.type;
+                return c.nrc;
+              }).toList();
 
         blocks.add(
           Positioned(
@@ -797,13 +831,16 @@ class _ScheduleOverviewWidgetState extends State<ScheduleOverviewWidget> {
               margin: const EdgeInsets.all(1),
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.8),
+                color: isCustom ? color.withOpacity(0.22) : color.withOpacity(0.8),
+                border: isCustom ? Border.all(color: color, width: 1.6) : null,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 labels.join('\n'),
                 style: TextStyle(
-                  color: Colors.white,
+                  color: isCustom
+                      ? (Color.lerp(color, Colors.black, 0.35) ?? color)
+                      : Colors.white,
                   fontSize: _statusColoring ? 13 : 10,
                   fontWeight: FontWeight.bold,
                 ),

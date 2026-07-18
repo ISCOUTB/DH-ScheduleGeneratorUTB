@@ -99,13 +99,17 @@ def _custom_option_group(cc: CustomCourseInput) -> List[ClassOption]:
             subjectCode=cc.code,
             type=cc.etiqueta or cc.type or "Personalizado",
             schedules=cc.bloques,
-            professor=cc.professor or "Personalizado",
+            # Vacío si el usuario no puso profesor: la UI/descargas muestran el
+            # profesor solo cuando existe (para un curso personalizado no hay uno
+            # "oficial"). Ver detalle en schedule_overview / schedule_export.
+            professor=cc.professor or "",
             nrc=cc.nrc,
             groupId=0,
             credits=cc.credits,
             campus=cc.campus or "",
             seatsAvailable=1,
             seatsMaximum=1,
+            isCustom=True,
         )
     ]
 

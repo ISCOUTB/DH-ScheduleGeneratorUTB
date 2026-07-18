@@ -1,6 +1,7 @@
 // lib/widgets/custom_course/custom_course_wizard.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:diacritic/diacritic.dart';
 
@@ -55,7 +56,11 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
 
   Timer? _nrcDebounce;
   bool _nrcChecking = false;
-  String? _nrcError; // "ya existe en la materia X"
+  String? _nrcError; // "ya existe en la materia X" / "debe tener 4 dígitos"
+
+  /// Nombre que se usará si el usuario deja el campo vacío (solo para mostrarlo
+  /// como pista debajo del campo). Ej. "Curso A".
+  String _defaultName = 'Curso A';
 
   bool get _isEdit => widget.existing != null;
 
@@ -71,8 +76,9 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
       _nrcController.text = ex.nrc.startsWith('CP') ? '' : ex.nrc;
       _selected.addAll(_selectedFromBloques(ex.bloques));
     } else {
-      // Nombre por defecto: "Curso Creado A", o la siguiente letra libre.
-      _labelController.text = _defaultLabel();
+      // El campo queda vacío; el default solo se muestra como pista y se aplica
+      // al guardar si el usuario no escribe nada.
+      _defaultName = _defaultLabel();
     }
   }
 
@@ -85,7 +91,7 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
     super.dispose();
   }
 
-  /// Primer "Curso Creado X" (A, B, … Z, AA, …) que no choque con los que ya tiene.
+  /// Primer "Curso X" (A, B, … Z, AA, …) que no choque con los que ya tiene.
   String _defaultLabel() {
     final taken = context
         .read<ScheduleProvider>()
@@ -94,7 +100,7 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
         .whereType<String>()
         .toSet();
     for (int i = 0;; i++) {
-      final label = 'Curso Creado ${_excelLetter(i)}';
+      final label = 'Curso ${_excelLetter(i)}';
       if (!taken.contains(label)) return label;
     }
   }
@@ -166,6 +172,11 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
     final nrc = value.trim();
     if (nrc.isEmpty) {
       setState(() { _nrcError = null; _nrcChecking = false; });
+      return;
+    }
+    // Un NRC de la oferta tiene 4 dígitos. Con menos, no se consulta al backend.
+    if (nrc.length != 4) {
+      setState(() { _nrcChecking = false; _nrcError = 'El NRC debe tener 4 dígitos.'; });
       return;
     }
     setState(() { _nrcChecking = true; _nrcError = null; });
@@ -248,7 +259,7 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
                 _isEdit ? 'Editar curso personalizado' : 'Nuevo curso personalizado',
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               _stepsHeader(),
               const Divider(height: 20),
               Expanded(child: _buildStepBody()),
@@ -399,26 +410,46 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Datos opcionales', style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text('Datos opcionales',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black87)),
           const SizedBox(height: 12),
-          const Text('Nombre del curso', style: TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+          _fieldLabel(_isEdit
+              ? 'Nombre del curso (opcional)'
+              : 'Nombre del curso (Por defecto: $_defaultName)'),
           const SizedBox(height: 4),
           TextField(
             controller: _labelController,
-            decoration: _dec('Ej. Curso Creado A'),
+            decoration: _dec(_defaultName),
           ),
           const SizedBox(height: 16),
-          const Text('Profesor', style: TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+          _fieldLabel('Profesor (opcional)'),
           const SizedBox(height: 4),
           TextField(controller: _profController, decoration: _dec('Ej. Juan Pérez')),
           const SizedBox(height: 16),
-          const Text('NRC', style: TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+          Row(
+            children: [
+              _fieldLabel('NRC (opcional)'),
+              const SizedBox(width: 6),
+              Tooltip(
+                message: 'Cada curso de la oferta tiene un NRC único de 4 dígitos.\n'
+                    'Si el que escribes ya existe, ese curso está en la oferta:\n'
+                    'te equivocaste al digitar, o el curso ya existe y no hay que crearlo.',
+                triggerMode: TooltipTriggerMode.tap,
+                showDuration: const Duration(seconds: 5),
+                child: Icon(Icons.info_outline, size: 16, color: Colors.grey.shade500),
+              ),
+            ],
+          ),
           const SizedBox(height: 4),
           TextField(
             controller: _nrcController,
             keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(4),
+            ],
             onChanged: _onNrcChanged,
-            decoration: _dec('Si lo conoces').copyWith(
+            decoration: _dec('4 dígitos').copyWith(
               suffixIcon: _nrcChecking
                   ? const Padding(padding: EdgeInsets.all(12), child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)))
                   : (_nrcError == null && _nrcController.text.trim().isNotEmpty
@@ -457,11 +488,24 @@ class _CustomCourseWizardState extends State<CustomCourseWizard> {
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       );
+
+  /// Etiqueta de un campo: oscura y en negrita, para que resalte más que el
+  /// texto que se escribe adentro.
+  Widget _fieldLabel(String text) => Text(
+        text,
+        style: const TextStyle(
+            fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF374151)),
+      );
+
 }
 
-/// Grilla interactiva de selección de bloques. Clic para alternar una celda,
-/// arrastre para pintar varias. El modo (marcar/borrar) lo fija la primera
-/// celda tocada.
+/// Grilla interactiva de selección de bloques. Clic para alternar una celda;
+/// arrastre para seleccionar un **rango**: la celda ancla (donde se empieza) y
+/// la del cursor definen un rectángulo. Al arrastrar de vuelta el rectángulo se
+/// encoge, así que si te pasas de franja, devuelves el mouse y se corrige (sin
+/// tener que soltar y borrar a mano). El modo (marcar/borrar) lo fija el ancla:
+/// si empiezas sobre una celda vacía, el rango marca; si empiezas sobre una
+/// llena, el rango borra.
 class _GridSelector extends StatefulWidget {
   final Set<String> selected;
   final VoidCallback onChanged;
@@ -476,23 +520,70 @@ class _GridSelectorState extends State<_GridSelector> {
   static const double _headerH = 22;
   static const double _cellH = 26;
 
-  bool? _paintTarget; // true = marcando, false = borrando
+  // Estado del arrastre: celda ancla, snapshot de la selección al empezar, y si
+  // el rango marca (true) o borra (false).
+  int? _aDay, _aHour;
+  Set<String> _base = {};
+  bool _paint = true;
 
-  void _apply(Offset local, double cellW, {required bool start}) {
-    if (local.dx < _labelW || local.dy < _headerH) return;
+  // Celda exacta bajo el punto, o null si cae en las cabeceras/fuera.
+  List<int>? _cellAt(Offset local, double cellW) {
+    if (local.dx < _labelW || local.dy < _headerH) return null;
     final day = ((local.dx - _labelW) / cellW).floor();
-    final row = ((local.dy - _headerH) / _cellH).floor();
-    if (day < 0 || day >= _kAbbrevDays.length) return;
-    final hour = _kFirstHour + row;
-    if (hour < _kFirstHour || hour > _kLastHour) return;
-    final id = '$day:$hour';
-    if (start) _paintTarget = !widget.selected.contains(id);
-    final target = _paintTarget ?? true;
-    if (target) {
-      widget.selected.add(id);
-    } else {
-      widget.selected.remove(id);
+    final hour = _kFirstHour + ((local.dy - _headerH) / _cellH).floor();
+    if (day < 0 || day >= _kAbbrevDays.length) return null;
+    if (hour < _kFirstHour || hour > _kLastHour) return null;
+    return [day, hour];
+  }
+
+  // Igual, pero recortada al borde de la grilla (para que arrastrar por fuera
+  // siga extendiendo el rango hasta el límite en vez de detenerse).
+  List<int> _clampCell(Offset local, double cellW) {
+    final day = ((local.dx - _labelW) / cellW).floor().clamp(0, _kAbbrevDays.length - 1);
+    final hour = (_kFirstHour + ((local.dy - _headerH) / _cellH).floor())
+        .clamp(_kFirstHour, _kLastHour);
+    return [day, hour];
+  }
+
+  // Pointer-down: fija ancla, guarda la selección base y el modo, aplica 1 celda.
+  void _begin(Offset local, double cellW) {
+    final cell = _cellAt(local, cellW);
+    if (cell == null) return;
+    _aDay = cell[0];
+    _aHour = cell[1];
+    _base = Set<String>.from(widget.selected);
+    _paint = !widget.selected.contains('${_aDay}:${_aHour}');
+    _applyRect(cell[0], cell[1]);
+  }
+
+  // Arrastre: extiende el rectángulo ancla → celda actual.
+  void _extend(Offset local, double cellW) {
+    if (_aDay == null) return;
+    final cell = _clampCell(local, cellW);
+    _applyRect(cell[0], cell[1]);
+  }
+
+  // Reaplica sobre la base: fuera del rectángulo queda como estaba; dentro se
+  // marca o borra según el modo. Así devolver el mouse revierte lo que sobra.
+  void _applyRect(int day, int hour) {
+    final d0 = _aDay! < day ? _aDay! : day;
+    final d1 = _aDay! > day ? _aDay! : day;
+    final h0 = _aHour! < hour ? _aHour! : hour;
+    final h1 = _aHour! > hour ? _aHour! : hour;
+    final sel = Set<String>.from(_base);
+    for (int d = d0; d <= d1; d++) {
+      for (int h = h0; h <= h1; h++) {
+        final id = '$d:$h';
+        if (_paint) {
+          sel.add(id);
+        } else {
+          sel.remove(id);
+        }
+      }
     }
+    widget.selected
+      ..clear()
+      ..addAll(sel);
     widget.onChanged();
   }
 
@@ -502,10 +593,15 @@ class _GridSelectorState extends State<_GridSelector> {
       builder: (context, constraints) {
         final cellW = (constraints.maxWidth - _labelW) / _kAbbrevDays.length;
         return SingleChildScrollView(
-          child: GestureDetector(
-            onTapDown: (d) => _apply(d.localPosition, cellW, start: true),
-            onPanStart: (d) => _apply(d.localPosition, cellW, start: true),
-            onPanUpdate: (d) => _apply(d.localPosition, cellW, start: false),
+          child: Listener(
+            // Listener (no GestureDetector): recibe los eventos de puntero
+            // directo, sin pasar por la arena de gestos. Así el arrastre
+            // responde de una vez — con GestureDetector el reconocedor de pan
+            // competía con el tap y el scroll del padre y tardaba en "ganar",
+            // por eso solo servía tras esperar un instante.
+            onPointerDown: (e) => _begin(e.localPosition, cellW),
+            onPointerMove: (e) => _extend(e.localPosition, cellW),
+            onPointerUp: (_) => _aDay = null,
             child: Column(
               children: [
                 // Cabecera de días

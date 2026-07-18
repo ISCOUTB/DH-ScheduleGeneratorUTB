@@ -24,6 +24,8 @@ class ClassOption(BaseModel):
     campus: str
     seats_available: int = Field(..., alias='seatsAvailable')
     seats_maximum: int = Field(..., alias='seatsMaximum')
+    # True si es un curso personalizado del usuario (para distinguirlo en la grilla).
+    is_custom: bool = Field(default=False, alias='isCustom')
 
 class Subject(BaseModel):
     # Configuración para que los modelos Pydantic usen camelCase en lugar de snake_case

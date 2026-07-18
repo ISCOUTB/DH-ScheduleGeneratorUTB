@@ -17,6 +17,10 @@ class ClassOption {
   final int seatsAvailable;
   final int seatsMaximum;
 
+  /// True si es un curso personalizado del usuario. Se usa para diferenciarlo
+  /// visualmente en la grilla (relleno translúcido + borde de su color).
+  final bool isCustom;
+
   ClassOption({
     required this.subjectName,
     required this.subjectCode,
@@ -29,6 +33,7 @@ class ClassOption {
     required this.campus,
     required this.seatsAvailable,
     required this.seatsMaximum,
+    this.isCustom = false,
   });
 
   /// Identidad de la materia a la que pertenece esta clase: el par
@@ -51,6 +56,7 @@ class ClassOption {
       campus: json['campus'],
       seatsAvailable: json['seatsAvailable'],
       seatsMaximum: json['seatsMaximum'],
+      isCustom: json['isCustom'] as bool? ?? false,
     );
   }
 
@@ -66,5 +72,6 @@ class ClassOption {
     'campus': campus,
     'seatsAvailable': seatsAvailable,
     'seatsMaximum': seatsMaximum,
+    'isCustom': isCustom,
   };
 }

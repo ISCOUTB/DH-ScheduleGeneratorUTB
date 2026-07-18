@@ -240,22 +240,29 @@ class SubjectsPanel extends StatelessWidget {
               children: [
                 ...addedSubjects.map(_subjectCard),
                 const SizedBox(height: 12),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 12,
-                  runSpacing: 8,
-                  children: [
-                    OutlinedButton.icon(
-                      onPressed: onAddSubject,
-                      icon: const Icon(Icons.add),
-                      label: const Text("Agregar materia"),
+                // Ambos botones contiguos, centrados como grupo (una sola fila).
+                // FittedBox(scaleDown): muestra el texto completo y, solo si no
+                // cupiera, escala el grupo en vez de cortar la palabra.
+                Center(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        OutlinedButton.icon(
+                          onPressed: onAddSubject,
+                          icon: const Icon(Icons.add, size: 18),
+                          label: const Text("Agregar materia"),
+                        ),
+                        const SizedBox(width: 10),
+                        OutlinedButton.icon(
+                          onPressed: onOpenCustomCourses,
+                          icon: const Icon(Icons.event_note, size: 18),
+                          label: const Text("Crear curso"),
+                        ),
+                      ],
                     ),
-                    OutlinedButton.icon(
-                      onPressed: onOpenCustomCourses,
-                      icon: const Icon(Icons.event_note, size: 18),
-                      label: const Text("Crear curso"),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),

@@ -157,14 +157,22 @@ class SchedulePreview extends StatelessWidget {
                                       ? colorResolver!(classOption)
                                       : subjectColors[classOption.subjectKey])
                                   : null;
+                              final bool isCustom = classOption?.isCustom ?? false;
+                              final Color base = subjectColor ?? Colors.blueGrey;
 
                               return Expanded(
                                 child: Container(
                                   margin: const EdgeInsets.all(0.5),
+                                  // Curso personalizado: relleno translúcido +
+                                  // borde de su color, para distinguirlo del
+                                  // resto (también en horarios destacados).
                                   decoration: BoxDecoration(
-                                    color: classOption != null
-                                        ? subjectColor
-                                        : Colors.grey.shade200,
+                                    color: classOption == null
+                                        ? Colors.grey.shade200
+                                        : (isCustom ? base.withOpacity(0.25) : base),
+                                    border: isCustom
+                                        ? Border.all(color: base, width: 1.4)
+                                        : null,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                   child: classOption != null
@@ -173,7 +181,9 @@ class SchedulePreview extends StatelessWidget {
                                             // Nombre hasta el primer espacio.
                                             classOption.subjectName.split(' ')[0],
                                             style: TextStyle(
-                                                color: Colors.white,
+                                                color: isCustom
+                                                    ? _darken(base)
+                                                    : Colors.white,
                                                 fontSize: fontSize,
                                                 fontWeight: FontWeight.bold),
                                             textAlign: TextAlign.center,
@@ -196,6 +206,10 @@ class SchedulePreview extends StatelessWidget {
       },
     );
   }
+
+  // Oscurece un color para que el texto se lea sobre el relleno translúcido
+  // del mismo tono (cursos personalizados).
+  Color _darken(Color c) => Color.lerp(c, Colors.black, 0.35) ?? c;
 
   _TimeRange _parseTimeRange(String timeRange) {
     final parts = timeRange.split(' - ');
