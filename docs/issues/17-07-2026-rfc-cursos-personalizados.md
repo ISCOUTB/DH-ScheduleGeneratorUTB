@@ -1,7 +1,7 @@
 # RFC: Cursos personalizados
 
 - Fecha: 2026-07-17
-- Estado: Propuesta
+- Estado: **Implementada** (Fases 1–3). Ver §11 para lo que cambió respecto a la propuesta.
 - Alcance: BD (persistencia de `Materia`, tabla nueva), ETL, Backend (generador, endpoints), Frontend (panel de materias)
 
 ## 1. Contexto
@@ -44,7 +44,7 @@ Para que el usuario elija una materia **existente** (y no invente una), `Materia
 
 **Cambios:**
 - Sacar `Materia` de `ACADEMIC_TABLES` (`backup.py`). `Clase`, `Curso` y `Profesor` se siguen limpiando: esos **sí** son la oferta del periodo.
-- `inserter.py`: `INSERT INTO Materia ... ON CONFLICT (codigomateria, nombre) DO NOTHING`.
+- `inserter.py`: `INSERT INTO Materia ... ON CONFLICT (codigomateria, nombre) DO UPDATE SET Creditos = EXCLUDED.Creditos`. (Se implementó `DO UPDATE` en vez de `DO NOTHING` — misma semántica de renombres, pero refresca los créditos si la U los ajusta; ver §3.1.)
 - Actualizar `docs/issues/29-03-2026-politica-persistencia-etl.md`: `Materia` deja de ser derivada.
 - Partir la lista de búsqueda en dos: **con oferta** (buscador normal, `JOIN Curso`) y **todas** (selector de curso personalizado).
 
@@ -61,7 +61,7 @@ Ahí el mismo código hospeda materias **legítimamente distintas**. Aplicar "mi
 
 Y el fondo: **desde los datos, un renombre es indistinguible de una variante nueva.** Banner no manda "esto era X y ahora es Y"; solo se ve un código con dos nombres. Por eso la PK es compuesta.
 
-→ **Decisión:** `ON CONFLICT DO NOTHING`. Un renombre deja la fila vieja como descontinuada y crea una nueva. Se acepta que el catálogo acumule materias muertas. **No existe "actualizar el nombre".**
+→ **Decisión:** `ON CONFLICT (codigomateria, nombre) DO UPDATE SET Creditos`. El conflicto es sobre el **par completo**, así que un renombre (código igual, nombre distinto) **no** hace conflicto: deja la fila vieja como descontinuada y crea una nueva. El `DO UPDATE` solo actúa cuando reaparece el **mismo par** exacto, y lo único que toca es `Creditos` (por si la U los reajusta). **No existe "actualizar el nombre".**
 
 > Costo asumido: el catálogo crece semestre a semestre con nombres que ya nadie dicta. A cambio, nunca se fusionan dos materias distintas. Si algún día molesta, la limpieza es manual y con criterio humano, no automática.
 
@@ -73,11 +73,13 @@ Un **curso personalizado** es una `ClassOption` declarada por el usuario, colgad
 |---|---|
 | materia (`código`, `nombre`) | elegida del catálogo (no se inventa) |
 | `credits` | **de `Materia`**, no del usuario |
-| bloques (día + inicio/fin) | los teclea el usuario — es el dato mínimo |
-| `nrc` | opcional; si no lo sabe, se genera uno sintético |
+| bloques (día + inicio/fin) | los marca el usuario — es el dato mínimo. Convención `:50`: se marcan **horas**; una clase de 1h que empieza a las 9 termina 9:50; una de 2h que empieza a las 8 termina 9:50. El usuario no teclea minutos; horas contiguas del mismo día se funden en un bloque. |
+| `nrc` | opcional; si no lo sabe, se genera uno sintético `CP{id}`. Si lo teclea y **ya existe en `Curso`**, se **bloquea** (*"Ese NRC ya existe en la materia X. Usa otro."*) — no hay opción de forzar. |
 | `professor`, `campus`, `type` | opcionales |
 
 Persisten **por usuario** (no por sesión): son "el curso que ya matriculé", tienen que sobrevivir al reload.
+
+El prefijo `CP` del NRC sintético también sirve para **excluir** estos cursos del aviso "fuera de la oferta" de destacados (§7): un NRC que empieza con `CP` no se busca en `Curso`.
 
 ## 5. Semántica de generación
 
@@ -117,32 +119,40 @@ Materias Seleccionadas
 
 **Por qué anidados y no una lista suelta:** un curso personalizado **no es una entidad libre, es una restricción sobre una materia**. Anidarlo hace ese vínculo obvio y hace que el switch signifique algo concreto: *"usa el mío"* vs *"usa los ofertados"*. En una lista aparte el switch quedaría ambiguo, y obligaría a reconciliar mentalmente dos listas (*"¿Cálculo está en las dos? ¿cuál manda?"*).
 
+Los anidados se pueden **expandir/contraer** con un chevron en la tarjeta de la materia (solo aparece si la materia tiene cursos personalizados). En este panel **no** se muestra el código de la materia — el código queda solo dentro del detalle.
+
 ### 6.2 Panel de gestión — la biblioteca
 
-Lista **todos** los cursos personalizados del usuario, agrupados por materia, **estén o no seleccionadas**. Por cada uno: switch, editar, borrar. Es donde se **crean** (se elige la materia del catálogo → se teclean los bloques). Resuelve de raíz el caso *"quiero ver / gestionar los cursos aunque la materia no esté en mi lista de trabajo"*.
+Lista **todos** los cursos personalizados del usuario, agrupados por materia, **estén o no seleccionadas**. Por cada uno: switch, editar, borrar. Es donde se **crean** (se elige la materia del catálogo → se marcan los bloques). Resuelve de raíz el caso *"quiero ver / gestionar los cursos aunque la materia no esté en mi lista de trabajo"*.
+
+**Crear/editar es un paso a paso (wizard):** 1) materia (autocompletar sobre el catálogo completo), 2) horario, 3) datos opcionales (profesor, NRC con validación en vivo). Primero se fija la materia, luego la franja, y al final se complementa.
+
+**Selección de horario, responsive:**
+- **Escritorio:** grilla interactiva (días × horas) que se pinta con clic o arrastre; el modo marcar/borrar lo fija la primera celda.
+- **Móvil:** la grilla queda con celdas diminutas, así que en pantalla angosta (`< 600px`) se usa un formulario **"Agregar bloque"** (Día + De/A). El dropdown "A" solo ofrece horas `>= "De"` (etiquetadas `H:50`); los bloques agregados se listan como chips con ✕. Ambos escriben sobre la misma estructura de celdas, así que el resto (resumen, edición, generación) no cambia.
 
 ### 6.3 Entradas al panel (decisión del equipo)
 
 | Entrada | Dónde | Intención |
 |---|---|---|
-| **Aviso en el header** | Cabecera de "Materias Seleccionadas": *"N cursos personalizados"*, **clickeable** | Ver / gestionar |
-| **"Agregar curso"** | Al lado de `+ Agregar materia` (`subjects_panel.dart:235-237`) | Crear uno nuevo |
+| **Aviso en el header** | Cabecera del panel, al **extremo opuesto** de "2026-2P": *"N cursos personalizados"*, **clickeable** | Ver / gestionar |
+| **"Crear curso"** | Al **lado opuesto** de `+ Agregar materia` (extremos de la fila, no agrupados) | Abre el panel de gestión |
 | **Speed dial (móvil)** | Ítem nuevo en `SpeedDialMenu` (`speed_dial_menu.dart`), junto a Buscar/Filtrar/Destacados | Ver / gestionar |
 
-Las tres abren el **mismo** panel; "Agregar curso" lo abre listo para crear. Con esto la feature es descubrible sin sumar un cuarto botón grande arriba (en escritorio) y queda accesible donde el usuario móvil ya busca acciones.
+Las tres abren el **mismo** panel de gestión; desde ahí, el "+ Agregar curso" del panel abre el wizard de creación. (En la propuesta el botón se llamaba "Agregar curso" y abría el wizard directo; se cambió a "Crear curso" → panel para que las tres entradas sean consistentes.) Con esto la feature es descubrible sin sumar un cuarto botón grande arriba (en escritorio) y queda accesible donde el usuario móvil ya busca acciones.
 
 **No** se usa un botón `+` junto al `−` de la materia: `+`/`−` se leen como pareja (agregar/quitar **la materia**), y ahí el `+` significaría otra cosa.
 
 ### 6.4 Crear un curso desde el panel: ¿toca la lista de trabajo?
 
-Crear un curso en el panel **solo lo persiste**; no mete la materia en "Materias Seleccionadas". Consecuencia: se puede crear un curso y que **no cambie ningún horario** hasta que la materia esté en la lista con el switch activo.
+Crear un curso **sí** mete la materia en "Materias Seleccionadas" si no estaba, con el switch activo, para que el curso entre a la generación **enseguida**.
 
-Eso puede confundir (*"lo agregué y no pasó nada"*). **A decidir en implementación** — opciones:
-- **(a)** Al crear, si la materia no está seleccionada, ofrecer *"¿Agregarla a tu lista para usar este curso ahora?"*.
-- **(b)** Auto-agregarla con el switch activo (más directo, menos control).
-- **(c)** Dejarlo explícito y avisar en el panel: *"Esta materia no está en tu lista; agrégala para generar con este curso."*
+**Decisión final (revierte la recomendación de la propuesta):** se optó por la opción **(b) auto-agregar**. La propuesta recomendaba **(c)** (no tocar la lista, solo avisar) por miedo a que auto-agregar sorprendiera; en la práctica pesó más el *"lo creé y no pasó nada"*: el usuario que se molesta en crear un curso lo quiere usando, no esperando un segundo paso. El botón *"Agregar a mi lista"* + el aviso de (c) **se conservan** en el panel para los casos donde la materia quedó fuera (cursos viejos, o cuando `addSubject` se bloquea por un conflicto de horario del estado actual).
 
-Recomendación: **(c)** por defecto (nada implícito) + un botón *"Agregar a mi lista"* ahí mismo = (a) sin modal. El auto-agregado (b) sorprende.
+Opciones que se consideraron:
+- **(a)** Al crear, si la materia no está seleccionada, ofrecer *"¿Agregarla a tu lista para usar este curso ahora?"* (modal).
+- **(b)** Auto-agregarla con el switch activo. ← **elegida**
+- **(c)** Dejarlo explícito y avisar en el panel. ← conservada como respaldo, no como principal.
 
 ### 6.5 Quitar la materia no borra el curso
 
@@ -190,11 +200,11 @@ La FK al par `(codigomateria, nombre)` es lo que **garantiza** que la materia ex
 
 ## 9. Fases
 
-**Fase 1 — el prerequisito:** `Materia` como catálogo (§3) + partir la lista de búsqueda. Sin esto no hay dónde colgar nada. Es independiente y desplegable solo.
+**Fase 1 — el prerequisito ✅:** `Materia` como catálogo (§3) + partir la lista de búsqueda. Sin esto no hay dónde colgar nada. Es independiente y desplegable solo.
 
-**Fase 2 — el modelo:** tabla, endpoints CRUD, y el generador aceptando dominios personalizados (§5).
+**Fase 2 — el modelo ✅:** tabla, endpoints CRUD, y el generador aceptando dominios personalizados (§5).
 
-**Fase 3 — la UI:** anidado + switch en la lista de trabajo (§6.1); panel de gestión con crear/editar/borrar + formulario de bloques (§6.2); las tres entradas —aviso clickeable en el header, "Agregar curso", ítem en el speed dial móvil— (§6.3); y excluir los cursos personalizados del aviso de destacados (§7).
+**Fase 3 — la UI ✅:** anidado + switch en la lista de trabajo (§6.1); panel de gestión con crear/editar/borrar + wizard de bloques (§6.2); las tres entradas —aviso clickeable en el header, "Crear curso", ítem en el speed dial móvil— (§6.3); y excluir los cursos personalizados del aviso de destacados (§7).
 
 ## 10. Descartado (con razón)
 
@@ -205,4 +215,44 @@ La FK al par `(codigomateria, nombre)` es lo que **garantiza** que la materia ex
 | **Segunda lista de trabajo** de cursos personalizados (que reemplace el anidado) | El curso es una restricción sobre una materia, no una entidad libre; dos listas de trabajo obligan a reconciliar cuál manda (§6.1). El panel de gestión (§6.2) **no** es una segunda lista de trabajo: es la biblioteca, con otro rol. |
 | Combinar oferta real + personalizada | Ignoraría la decisión del usuario: el punto es fijar ESE curso, y combinarlo con la oferta lo des-fija. El switch permite alternar (§5). |
 | Botón `+` junto al `−` de la materia | `+`/`−` se leen como pareja sobre **la materia**; el `+` significaría otra cosa (§6.3). |
-| Auto-agregar la materia al crear un curso | Sorprende (*"¿por qué apareció Cálculo?"*). Se prefiere avisar + botón explícito (§6.4). |
+| Forzar un NRC que ya existe en la oferta | Se bloquea sin opción de forzar: un NRC duplicado confundiría el horario/PDF. El usuario teclea otro o lo deja vacío (sintético `CP{id}`) (§4). |
+
+> El "auto-agregar la materia al crear" que aquí estaba descartado **se revirtió y sí se implementó** — ver §6.4 para el razonamiento.
+
+## 11. Estado de implementación
+
+Lo entregado y en qué archivo vive. Los puntos marcan dónde la implementación **divergió** de la propuesta.
+
+### Backend / BD
+| Pieza | Archivo |
+|---|---|
+| `Materia` fuera de `ACADEMIC_TABLES`; `curso_personalizado` en `PRESERVED_APP_TABLES` | `backend/scripts/backup.py` |
+| `INSERT ... ON CONFLICT DO UPDATE Creditos` (⚠ era `DO NOTHING`) | `backend/scripts/inserter.py` |
+| Tabla `curso_personalizado` (+ migración idempotente) | `backend/init.sql`, `backend/scripts/migrar_esquema.py` |
+| Catálogo completo vs. solo-oferta; CRUD; `get_nrc_subject` (⚠ NRC hard-block) | `backend/app/db/repository.py` |
+| Endpoints CRUD, `GET /nrc-check`, 409 si el NRC ya existe (⚠) | `backend/app/routes/custom_course_routes.py` |
+| `CustomCourseInput`, `customCourses` en el request | `backend/app/models.py` |
+| `/api/subjects-catalog`; inyección del dominio personalizado en la generación (§5) | `backend/app/main.py` |
+
+### Frontend
+| Pieza | Archivo |
+|---|---|
+| Modelo `CustomCourse` (`subjectKey`, `toGenerationJson`) | `frontend/lib/models/custom_course.dart` |
+| Excluir `CP*` del aviso de destacados (§7) | `frontend/lib/models/course_status.dart` |
+| Estado/CRUD; **auto-agregar materia al crear** (⚠ §6.4) | `frontend/lib/providers/schedule_provider.dart` |
+| API: catálogo, CRUD, `checkNrcTaken` | `frontend/lib/services/api_service.dart` |
+| Wizard 3 pasos; grilla (desktop) + **formulario Día/De-A (móvil, ⚠ §6.2)** | `frontend/lib/widgets/custom_course/custom_course_wizard.dart` |
+| Panel de gestión (biblioteca) | `frontend/lib/widgets/custom_course/custom_courses_panel.dart` |
+| Anidado + switch + **expand/collapse**, sin código (⚠ §6.1); botón **"Crear curso"** al extremo (⚠ §6.3) | `frontend/lib/widgets/subjects_panel.dart` |
+| Entrada speed dial móvil (§6.3) | `frontend/lib/widgets/layout/speed_dial_menu.dart` |
+| Carga inicial; wiring de las entradas | `frontend/lib/screens/home_screen.dart` |
+
+### Divergencias respecto a la propuesta
+1. **`ON CONFLICT DO UPDATE Creditos`** en vez de `DO NOTHING` (§3, §3.1) — refresca créditos sin cambiar la semántica de renombres.
+2. **Auto-agregar la materia al crear** (§6.4) — se eligió (b), no la (c) recomendada. El aviso + botón de (c) quedan como respaldo.
+3. **NRC hard-block** (§4) — si el NRC ya existe en `Curso`, se bloquea sin forzar.
+4. **Selector de horario móvil** (§6.2) — formulario "Agregar bloque" bajo `600px`; la grilla clic/arrastre queda solo para escritorio.
+5. **Botón "Crear curso"** (§6.3) — renombrado y abre el panel (no el wizard directo); ubicado al extremo opuesto de "Agregar materia".
+
+### Nota de despliegue (ETL)
+`backup.py` y el esquema `curso_personalizado` **deben desplegarse juntos**. Si el contenedor `cron-updater` corre un `backup.py` viejo (con `Materia` aún en `ACADEMIC_TABLES`) contra una BD que ya tiene la tabla nueva, el `DELETE FROM Materia` rompe la FK `curso_personalizado_...fkey` y el ETL aborta (la transacción hace rollback, sin pérdida de datos, pero no actualiza la oferta). En local: `docker compose up -d --build backend cron-updater`.
