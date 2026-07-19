@@ -48,7 +48,8 @@ class CustomCoursesPanel extends StatelessWidget {
                       const SizedBox(width: 8),
                       const Expanded(
                         child: Text('Cursos personalizados',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
@@ -108,7 +109,8 @@ class CustomCoursesPanel extends StatelessWidget {
             Expanded(
               child: RichText(
                 text: TextSpan(
-                  style: TextStyle(color: Colors.blue.shade700, fontSize: 12, height: 1.35),
+                  style: TextStyle(
+                      color: Colors.blue.shade700, fontSize: 12, height: 1.35),
                   children: [
                     const TextSpan(
                         text: 'Su objetivo principal es ',
@@ -117,13 +119,14 @@ class CustomCoursesPanel extends StatelessWidget {
                         text: 'fijar un curso que ya no está en la oferta',
                         style: TextStyle(fontWeight: FontWeight.w700)),
                     const TextSpan(
-                        text: ' —uno que ya matriculaste o decidiste—, aunque '
-                            'también sirve para reservar cualquier curso o '
-                            'variación que quieras respetar. El generador arma '
-                            'el resto del horario a su alrededor. '),
+                        text: ' —uno que ya matriculaste o decidiste—. Por '
+                            'ejemplo, si un curso se llenó, puedes crearlo '
+                            'aquí para que el generador lo incluya en tus horarios. ',
+                        style: TextStyle(fontWeight: FontWeight.w500)),
                     const TextSpan(
-                        text: 'Mientras el curso esté activo, esa materia se '
-                            'combina solo con él, no con los cursos reales',
+                        text:
+                            'Mientras esté activo, el generador solo combinará con '
+                            'este curso, no con la oferta real de la materia (la proveniente de Banner)',
                         style: TextStyle(fontWeight: FontWeight.w600)),
                     const TextSpan(
                         text: '; para volver a combinar con la oferta real, '
@@ -153,7 +156,6 @@ class CustomCoursesPanel extends StatelessWidget {
           ],
         ),
       );
-
 }
 
 /// Grupo de una materia dentro del panel de gestión: cabecera **clickeable**
@@ -206,23 +208,30 @@ class _MateriaGroupState extends State<_MateriaGroup> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(first.name,
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 15)),
                         Text(first.code,
-                            style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                            style: TextStyle(
+                                fontSize: 12, color: Colors.grey.shade600)),
                       ],
                     ),
                   ),
                   // Contador (visible aun colapsado) + chevron.
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: const Color(0xFFEFF6FF),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      cursos.length == 1 ? '1 curso' : '${cursos.length} cursos',
+                      cursos.length == 1
+                          ? '1 curso'
+                          : '${cursos.length} cursos',
                       style: const TextStyle(
-                          fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary),
                     ),
                   ),
                   Icon(_expanded ? Icons.expand_less : Icons.expand_more,
@@ -245,12 +254,14 @@ class _MateriaGroupState extends State<_MateriaGroup> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline, size: 16, color: Color(0xFF9A3412)),
+                    const Icon(Icons.info_outline,
+                        size: 16, color: Color(0xFF9A3412)),
                     const SizedBox(width: 6),
                     const Expanded(
                       child: Text(
                         'Esta materia no está en tu lista; agrégala para generar con este curso.',
-                        style: TextStyle(fontSize: 12, color: Color(0xFF9A3412)),
+                        style:
+                            TextStyle(fontSize: 12, color: Color(0xFF9A3412)),
                       ),
                     ),
                     TextButton(
@@ -274,18 +285,18 @@ class _MateriaGroupState extends State<_MateriaGroup> {
     );
   }
 
-  Widget _courseRow(
-      BuildContext context, ScheduleProvider provider, CustomCourse c, bool inList) {
-    final bloques = c.bloques
-        .map((b) => '${b.day.substring(0, 3)} ${b.time}')
-        .join(' · ');
+  Widget _courseRow(BuildContext context, ScheduleProvider provider,
+      CustomCourse c, bool inList) {
+    final bloques =
+        c.bloques.map((b) => '${b.day.substring(0, 3)} ${b.time}').join(' · ');
     final titulo = c.etiqueta?.trim().isNotEmpty == true
         ? c.etiqueta!
         : 'Curso personalizado';
     return ListTile(
       dense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-      title: Text(titulo, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+      title: Text(titulo,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
       subtitle: Text(
         [
           bloques,
@@ -325,17 +336,22 @@ class _MateriaGroupState extends State<_MateriaGroup> {
     );
   }
 
-  void _confirmDelete(BuildContext context, ScheduleProvider provider, CustomCourse c) {
+  void _confirmDelete(
+      BuildContext context, ScheduleProvider provider, CustomCourse c) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         title: const Text('Eliminar curso personalizado'),
-        content: Text('¿Eliminar este curso de ${c.name}? No se puede deshacer.'),
+        content:
+            Text('¿Eliminar este curso de ${c.name}? No se puede deshacer.'),
         actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Cancelar')),
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancelar')),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red, foregroundColor: Colors.white),
             onPressed: () {
               provider.deleteCustomCourse(c.id);
               Navigator.of(ctx).pop();

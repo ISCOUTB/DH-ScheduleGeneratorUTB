@@ -22,6 +22,7 @@ import '../widgets/schedule_grid_widget.dart';
 import '../widgets/schedule_overview_widget.dart';
 import '../widgets/schedule_sort_widget.dart';
 import '../widgets/custom_course/custom_courses_panel.dart';
+import '../widgets/faq_dialog.dart';
 import '../screens/favorites_screen.dart';
 
 // Nuevos widgets extraídos
@@ -280,8 +281,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: SpeedDialMenu(
                           onSearch: () => provider.setSearchOpen(true),
                           onFilter: () => provider.setFilterOpen(true),
-                          onTutorial: _openTutorial,
                           onShowCreators: () => CreatorsDialog.show(context),
+                          onQuestions: () => FaqDialog.show(context),
                           onClear: _handleClearSchedules,
                           onFavorites: _navigateToFavorites,
                           onCustomCourses: () => CustomCoursesPanel.show(context),
@@ -358,6 +359,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         _buildNavButton('Reportar Error',
             'https://docs.google.com/forms/d/e/1FAIpQLSeG6F1lWErfKEtTo4R8OmF6ZCpjrqKqosn_7KLgHpLCYTuDFw/viewform?usp=publish-editor'),
+        _buildFaqButton(),
         const SizedBox(width: 8),
         IconButton(
           icon: const Icon(Icons.info_outline, color: Colors.white),
@@ -378,6 +380,18 @@ class _HomeScreenState extends State<HomeScreen> {
           cursor: SystemMouseCursors.click,
           child: NavLink(text: text),
         ),
+      );
+
+  /// Botón de Preguntas frecuentes del AppBar (ícono + texto): abre el diálogo.
+  Widget _buildFaqButton() => TextButton.icon(
+        style: TextButton.styleFrom(
+          foregroundColor: Colors.white,
+          overlayColor: Colors.white24,
+        ),
+        onPressed: () => FaqDialog.show(context),
+        icon: const Icon(Icons.help_outline, size: 20),
+        label: const Text('Preguntas frecuentes',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       );
 
   Widget _buildMobileUserMenu() => PopupMenuButton<String>(
@@ -477,6 +491,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   label: 'Reportar Error',
                   onTap: () => _launchURL(
                       'https://docs.google.com/forms/d/e/1FAIpQLSeG6F1lWErfKEtTo4R8OmF6ZCpjrqKqosn_7KLgHpLCYTuDFw/viewform?usp=publish-editor')),
+              MobileMenuItem(
+                  label: 'Preguntas frecuentes',
+                  onTap: () {
+                    provider.setMobileMenuOpen(false);
+                    FaqDialog.show(context);
+                  }),
             ],
           ),
         ),

@@ -11,11 +11,11 @@ class SpeedDialMenu extends StatelessWidget {
   /// Callback para abrir filtros.
   final VoidCallback onFilter;
 
-  /// Callback para abrir tutorial.
-  final VoidCallback onTutorial;
-
   /// Callback para mostrar información de creadores.
   final VoidCallback onShowCreators;
+
+  /// Callback para abrir Preguntas frecuentes.
+  final VoidCallback onQuestions;
 
   /// Callback para limpiar todo.
   final VoidCallback onClear;
@@ -23,15 +23,15 @@ class SpeedDialMenu extends StatelessWidget {
   /// Callback para abrir horarios destacados.
   final VoidCallback? onFavorites;
 
-  /// Callback para abrir el panel de cursos personalizados.
+  /// Callback para abrir el panel de cursos personalizados (crear curso).
   final VoidCallback? onCustomCourses;
 
   const SpeedDialMenu({
     Key? key,
     required this.onSearch,
     required this.onFilter,
-    required this.onTutorial,
     required this.onShowCreators,
+    required this.onQuestions,
     required this.onClear,
     this.onFavorites,
     this.onCustomCourses,
@@ -55,16 +55,6 @@ class SpeedDialMenu extends StatelessWidget {
           label: 'Realizar Filtro',
           onTap: onFilter,
         ),
-        SpeedDialChild(
-          child: const Icon(Icons.school),
-          label: 'Tutorial',
-          onTap: onTutorial,
-        ),
-        SpeedDialChild(
-          child: const Icon(Icons.info_outline),
-          label: 'Creadores',
-          onTap: onShowCreators,
-        ),
         if (onFavorites != null)
           SpeedDialChild(
             child: const Icon(Icons.star, color: Colors.amber),
@@ -74,9 +64,20 @@ class SpeedDialMenu extends StatelessWidget {
         if (onCustomCourses != null)
           SpeedDialChild(
             child: const Icon(Icons.event_note),
-            label: 'Cursos Personalizados',
+            label: 'Crear curso',
             onTap: onCustomCourses,
           ),
+        SpeedDialChild(
+          child: const Icon(Icons.help_outline),
+          label: 'Preguntas frecuentes',
+          onTap: onQuestions,
+        ),
+        SpeedDialChild(
+          child: const Icon(Icons.info_outline),
+          label: 'Creadores',
+          onTap: onShowCreators,
+        ),
+        // Limpiar Todo, último.
         SpeedDialChild(
           child: const Icon(Icons.delete_forever, color: Colors.white),
           label: 'Limpiar Todo',
