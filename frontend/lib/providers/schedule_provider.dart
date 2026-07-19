@@ -870,15 +870,57 @@ class ScheduleProvider extends ChangeNotifier {
   // ESTADO: Favoritos (Horarios Destacados)
   // ============================================================
 
-  /// Set de signatures de los favoritos del usuario (para lookup O(1)).
+  /// Signatures + IDs del término que se está VIENDO en Destacados (browsed).
+  /// Cambian al navegar entre períodos. Los usa la pantalla de Destacados
+  /// (borrar/renombrar/reordenar).
   Set<String> _favoriteSignatures = {};
-
-  /// Mapa de signature → favorite ID del servidor (necesario para DELETE).
   final Map<String, int> _favoriteIdBySignature = {};
+
+  /// Signatures + IDs del término ACTUAL, **siempre** (no cambian al navegar a
+  /// períodos anteriores en Destacados). Es lo que mira la estrella del
+  /// generador, que siempre opera sobre el término actual. Ver bug de sync al
+  /// ver períodos pasados.
+  final Set<String> _curSig = {};
+  final Map<String, int> _curId = {};
 
   /// Horarios favoritos cargados del servidor (para la pantalla dedicada).
   List<List<ClassOption>> _favoriteSchedules = [];
   List<List<ClassOption>> get favoriteSchedules => List.unmodifiable(_favoriteSchedules);
+
+  /// Nombre personalizado de cada favorito, alineado por índice con
+  /// `_favoriteSchedules` (null = sin nombre → la UI muestra "Opción X").
+  List<String?> _favoriteNames = [];
+  List<String?> get favoriteNames => List.unmodifiable(_favoriteNames);
+  String? favoriteNameAt(int i) =>
+      (i >= 0 && i < _favoriteNames.length) ? _favoriteNames[i] : null;
+
+  /// `created_at` de cada favorito (alineado por índice). Se usa para la letra
+  /// automática ESTABLE (por orden de creación, no de posición): reordenar no la
+  /// cambia porque el created_at no cambia.
+  final List<String?> _favoriteCreatedAt = [];
+
+  /// Letra automática estable del favorito en [index] (A, B, C… por orden de
+  /// creación). No depende de la posición → reordenar no la altera.
+  String favoriteAutoLetterAt(int index) {
+    if (index < 0 || index >= _favoriteCreatedAt.length) return '?';
+    final mine = _favoriteCreatedAt[index];
+    int rank = 0;
+    for (int i = 0; i < _favoriteCreatedAt.length; i++) {
+      if (i == index) continue;
+      final c = _favoriteCreatedAt[i];
+      final bool before = (c == null)
+          ? false
+          : (mine == null
+              ? true
+              : (c.compareTo(mine) < 0 || (c == mine && i < index)));
+      if (before) rank++;
+    }
+    return String.fromCharCode(65 + rank);
+  }
+
+  /// Rótulo automático estable: "Opción {letra}".
+  String favoriteAutoLabelAt(int index) =>
+      'Opción ${favoriteAutoLetterAt(index)}';
 
   /// Indica si los favoritos están cargándose.
   bool _isFavoritesLoading = false;
@@ -893,8 +935,8 @@ class ScheduleProvider extends ChangeNotifier {
   int _maxFavoritesAllowed = 20;
   int get maxFavoritesAllowed => _maxFavoritesAllowed;
 
-  /// Número de favoritos actuales.
-  int get favoritesCount => _favoriteSignatures.length;
+  /// Número de favoritos del término actual (para el límite/estrella).
+  int get favoritesCount => _curSig.length;
 
   /// Término académico actual (definido por el servidor).
   String _currentTerm = '';
@@ -941,9 +983,10 @@ class ScheduleProvider extends ChangeNotifier {
     return nrcs.join('-');
   }
 
-  /// Verifica si un horario es favorito.
+  /// Verifica si un horario es favorito **en el término actual** (la estrella
+  /// del generador no depende del período que se esté viendo en Destacados).
   bool isFavorite(List<ClassOption> schedule) {
-    return _favoriteSignatures.contains(computeSignature(schedule));
+    return _curSig.contains(computeSignature(schedule));
   }
 
   /// Carga los términos disponibles desde el servidor.
@@ -1054,6 +1097,8 @@ class ScheduleProvider extends ChangeNotifier {
       _favoriteSignatures.clear();
       _favoriteIdBySignature.clear();
       _favoriteSchedules.clear();
+      _favoriteNames.clear();
+      _favoriteCreatedAt.clear();
 
       for (final fav in favorites) {
         final signature = fav['signature'] as String;
@@ -1067,6 +1112,8 @@ class ScheduleProvider extends ChangeNotifier {
             .map<ClassOption>((co) => ClassOption.fromJson(co as Map<String, dynamic>))
             .toList();
         _favoriteSchedules.add(schedule);
+        _favoriteNames.add(fav['nombre'] as String?);
+        _favoriteCreatedAt.add(fav['created_at'] as String?);
       }
 
       // Fallback: si loadFavoriteTerms no funcionó, usar el term de esta respuesta
@@ -1078,6 +1125,19 @@ class ScheduleProvider extends ChangeNotifier {
           _availableTerms = [responseTerm, ..._availableTerms];
         }
       }
+
+      // Si lo que se cargó es el término ACTUAL, refresca el snapshot que usa la
+      // estrella del generador. Si es un período anterior (navegación en
+      // Destacados), NO se toca: la estrella sigue reflejando el actual.
+      final loadedTerm = responseTerm ?? (term ?? _selectedTerm);
+      if (_currentTerm.isEmpty || loadedTerm == _currentTerm) {
+        _curSig
+          ..clear()
+          ..addAll(_favoriteSignatures);
+        _curId
+          ..clear()
+          ..addAll(_favoriteIdBySignature);
+      }
     } catch (e) {
       debugPrint('Error cargando favoritos: $e');
     } finally {
@@ -1087,30 +1147,44 @@ class ScheduleProvider extends ChangeNotifier {
     }
   }
 
-  /// Agrega o quita un horario de favoritos (toggle).
+  /// Agrega o quita un horario de favoritos (toggle). Siempre opera sobre el
+  /// **término actual** (`_curSig`/`_curId`). Si Destacados está mostrando ese
+  /// mismo término, también se sincroniza su lista visible; si está en un período
+  /// anterior, no se toca la lista vista (el nuevo/quitado es del actual).
   Future<void> toggleFavorite(List<ClassOption> schedule) async {
     final signature = computeSignature(schedule);
+    final bool browsingCurrent =
+        _selectedTerm.isEmpty || _selectedTerm == _currentTerm;
 
-    if (_favoriteSignatures.contains(signature)) {
-      // Quitar de favoritos
-      final favoriteId = _favoriteIdBySignature[signature];
-      if (favoriteId != null) {
-        try {
-          await _apiService.deleteFavorite(favoriteId);
+    if (_curSig.contains(signature)) {
+      // Quitar de favoritos (término actual)
+      final favoriteId = _curId[signature];
+      if (favoriteId == null) return;
+      try {
+        await _apiService.deleteFavorite(favoriteId);
+        _curSig.remove(signature);
+        _curId.remove(signature);
+        if (browsingCurrent) {
           _favoriteSignatures.remove(signature);
           _favoriteIdBySignature.remove(signature);
-          _favoriteSchedules.removeWhere((s) => computeSignature(s) == signature);
-          notifyListeners();
-        } catch (e) {
-          _errorMessage = 'Error al quitar de destacados: ${e.toString()}';
-          _errorIcon = Icons.error;
-          _errorColor = Colors.red;
-          notifyListeners();
+          final idx = _favoriteSchedules
+              .indexWhere((s) => computeSignature(s) == signature);
+          if (idx >= 0) {
+            _favoriteSchedules.removeAt(idx);
+            if (idx < _favoriteNames.length) _favoriteNames.removeAt(idx);
+            if (idx < _favoriteCreatedAt.length) _favoriteCreatedAt.removeAt(idx);
+          }
         }
+        notifyListeners();
+      } catch (e) {
+        _errorMessage = 'Error al quitar de destacados: ${e.toString()}';
+        _errorIcon = Icons.error;
+        _errorColor = Colors.red;
+        notifyListeners();
       }
     } else {
-      // Agregar a favoritos
-      if (_favoriteSignatures.length >= _maxFavoritesAllowed) {
+      // Agregar a favoritos (término actual)
+      if (_curSig.length >= _maxFavoritesAllowed) {
         _errorMessage = 'Límite de $_maxFavoritesAllowed horarios destacados alcanzado';
         _errorIcon = Icons.warning;
         _errorColor = Colors.orange;
@@ -1125,9 +1199,17 @@ class ScheduleProvider extends ChangeNotifier {
           schedule: scheduleJson,
         );
         final favorite = result['favorite'];
-        _favoriteSignatures.add(signature);
-        _favoriteIdBySignature[signature] = favorite['id'];
-        _favoriteSchedules.insert(0, schedule);
+        final int newId = favorite['id'] as int;
+        _curSig.add(signature);
+        _curId[signature] = newId;
+        // Solo si Destacados muestra el término actual: agregar al FINAL (cola).
+        if (browsingCurrent) {
+          _favoriteSignatures.add(signature);
+          _favoriteIdBySignature[signature] = newId;
+          _favoriteSchedules.add(schedule);
+          _favoriteNames.add(favorite['nombre'] as String?);
+          _favoriteCreatedAt.add(favorite['created_at'] as String?);
+        }
         notifyListeners();
       } catch (e) {
         _errorMessage = 'Error al guardar en destacados: ${e.toString()}';
@@ -1152,6 +1234,13 @@ class ScheduleProvider extends ChangeNotifier {
         _favoriteSignatures.remove(signature);
         _favoriteIdBySignature.remove(signature);
         _favoriteSchedules.removeAt(index);
+        if (index < _favoriteNames.length) _favoriteNames.removeAt(index);
+        if (index < _favoriteCreatedAt.length) _favoriteCreatedAt.removeAt(index);
+        // Si se borró del término actual, sincroniza la estrella del generador.
+        if (_selectedTerm.isEmpty || _selectedTerm == _currentTerm) {
+          _curSig.remove(signature);
+          _curId.remove(signature);
+        }
         notifyListeners();
       } catch (e) {
         _errorMessage = 'Error al eliminar destacado: ${e.toString()}';
@@ -1159,6 +1248,58 @@ class ScheduleProvider extends ChangeNotifier {
         _errorColor = Colors.red;
         notifyListeners();
       }
+    }
+  }
+
+  /// Renombra el favorito en [index]. `nombre` vacío/null quita el nombre
+  /// (vuelve a "Opción X"). Persiste en el servidor.
+  Future<void> renameFavorite(int index, String? nombre) async {
+    if (index < 0 || index >= _favoriteSchedules.length) return;
+    final signature = computeSignature(_favoriteSchedules[index]);
+    final favoriteId = _favoriteIdBySignature[signature];
+    if (favoriteId == null) return;
+
+    final limpio = (nombre ?? '').trim();
+    final valor = limpio.isEmpty ? null : limpio;
+    try {
+      await _apiService.renameFavorite(favoriteId, valor);
+      if (index < _favoriteNames.length) _favoriteNames[index] = valor;
+      notifyListeners();
+    } catch (e) {
+      _errorMessage = 'Error al renombrar destacado: ${e.toString()}';
+      _errorIcon = Icons.error;
+      _errorColor = Colors.red;
+      notifyListeners();
+    }
+  }
+
+  /// Reordena los favoritos (drag & drop del sidebar) y persiste el nuevo orden.
+  /// Usa la convención de `ReorderableListView` para [newIndex].
+  Future<void> reorderFavorite(int oldIndex, int newIndex) async {
+    if (oldIndex < 0 || oldIndex >= _favoriteSchedules.length) return;
+    if (newIndex > oldIndex) newIndex -= 1;
+    newIndex = newIndex.clamp(0, _favoriteSchedules.length - 1);
+    if (oldIndex == newIndex) return;
+
+    final sched = _favoriteSchedules.removeAt(oldIndex);
+    _favoriteSchedules.insert(newIndex, sched);
+    final name = _favoriteNames.removeAt(oldIndex);
+    _favoriteNames.insert(newIndex, name);
+    // created_at viaja con el item (aunque no afecta la letra, mantiene alineado).
+    final created = _favoriteCreatedAt.removeAt(oldIndex);
+    _favoriteCreatedAt.insert(newIndex, created);
+    notifyListeners();
+
+    // Persistir: IDs en el nuevo orden.
+    final orderedIds = <int>[
+      for (final s in _favoriteSchedules)
+        if (_favoriteIdBySignature[computeSignature(s)] != null)
+          _favoriteIdBySignature[computeSignature(s)]!
+    ];
+    try {
+      await _apiService.reorderFavorites(orderedIds, term: _selectedTerm);
+    } catch (e) {
+      debugPrint('Error guardando orden de destacados: $e');
     }
   }
 }

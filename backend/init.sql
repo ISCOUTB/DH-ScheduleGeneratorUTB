@@ -210,6 +210,8 @@ CREATE TABLE IF NOT EXISTS public.horario_destacado (
     usuario_id INTEGER NOT NULL REFERENCES public.usuario(id),
     term VARCHAR(20) NOT NULL,
     signature VARCHAR(255) NOT NULL,
+    nombre VARCHAR,             -- nombre editable; si es NULL se muestra "Opción X" automático
+    posicion INTEGER,           -- orden manual persistente (0-indexado por usuario+term)
     schedule_json JSONB NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     UNIQUE (usuario_id, term, signature)

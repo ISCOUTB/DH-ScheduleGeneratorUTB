@@ -42,6 +42,40 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   bool _showOverview = false;
   bool _sidebarShowInfo = false;
 
+  /// Edición inline del nombre del horario en la vista grande.
+  bool _editingName = false;
+  final TextEditingController _nameController = TextEditingController();
+  final FocusNode _nameFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _nameFocus.dispose();
+    super.dispose();
+  }
+
+  /// Guarda el nombre en edición. Si el texto está vacío o es el rótulo
+  /// automático ("Opción X"), se guarda vacío (vuelve a la letra).
+  void _saveName(ScheduleProvider provider) {
+    if (!_editingName) return;
+    final text = _nameController.text.trim();
+    final auto = provider.favoriteAutoLabelAt(_selectedIndex);
+    final valor = (text.isEmpty || text == auto) ? '' : text;
+    provider.renameFavorite(_selectedIndex, valor);
+    setState(() => _editingName = false);
+  }
+
+  /// Entra en modo edición precargando el rótulo actual (nombre o "Opción X").
+  void _startEditingName(String currentLabel) {
+    setState(() {
+      _editingName = true;
+      _nameController.text = currentLabel;
+      _nameController.selection = TextSelection(
+          baseOffset: 0, extentOffset: _nameController.text.length);
+    });
+    _nameFocus.requestFocus();
+  }
+
   /// Una GlobalKey por tarjeta del sidebar, para poder desplazar la lista y
   /// mantener a la vista la seleccionada al navegar con ↑/↓.
   List<GlobalKey> _cardKeys = [];
@@ -248,6 +282,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -611,7 +646,12 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
     final selectedSchedule = provider.favoriteSchedules[_selectedIndex];
     final colors = _buildColorMap(selectedSchedule);
-    final selectedLabel = String.fromCharCode(65 + _selectedIndex);
+    // Letra automática ESTABLE (por creación, no por posición): reordenar no la
+    // cambia.
+    final selectedLabel = provider.favoriteAutoLetterAt(_selectedIndex);
+    final selectedName = provider.favoriteNameAt(_selectedIndex);
+    final headerLabel =
+        selectedName ?? provider.favoriteAutoLabelAt(_selectedIndex);
     // Problemas del horario abierto, para el aviso del header.
     final selectedIssues =
         issuesForSchedule(selectedSchedule, provider.allFavoritesStatus);
@@ -635,11 +675,31 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
         // Sidebar con mini previews / info
         _FavoritesSidebar(
           schedules: provider.favoriteSchedules,
+          names: provider.favoriteNames,
+          autoLetters: [
+            for (int i = 0; i < provider.favoriteSchedules.length; i++)
+              provider.favoriteAutoLetterAt(i)
+          ],
           cardKeys: _cardKeys,
           seatsByNrc: provider.allFavoritesStatus,
           selectedIndex: _selectedIndex,
           showInfo: _sidebarShowInfo,
           onToggleMode: () => setState(() => _sidebarShowInfo = !_sidebarShowInfo),
+          onReorder: (oldIndex, newIndex) {
+            provider.reorderFavorite(oldIndex, newIndex);
+            // Mantener seleccionado el mismo horario tras el reacomodo.
+            setState(() {
+              int ni = newIndex;
+              if (ni > oldIndex) ni -= 1;
+              if (_selectedIndex == oldIndex) {
+                _selectedIndex = ni;
+              } else if (oldIndex < _selectedIndex && ni >= _selectedIndex) {
+                _selectedIndex -= 1;
+              } else if (oldIndex > _selectedIndex && ni <= _selectedIndex) {
+                _selectedIndex += 1;
+              }
+            });
+          },
           onSelect: (i) {
             setState(() => _selectedIndex = i);
             _loadStatusIfNeeded(provider);
@@ -708,13 +768,56 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           size: 18, color: Color(0xFF4B5563)),
                     ),
                     const SizedBox(width: 12),
-                    Text(
-                      'Opción $selectedLabel',
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF111827),
-                      ),
+                    // Título editable en el sitio: al tocar el lápiz, "Opción X"
+                    // se vuelve un campo; Enter, tocar el ✓, o clic fuera guardan.
+                    // ConstrainedBox (no Flexible/Expanded) para no robarle espacio
+                    // a la leyenda de estado, que se ancla a la derecha.
+                    _editingName
+                        ? SizedBox(
+                            width: 300,
+                            child: TextField(
+                              controller: _nameController,
+                              focusNode: _nameFocus,
+                              autofocus: true,
+                              maxLength: 40,
+                              textInputAction: TextInputAction.done,
+                              onSubmitted: (_) => _saveName(provider),
+                              onTapOutside: (_) => _saveName(provider),
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF111827),
+                              ),
+                              decoration: const InputDecoration(
+                                isDense: true,
+                                counterText: '',
+                                contentPadding: EdgeInsets.symmetric(vertical: 4),
+                              ),
+                            ),
+                          )
+                        : ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 360),
+                            child: Text(
+                              headerLabel,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF111827),
+                              ),
+                            ),
+                          ),
+                    IconButton(
+                      icon: Icon(
+                          _editingName ? Icons.check : Icons.edit_outlined,
+                          size: 20),
+                      color: _editingName
+                          ? AppColors.primary
+                          : const Color(0xFF6B7280),
+                      tooltip: _editingName ? 'Guardar' : 'Editar nombre',
+                      onPressed: () => _editingName
+                          ? _saveName(provider)
+                          : _startEditingName(headerLabel),
                     ),
                     // Aviso del horario que se está viendo. En el sidebar es un
                     // ícono (no hay espacio); aquí sí cabe el conteo.
@@ -1056,6 +1159,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
 class _FavoritesSidebar extends StatelessWidget {
   final List<List<ClassOption>> schedules;
+
+  /// Nombres personalizados alineados por índice (null = "Opción X").
+  final List<String?> names;
+
+  /// Letra automática estable (por creación) alineada por índice.
+  final List<String> autoLetters;
+
+  /// Reordenar (drag & drop). Convención de ReorderableListView.
+  final void Function(int oldIndex, int newIndex) onReorder;
+
   final List<GlobalKey> cardKeys;
 
   /// Cupos actuales de todos los favoritos, para marcar cuáles tienen
@@ -1080,6 +1193,9 @@ class _FavoritesSidebar extends StatelessWidget {
 
   const _FavoritesSidebar({
     required this.schedules,
+    required this.names,
+    required this.autoLetters,
+    required this.onReorder,
     required this.cardKeys,
     required this.seatsByNrc,
     required this.selectedIndex,
@@ -1202,31 +1318,40 @@ class _FavoritesSidebar extends StatelessWidget {
                 ),
               ),
             ),
-          // Lista de tarjetas
+          // Lista de tarjetas: arrastrable para reordenar (persistente). El
+          // handle es toda la tarjeta; el tap sigue seleccionando.
           Expanded(
-            child: SingleChildScrollView(
+            child: ReorderableListView.builder(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-              child: Column(
-                children: [
-                  for (int i = 0; i < schedules.length; i++) ...[
-                    _SidebarCard(
-                      key: i < cardKeys.length ? cardKeys[i] : null,
+              buildDefaultDragHandles: false,
+              itemCount: schedules.length,
+              onReorder: onReorder,
+              itemBuilder: (context, i) {
+                return ReorderableDragStartListener(
+                  // ObjectKey por identidad de la lista: sigue al item al mover.
+                  key: ObjectKey(schedules[i]),
+                  index: i,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: _SidebarCard(
+                      scrollKey: i < cardKeys.length ? cardKeys[i] : null,
                       index: i,
                       isSelected: i == selectedIndex,
                       showInfo: showInfo,
                       onTap: () => onSelect(i),
                       onDelete: () => onDelete(i),
                       schedule: schedules[i],
+                      name: i < names.length ? names[i] : null,
+                      autoLetter: i < autoLetters.length ? autoLetters[i] : '?',
                       subjectColors: buildColorMap(schedules[i]),
                       huecos: calculateGaps(schedules[i]),
                       diasLibres: calculateFreeDays(schedules[i]),
                       subjectNames: getSubjectNames(schedules[i]),
                       issues: issuesForSchedule(schedules[i], seatsByNrc),
                     ),
-                    const SizedBox(height: 10),
-                  ],
-                ],
-              ),
+                  ),
+                );
+              },
             ),
           ),
           // Botón volver
@@ -1259,6 +1384,17 @@ class _SidebarCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onDelete;
   final List<ClassOption> schedule;
+
+  /// Nombre personalizado (null = se muestra "Opción X").
+  final String? name;
+
+  /// Letra automática estable (por creación, no por posición).
+  final String autoLetter;
+
+  /// Key para `Scrollable.ensureVisible` (navegación con teclado). Va sobre el
+  /// contenido; la key de reordenamiento vive en el wrapper.
+  final GlobalKey? scrollKey;
+
   final Map<String, Color> subjectColors;
   final int huecos;
   final int diasLibres;
@@ -1269,7 +1405,6 @@ class _SidebarCard extends StatelessWidget {
   final ScheduleIssues issues;
 
   const _SidebarCard({
-    super.key,
     required this.index,
     required this.isSelected,
     required this.showInfo,
@@ -1281,9 +1416,10 @@ class _SidebarCard extends StatelessWidget {
     required this.diasLibres,
     required this.subjectNames,
     required this.issues,
+    required this.autoLetter,
+    this.name,
+    this.scrollKey,
   });
-
-  String get _label => String.fromCharCode(65 + index);
 
   @override
   Widget build(BuildContext context) {
@@ -1291,6 +1427,7 @@ class _SidebarCard extends StatelessWidget {
         isSelected ? const Color(0xFF2742F5) : const Color(0xFFE5E7EB);
 
     return Material(
+      key: scrollKey,
       color: Colors.white,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
@@ -1378,7 +1515,7 @@ class _SidebarCard extends StatelessWidget {
           showFavoriteButton: false,
           useLetterLabels: true,
           fillParent: true,
-          fillParentLabel: _label,
+          fillParentLabel: autoLetter,
           currentPage: 1,
           itemsPerPage: 1,
         ),
@@ -1396,9 +1533,11 @@ class _SidebarCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Letra grande
+          // Nombre del horario (o "Opción X" estable si no tiene).
           Text(
-            'Opción $_label',
+            name ?? 'Opción $autoLetter',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,

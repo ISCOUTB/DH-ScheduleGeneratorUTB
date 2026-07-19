@@ -3,7 +3,7 @@
 Endpoints para gestionar horarios destacados (favoritos) del usuario.
 """
 import json
-from typing import Optional
+from typing import Optional, List
 from fastapi import APIRouter, Cookie, HTTPException
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel
@@ -147,6 +147,56 @@ async def create_favorite(
         result["created_at"] = str(result["created_at"])
 
     return {"message": "Horario destacado guardado", "favorite": result}
+
+
+class ReorderFavoritesRequest(BaseModel):
+    """Body para reordenar: lista de IDs en el nuevo orden."""
+    orderedIds: List[int]
+    term: Optional[str] = None
+
+
+class RenameFavoriteRequest(BaseModel):
+    """Body para renombrar (nombre None/'' quita el nombre → "Opción X")."""
+    nombre: Optional[str] = None
+
+
+@router.patch("/reorder")
+async def reorder_favorites(
+    body: ReorderFavoritesRequest,
+    session_id: Optional[str] = Cookie(default=None),
+):
+    """Guarda el orden manual de los destacados (persistente). Se define antes
+    que `/{favorite_id}` para que 'reorder' no se interprete como un ID."""
+    user = get_authenticated_user(session_id)
+    user_id = user.get("db_user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="Usuario no vinculado a la base de datos")
+
+    term = body.term or CURRENT_TERM
+    await run_in_threadpool(
+        repository.reorder_favorites, user_id, term, body.orderedIds
+    )
+    return {"message": "Orden actualizado"}
+
+
+@router.patch("/{favorite_id}")
+async def rename_favorite(
+    favorite_id: int,
+    body: RenameFavoriteRequest,
+    session_id: Optional[str] = Cookie(default=None),
+):
+    """Renombra un destacado (o quita el nombre). Valida ownership."""
+    user = get_authenticated_user(session_id)
+    user_id = user.get("db_user_id")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="Usuario no vinculado a la base de datos")
+
+    ok = await run_in_threadpool(
+        repository.rename_favorite, favorite_id, user_id, body.nombre
+    )
+    if not ok:
+        raise HTTPException(status_code=404, detail="Favorito no encontrado")
+    return {"message": "Nombre actualizado"}
 
 
 @router.delete("/{favorite_id}")

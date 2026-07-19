@@ -457,14 +457,19 @@ def create_favorite(usuario_id: int, term: str, signature: str, schedule_json: d
     cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
 
     try:
+        # `posicion` = la siguiente libre (al final): un destacado nuevo va al
+        # final de la cola, sin renombrar los existentes.
         cursor.execute(
             """
-            INSERT INTO horario_destacado (usuario_id, term, signature, schedule_json)
-            VALUES (%s, %s, %s, %s::jsonb)
+            INSERT INTO horario_destacado (usuario_id, term, signature, schedule_json, posicion)
+            VALUES (%s, %s, %s, %s::jsonb,
+                COALESCE(
+                    (SELECT MAX(posicion) + 1 FROM horario_destacado
+                     WHERE usuario_id = %s AND term = %s), 0))
             ON CONFLICT (usuario_id, term, signature) DO NOTHING
-            RETURNING id, usuario_id, term, signature, created_at
+            RETURNING id, usuario_id, term, signature, nombre, posicion, created_at
             """,
-            (usuario_id, term, signature, json.dumps(schedule_json))
+            (usuario_id, term, signature, json.dumps(schedule_json), usuario_id, term)
         )
         result = cursor.fetchone()
         conn.commit()
@@ -475,21 +480,59 @@ def create_favorite(usuario_id: int, term: str, signature: str, schedule_json: d
 
 
 def get_favorites(usuario_id: int, term: str) -> List[Dict[str, Any]]:
-    """Obtiene los horarios destacados de un usuario para un término."""
+    """Obtiene los horarios destacados de un usuario para un término, en el orden
+    manual guardado (`posicion`)."""
     conn = get_db_connection()
     cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
 
     try:
         cursor.execute(
             """
-            SELECT id, usuario_id, term, signature, schedule_json, created_at
+            SELECT id, usuario_id, term, signature, nombre, posicion, schedule_json, created_at
             FROM horario_destacado
             WHERE usuario_id = %s AND term = %s
-            ORDER BY created_at DESC
+            ORDER BY posicion ASC NULLS LAST, created_at ASC, id ASC
             """,
             (usuario_id, term)
         )
         return [dict(row) for row in cursor.fetchall()]
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def rename_favorite(favorite_id: int, usuario_id: int, nombre: Optional[str]) -> bool:
+    """Renombra un destacado (o quita el nombre si `nombre` es None/''). Valida
+    dueño. Retorna True si actualizó una fila."""
+    limpio = (nombre or "").strip() or None
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "UPDATE horario_destacado SET nombre = %s WHERE id = %s AND usuario_id = %s",
+            (limpio, favorite_id, usuario_id),
+        )
+        conn.commit()
+        return cursor.rowcount > 0
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def reorder_favorites(usuario_id: int, term: str, ordered_ids: List[int]) -> bool:
+    """Asigna `posicion` = índice a cada favorito según el orden recibido. Solo
+    toca filas del propio usuario y término (los IDs ajenos se ignoran)."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        for pos, fid in enumerate(ordered_ids):
+            cursor.execute(
+                "UPDATE horario_destacado SET posicion = %s "
+                "WHERE id = %s AND usuario_id = %s AND term = %s",
+                (pos, fid, usuario_id, term),
+            )
+        conn.commit()
+        return True
     finally:
         cursor.close()
         conn.close()

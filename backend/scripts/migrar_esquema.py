@@ -102,6 +102,43 @@ def _agregar_etiqueta_curso_personalizado(conn: psycopg.Connection) -> None:
         cursor.close()
 
 
+def _agregar_nombre_posicion_favoritos(conn: psycopg.Connection) -> None:
+    """Agrega `nombre` y `posicion` a `horario_destacado` si faltan, y backfillea
+    `posicion` desde `created_at` para las filas existentes.
+
+    Permite nombrar y reordenar manualmente los destacados con persistencia. Los
+    favoritos viejos arrancan con un orden coherente (el de creación) y sin
+    nombre (se muestran como "Opción X"). Idempotente.
+    """
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            "ALTER TABLE public.horario_destacado ADD COLUMN IF NOT EXISTS nombre VARCHAR"
+        )
+        cursor.execute(
+            "ALTER TABLE public.horario_destacado ADD COLUMN IF NOT EXISTS posicion INTEGER"
+        )
+        # Backfill: numera 0..N por usuario+term según fecha de creación, solo las
+        # filas que aún no tienen posición.
+        cursor.execute(
+            """
+            UPDATE public.horario_destacado h
+            SET posicion = sub.rn
+            FROM (
+                SELECT id, ROW_NUMBER() OVER (
+                    PARTITION BY usuario_id, term ORDER BY created_at, id
+                ) - 1 AS rn
+                FROM public.horario_destacado
+                WHERE posicion IS NULL
+            ) sub
+            WHERE h.id = sub.id AND h.posicion IS NULL
+            """
+        )
+        conn.commit()
+    finally:
+        cursor.close()
+
+
 def aplicar_migraciones() -> None:
     """Aplica todas las migraciones pendientes. Seguro de ejecutar siempre."""
     conn = get_connection()
@@ -109,6 +146,7 @@ def aplicar_migraciones() -> None:
         _migrar_creditos_decimales(conn)
         _crear_tabla_curso_personalizado(conn)
         _agregar_etiqueta_curso_personalizado(conn)
+        _agregar_nombre_posicion_favoritos(conn)
     finally:
         conn.close()
 

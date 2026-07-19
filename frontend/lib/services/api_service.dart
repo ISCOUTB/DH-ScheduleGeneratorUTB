@@ -300,6 +300,43 @@ class ApiService {
     }
   }
 
+  /// Renombra un destacado (nombre null/'' quita el nombre → "Opción X").
+  Future<void> renameFavorite(int favoriteId, String? nombre) async {
+    final url = Uri.parse('$_baseUrl/api/favorites/$favoriteId');
+    final client = _createClient();
+    try {
+      final response = await client.patch(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({"nombre": nombre}),
+      );
+      if (response.statusCode == 200) return;
+      if (response.statusCode == 404) throw Exception('Favorito no encontrado');
+      if (response.statusCode == 401) throw Exception('No autenticado');
+      throw Exception('Error del servidor: ${response.statusCode}');
+    } finally {
+      client.close();
+    }
+  }
+
+  /// Guarda el orden manual de los destacados (lista de IDs en el nuevo orden).
+  Future<void> reorderFavorites(List<int> orderedIds, {String? term}) async {
+    final url = Uri.parse('$_baseUrl/api/favorites/reorder');
+    final client = _createClient();
+    try {
+      final response = await client.patch(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({"orderedIds": orderedIds, "term": term}),
+      );
+      if (response.statusCode == 200) return;
+      if (response.statusCode == 401) throw Exception('No autenticado');
+      throw Exception('Error del servidor: ${response.statusCode}');
+    } finally {
+      client.close();
+    }
+  }
+
   // ============================================================
   // Cursos personalizados
   // ============================================================
