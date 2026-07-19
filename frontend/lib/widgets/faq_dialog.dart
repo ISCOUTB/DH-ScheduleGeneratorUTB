@@ -128,7 +128,7 @@ class FaqDialog extends StatelessWidget {
       'Creo que encontré un error. ¿Cómo lo reporto?',
       'Puedes reportar el error a través de la opción correspondiente '
           '("Reportar Error") o escribirnos directamente por WhatsApp al '
-          '312.',
+          '3122854525 o al 3245437640.',
     ),
   ];
 
