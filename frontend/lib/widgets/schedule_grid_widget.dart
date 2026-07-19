@@ -56,6 +56,11 @@ class ScheduleGridWidget extends StatefulWidget {
   /// defecto false para no alterar otros usos.
   final bool paginateOnMobile;
 
+  /// Resuelve la etiqueta de la esquina de cada horario por su índice real.
+  /// Si se provee, tiene prioridad sobre [useLetterLabels]. Se usa en Destacados
+  /// para mostrar el nombre (o la letra estable) en vez de una letra posicional.
+  final String Function(int index)? labelBuilder;
+
   const ScheduleGridWidget({
     Key? key,
     required this.allSchedules,
@@ -72,6 +77,7 @@ class ScheduleGridWidget extends StatefulWidget {
     this.fillParentLabel,
     this.colorResolver,
     this.paginateOnMobile = false,
+    this.labelBuilder,
   }) : super(key: key);
 
   @override
@@ -220,8 +226,11 @@ class _ScheduleGridWidgetState extends State<ScheduleGridWidget> {
           schedule: schedule,
           subjectColors: subjectColors,
           scheduleIndex: realIndex,
-          labelOverride:
-              widget.useLetterLabels ? String.fromCharCode(65 + index) : null,
+          labelOverride: widget.labelBuilder != null
+              ? widget.labelBuilder!(realIndex)
+              : (widget.useLetterLabels
+                  ? String.fromCharCode(65 + index)
+                  : null),
           colorResolver: widget.colorResolver,
           showFavoriteButton: widget.showFavoriteButton,
           onTap: () => widget.onScheduleTap(realIndex),

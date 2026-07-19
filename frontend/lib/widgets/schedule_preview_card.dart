@@ -97,12 +97,18 @@ class SchedulePreview extends StatelessWidget {
                       ),
                     ),
                     child: Center(
-                      child: Text(
-                        labelOverride ?? '#${scheduleIndex + 1}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: fontSize,
-                          color: Colors.black54,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: Text(
+                          labelOverride ?? '#${scheduleIndex + 1}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: fontSize,
+                            color: Colors.black54,
+                          ),
                         ),
                       ),
                     ),

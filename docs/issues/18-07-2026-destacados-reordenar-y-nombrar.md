@@ -50,6 +50,23 @@ por posición**. Así, al reordenar, cada horario **conserva su letra** (mueves 
 posición — que era la intención al desligar nombre/orden de la letra. Al borrar
 uno, al recargar las letras se recompactan por creación.
 
+### Etiqueta de la esquina (mini-grilla)
+
+La esquina superior izquierda de cada grilla muestra **`nombre ?? letra estable`**,
+truncada con ellipsis si el nombre es largo (el completo se ve al abrir el
+detalle). Para esto `ScheduleGridWidget` acepta un `labelBuilder(index)` que tiene
+prioridad sobre la letra posicional interna.
+
+- **Escritorio:** grilla grande y mini-previews del sidebar usan `labelBuilder`/`fillParentLabel`.
+- **Móvil:** antes la grilla rotulaba con letra **posicional** (siempre A, B, C…
+  sin importar el orden/nombre). Ahora usa `labelBuilder` → la misma letra estable
+  o el nombre, consistente con escritorio.
+
+Guardado de nombre (edge cases): al guardar se hace `trim()` y se compara con el
+rótulo automático; si el resultado queda vacío o es exactamente "Opción X", se
+guarda **sin nombre** (queda la letra). Así, abrir el editor sin cambiar nada,
+reescribir el mismo default, o dejar espacios de más, **no** cuentan como nombrar.
+
 ## Bugs corregidos (sincronización entre períodos)
 
 El estado de la estrella del generador estaba atado al **período que se veía** en
@@ -74,9 +91,11 @@ título del header (le robaba espacio al `Expanded` de la leyenda). Se volvió a
 
 ## Fuera de alcance
 
-**Móvil:** no se incluye. La vista móvil de Destacados es una grilla
-(`ScheduleGridWidget`) con letras posicionales; llevar reordenar/nombrar/letra
-estable ahí implica rehacer ese layout. Se decidió dejarlo solo en escritorio.
+**Móvil:** **reordenar** y **editar nombre** siguen siendo solo de escritorio
+(la vista móvil es una grilla, no una lista arrastrable, y no tiene tarjeta/header
+donde poner el editor). Sí se corrigió la etiqueta de la esquina para que muestre
+`nombre ?? letra estable` (antes eran letras posicionales); ver la sección de
+etiqueta de la esquina.
 
 ## Despliegue
 

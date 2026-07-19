@@ -919,7 +919,8 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           showFavoriteButton: false,
                           useLetterLabels: true,
                           fillParent: true,
-                          fillParentLabel: selectedLabel,
+                          // Esquina: nombre si lo tiene, si no la letra estable.
+                          fillParentLabel: selectedName ?? selectedLabel,
                           currentPage: 1,
                           itemsPerPage: 1,
                         ),
@@ -1090,6 +1091,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
             isMobileLayout: true,
             showFavoriteButton: true,
             useLetterLabels: true,
+            // Móvil consistente con escritorio: nombre o letra ESTABLE (por
+            // creación), no la letra posicional interna de la grilla.
+            labelBuilder: (i) =>
+                provider.favoriteNameAt(i) ?? provider.favoriteAutoLetterAt(i),
             currentPage: 1,
             itemsPerPage: provider.favoriteSchedules.length,
           ),
@@ -1515,7 +1520,9 @@ class _SidebarCard extends StatelessWidget {
           showFavoriteButton: false,
           useLetterLabels: true,
           fillParent: true,
-          fillParentLabel: autoLetter,
+          // Esquina: nombre si lo tiene, si no la letra estable.
+          fillParentLabel:
+              (name != null && name!.trim().isNotEmpty) ? name! : autoLetter,
           currentPage: 1,
           itemsPerPage: 1,
         ),
