@@ -283,8 +283,9 @@ La exclusión de cursos personalizados del modo "Estado" y del aviso de destacad
 ### 12.4 Filtros vacíos para materias agregadas por curso personalizado (bug)
 `addSubjectFromCustom` agregaba la materia con `classOptions: []`, así que los filtros de **NRC/profesor** no tenían opciones (a diferencia de agregarla por "Buscar materia", que trae la oferta). **Fix** (`schedule_provider.dart`): ahora `addSubjectFromCustom` es `async` y **trae la oferta real** con `getSubjectDetails` (fallback a vacío si la materia no tiene oferta). Los llamadores (`createCustomCourse`, "Agregar a mi lista") pasan a `await`.
 
-### 12.5 Wizard: pulido de formulario
-- **Aviso azul** de "para qué sirve" movido del wizard al **panel de gestión** (`custom_courses_panel.dart`), estilo "Buscar Materia".
+### 12.5 Wizard y panel: pulido
+- **Aviso azul** de "para qué sirve" movido del wizard al **panel de gestión** (`custom_courses_panel.dart`), estilo "Buscar Materia". El texto explica el **objetivo principal** (fijar un curso que ya no está en la oferta —uno matriculado/decidido—, con otros usos como reservar una variación) y la **semántica de activación**: mientras un curso personalizado está activo, esa materia se combina **solo con él**, no con los cursos reales; para volver a la oferta real se desactiva con el switch (§5).
+- **Dropdown por materia en el panel de gestión:** cada grupo de materia tiene una cabecera **clickeable** que expande/contrae sus cursos (con badge "N cursos" visible aun colapsado + chevron), igual que el anidado de "Materias Seleccionadas" (§6.1).
 - Campos marcados **"(opcional)"** (Nombre, Profesor, NRC).
 - **Nombre del curso:** el default ya no se escribe en el campo. El label dice **"Nombre del curso (Por defecto: Curso A)"** y el placeholder es el default (`Curso A`); el esquema pasó de "Curso Creado A" a **"Curso A"** (siguiente letra libre). Se aplica al guardar si queda vacío.
 - **NRC:** solo dígitos, máx 4 (`inputFormatters`); si mete 1–3 dígitos → error y bloqueo; solo consulta al backend con 4. Ícono **ℹ️ con tooltip** (3 líneas) explicando que el NRC es único por periodo: si ya existe, ese curso está en la oferta (o te equivocaste al digitar).

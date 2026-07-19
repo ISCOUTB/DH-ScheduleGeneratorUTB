@@ -77,7 +77,10 @@ class CustomCoursesPanel extends StatelessWidget {
                         ? _emptyState()
                         : ListView(
                             children: byKey.entries
-                                .map((e) => _materiaGroup(context, provider, e.key, e.value))
+                                .map((e) => _MateriaGroup(
+                                    provider: provider,
+                                    subjectKey: e.key,
+                                    cursos: e.value))
                                 .toList(),
                           ),
                   ),
@@ -103,11 +106,30 @@ class CustomCoursesPanel extends StatelessWidget {
             Icon(Icons.info_outline, color: Colors.blue.shade600, size: 20),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
-                'Un curso personalizado fija un curso que ya tienes o decidiste '
-                '(aunque no esté en la oferta). Marca sus horas y el generador '
-                'arma el resto del horario a su alrededor.',
-                style: TextStyle(color: Colors.blue.shade700, fontSize: 12, height: 1.3),
+              child: RichText(
+                text: TextSpan(
+                  style: TextStyle(color: Colors.blue.shade700, fontSize: 12, height: 1.35),
+                  children: [
+                    const TextSpan(
+                        text: 'Su objetivo principal es ',
+                        style: TextStyle(fontWeight: FontWeight.w600)),
+                    const TextSpan(
+                        text: 'fijar un curso que ya no está en la oferta',
+                        style: TextStyle(fontWeight: FontWeight.w700)),
+                    const TextSpan(
+                        text: ' —uno que ya matriculaste o decidiste—, aunque '
+                            'también sirve para reservar cualquier curso o '
+                            'variación que quieras respetar. El generador arma '
+                            'el resto del horario a su alrededor. '),
+                    const TextSpan(
+                        text: 'Mientras el curso esté activo, esa materia se '
+                            'combina solo con él, no con los cursos reales',
+                        style: TextStyle(fontWeight: FontWeight.w600)),
+                    const TextSpan(
+                        text: '; para volver a combinar con la oferta real, '
+                            'desactívalo con el switch.'),
+                  ],
+                ),
               ),
             ),
           ],
@@ -132,10 +154,35 @@ class CustomCoursesPanel extends StatelessWidget {
         ),
       );
 
-  Widget _materiaGroup(
-      BuildContext context, ScheduleProvider provider, String key, List<CustomCourse> cursos) {
+}
+
+/// Grupo de una materia dentro del panel de gestión: cabecera **clickeable**
+/// que expande/contrae sus cursos personalizados (dropdown), igual que en
+/// "Materias Seleccionadas".
+class _MateriaGroup extends StatefulWidget {
+  final ScheduleProvider provider;
+  final String subjectKey;
+  final List<CustomCourse> cursos;
+
+  const _MateriaGroup({
+    required this.provider,
+    required this.subjectKey,
+    required this.cursos,
+  });
+
+  @override
+  State<_MateriaGroup> createState() => _MateriaGroupState();
+}
+
+class _MateriaGroupState extends State<_MateriaGroup> {
+  bool _expanded = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final cursos = widget.cursos;
+    final provider = widget.provider;
     final first = cursos.first;
-    final bool inList = provider.isSubjectInList(key);
+    final bool inList = provider.isSubjectInList(widget.subjectKey);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -146,61 +193,82 @@ class CustomCoursesPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Cabecera de la materia
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(first.name,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                      Text(first.code,
-                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Aviso: la materia no está en la lista de trabajo (RFC §6.4)
-          if (!inList)
-            Container(
-              width: double.infinity,
-              margin: const EdgeInsets.fromLTRB(12, 4, 12, 4),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF7ED),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color(0xFFFED7AA)),
-              ),
+          // Cabecera de la materia: toda la fila abre/cierra el dropdown.
+          InkWell(
+            onTap: () => setState(() => _expanded = !_expanded),
+            borderRadius: BorderRadius.circular(10),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline, size: 16, color: Color(0xFF9A3412)),
-                  const SizedBox(width: 6),
-                  const Expanded(
-                    child: Text(
-                      'Esta materia no está en tu lista; agrégala para generar con este curso.',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF9A3412)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(first.name,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                        Text(first.code,
+                            style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                      ],
                     ),
                   ),
-                  TextButton(
-                    onPressed: () async {
-                      final err = await provider.addSubjectFromCustom(first);
-                      if (err != null && context.mounted) {
-                        showCustomNotification(context, err,
-                            icon: Icons.info, color: Colors.orange);
-                      }
-                    },
-                    child: const Text('Agregar a mi lista'),
+                  // Contador (visible aun colapsado) + chevron.
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEFF6FF),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      cursos.length == 1 ? '1 curso' : '${cursos.length} cursos',
+                      style: const TextStyle(
+                          fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
+                    ),
                   ),
+                  Icon(_expanded ? Icons.expand_less : Icons.expand_more,
+                      color: Colors.grey.shade600),
                 ],
               ),
             ),
-          ...cursos.map((c) => _courseRow(context, provider, c, inList)),
-          const SizedBox(height: 6),
+          ),
+          if (_expanded) ...[
+            // Aviso: la materia no está en la lista de trabajo (RFC §6.4)
+            if (!inList)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.fromLTRB(12, 0, 12, 4),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF7ED),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFFED7AA)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.info_outline, size: 16, color: Color(0xFF9A3412)),
+                    const SizedBox(width: 6),
+                    const Expanded(
+                      child: Text(
+                        'Esta materia no está en tu lista; agrégala para generar con este curso.',
+                        style: TextStyle(fontSize: 12, color: Color(0xFF9A3412)),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        final err = await provider.addSubjectFromCustom(first);
+                        if (err != null && context.mounted) {
+                          showCustomNotification(context, err,
+                              icon: Icons.info, color: Colors.orange);
+                        }
+                      },
+                      child: const Text('Agregar a mi lista'),
+                    ),
+                  ],
+                ),
+              ),
+            ...cursos.map((c) => _courseRow(context, provider, c, inList)),
+            const SizedBox(height: 6),
+          ],
         ],
       ),
     );

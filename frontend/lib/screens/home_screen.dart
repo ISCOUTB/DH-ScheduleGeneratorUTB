@@ -343,13 +343,19 @@ class _HomeScreenState extends State<HomeScreen> {
       );
 
   List<Widget> _buildDesktopActions(ScheduleProvider provider) => [
-        _buildNavButton('Mi UTB', 'https://www.utb.edu.co/mi-utb/'),
-        _buildNavButton('Turnos',
-            'https://sites.google.com/view/turnos-de-matricula-web-utb/turnos?authuser=0'),
-        _buildNavButton('Mallas',
-            'https://sites.google.com/utb.edu.co/mallasutb/mallas-curriculares'),
-        _buildNavButton('Electivas',
-            'https://sites.google.com/utb.edu.co/stuplan-electivas/electivas'),
+        ResourcesMenu(
+          label: 'Recursos',
+          onSelect: _launchURL,
+          items: const {
+            'Mi UTB': 'https://www.utb.edu.co/mi-utb/',
+            'Turnos':
+                'https://sites.google.com/view/turnos-de-matricula-web-utb/turnos?authuser=0',
+            'Mallas':
+                'https://sites.google.com/utb.edu.co/mallasutb/mallas-curriculares',
+            'Electivas':
+                'https://sites.google.com/utb.edu.co/stuplan-electivas/electivas',
+          },
+        ),
         _buildNavButton('Reportar Error',
             'https://docs.google.com/forms/d/e/1FAIpQLSeG6F1lWErfKEtTo4R8OmF6ZCpjrqKqosn_7KLgHpLCYTuDFw/viewform?usp=publish-editor'),
         const SizedBox(width: 8),
