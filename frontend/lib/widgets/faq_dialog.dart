@@ -206,8 +206,8 @@ class FaqDialog extends StatelessWidget {
                     Expanded(
                       child: Text(
                         'Si tu duda, pregunta o inquietud no se encuentra '
-                        'registrada, escríbenos al 3245437640 o al 3122854525'
-                        'y gustosamente aclararemos tu duda.',
+                        'registrada, escríbenos al 3245437640 o al 3122854525 '
+                        'y con gusto te ayudamos.',
                         style: TextStyle(
                             fontSize: 12,
                             height: 1.3,
