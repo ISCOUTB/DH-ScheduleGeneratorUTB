@@ -17,6 +17,7 @@ import '../widgets/color_mode_toggle.dart';
 import '../widgets/common/common.dart';
 import '../widgets/dialogs/dialogs.dart';
 import '../widgets/layout/layout.dart';
+import '../widgets/faq_dialog.dart';
 
 /// Pantalla dedicada para ver los horarios destacados (favoritos) del usuario.
 ///
@@ -410,6 +411,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                   'https://docs.google.com/forms/d/e/1FAIpQLSeG6F1lWErfKEtTo4R8OmF6ZCpjrqKqosn_7KLgHpLCYTuDFw/viewform?usp=publish-editor');
                             },
                           ),
+                          MobileMenuItem(
+                            label: 'Preguntas frecuentes',
+                            onTap: () {
+                              provider.setMobileMenuOpen(false);
+                              FaqDialog.show(context);
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -455,15 +463,22 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       ),
       actions: [
         if (!isMobileLayout) ...[
-          _buildNavButton('Mi UTB', 'https://www.utb.edu.co/mi-utb/'),
-          _buildNavButton('Turnos',
-              'https://sites.google.com/view/turnos-de-matricula-web-utb/turnos?authuser=0'),
-          _buildNavButton('Mallas',
-              'https://sites.google.com/utb.edu.co/mallasutb/mallas-curriculares'),
-          _buildNavButton('Electivas',
-              'https://sites.google.com/utb.edu.co/stuplan-electivas/electivas'),
+          ResourcesMenu(
+            label: 'Recursos',
+            onSelect: _launchURL,
+            items: const {
+              'Mi UTB': 'https://www.utb.edu.co/mi-utb/',
+              'Turnos':
+                  'https://sites.google.com/view/turnos-de-matricula-web-utb/turnos?authuser=0',
+              'Mallas':
+                  'https://sites.google.com/utb.edu.co/mallasutb/mallas-curriculares',
+              'Electivas':
+                  'https://sites.google.com/utb.edu.co/stuplan-electivas/electivas',
+            },
+          ),
           _buildNavButton('Reportar Error',
               'https://docs.google.com/forms/d/e/1FAIpQLSeG6F1lWErfKEtTo4R8OmF6ZCpjrqKqosn_7KLgHpLCYTuDFw/viewform?usp=publish-editor'),
+          _buildFaqButton(),
           const SizedBox(width: 8),
           IconButton(
             icon: const Icon(Icons.info_outline, color: Colors.white),
@@ -497,6 +512,18 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           cursor: SystemMouseCursors.click,
           child: NavLink(text: text),
         ),
+      );
+
+  /// Botón de Preguntas frecuentes del AppBar (ícono + texto): abre el diálogo.
+  Widget _buildFaqButton() => TextButton.icon(
+        style: TextButton.styleFrom(
+          foregroundColor: Colors.white,
+          overlayColor: Colors.white24,
+        ),
+        onPressed: () => FaqDialog.show(context),
+        icon: const Icon(Icons.help_outline, size: 20),
+        label: const Text('Preguntas frecuentes',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       );
 
   /// Menú de usuario (perfil) para la appbar móvil, igual que en el generador.
