@@ -19,6 +19,7 @@ Para mejorar mantenibilidad y trazabilidad, las decisiones relevantes se documen
 
 Registros vigentes:
 
+- `docs/issues/13-10-2026-auth-token-app-movil.md`
 - `docs/issues/14-07-2026-creditos-decimales.md`
 - `docs/issues/15-06-2026-incidente-wipe-oferta-etl-banner-caido.md`
 - `docs/issues/12-05-2026-rfc-estados-cursos-notificaciones.md`
@@ -243,7 +244,7 @@ El módulo `app/auth/` implementa autenticación OAuth 2.0 con **Authorization C
 | `POST` | `/api/favorites` | Crea un horario destacado |
 | `DELETE` | `/api/favorites/{id}` | Elimina un horario destacado (valida ownership) |
 
-**Autorización:** Todos los endpoints requieren la cookie `session_id` (sesión activa). Si no hay sesión → 401.
+**Autorización:** Todos los endpoints requieren la cookie `session_id` (sesión activa) **o**, para la app móvil, `Authorization: Bearer <token de Microsoft>` (dependencia `require_user`, verificada con Graph: ver `docs/issues/13-10-2026-auth-token-app-movil.md`). Sin ninguno válido → 401; si Graph no responde → 503. Lo mismo aplica a `/api/custom-courses*`.
 
 **GET /api/favorites/status — Response:**
 ```json

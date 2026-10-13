@@ -4,10 +4,10 @@ Endpoints para gestionar horarios destacados (favoritos) del usuario.
 """
 import json
 from typing import Optional, List
-from fastapi import APIRouter, Cookie, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel
-from ..auth.routes import get_authenticated_user, CURRENT_TERM
+from ..auth.routes import require_user, CURRENT_TERM
 from ..db import repository
 
 router = APIRouter(prefix="/api/favorites", tags=["favorites"])
@@ -18,12 +18,11 @@ MAX_FAVORITES_PER_TERM = 20
 
 @router.get("/terms")
 async def get_favorite_terms(
-    session_id: Optional[str] = Cookie(default=None),
+    user: dict = Depends(require_user),
 ):
     """
     Retorna los términos que tienen favoritos para el usuario + el término actual.
     """
-    user = get_authenticated_user(session_id)
     user_id = user.get("db_user_id")
     if not user_id:
         raise HTTPException(status_code=400, detail="Usuario no vinculado a la base de datos")
@@ -45,7 +44,7 @@ async def get_favorite_terms(
 @router.get("/status")
 async def get_favorites_status(
     nrcs: str = "",
-    session_id: Optional[str] = Cookie(default=None),
+    user: dict = Depends(require_user),
 ):
     """
     Estado actual de cupos de una lista de NRCs (Fase 2: estado visual).
@@ -57,9 +56,8 @@ async def get_favorites_status(
     Solo refleja el término actual; el frontend no lo invoca para periodos
     pasados (ver RFC Fase 2, sección 2.6). Requiere sesión activa.
     """
-    # Valida la sesión (lanza 401 si no hay). No se necesita el user_id: el
-    # estado de cupos no depende del usuario, pero el endpoint es privado.
-    get_authenticated_user(session_id)
+    # La sesión la valida `require_user` (401 si no hay). No se necesita el
+    # user_id: el estado de cupos no depende del usuario, pero es privado.
 
     nrc_list = [n.strip() for n in nrcs.split(",") if n.strip()]
     if not nrc_list:
@@ -77,13 +75,12 @@ class CreateFavoriteRequest(BaseModel):
 @router.get("")
 async def get_favorites(
     term: Optional[str] = None,
-    session_id: Optional[str] = Cookie(default=None),
+    user: dict = Depends(require_user),
 ):
     """
     Lista los horarios destacados del usuario autenticado para un término.
     Si no se especifica term, usa el término actual.
     """
-    user = get_authenticated_user(session_id)
     user_id = user.get("db_user_id")
     if not user_id:
         raise HTTPException(status_code=400, detail="Usuario no vinculado a la base de datos")
@@ -110,14 +107,13 @@ async def get_favorites(
 @router.post("")
 async def create_favorite(
     body: CreateFavoriteRequest,
-    session_id: Optional[str] = Cookie(default=None),
+    user: dict = Depends(require_user),
 ):
     """
     Crea un horario destacado para el usuario autenticado.
     Usa el término actual del servidor.
     Si ya existe (misma signature), retorna 409.
     """
-    user = get_authenticated_user(session_id)
     user_id = user.get("db_user_id")
     if not user_id:
         raise HTTPException(status_code=400, detail="Usuario no vinculado a la base de datos")
@@ -163,11 +159,10 @@ class RenameFavoriteRequest(BaseModel):
 @router.patch("/reorder")
 async def reorder_favorites(
     body: ReorderFavoritesRequest,
-    session_id: Optional[str] = Cookie(default=None),
+    user: dict = Depends(require_user),
 ):
     """Guarda el orden manual de los destacados (persistente). Se define antes
     que `/{favorite_id}` para que 'reorder' no se interprete como un ID."""
-    user = get_authenticated_user(session_id)
     user_id = user.get("db_user_id")
     if not user_id:
         raise HTTPException(status_code=400, detail="Usuario no vinculado a la base de datos")
@@ -183,10 +178,9 @@ async def reorder_favorites(
 async def rename_favorite(
     favorite_id: int,
     body: RenameFavoriteRequest,
-    session_id: Optional[str] = Cookie(default=None),
+    user: dict = Depends(require_user),
 ):
     """Renombra un destacado (o quita el nombre). Valida ownership."""
-    user = get_authenticated_user(session_id)
     user_id = user.get("db_user_id")
     if not user_id:
         raise HTTPException(status_code=400, detail="Usuario no vinculado a la base de datos")
@@ -202,13 +196,12 @@ async def rename_favorite(
 @router.delete("/{favorite_id}")
 async def delete_favorite(
     favorite_id: int,
-    session_id: Optional[str] = Cookie(default=None),
+    user: dict = Depends(require_user),
 ):
     """
     Elimina un horario destacado del usuario autenticado.
     Valida ownership: solo puede eliminar sus propios favoritos.
     """
-    user = get_authenticated_user(session_id)
     user_id = user.get("db_user_id")
     if not user_id:
         raise HTTPException(status_code=400, detail="Usuario no vinculado a la base de datos")

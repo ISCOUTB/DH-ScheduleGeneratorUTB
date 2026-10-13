@@ -11,11 +11,12 @@ import base64
 from urllib.parse import urlencode
 from typing import Optional
 import httpx
-from fastapi import APIRouter, Request, Response, Cookie, HTTPException
+from fastapi import APIRouter, Request, Response, Cookie, Header, HTTPException
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import RedirectResponse
 from dotenv import load_dotenv
 from ..db import repository
+from . import token_auth
 
 load_dotenv()
 
@@ -59,6 +60,44 @@ def get_authenticated_user(session_id: str | None) -> dict:
     if not session_id or session_id not in sessions:
         raise HTTPException(status_code=401, detail="No autenticado")
     return sessions[session_id]
+
+
+def _client_ip(request: Request) -> Optional[str]:
+    return request.headers.get("x-forwarded-for", "").split(",")[0].strip() or (
+        request.client.host if request.client else None
+    )
+
+
+async def require_user(
+    request: Request,
+    session_id: Optional[str] = Cookie(default=None),
+    authorization: Optional[str] = Header(default=None),
+) -> dict:
+    """
+    Dependencia de las rutas privadas: el usuario de la cookie de la web o, si
+    no hay sesión, el de un `Authorization: Bearer <token>` de Microsoft
+    (app móvil, ver auth/token_auth.py).
+
+    401 si no hay ninguno válido; 503 si Graph no responde (el token puede
+    ser válido: el cliente no debe cerrar la sesión por eso).
+    """
+    if session_id and session_id in sessions:
+        return sessions[session_id]
+    token = token_auth.bearer_token(authorization)
+    if token:
+        try:
+            user = await token_auth.user_from_token(
+                token,
+                ALLOWED_TENANTS,
+                client_ip=_client_ip(request),
+                user_agent=request.headers.get("user-agent"),
+            )
+        except token_auth.TokenVerificationUnavailable as e:
+            print(f"Warning: no se pudo verificar el token con Graph: {e}")
+            raise HTTPException(status_code=503, detail="No se pudo verificar la sesión")
+        if user:
+            return user
+    raise HTTPException(status_code=401, detail="No autenticado")
 
 
 async def _persist_user(entra_id: str, email: str, nombre: Optional[str]) -> dict:

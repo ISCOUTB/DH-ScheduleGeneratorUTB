@@ -9,11 +9,11 @@ materias (la materia carga los créditos). Ver
 docs/issues/17-07-2026-rfc-cursos-personalizados.md
 """
 from typing import Optional, List
-from fastapi import APIRouter, Cookie, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel
 
-from ..auth.routes import get_authenticated_user
+from ..auth.routes import require_user
 from ..db import repository
 
 router = APIRouter(prefix="/api/custom-courses", tags=["custom-courses"])
@@ -49,8 +49,7 @@ class UpdateCustomCourseRequest(BaseModel):
     activo: Optional[bool] = None
 
 
-def _user_id(session_id: Optional[str]) -> int:
-    user = get_authenticated_user(session_id)
+def _user_id(user: dict) -> int:
     uid = user.get("db_user_id")
     if not uid:
         raise HTTPException(status_code=400, detail="Usuario no vinculado a la base de datos")
@@ -58,21 +57,21 @@ def _user_id(session_id: Optional[str]) -> int:
 
 
 @router.get("")
-async def list_custom_courses(session_id: Optional[str] = Cookie(default=None)):
+async def list_custom_courses(user: dict = Depends(require_user)):
     """Lista todos los cursos personalizados del usuario (para el panel de gestión)."""
-    uid = _user_id(session_id)
+    uid = _user_id(user)
     cursos = await run_in_threadpool(repository.get_custom_courses, uid)
     return {"customCourses": cursos}
 
 
 @router.get("/nrc-check")
-async def check_nrc(nrc: str, session_id: Optional[str] = Cookie(default=None)):
+async def check_nrc(nrc: str, user: dict = Depends(require_user)):
     """¿El NRC ya existe en la oferta real? Devuelve la materia que lo ocupa.
 
     Lo usa el formulario para avisar en vivo que un NRC está tomado (no se puede
     reusar). `{ "taken": bool, "code": ..., "name": ... }`.
     """
-    _user_id(session_id)
+    _user_id(user)
     subj = await run_in_threadpool(repository.get_nrc_subject, nrc.strip())
     if subj:
         return {"taken": True, "code": subj["code"], "name": subj["name"]}
@@ -82,10 +81,10 @@ async def check_nrc(nrc: str, session_id: Optional[str] = Cookie(default=None)):
 @router.post("")
 async def create_custom_course(
     body: CreateCustomCourseRequest,
-    session_id: Optional[str] = Cookie(default=None),
+    user: dict = Depends(require_user),
 ):
     """Crea un curso personalizado para una materia existente del catálogo."""
-    uid = _user_id(session_id)
+    uid = _user_id(user)
 
     if not body.bloques:
         raise HTTPException(status_code=400, detail="El curso debe tener al menos un bloque de horario.")
@@ -125,10 +124,10 @@ async def create_custom_course(
 async def update_custom_course(
     course_id: int,
     body: UpdateCustomCourseRequest,
-    session_id: Optional[str] = Cookie(default=None),
+    user: dict = Depends(require_user),
 ):
     """Actualiza campos de un curso personalizado (incluye el switch `activo`)."""
-    uid = _user_id(session_id)
+    uid = _user_id(user)
     if body.nrc and body.nrc.strip():
         taken = await run_in_threadpool(repository.get_nrc_subject, body.nrc.strip())
         if taken:
@@ -150,10 +149,10 @@ async def update_custom_course(
 @router.delete("/{course_id}")
 async def delete_custom_course(
     course_id: int,
-    session_id: Optional[str] = Cookie(default=None),
+    user: dict = Depends(require_user),
 ):
     """Elimina un curso personalizado. Valida ownership."""
-    uid = _user_id(session_id)
+    uid = _user_id(user)
     deleted = await run_in_threadpool(repository.delete_custom_course, course_id, uid)
     if not deleted:
         raise HTTPException(status_code=404, detail="Curso personalizado no encontrado.")
