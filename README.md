@@ -121,6 +121,7 @@ El despliegue es automático: cada **push a `master`** dispara el workflow de Gi
 |--------|----------|-------------|
 | `GET` | `/api/subjects` | Lista todas las materias disponibles |
 | `GET` | `/api/subjects/{code}?name=...` | Detalles de una materia |
+| `GET` | `/api/term` | Período actual de la oferta (`CURRENT_TERM`), sin sesión |
 | `POST` | `/api/schedules/generate` | Genera horarios válidos (devuelve `{ schedules, truncated }`) |
 
 ### 🔐 Autenticación (Microsoft Entra ID)

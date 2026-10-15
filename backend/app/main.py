@@ -19,7 +19,7 @@ from .services import schedule_diagnostics
 from .routes import subject_routes
 from .routes import favorite_routes
 from .routes import custom_course_routes
-from .auth.routes import router as auth_router
+from .auth.routes import router as auth_router, CURRENT_TERM
 
 app = FastAPI(
     title="DH Schedule Generator API",
@@ -85,6 +85,18 @@ def get_subjects_catalog():
     cursos vigentes). El buscador normal usa `/api/subjects`.
     """
     return repository.get_all_subjects_catalog()
+
+
+@app.get("/api/term", summary="Período académico actual")
+def get_current_term():
+    """
+    Devuelve el período de la oferta que usa el generador (`CURRENT_TERM` del
+    .env, el mismo de Destacados y del ETL), en código de Banner: p. ej.
+    `{"currentTerm": "202620"}`. Es pública (no es un dato personal): la app
+    móvil la usa para mostrar el período sobre la lista de materias.
+    """
+    return {"currentTerm": CURRENT_TERM}
+
 
 def _custom_option_group(cc: CustomCourseInput) -> List[ClassOption]:
     """Convierte un curso personalizado en un `option_group` (una sola opción).

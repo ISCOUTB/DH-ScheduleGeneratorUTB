@@ -203,6 +203,17 @@ La API expone los siguientes endpoints para ser consumidos por el frontend:
 
 ---
 
+### `GET /api/term`
+
+- **Descripción:** Devuelve el período de la oferta que usa el generador: `CURRENT_TERM` del `.env`, el mismo de Destacados y del ETL, en código de Banner. Es pública (no pide sesión; no es un dato personal). La usa la app móvil (UTB App) para mostrar el período sobre la lista de materias.
+- **Respuesta Exitosa (200):**
+
+  ```json
+  { "currentTerm": "202620" }
+  ```
+
+---
+
 ### `GET /api/subjects/{subject_code}?name=...`
 
 - **Descripción:** Obtiene toda la información detallada de una única materia, incluyendo todas sus `classOptions` (grupos, profesores, horarios, etc.).
