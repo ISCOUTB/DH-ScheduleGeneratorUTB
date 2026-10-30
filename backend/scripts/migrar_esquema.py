@@ -139,6 +139,95 @@ def _agregar_nombre_posicion_favoritos(conn: psycopg.Connection) -> None:
         cursor.close()
 
 
+# Lo mismo que la sección «Planificación del período siguiente» de init.sql
+# (tests/test_planificacion_esquema.py comprueba que las columnas coincidan).
+_DDL_PLANIFICACION = """
+CREATE TABLE IF NOT EXISTS public.periodo_planificacion (
+    id SERIAL PRIMARY KEY,
+    periodo VARCHAR(6) NOT NULL UNIQUE,
+    etiqueta VARCHAR NOT NULL,
+    version_lista VARCHAR NOT NULL,
+    estado VARCHAR NOT NULL DEFAULT 'abierto'
+        CHECK (estado IN ('borrador', 'abierto', 'cerrado')),
+    abre TIMESTAMP WITH TIME ZONE,
+    cierra TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS public.materia_planificable (
+    id SERIAL PRIMARY KEY,
+    periodo_id INTEGER NOT NULL REFERENCES public.periodo_planificacion(id) ON DELETE CASCADE,
+    codigo VARCHAR NOT NULL,
+    nombre VARCHAR NOT NULL,
+    nombre_banner VARCHAR,
+    area VARCHAR,
+    creditos NUMERIC(4,2),
+    niveles JSONB NOT NULL DEFAULT '[]'::jsonb,
+    programas JSONB NOT NULL DEFAULT '[]'::jsonb,
+    nombre_cortado BOOLEAN NOT NULL DEFAULT FALSE,
+    activa BOOLEAN NOT NULL DEFAULT TRUE,
+    UNIQUE (periodo_id, codigo)
+);
+
+CREATE TABLE IF NOT EXISTS public.equivalencia_materia (
+    id SERIAL PRIMARY KEY,
+    periodo_id INTEGER NOT NULL REFERENCES public.periodo_planificacion(id) ON DELETE CASCADE,
+    materia_a_id INTEGER NOT NULL REFERENCES public.materia_planificable(id) ON DELETE CASCADE,
+    materia_b_id INTEGER NOT NULL REFERENCES public.materia_planificable(id) ON DELETE CASCADE,
+    evidencia VARCHAR,
+    CHECK (materia_a_id < materia_b_id),
+    UNIQUE (materia_a_id, materia_b_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.plan_estudiante (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL REFERENCES public.usuario(id) ON DELETE CASCADE,
+    periodo_id INTEGER NOT NULL REFERENCES public.periodo_planificacion(id),
+    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    UNIQUE (usuario_id, periodo_id)
+);
+
+CREATE TABLE IF NOT EXISTS public.plan_materia (
+    id SERIAL PRIMARY KEY,
+    plan_id INTEGER NOT NULL REFERENCES public.plan_estudiante(id) ON DELETE CASCADE,
+    materia_id INTEGER NOT NULL REFERENCES public.materia_planificable(id),
+    posicion INTEGER NOT NULL,
+    agregada TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    UNIQUE (plan_id, materia_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_materia_plan_periodo ON public.materia_planificable(periodo_id);
+CREATE INDEX IF NOT EXISTS idx_plan_materia_materia ON public.plan_materia(materia_id);
+
+CREATE OR REPLACE VIEW public.demanda_planificacion AS
+SELECT p.periodo, m.codigo, m.nombre, COUNT(DISTINCT pe.usuario_id) AS estudiantes
+FROM public.plan_materia pm
+JOIN public.plan_estudiante pe ON pe.id = pm.plan_id
+JOIN public.materia_planificable m ON m.id = pm.materia_id
+JOIN public.periodo_planificacion p ON p.id = pe.periodo_id
+GROUP BY p.periodo, m.codigo, m.nombre
+HAVING COUNT(DISTINCT pe.usuario_id) >= 10;
+"""
+
+
+def _crear_tablas_planificacion(conn: psycopg.Connection) -> None:
+    """Crea las tablas de la planificación del período siguiente si no existen
+    (HU #380 de la app): la lista de materias, sus equivalencias y el plan de
+    cada estudiante, más la vista de demanda (solo conteos de 10 o más).
+
+    `init.sql` solo corre en bases vacías; en la de producción llegan por esta
+    migración. Idempotente: `IF NOT EXISTS` y `CREATE OR REPLACE VIEW`.
+    """
+    cursor = conn.cursor()
+    try:
+        cursor.execute(_DDL_PLANIFICACION)
+        conn.commit()
+    finally:
+        cursor.close()
+
+
 def aplicar_migraciones() -> None:
     """Aplica todas las migraciones pendientes. Seguro de ejecutar siempre."""
     conn = get_connection()
@@ -147,6 +236,7 @@ def aplicar_migraciones() -> None:
         _crear_tabla_curso_personalizado(conn)
         _agregar_etiqueta_curso_personalizado(conn)
         _agregar_nombre_posicion_favoritos(conn)
+        _crear_tablas_planificacion(conn)
     finally:
         conn.close()
 
