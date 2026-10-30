@@ -19,6 +19,7 @@ from .services import schedule_diagnostics
 from .routes import subject_routes
 from .routes import favorite_routes
 from .routes import custom_course_routes
+from .routes import planning_routes
 from .auth.routes import router as auth_router, CURRENT_TERM
 
 app = FastAPI(
@@ -62,6 +63,9 @@ app.include_router(favorite_routes.router)
 
 # Rutas de cursos personalizados
 app.include_router(custom_course_routes.router)
+
+# Rutas de la planificación del período siguiente (HU #380 de la app)
+app.include_router(planning_routes.router)
 
 # Rutas de autenticación OAuth
 app.include_router(auth_router)

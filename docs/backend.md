@@ -287,6 +287,23 @@ Consulta los cupos actuales en la tabla `Curso` (`CuposDisponibles`/`CuposTotale
 
 **Configuración:** El término actual se define con `CURRENT_TERM` en `backend/.env`. Esta variable es leída por la API y por los scripts de actualización de datos. Actualizar una sola vez cada semestre.
 
+### Endpoints de la planificación del período siguiente
+
+El estudiante arma en la app la lista de materias que piensa ver el próximo período (HU #380 de la app móvil, sin sugerencias). Las materias salen de `materia_planificable`, la lista del período, que trae también las que no se dictan este período; no de `Materia`, que es la oferta actual. Tablas en `docs/modelo_datos.md`.
+
+| Método | Endpoint | Sesión | Descripción |
+|--------|----------|--------|-------------|
+| `GET` | `/api/planning/current` | No | El período que se está planificando (abierto y dentro de su ventana): `{term, label, listVersion, opensAt, closesAt}`; 404 si no hay |
+| `GET` | `/api/planning/{term}/subjects` | No | La lista activa del período, por nombre: `{term, listVersion, subjects: [{code, name, credits, area, levels, programs, nameTruncated, equivalentCodes}]}`; 404 si el período no existe o es un borrador |
+| `GET` | `/api/planning/{term}/plan` | Sí | El plan de quien tiene la sesión: `{term, editable, updatedAt, subjects: [{code, name, credits, active}]}` (vacío si no tiene) |
+| `PUT` | `/api/planning/{term}/plan` | Sí | Reemplaza el plan con `{"codes": [...]}` en ese orden y lo devuelve |
+
+El `PUT` revisa lo mismo que la app: período abierto (si no, 409), sin repetidos ni códigos vacíos, máximo 30 materias (400), solo materias de la lista (422; una que salió de la lista se conserva si ya estaba en el plan) y hasta 20 créditos, el mismo tope por defecto del generador (422). El plan es de quien tiene la sesión (`require_user`, igual que los favoritos), nunca de un id del cuerpo. Repetirlo no cambia el resultado.
+
+**Carga de la lista:** `python scripts/cargar_lista_planificacion.py lista_materias_202710.json` (desde `backend/`), con el JSON que genera `exportar_lista.py` desde la lista revisada. En una transacción crea o actualiza el período (un período nuevo queda abierto) y sus materias, deja inactivas las que ya no vienen (no se borran: puede haber planes que las tienen) y reemplaza las equivalencias. Se corre a mano una vez por período, no en el cron. El estado (`borrador`, `abierto`, `cerrado`) y la ventana (`abre`, `cierra`) se cambian con SQL en `periodo_planificacion`.
+
+**Demanda:** la vista `demanda_planificacion` da cuántos estudiantes planearon cada materia y no muestra conteos de menos de 10 (Ley 1581 de 2012). No tiene endpoint.
+
 ### Limitaciones conocidas
 
 - Las sesiones se almacenan **en memoria** del proceso API. Si el contenedor se reinicia, todas las sesiones se pierden y los usuarios deben re-autenticarse.

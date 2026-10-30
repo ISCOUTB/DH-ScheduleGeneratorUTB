@@ -827,3 +827,163 @@ def delete_custom_course(id_: int, usuario_id: int) -> bool:
     finally:
         cursor.close()
         conn.close()
+
+
+# --- Planificación del período siguiente (HU #380 de la app) ---
+
+# Un período se puede editar si está abierto y dentro de su ventana (sin fecha
+# de apertura o de cierre, ese lado no limita).
+_PERIODO_EDITABLE = (
+    "estado = 'abierto' AND (abre IS NULL OR abre <= NOW()) "
+    "AND (cierra IS NULL OR cierra > NOW())"
+)
+
+
+def get_planning_term_current() -> Dict[str, Any] | None:
+    """El período que se está planificando (el más reciente que se pueda editar)."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            f"""
+            SELECT periodo, etiqueta, version_lista, abre, cierra
+            FROM periodo_planificacion
+            WHERE {_PERIODO_EDITABLE}
+            ORDER BY periodo DESC
+            LIMIT 1
+            """
+        )
+        row = cursor.fetchone()
+        return dict(row) if row else None
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_planning_term(periodo: str) -> Dict[str, Any] | None:
+    """Un período de planificación, con `editable`; None si no existe."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            f"""
+            SELECT id, periodo, etiqueta, version_lista, estado, abre, cierra,
+                   ({_PERIODO_EDITABLE}) AS editable
+            FROM periodo_planificacion
+            WHERE periodo = %s
+            """,
+            (periodo,),
+        )
+        row = cursor.fetchone()
+        return dict(row) if row else None
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_planning_subjects(periodo_id: int) -> List[Dict[str, Any]]:
+    """La lista activa del período, por nombre, con los códigos de sus
+    equivalentes que también estén activos."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            """
+            SELECT m.codigo, m.nombre, m.creditos, m.area, m.niveles, m.programas,
+                   m.nombre_cortado,
+                   COALESCE(
+                       array_agg(o.codigo ORDER BY o.codigo) FILTER (WHERE o.codigo IS NOT NULL),
+                       ARRAY[]::varchar[]
+                   ) AS equivalentes
+            FROM materia_planificable m
+            LEFT JOIN equivalencia_materia e
+                ON m.id IN (e.materia_a_id, e.materia_b_id)
+            LEFT JOIN materia_planificable o
+                ON o.activa
+               AND o.id = CASE WHEN e.materia_a_id = m.id THEN e.materia_b_id ELSE e.materia_a_id END
+            WHERE m.periodo_id = %s AND m.activa
+            GROUP BY m.id
+            ORDER BY m.nombre, m.codigo
+            """,
+            (periodo_id,),
+        )
+        return [dict(row) for row in cursor.fetchall()]
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_planning_subjects_by_code(periodo_id: int, codigos: List[str]) -> Dict[str, Dict[str, Any]]:
+    """{código: {id, creditos, activa}} de las materias del período con esos códigos."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            """
+            SELECT id, codigo, creditos, activa
+            FROM materia_planificable
+            WHERE periodo_id = %s AND codigo = ANY(%s)
+            """,
+            (periodo_id, codigos),
+        )
+        return {row["codigo"]: dict(row) for row in cursor.fetchall()}
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_student_plan(usuario_id: int, periodo_id: int) -> Dict[str, Any]:
+    """El plan del estudiante, en su orden: `{updated_at, subjects}`. Sin plan,
+    `updated_at` es None y `subjects` está vacío. Trae también las materias que
+    después salieron de la lista (`activa` en falso)."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            """
+            SELECT pe.updated_at, m.codigo, m.nombre, m.creditos, m.activa
+            FROM plan_estudiante pe
+            LEFT JOIN plan_materia pm ON pm.plan_id = pe.id
+            LEFT JOIN materia_planificable m ON m.id = pm.materia_id
+            WHERE pe.usuario_id = %s AND pe.periodo_id = %s
+            ORDER BY pm.posicion
+            """,
+            (usuario_id, periodo_id),
+        )
+        rows = cursor.fetchall()
+        return {
+            "updated_at": rows[0]["updated_at"] if rows else None,
+            "subjects": [dict(row) for row in rows if row["codigo"] is not None],
+        }
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def save_student_plan(usuario_id: int, periodo_id: int, materia_ids: List[int]) -> None:
+    """Reemplaza el plan del estudiante por `materia_ids`, en ese orden, en una
+    sola transacción (dos guardados a la vez del mismo estudiante se turnan por
+    el bloqueo de su fila en `plan_estudiante`)."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            """
+            INSERT INTO plan_estudiante (usuario_id, periodo_id)
+            VALUES (%s, %s)
+            ON CONFLICT (usuario_id, periodo_id) DO UPDATE SET updated_at = NOW()
+            RETURNING id
+            """,
+            (usuario_id, periodo_id),
+        )
+        plan_id = cursor.fetchone()[0]
+        cursor.execute("DELETE FROM plan_materia WHERE plan_id = %s", (plan_id,))
+        for posicion, materia_id in enumerate(materia_ids):
+            cursor.execute(
+                "INSERT INTO plan_materia (plan_id, materia_id, posicion) VALUES (%s, %s, %s)",
+                (plan_id, materia_id, posicion),
+            )
+        conn.commit()
+    finally:
+        cursor.close()
+        conn.close()

@@ -301,6 +301,24 @@ Estado de implementación:
 - CRUD completo en `routes/favorite_routes.py` + `repository.py` (máx. 20 favoritos por término).
 - Pantalla dedicada con previsualización y estado de cupos en vivo (Fase 2). El estado se consulta con `GET /api/favorites/status` contra la tabla `Curso` y solo aplica al término actual.
 
+---
+
+### Planificación del período siguiente
+
+Lista de materias que el estudiante puede agregar a su plan del próximo período y el plan de cada uno (HU #380 de la app móvil). Rutas en `docs/backend.md`; tablas en `backend/init.sql` y, para una base existente, en `scripts/migrar_esquema.py`.
+
+| Tabla | Qué guarda | Columnas principales |
+|-------|------------|----------------------|
+| `periodo_planificacion` | Cada período que se planifica | `periodo` (ej. `202710`, único), `etiqueta` (`2027-1`), `version_lista`, `estado` (`borrador`, `abierto`, `cerrado`), `abre`, `cierra` |
+| `materia_planificable` | La lista de materias del período; aparte de `Materia`, que es la oferta actual | `periodo_id`, `codigo`, `nombre`, `nombre_banner`, `area`, `creditos` (vacío si no se conocen), `niveles`, `programas`, `nombre_cortado`, `activa`; `UNIQUE (periodo_id, codigo)` |
+| `equivalencia_materia` | Pares de materias equivalentes con evidencia de programa, a un solo salto | `periodo_id`, `materia_a_id` < `materia_b_id`, `evidencia` |
+| `plan_estudiante` | El plan de un estudiante para un período | `usuario_id` (FK a `usuario.id`, `ON DELETE CASCADE`), `periodo_id`; `UNIQUE (usuario_id, periodo_id)` |
+| `plan_materia` | Las materias de cada plan, en orden | `plan_id`, `materia_id`, `posicion`; `UNIQUE (plan_id, materia_id)` |
+
+- Una materia que sale de la lista no se borra: queda `activa = false`, para no romper los planes que ya la tienen.
+- Borrar un usuario borra sus planes.
+- La vista `demanda_planificacion` (`periodo`, `codigo`, `nombre`, `estudiantes`) no muestra conteos de menos de 10 estudiantes.
+
 ## Relaciones
 
 | Relación | Tipo | Descripción |
