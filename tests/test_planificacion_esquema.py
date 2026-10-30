@@ -9,23 +9,17 @@ lista de materias que el estudiante puede agregar y el plan de cada uno.
 - borrar la cuenta borra sus planes;
 - la vista de demanda no muestra conteos de menos de 10 estudiantes.
 
-Necesita un PostgreSQL de prueba en `DH_TEST_DATABASE_URL`, una base que se
-puede borrar entera: cada prueba recrea el esquema `public`. Sin la variable,
-se omiten.
+Necesita un PostgreSQL de prueba en `DH_TEST_DATABASE_URL` (fixture `bd` de
+conftest.py); sin la variable, se omiten.
 """
 import importlib
-import os
-import sys
-from pathlib import Path
 
 import pytest
 
+from conftest import RAIZ, URL_PRUEBA as URL
+
 psycopg = pytest.importorskip("psycopg")
 
-URL = os.getenv("DH_TEST_DATABASE_URL")
-pytestmark = pytest.mark.skipif(not URL, reason="sin DH_TEST_DATABASE_URL")
-
-RAIZ = Path(__file__).resolve().parent.parent
 TABLAS = [
     "equivalencia_materia",
     "materia_planificable",
@@ -36,16 +30,8 @@ TABLAS = [
 
 
 @pytest.fixture
-def conn():
-    c = psycopg.connect(URL, autocommit=True)
-    c.execute("DROP SCHEMA public CASCADE")
-    # Como en una base nueva (PostgreSQL 15+): init.sql da las tablas a
-    # pg_database_owner, que necesita el esquema para revisar las llaves.
-    c.execute("CREATE SCHEMA public AUTHORIZATION pg_database_owner")
-    c.execute((RAIZ / "backend" / "init.sql").read_text(encoding="utf-8"))
-    c.execute("SET search_path TO public")
-    yield c
-    c.close()
+def conn(bd):
+    return bd
 
 
 def _columnas(c):
