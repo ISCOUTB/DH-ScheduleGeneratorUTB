@@ -302,7 +302,9 @@ El `PUT` revisa lo mismo que la app: período abierto (si no, 409), sin repetido
 
 **Carga de la lista:** `python scripts/cargar_lista_planificacion.py lista_materias_202710.json` (desde `backend/`), con el JSON que genera `exportar_lista.py` desde la lista revisada. En una transacción crea o actualiza el período (un período nuevo queda abierto) y sus materias, deja inactivas las que ya no vienen (no se borran: puede haber planes que las tienen) y reemplaza las equivalencias. Se corre a mano una vez por período, no en el cron. El estado (`borrador`, `abierto`, `cerrado`) y la ventana (`abre`, `cierra`) se cambian con SQL en `periodo_planificacion`.
 
-**Demanda:** la vista `demanda_planificacion` da cuántos estudiantes planearon cada materia y no muestra conteos de menos de 10 (Ley 1581 de 2012). No tiene endpoint.
+**Fechas:** toda fecha de `/api/planning/*` sale en ISO 8601 con su desfase horario (ej. `2026-11-03T14:05:00.123456-05:00`); las columnas son `TIMESTAMP WITH TIME ZONE`.
+
+**Demanda:** la vista `demanda_planificacion` da cuántos estudiantes planearon cada materia y `preferencias_planificacion` cuántos eligieron cada opción de las preferencias (`pregunta` en `jornada`, `dia_libre` o `motivo`); ninguna muestra conteos de menos de 10 (Ley 1581 de 2012). No tienen endpoint.
 
 ### Limitaciones conocidas
 

@@ -270,8 +270,8 @@ CREATE TABLE IF NOT EXISTS public.periodo_planificacion (
         CHECK (estado IN ('borrador', 'abierto', 'cerrado')),
     abre TIMESTAMP WITH TIME ZONE,          -- NULL: sin fecha de apertura
     cierra TIMESTAMP WITH TIME ZONE,        -- NULL: sin fecha de cierre
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 ALTER TABLE public.periodo_planificacion OWNER TO pg_database_owner;
@@ -307,12 +307,20 @@ CREATE TABLE IF NOT EXISTS public.equivalencia_materia (
 
 ALTER TABLE public.equivalencia_materia OWNER TO pg_database_owner;
 
+-- El plan de un estudiante para un período, con sus preferencias de horario.
+-- Las preferencias son listas de valores cerrados (los de la app): jornadas
+-- `morning`, `afternoon`, `night`, `noPreference`; días `Lunes` a `Sábado`;
+-- motivos `work`, `internship`, `other`, `preferNotToSay`.
 CREATE TABLE IF NOT EXISTS public.plan_estudiante (
     id SERIAL PRIMARY KEY,
     usuario_id INTEGER NOT NULL REFERENCES public.usuario(id) ON DELETE CASCADE,
     periodo_id INTEGER NOT NULL REFERENCES public.periodo_planificacion(id),
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    jornadas JSONB NOT NULL DEFAULT '[]'::jsonb,
+    dias_libres JSONB NOT NULL DEFAULT '[]'::jsonb,
+    motivos JSONB NOT NULL DEFAULT '[]'::jsonb,
+    preferencias_actualizadas TIMESTAMP WITH TIME ZONE,  -- NULL: nunca respondió
     UNIQUE (usuario_id, periodo_id)
 );
 
@@ -323,7 +331,7 @@ CREATE TABLE IF NOT EXISTS public.plan_materia (
     plan_id INTEGER NOT NULL REFERENCES public.plan_estudiante(id) ON DELETE CASCADE,
     materia_id INTEGER NOT NULL REFERENCES public.materia_planificable(id),
     posicion INTEGER NOT NULL,
-    agregada TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    agregada TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE (plan_id, materia_id)
 );
 
@@ -341,4 +349,21 @@ JOIN public.plan_estudiante pe ON pe.id = pm.plan_id
 JOIN public.materia_planificable m ON m.id = pm.materia_id
 JOIN public.periodo_planificacion p ON p.id = pe.periodo_id
 GROUP BY p.periodo, m.codigo, m.nombre
+HAVING COUNT(DISTINCT pe.usuario_id) >= 10;
+
+-- Preferencias de horario: cuántos estudiantes eligieron cada opción de cada
+-- pregunta (`jornada`, `dia_libre`, `motivo`). La misma regla: no muestra
+-- conteos de menos de 10.
+CREATE OR REPLACE VIEW public.preferencias_planificacion AS
+SELECT p.periodo, r.pregunta, r.valor, COUNT(DISTINCT pe.usuario_id) AS estudiantes
+FROM public.plan_estudiante pe
+JOIN public.periodo_planificacion p ON p.id = pe.periodo_id
+CROSS JOIN LATERAL (
+    SELECT 'jornada'::text AS pregunta, j.valor FROM jsonb_array_elements_text(pe.jornadas) AS j(valor)
+    UNION ALL
+    SELECT 'dia_libre'::text, d.valor FROM jsonb_array_elements_text(pe.dias_libres) AS d(valor)
+    UNION ALL
+    SELECT 'motivo'::text, m.valor FROM jsonb_array_elements_text(pe.motivos) AS m(valor)
+) r
+GROUP BY p.periodo, r.pregunta, r.valor
 HAVING COUNT(DISTINCT pe.usuario_id) >= 10;

@@ -151,8 +151,8 @@ CREATE TABLE IF NOT EXISTS public.periodo_planificacion (
         CHECK (estado IN ('borrador', 'abierto', 'cerrado')),
     abre TIMESTAMP WITH TIME ZONE,
     cierra TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS public.materia_planificable (
@@ -184,8 +184,12 @@ CREATE TABLE IF NOT EXISTS public.plan_estudiante (
     id SERIAL PRIMARY KEY,
     usuario_id INTEGER NOT NULL REFERENCES public.usuario(id) ON DELETE CASCADE,
     periodo_id INTEGER NOT NULL REFERENCES public.periodo_planificacion(id),
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    jornadas JSONB NOT NULL DEFAULT '[]'::jsonb,
+    dias_libres JSONB NOT NULL DEFAULT '[]'::jsonb,
+    motivos JSONB NOT NULL DEFAULT '[]'::jsonb,
+    preferencias_actualizadas TIMESTAMP WITH TIME ZONE,
     UNIQUE (usuario_id, periodo_id)
 );
 
@@ -194,7 +198,7 @@ CREATE TABLE IF NOT EXISTS public.plan_materia (
     plan_id INTEGER NOT NULL REFERENCES public.plan_estudiante(id) ON DELETE CASCADE,
     materia_id INTEGER NOT NULL REFERENCES public.materia_planificable(id),
     posicion INTEGER NOT NULL,
-    agregada TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
+    agregada TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE (plan_id, materia_id)
 );
 
@@ -209,13 +213,28 @@ JOIN public.materia_planificable m ON m.id = pm.materia_id
 JOIN public.periodo_planificacion p ON p.id = pe.periodo_id
 GROUP BY p.periodo, m.codigo, m.nombre
 HAVING COUNT(DISTINCT pe.usuario_id) >= 10;
+
+CREATE OR REPLACE VIEW public.preferencias_planificacion AS
+SELECT p.periodo, r.pregunta, r.valor, COUNT(DISTINCT pe.usuario_id) AS estudiantes
+FROM public.plan_estudiante pe
+JOIN public.periodo_planificacion p ON p.id = pe.periodo_id
+CROSS JOIN LATERAL (
+    SELECT 'jornada'::text AS pregunta, j.valor FROM jsonb_array_elements_text(pe.jornadas) AS j(valor)
+    UNION ALL
+    SELECT 'dia_libre'::text, d.valor FROM jsonb_array_elements_text(pe.dias_libres) AS d(valor)
+    UNION ALL
+    SELECT 'motivo'::text, m.valor FROM jsonb_array_elements_text(pe.motivos) AS m(valor)
+) r
+GROUP BY p.periodo, r.pregunta, r.valor
+HAVING COUNT(DISTINCT pe.usuario_id) >= 10;
 """
 
 
 def _crear_tablas_planificacion(conn: psycopg.Connection) -> None:
     """Crea las tablas de la planificación del período siguiente si no existen
     (HU #380 de la app): la lista de materias, sus equivalencias y el plan de
-    cada estudiante, más la vista de demanda (solo conteos de 10 o más).
+    cada estudiante con sus preferencias de horario, más las vistas de demanda
+    y de preferencias (solo conteos de 10 o más).
 
     `init.sql` solo corre en bases vacías; en la de producción llegan por esta
     migración. Idempotente: `IF NOT EXISTS` y `CREATE OR REPLACE VIEW`.

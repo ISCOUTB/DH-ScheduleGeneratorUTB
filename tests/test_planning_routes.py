@@ -9,7 +9,8 @@ la app), con la base de prueba (`DH_TEST_DATABASE_URL`):
   tiene la sesión, nunca de un id que venga en el cuerpo; el `PUT` reemplaza el
   plan en el orden dado y revisa lo mismo que la app: período abierto (409),
   sin repetidos (400), materias de la lista (422; una que salió de la lista se
-  conserva si ya estaba en el plan) y máximo 20 créditos (422).
+  conserva si ya estaba en el plan) y máximo 20 créditos (422);
+- las fechas salen en ISO 8601 con desfase horario.
 """
 import os
 from datetime import datetime, timedelta, timezone
@@ -137,8 +138,11 @@ def test_guardar_y_leer_el_plan_en_orden(api):
     assert r.status_code == 200
     assert _codigos(r) == ["CHUL-I03A", "CBAS-M03A"]
     assert r.json()["subjects"][1] == {"code": "CBAS-M03A", "name": "Cálculo Integral", "credits": 4.0, "active": True}
-    assert r.json()["updatedAt"] is not None
-    assert _codigos(client.get("/api/planning/202710/plan")) == ["CHUL-I03A", "CBAS-M03A"]
+    # La fecha sale en ISO 8601 con su desfase horario.
+    assert datetime.fromisoformat(r.json()["updatedAt"]).utcoffset() is not None
+    leido = client.get("/api/planning/202710/plan")
+    assert _codigos(leido) == ["CHUL-I03A", "CBAS-M03A"]
+    assert leido.json()["updatedAt"] == r.json()["updatedAt"]
 
     # Repetirlo da lo mismo; otro plan lo reemplaza entero.
     assert _codigos(client.put("/api/planning/202710/plan", json={"codes": ["CHUL-I03A", "CBAS-M03A"]})) == ["CHUL-I03A", "CBAS-M03A"]

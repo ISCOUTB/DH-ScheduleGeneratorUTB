@@ -7,7 +7,11 @@ lista de materias que el estudiante puede agregar y el plan de cada uno.
 - una materia de la lista es única por período; un plan, por estudiante y
   período; una materia, una sola vez por plan;
 - borrar la cuenta borra sus planes;
-- la vista de demanda no muestra conteos de menos de 10 estudiantes.
+- las fechas de la planificación llevan zona horaria;
+- el plan guarda las preferencias (jornadas, días libres y motivos, vacías
+  por defecto) y cuándo se respondieron (NULL si nunca);
+- las vistas de demanda y de preferencias no muestran conteos de menos de 10
+  estudiantes.
 
 Necesita un PostgreSQL de prueba en `DH_TEST_DATABASE_URL` (fixture `bd` de
 conftest.py); sin la variable, se omiten.
@@ -100,13 +104,50 @@ def test_init_sql_crea_las_tablas_y_la_vista(conn):
         ).fetchall()
     }
     assert set(TABLAS) <= tablas
-    assert "demanda_planificacion" in tablas  # la vista
+    assert {"demanda_planificacion", "preferencias_planificacion"} <= tablas  # las vistas
+
+
+def test_las_fechas_llevan_zona_horaria(conn):
+    tipos = {
+        (tabla, columna): tipo
+        for tabla, columna, tipo, _, _ in _columnas(conn)
+        if columna in ("created_at", "updated_at", "agregada", "abre", "cierra", "preferencias_actualizadas")
+    }
+    assert tipos == {
+        ("periodo_planificacion", "abre"): "timestamp with time zone",
+        ("periodo_planificacion", "cierra"): "timestamp with time zone",
+        ("periodo_planificacion", "created_at"): "timestamp with time zone",
+        ("periodo_planificacion", "updated_at"): "timestamp with time zone",
+        ("plan_estudiante", "created_at"): "timestamp with time zone",
+        ("plan_estudiante", "updated_at"): "timestamp with time zone",
+        ("plan_estudiante", "preferencias_actualizadas"): "timestamp with time zone",
+        ("plan_materia", "agregada"): "timestamp with time zone",
+    }
+
+
+def test_el_plan_guarda_las_preferencias_vacias_por_defecto(conn):
+    columnas = {
+        columna: (tipo, nula, defecto)
+        for tabla, columna, tipo, nula, defecto in _columnas(conn)
+        if tabla == "plan_estudiante"
+    }
+    for columna in ("jornadas", "dias_libres", "motivos"):
+        assert columnas[columna] == ("jsonb", "NO", "'[]'::jsonb")
+    assert columnas["preferencias_actualizadas"] == ("timestamp with time zone", "YES", None)
+
+    periodo = _periodo(conn)
+    plan = _plan(conn, _usuario(conn, 1), periodo, [])
+    assert conn.execute(
+        "SELECT jornadas, dias_libres, motivos, preferencias_actualizadas FROM plan_estudiante WHERE id = %s",
+        (plan,),
+    ).fetchone() == ([], [], [], None)
 
 
 def test_la_migracion_crea_lo_mismo_que_init_sql_y_se_repite(conn, monkeypatch):
     esperado = _columnas(conn)
     # Una base de producción de antes: sin las tablas nuevas.
     conn.execute("DROP VIEW demanda_planificacion")
+    conn.execute("DROP VIEW preferencias_planificacion")
     for tabla in ["plan_materia", "plan_estudiante", "equivalencia_materia", "materia_planificable", "periodo_planificacion"]:
         conn.execute(f"DROP TABLE {tabla}")
     assert _columnas(conn) == []
@@ -115,6 +156,7 @@ def test_la_migracion_crea_lo_mismo_que_init_sql_y_se_repite(conn, monkeypatch):
     _migrar(monkeypatch)  # idempotente
     assert _columnas(conn) == esperado
     assert conn.execute("SELECT to_regclass('public.demanda_planificacion')").fetchone()[0]
+    assert conn.execute("SELECT to_regclass('public.preferencias_planificacion')").fetchone()[0]
 
 
 def test_reglas_de_unicidad(conn):
@@ -166,3 +208,29 @@ def test_la_demanda_no_muestra_menos_de_10_estudiantes(conn):
         "SELECT periodo, codigo, estudiantes FROM demanda_planificacion ORDER BY codigo"
     ).fetchall()
     assert filas == [("202710", "CBAS-M03A", 10)]
+
+
+def test_las_preferencias_no_muestran_menos_de_10_estudiantes(conn):
+    periodo = _periodo(conn)
+    for n in range(10):
+        plan = _plan(conn, _usuario(conn, n), periodo, [])
+        # Los 10 prefieren la noche y tienen libre el sábado; 9 trabajan; uno
+        # solo prefiere la mañana.
+        conn.execute(
+            """
+            UPDATE plan_estudiante
+            SET jornadas = %s::jsonb, dias_libres = %s::jsonb, motivos = %s::jsonb,
+                preferencias_actualizadas = NOW()
+            WHERE id = %s
+            """,
+            (
+                '["morning", "night"]' if n == 0 else '["night"]',
+                '["Sábado"]',
+                '["work"]' if n < 9 else '["internship"]',
+                plan,
+            ),
+        )
+    filas = conn.execute(
+        "SELECT periodo, pregunta, valor, estudiantes FROM preferencias_planificacion ORDER BY pregunta, valor"
+    ).fetchall()
+    assert filas == [("202710", "dia_libre", "Sábado", 10), ("202710", "jornada", "night", 10)]
