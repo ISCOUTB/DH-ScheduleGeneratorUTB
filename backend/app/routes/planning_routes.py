@@ -222,28 +222,24 @@ async def put_plan(term: str, body: PlanRequest, user: dict = Depends(require_us
             raise HTTPException(status_code=400, detail=f"La materia {codigo} está repetida.")
         vistos.add(codigo)
 
-    materias = await run_in_threadpool(repository.get_planning_subjects_by_code, periodo["id"], codigos)
-    actual = await run_in_threadpool(repository.get_student_plan, uid, periodo["id"])
-    ya_estaban = {m["codigo"] for m in actual["subjects"]}
-    fuera = [
-        c for c in codigos
-        if c not in materias or (not materias[c]["activa"] and c not in ya_estaban)
-    ]
-    if fuera:
+    # El período, las materias de la lista y los créditos se revisan dentro de
+    # la transacción del guardado, con la fila del plan bloqueada.
+    try:
+        await run_in_threadpool(
+            repository.replace_student_plan, uid, periodo["id"], codigos, MAX_PLAN_CREDITS
+        )
+    except repository.PlanningTermNotEditable:
+        raise _no_editable(periodo)
+    except repository.PlanSubjectsNotInList as e:
         raise HTTPException(
             status_code=422,
-            detail=f"Estas materias no están en la lista de {periodo['etiqueta']}: {', '.join(fuera)}.",
+            detail=f"Estas materias no están en la lista de {periodo['etiqueta']}: {', '.join(e.codigos)}.",
         )
-    total = sum((materias[c]["creditos"] or Decimal(0) for c in codigos), Decimal(0))
-    if total > MAX_PLAN_CREDITS:
+    except repository.PlanOverCreditLimit as e:
         raise HTTPException(
             status_code=422,
-            detail=f"El plan pasa del tope de {MAX_PLAN_CREDITS} créditos ({_numero(total)}).",
+            detail=f"El plan pasa del tope de {MAX_PLAN_CREDITS} créditos ({_numero(e.total)}).",
         )
-
-    await run_in_threadpool(
-        repository.save_student_plan, uid, periodo["id"], [materias[c]["id"] for c in codigos]
-    )
     plan = await run_in_threadpool(repository.get_student_plan, uid, periodo["id"])
     return _plan(periodo, plan)
 

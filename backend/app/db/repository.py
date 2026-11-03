@@ -6,6 +6,7 @@ import psycopg
 import psycopg.rows
 import json
 import os
+from decimal import Decimal
 from dotenv import load_dotenv
 from typing import List, Dict, Any, Optional
 from psycopg.sql import SQL
@@ -914,25 +915,6 @@ def get_planning_subjects(periodo_id: int) -> List[Dict[str, Any]]:
         conn.close()
 
 
-def get_planning_subjects_by_code(periodo_id: int, codigos: List[str]) -> Dict[str, Dict[str, Any]]:
-    """{código: {id, creditos, activa}} de las materias del período con esos códigos."""
-    conn = get_db_connection()
-    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
-    try:
-        cursor.execute(
-            """
-            SELECT id, codigo, creditos, activa
-            FROM materia_planificable
-            WHERE periodo_id = %s AND codigo = ANY(%s)
-            """,
-            (periodo_id, codigos),
-        )
-        return {row["codigo"]: dict(row) for row in cursor.fetchall()}
-    finally:
-        cursor.close()
-        conn.close()
-
-
 def get_student_plan(usuario_id: int, periodo_id: int) -> Dict[str, Any]:
     """El plan del estudiante, en su orden: `{updated_at, subjects}`. Sin plan,
     `updated_at` es None y `subjects` está vacío. Trae también las materias que
@@ -1061,22 +1043,79 @@ def save_plan_preferences(
         conn.close()
 
 
-def save_student_plan(usuario_id: int, periodo_id: int, materia_ids: List[int]) -> None:
-    """Reemplaza el plan del estudiante por `materia_ids`, en ese orden, en una
-    sola transacción (dos guardados a la vez del mismo estudiante se turnan por
-    el bloqueo de su fila en `plan_estudiante`)."""
+class PlanSubjectsNotInList(Exception):
+    """Hay códigos que no están en la lista del período (o que salieron de ella
+    y no estaban ya en el plan)."""
+
+    def __init__(self, codigos: List[str]):
+        super().__init__(", ".join(codigos))
+        self.codigos = codigos
+
+
+class PlanOverCreditLimit(Exception):
+    """El plan suma más créditos que el tope."""
+
+    def __init__(self, total: Decimal):
+        super().__init__(str(total))
+        self.total = total
+
+
+def replace_student_plan(usuario_id: int, periodo_id: int, codigos: List[str], max_creditos: int) -> None:
+    """Valida y reemplaza el plan del estudiante por `codigos`, en ese orden, en
+    una sola transacción:
+
+    1. bloquea la fila de su plan (la crea vacía si no tiene): dos guardados a
+       la vez del mismo estudiante se turnan;
+    2. revisa que el período se pueda editar (`PlanningTermNotEditable`);
+    3. revisa que cada código esté activo en la lista del período o ya esté en
+       el plan (`PlanSubjectsNotInList`, con los que no);
+    4. revisa que los créditos no pasen de `max_creditos` (`PlanOverCreditLimit`;
+       una materia sin créditos cuenta 0).
+
+    Si algo no pasa, no queda nada a medias (ni el plan vacío). Los códigos ya
+    vienen sin repetidos."""
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
         plan_id = _bloquear_plan(cursor, usuario_id, periodo_id)
+        _exigir_periodo_editable(cursor, periodo_id)
+        cursor.execute(
+            """
+            SELECT codigo, id, creditos, activa
+            FROM materia_planificable
+            WHERE periodo_id = %s AND codigo = ANY(%s)
+            """,
+            (periodo_id, codigos),
+        )
+        materias = {codigo: (id_, creditos, activa) for codigo, id_, creditos, activa in cursor.fetchall()}
+        cursor.execute(
+            """
+            SELECT m.codigo FROM plan_materia pm
+            JOIN materia_planificable m ON m.id = pm.materia_id
+            WHERE pm.plan_id = %s
+            """,
+            (plan_id,),
+        )
+        ya_estaban = {fila[0] for fila in cursor.fetchall()}
+
+        fuera = [c for c in codigos if c not in materias or (not materias[c][2] and c not in ya_estaban)]
+        if fuera:
+            raise PlanSubjectsNotInList(fuera)
+        total = sum((materias[c][1] or Decimal(0) for c in codigos), Decimal(0))
+        if total > max_creditos:
+            raise PlanOverCreditLimit(total)
+
         cursor.execute("UPDATE plan_estudiante SET updated_at = NOW() WHERE id = %s", (plan_id,))
         cursor.execute("DELETE FROM plan_materia WHERE plan_id = %s", (plan_id,))
-        for posicion, materia_id in enumerate(materia_ids):
+        for posicion, codigo in enumerate(codigos):
             cursor.execute(
                 "INSERT INTO plan_materia (plan_id, materia_id, posicion) VALUES (%s, %s, %s)",
-                (plan_id, materia_id, posicion),
+                (plan_id, materias[codigo][0], posicion),
             )
         conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         cursor.close()
         conn.close()
