@@ -57,6 +57,18 @@ def test_periodo_actual(api):
     assert client.get("/api/planning/current").status_code == 404
 
 
+def test_la_ventana_del_periodo_sale_con_desfase(api):
+    client, bd, _, _ = api
+    ahora = datetime.now(timezone.utc).replace(microsecond=0)
+    abre, cierra = ahora - timedelta(days=1), ahora + timedelta(days=30)
+    bd.execute("UPDATE periodo_planificacion SET abre = %s, cierra = %s", (abre, cierra))
+    cuerpo = client.get("/api/planning/current").json()
+    for campo, esperado in (("opensAt", abre), ("closesAt", cierra)):
+        fecha = datetime.fromisoformat(cuerpo[campo])
+        assert fecha.utcoffset() is not None, campo
+        assert fecha == esperado
+
+
 def test_lista_del_periodo(api):
     client, bd, _, _ = api
     bd.execute("UPDATE materia_planificable SET activa = FALSE WHERE codigo = 'CBAS-M01B'")
