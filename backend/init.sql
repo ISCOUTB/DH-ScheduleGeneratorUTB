@@ -316,7 +316,7 @@ CREATE TABLE IF NOT EXISTS public.plan_estudiante (
     usuario_id INTEGER NOT NULL REFERENCES public.usuario(id) ON DELETE CASCADE,
     periodo_id INTEGER NOT NULL REFERENCES public.periodo_planificacion(id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),  -- último guardado de las materias; NULL si solo respondió preferencias
     jornadas JSONB NOT NULL DEFAULT '[]'::jsonb,
     dias_libres JSONB NOT NULL DEFAULT '[]'::jsonb,
     motivos JSONB NOT NULL DEFAULT '[]'::jsonb,

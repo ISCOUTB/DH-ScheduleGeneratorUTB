@@ -9,6 +9,7 @@ import os
 from dotenv import load_dotenv
 from typing import List, Dict, Any, Optional
 from psycopg.sql import SQL
+from psycopg.types.json import Jsonb
 from ..models import ClassOption, Schedule, Subject
 
 # Define la ruta base del proyecto (la carpeta 'backend')
@@ -960,6 +961,106 @@ def get_student_plan(usuario_id: int, periodo_id: int) -> Dict[str, Any]:
         conn.close()
 
 
+class PlanningTermNotEditable(Exception):
+    """El período no está abierto o está fuera de su ventana, según lo que se
+    leyó dentro de la transacción del guardado."""
+
+
+def _bloquear_plan(cursor, usuario_id: int, periodo_id: int) -> int:
+    """Crea el plan vacío del estudiante si no existe y bloquea su fila hasta el
+    final de la transacción (dos guardados a la vez del mismo estudiante se
+    turnan). Devuelve su id.
+
+    Un plan nuevo nace sin `updated_at`: esa es la fecha del último guardado de
+    las materias, y quien solo respondió las preferencias no lo ha guardado."""
+    cursor.execute(
+        """
+        INSERT INTO plan_estudiante (usuario_id, periodo_id, updated_at)
+        VALUES (%s, %s, NULL)
+        ON CONFLICT (usuario_id, periodo_id) DO NOTHING
+        """,
+        (usuario_id, periodo_id),
+    )
+    cursor.execute(
+        "SELECT id FROM plan_estudiante WHERE usuario_id = %s AND periodo_id = %s FOR UPDATE",
+        (usuario_id, periodo_id),
+    )
+    return cursor.fetchone()[0]
+
+
+def _exigir_periodo_editable(cursor, periodo_id: int) -> None:
+    """`PlanningTermNotEditable` si el período ya no se puede editar. Su fila
+    queda bloqueada para lectura: no se cierra hasta que termine el guardado."""
+    cursor.execute(
+        f"SELECT ({_PERIODO_EDITABLE}) FROM periodo_planificacion WHERE id = %s FOR SHARE",
+        (periodo_id,),
+    )
+    fila = cursor.fetchone()
+    if not fila or not fila[0]:
+        raise PlanningTermNotEditable()
+
+
+_PREFERENCIAS_VACIAS = {
+    "jornadas": [],
+    "dias_libres": [],
+    "motivos": [],
+    "preferencias_actualizadas": None,
+}
+
+
+def get_plan_preferences(usuario_id: int, periodo_id: int) -> Dict[str, Any]:
+    """Las preferencias del estudiante: `{jornadas, dias_libres, motivos,
+    preferencias_actualizadas}`. Sin plan, listas vacías y fecha None."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            """
+            SELECT jornadas, dias_libres, motivos, preferencias_actualizadas
+            FROM plan_estudiante
+            WHERE usuario_id = %s AND periodo_id = %s
+            """,
+            (usuario_id, periodo_id),
+        )
+        row = cursor.fetchone()
+        return dict(row) if row else dict(_PREFERENCIAS_VACIAS)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def save_plan_preferences(
+    usuario_id: int, periodo_id: int, jornadas: List[str], dias_libres: List[str], motivos: List[str]
+) -> Dict[str, Any]:
+    """Reemplaza las tres respuestas del estudiante en una sola transacción:
+    bloquea su plan (lo crea vacío si no tiene), revisa que el período se pueda
+    editar (`PlanningTermNotEditable` si no, sin dejar nada a medias) y guarda.
+    Devuelve lo guardado, como `get_plan_preferences`."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        plan_id = _bloquear_plan(cursor, usuario_id, periodo_id)
+        _exigir_periodo_editable(cursor, periodo_id)
+        cursor.execute(
+            """
+            UPDATE plan_estudiante
+            SET jornadas = %s, dias_libres = %s, motivos = %s, preferencias_actualizadas = NOW()
+            WHERE id = %s
+            RETURNING jornadas, dias_libres, motivos, preferencias_actualizadas
+            """,
+            (Jsonb(jornadas), Jsonb(dias_libres), Jsonb(motivos), plan_id),
+        )
+        guardadas = dict(zip(_PREFERENCIAS_VACIAS, cursor.fetchone()))
+        conn.commit()
+        return guardadas
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cursor.close()
+        conn.close()
+
+
 def save_student_plan(usuario_id: int, periodo_id: int, materia_ids: List[int]) -> None:
     """Reemplaza el plan del estudiante por `materia_ids`, en ese orden, en una
     sola transacción (dos guardados a la vez del mismo estudiante se turnan por
@@ -967,16 +1068,8 @@ def save_student_plan(usuario_id: int, periodo_id: int, materia_ids: List[int]) 
     conn = get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute(
-            """
-            INSERT INTO plan_estudiante (usuario_id, periodo_id)
-            VALUES (%s, %s)
-            ON CONFLICT (usuario_id, periodo_id) DO UPDATE SET updated_at = NOW()
-            RETURNING id
-            """,
-            (usuario_id, periodo_id),
-        )
-        plan_id = cursor.fetchone()[0]
+        plan_id = _bloquear_plan(cursor, usuario_id, periodo_id)
+        cursor.execute("UPDATE plan_estudiante SET updated_at = NOW() WHERE id = %s", (plan_id,))
         cursor.execute("DELETE FROM plan_materia WHERE plan_id = %s", (plan_id,))
         for posicion, materia_id in enumerate(materia_ids):
             cursor.execute(
