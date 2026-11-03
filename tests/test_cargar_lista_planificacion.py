@@ -5,7 +5,9 @@ Carga de la lista de materias del período siguiente
 
 - leer: sin período, sin materias o con un código repetido no es una lista;
   cada par de equivalentes queda una sola vez y solo si las dos materias
-  están en la lista; sin créditos queda sin créditos (no 0);
+  están en la lista; sin créditos queda sin créditos (no 0); los créditos
+  son un número JSON (no booleano) entre 0 y 99,99, o null: si no, el error
+  nombra la materia;
 - cargar (necesita `DH_TEST_DATABASE_URL`): crea el período abierto con sus
   materias y equivalencias; volver a cargar lo mismo no cambia nada; una
   materia que ya no viene queda inactiva, sin borrarse ni romper los planes
@@ -80,6 +82,27 @@ def test_leer_una_lista_valida():
 def test_lo_que_no_es_una_lista(datos, motivo):
     with pytest.raises(ValueError, match=motivo):
         carga.leer_lista(datos)
+
+
+@pytest.mark.parametrize(
+    "creditos",
+    ["3", "", True, False, -1, -0.01, 100, 99.995, float("nan"), float("inf"), [3], {"valor": 3}],
+)
+def test_creditos_que_no_son_un_numero_valido_nombran_la_materia(creditos):
+    with pytest.raises(ValueError, match="CBAS-M03A"):
+        carga.leer_lista(_json(_materia("A-1"), _materia("CBAS-M03A", creditos=creditos)))
+
+
+@pytest.mark.parametrize("creditos, esperado", [(0, 0.0), (0.5, 0.5), (3, 3.0), (99.99, 99.99), (None, None)])
+def test_creditos_validos(creditos, esperado):
+    lista = carga.leer_lista(_json(_materia("CBAS-M03A", creditos=creditos)))
+    assert lista.materias[0]["creditos"] == esperado
+
+
+def test_sin_la_clave_de_creditos_queda_sin_creditos():
+    materia = _materia("CBAS-M03A")
+    del materia["credits"]
+    assert carga.leer_lista(_json(materia)).materias[0]["creditos"] is None
 
 
 # --- Cargar en la base (DH_TEST_DATABASE_URL) -------------------------------

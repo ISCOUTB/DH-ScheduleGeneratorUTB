@@ -6,6 +6,8 @@ Lee el JSON que genera `exportar_lista.py` (lista revisada en el Planificador UT
 {"code", "name", "bannerName", "nameTruncated", "subject", "credits", "levels",
 "programs", "equivalentCodes"}]}`.
 
+- Revisa la lista antes de tocar la base: los créditos de cada materia son un
+  número entre 0 y 99,99, o null; si no, no se carga nada.
 - Crea el período, o le actualiza la etiqueta y la versión. El estado y la
   ventana de edición no se tocan aquí; un período nuevo queda abierto.
 - Crea o actualiza cada materia y la deja activa. Las que ya no vienen quedan
@@ -40,9 +42,21 @@ def _texto(valor: Any) -> str:
     return str(valor).strip() if valor is not None else ""
 
 
-def _creditos(valor: Any) -> float | None:
-    if isinstance(valor, bool) or not isinstance(valor, (int, float)):
+# Lo que cabe en `materia_planificable.creditos` (NUMERIC(4,2)).
+MAX_CREDITOS = 99.99
+
+
+def _creditos(valor: Any, codigo: str) -> float | None:
+    """Los créditos de la materia: un número JSON (no booleano) entre 0 y 99,99,
+    o null si no se conocen. Cualquier otra cosa es un `ValueError` que nombra
+    la materia: una lista con créditos mal puestos no se carga."""
+    if valor is None:
         return None
+    if isinstance(valor, bool) or not isinstance(valor, (int, float)) or not 0 <= valor <= MAX_CREDITOS:
+        raise ValueError(
+            f"La materia {codigo} trae créditos inválidos ({valor!r}): "
+            f"deben ser un número entre 0 y 99,99, o null"
+        )
     return float(valor)
 
 
@@ -80,7 +94,7 @@ def leer_lista(datos: Any) -> Lista:
             "nombre": nombre,
             "nombre_banner": _texto(cruda.get("bannerName")) or None,
             "area": _texto(cruda.get("subject")) or None,
-            "creditos": _creditos(cruda.get("credits")),
+            "creditos": _creditos(cruda.get("credits"), codigo),
             "niveles": [_texto(n) for n in cruda.get("levels") or [] if _texto(n)],
             "programas": [_texto(p) for p in cruda.get("programs") or [] if _texto(p)],
             "nombre_cortado": bool(cruda.get("nameTruncated")),
