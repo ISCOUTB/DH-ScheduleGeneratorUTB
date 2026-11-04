@@ -19,6 +19,7 @@ Para mejorar mantenibilidad y trazabilidad, las decisiones relevantes se documen
 
 Registros vigentes:
 
+- `docs/issues/04-11-2026-planificacion-proximo-periodo.md`
 - `docs/issues/13-10-2026-auth-token-app-movil.md`
 - `docs/issues/14-07-2026-creditos-decimales.md`
 - `docs/issues/15-06-2026-incidente-wipe-oferta-etl-banner-caido.md`
