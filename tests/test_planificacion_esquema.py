@@ -159,6 +159,47 @@ def test_la_migracion_crea_lo_mismo_que_init_sql_y_se_repite(conn, monkeypatch):
     assert conn.execute("SELECT to_regclass('public.preferencias_planificacion')").fetchone()[0]
 
 
+def test_la_migracion_pone_al_dia_las_tablas_de_la_primera_version(conn, monkeypatch):
+    esperado = _columnas(conn)
+    # Una base migrada con la primera versión: sin preferencias y con las
+    # fechas sin zona horaria, con un plan guardado.
+    conn.execute("DROP VIEW preferencias_planificacion")
+    conn.execute(
+        "ALTER TABLE plan_estudiante DROP COLUMN jornadas, DROP COLUMN dias_libres, "
+        "DROP COLUMN motivos, DROP COLUMN preferencias_actualizadas"
+    )
+    for tabla, columna in [
+        ("periodo_planificacion", "created_at"),
+        ("periodo_planificacion", "updated_at"),
+        ("plan_estudiante", "created_at"),
+        ("plan_estudiante", "updated_at"),
+        ("plan_materia", "agregada"),
+    ]:
+        conn.execute(f"ALTER TABLE {tabla} ALTER COLUMN {columna} TYPE TIMESTAMP WITHOUT TIME ZONE")
+    periodo = _periodo(conn)
+    materia = _materia(conn, periodo, "CBASM03A")
+    plan = _plan(conn, _usuario(conn, 1), periodo, [materia])
+    antes = conn.execute(
+        "SELECT pe.updated_at::text, pm.agregada::text FROM plan_estudiante pe "
+        "JOIN plan_materia pm ON pm.plan_id = pe.id WHERE pe.id = %s",
+        (plan,),
+    ).fetchone()
+
+    _migrar(monkeypatch)
+    _migrar(monkeypatch)  # idempotente
+    assert _columnas(conn) == esperado
+    assert conn.execute("SELECT to_regclass('public.preferencias_planificacion')").fetchone()[0]
+    # El plan sigue ahí, con sus preferencias vacías y las mismas fechas.
+    despues = conn.execute(
+        "SELECT pe.jornadas, pe.dias_libres, pe.motivos, pe.preferencias_actualizadas, "
+        "(pe.updated_at AT TIME ZONE current_setting('TimeZone'))::text, "
+        "(pm.agregada AT TIME ZONE current_setting('TimeZone'))::text, pm.materia_id "
+        "FROM plan_estudiante pe JOIN plan_materia pm ON pm.plan_id = pe.id WHERE pe.id = %s",
+        (plan,),
+    ).fetchone()
+    assert despues == ([], [], [], None, antes[0], antes[1], materia)
+
+
 def test_reglas_de_unicidad(conn):
     periodo = _periodo(conn)
     a = _materia(conn, periodo, "CBAS-M03A")

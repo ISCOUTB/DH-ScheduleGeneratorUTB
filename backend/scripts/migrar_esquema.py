@@ -205,6 +205,32 @@ CREATE TABLE IF NOT EXISTS public.plan_materia (
 CREATE INDEX IF NOT EXISTS idx_materia_plan_periodo ON public.materia_planificable(periodo_id);
 CREATE INDEX IF NOT EXISTS idx_plan_materia_materia ON public.plan_materia(materia_id);
 
+-- Una base con las tablas de la primera versión (sin preferencias y con las
+-- fechas sin zona horaria) se pone al día sin tocar sus datos: las fechas se
+-- leen en la zona de la sesión, la misma con la que NOW() las escribió.
+ALTER TABLE public.plan_estudiante
+    ADD COLUMN IF NOT EXISTS jornadas JSONB NOT NULL DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS dias_libres JSONB NOT NULL DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS motivos JSONB NOT NULL DEFAULT '[]'::jsonb,
+    ADD COLUMN IF NOT EXISTS preferencias_actualizadas TIMESTAMP WITH TIME ZONE;
+
+DO $$
+DECLARE c RECORD;
+BEGIN
+    FOR c IN
+        SELECT table_name, column_name FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name IN ('periodo_planificacion', 'plan_estudiante', 'plan_materia')
+          AND column_name IN ('created_at', 'updated_at', 'agregada', 'abre', 'cierra')
+          AND data_type = 'timestamp without time zone'
+    LOOP
+        EXECUTE format(
+            'ALTER TABLE public.%I ALTER COLUMN %I TYPE TIMESTAMP WITH TIME ZONE',
+            c.table_name, c.column_name
+        );
+    END LOOP;
+END $$;
+
 CREATE OR REPLACE VIEW public.demanda_planificacion AS
 SELECT p.periodo, m.codigo, m.nombre, COUNT(DISTINCT pe.usuario_id) AS estudiantes
 FROM public.plan_materia pm
@@ -237,7 +263,9 @@ def _crear_tablas_planificacion(conn: psycopg.Connection) -> None:
     y de preferencias (solo conteos de 10 o más).
 
     `init.sql` solo corre en bases vacías; en la de producción llegan por esta
-    migración. Idempotente: `IF NOT EXISTS` y `CREATE OR REPLACE VIEW`.
+    migración. Idempotente: `IF NOT EXISTS` y `CREATE OR REPLACE VIEW`; una
+    base con la primera versión de estas tablas recibe las columnas que le
+    faltan y las fechas con zona horaria.
     """
     cursor = conn.cursor()
     try:
