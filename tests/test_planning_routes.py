@@ -9,7 +9,8 @@ la app), con la base de prueba (`DH_TEST_DATABASE_URL`):
   tiene la sesión, nunca de un id que venga en el cuerpo; el `PUT` reemplaza el
   plan en el orden dado y revisa lo mismo que la app: período abierto (409),
   sin repetidos (400), materias de la lista (422; una que salió de la lista se
-  conserva si ya estaba en el plan) y máximo 20 créditos (422);
+  conserva si ya estaba en el plan), sin dos códigos de la misma materia (422)
+  y máximo 20 créditos (422);
 - el `PUT` valida y guarda en una sola transacción: bloquea la fila del plan,
   revisa el período (abierto y dentro de su ventana) otra vez, y un plan
   rechazado no deja nada a medias;
@@ -159,6 +160,21 @@ def test_reglas_del_plan(api):
     r = put(["CBAS-M03A"])
     assert r.status_code == 409 and "2027-1" in r.json()["detail"]
     assert client.get("/api/planning/202710/plan").json()["editable"] is False
+
+
+def test_dos_codigos_de_la_misma_materia_no_entran_juntos(api):
+    client, bd, _, ids = api
+    uid = ids[0]
+    assert client.put("/api/planning/202710/plan", json={"codes": ["CBAS-M01B"]}).status_code == 200
+    antes = _plan_guardado(bd, uid)
+
+    # CHUL-I03A y RULE-I03B son la misma materia (código viejo y nuevo).
+    r = client.put("/api/planning/202710/plan", json={"codes": ["CHUL-I03A", "CBAS-M01B", "RULE-I03B"]})
+    assert r.status_code == 422
+    assert r.json()["detail"] == "CHUL-I03A y RULE-I03B son la misma materia: deja solo una."
+    assert _plan_guardado(bd, uid) == antes
+    # Cada uno por su lado sí.
+    assert client.put("/api/planning/202710/plan", json={"codes": ["RULE-I03B", "CBAS-M01B"]}).status_code == 200
 
 
 def test_una_materia_que_sale_de_la_lista_se_conserva_si_ya_estaba(api):
