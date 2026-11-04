@@ -1052,6 +1052,16 @@ class PlanSubjectsNotInList(Exception):
         self.codigos = codigos
 
 
+class PlanEquivalentSubjects(Exception):
+    """El plan trae dos códigos de la misma materia (equivalentes en la lista del
+    período, p. ej. el código viejo y el de la malla 2026)."""
+
+    def __init__(self, codigo_a: str, codigo_b: str):
+        super().__init__(f"{codigo_a}, {codigo_b}")
+        self.codigo_a = codigo_a
+        self.codigo_b = codigo_b
+
+
 class PlanOverCreditLimit(Exception):
     """El plan suma más créditos que el tope."""
 
@@ -1069,7 +1079,9 @@ def replace_student_plan(usuario_id: int, periodo_id: int, codigos: List[str], m
     2. revisa que el período se pueda editar (`PlanningTermNotEditable`);
     3. revisa que cada código esté activo en la lista del período o ya esté en
        el plan (`PlanSubjectsNotInList`, con los que no);
-    4. revisa que los créditos no pasen de `max_creditos` (`PlanOverCreditLimit`;
+    4. revisa que no vengan dos códigos de la misma materia
+       (`PlanEquivalentSubjects`, con el primer par en el orden del plan);
+    5. revisa que los créditos no pasen de `max_creditos` (`PlanOverCreditLimit`;
        una materia sin créditos cuenta 0).
 
     Si algo no pasa, no queda nada a medias (ni el plan vacío). Los códigos ya
@@ -1101,6 +1113,19 @@ def replace_student_plan(usuario_id: int, periodo_id: int, codigos: List[str], m
         fuera = [c for c in codigos if c not in materias or (not materias[c][2] and c not in ya_estaban)]
         if fuera:
             raise PlanSubjectsNotInList(fuera)
+        ids = [materias[c][0] for c in codigos]
+        cursor.execute(
+            """
+            SELECT materia_a_id, materia_b_id FROM equivalencia_materia
+            WHERE periodo_id = %s AND materia_a_id = ANY(%s) AND materia_b_id = ANY(%s)
+            """,
+            (periodo_id, ids, ids),
+        )
+        pares = cursor.fetchall()
+        if pares:
+            posicion = {id_: i for i, id_ in enumerate(ids)}
+            a, b = sorted(min(pares, key=lambda p: max(posicion[p[0]], posicion[p[1]])), key=posicion.get)
+            raise PlanEquivalentSubjects(codigos[posicion[a]], codigos[posicion[b]])
         total = sum((materias[c][1] or Decimal(0) for c in codigos), Decimal(0))
         if total > max_creditos:
             raise PlanOverCreditLimit(total)

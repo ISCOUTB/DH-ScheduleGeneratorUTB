@@ -40,7 +40,7 @@ Todas las fechas son `TIMESTAMP WITH TIME ZONE`. El detalle de columnas está en
 
 La sesión es la misma de los destacados (`require_user`: cookie de la web o Bearer de la app, ver `13-10-2026-auth-token-app-movil.md`). El estudiante sale siempre de la sesión, nunca del cuerpo ni de la consulta. Los contratos completos están en `docs/backend.md`.
 
-Los `PUT` validan y guardan en una sola transacción, con la fila del plan bloqueada: período abierto y dentro de su ventana (409), sin repetidos (400), códigos de la lista (422), máximo 20 créditos (422) y, en las preferencias, solo valores conocidos y sin combinar «Me da igual» o «Prefiero no decir» con otra opción (422).
+Los `PUT` validan y guardan en una sola transacción, con la fila del plan bloqueada: período abierto y dentro de su ventana (409), sin repetidos (400), códigos de la lista (422), sin dos códigos de la misma materia, como el viejo y el de la malla 2026 (422, desde el 4 de noviembre de 2026), máximo 20 créditos (422) y, en las preferencias, solo valores conocidos y sin combinar «Me da igual» o «Prefiero no decir» con otra opción (422).
 
 ### 2.3 Cargador de la lista
 

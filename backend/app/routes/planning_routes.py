@@ -199,8 +199,9 @@ async def get_plan(term: str, user: dict = Depends(require_user)):
 async def put_plan(term: str, body: PlanRequest, user: dict = Depends(require_user)):
     """Reemplaza el plan de quien tiene la sesión por `codes`, en ese orden.
 
-    Revisa lo mismo que la app: el período abierto, sin materias repetidas,
-    solo materias de la lista y hasta 20 créditos. Una materia que salió de la
+    Revisa lo mismo que la app: el período abierto, sin materias repetidas
+    (tampoco dos códigos de la misma materia), solo materias de la lista y
+    hasta 20 créditos. Una materia que salió de la
     lista se conserva si ya estaba en el plan. Repetirlo no cambia el resultado.
     """
     uid = _user_id(user)
@@ -234,6 +235,11 @@ async def put_plan(term: str, body: PlanRequest, user: dict = Depends(require_us
         raise HTTPException(
             status_code=422,
             detail=f"Estas materias no están en la lista de {periodo['etiqueta']}: {', '.join(e.codigos)}.",
+        )
+    except repository.PlanEquivalentSubjects as e:
+        raise HTTPException(
+            status_code=422,
+            detail=f"{e.codigo_a} y {e.codigo_b} son la misma materia: deja solo una.",
         )
     except repository.PlanOverCreditLimit as e:
         raise HTTPException(
