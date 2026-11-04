@@ -250,3 +250,120 @@ CREATE TABLE IF NOT EXISTS public.curso_personalizado (
 ALTER TABLE public.curso_personalizado OWNER TO pg_database_owner;
 
 CREATE INDEX IF NOT EXISTS idx_curso_pers_usuario ON public.curso_personalizado(usuario_id);
+
+--
+-- Planificación del período siguiente (HU #380 de la app móvil): la lista de
+-- materias que el estudiante puede agregar y el plan de cada uno.
+-- `materia_planificable` va aparte de `materia` (la oferta actual): trae también
+-- las materias que no se dictan este período. Una materia que sale de la lista
+-- no se borra (`activa` en falso), para no romper los planes que ya la tienen.
+-- La lista se carga con scripts/cargar_lista_planificacion.py. La migración de
+-- scripts/migrar_esquema.py crea lo mismo en una base existente.
+--
+
+CREATE TABLE IF NOT EXISTS public.periodo_planificacion (
+    id SERIAL PRIMARY KEY,
+    periodo VARCHAR(6) NOT NULL UNIQUE,     -- código de Banner, ej. 202710
+    etiqueta VARCHAR NOT NULL,              -- ej. 2027-1
+    version_lista VARCHAR NOT NULL,
+    estado VARCHAR NOT NULL DEFAULT 'abierto'
+        CHECK (estado IN ('borrador', 'abierto', 'cerrado')),
+    abre TIMESTAMP WITH TIME ZONE,          -- NULL: sin fecha de apertura
+    cierra TIMESTAMP WITH TIME ZONE,        -- NULL: sin fecha de cierre
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE public.periodo_planificacion OWNER TO pg_database_owner;
+
+CREATE TABLE IF NOT EXISTS public.materia_planificable (
+    id SERIAL PRIMARY KEY,
+    periodo_id INTEGER NOT NULL REFERENCES public.periodo_planificacion(id) ON DELETE CASCADE,
+    codigo VARCHAR NOT NULL,
+    nombre VARCHAR NOT NULL,
+    nombre_banner VARCHAR,
+    area VARCHAR,
+    creditos NUMERIC(4,2),                  -- NULL: no se conocen
+    niveles JSONB NOT NULL DEFAULT '[]'::jsonb,
+    programas JSONB NOT NULL DEFAULT '[]'::jsonb,
+    nombre_cortado BOOLEAN NOT NULL DEFAULT FALSE,
+    activa BOOLEAN NOT NULL DEFAULT TRUE,
+    UNIQUE (periodo_id, codigo)
+);
+
+ALTER TABLE public.materia_planificable OWNER TO pg_database_owner;
+
+-- Pares de materias equivalentes con evidencia de programa, a un solo salto
+-- (el id menor primero).
+CREATE TABLE IF NOT EXISTS public.equivalencia_materia (
+    id SERIAL PRIMARY KEY,
+    periodo_id INTEGER NOT NULL REFERENCES public.periodo_planificacion(id) ON DELETE CASCADE,
+    materia_a_id INTEGER NOT NULL REFERENCES public.materia_planificable(id) ON DELETE CASCADE,
+    materia_b_id INTEGER NOT NULL REFERENCES public.materia_planificable(id) ON DELETE CASCADE,
+    evidencia VARCHAR,
+    CHECK (materia_a_id < materia_b_id),
+    UNIQUE (materia_a_id, materia_b_id)
+);
+
+ALTER TABLE public.equivalencia_materia OWNER TO pg_database_owner;
+
+-- El plan de un estudiante para un período, con sus preferencias de horario.
+-- Las preferencias son listas de valores cerrados (los de la app): jornadas
+-- `morning`, `afternoon`, `night`, `noPreference`; días `Lunes` a `Sábado`;
+-- motivos `work`, `internship`, `other`, `preferNotToSay`.
+CREATE TABLE IF NOT EXISTS public.plan_estudiante (
+    id SERIAL PRIMARY KEY,
+    usuario_id INTEGER NOT NULL REFERENCES public.usuario(id) ON DELETE CASCADE,
+    periodo_id INTEGER NOT NULL REFERENCES public.periodo_planificacion(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),  -- último guardado de las materias; NULL si solo respondió preferencias
+    jornadas JSONB NOT NULL DEFAULT '[]'::jsonb,
+    dias_libres JSONB NOT NULL DEFAULT '[]'::jsonb,
+    motivos JSONB NOT NULL DEFAULT '[]'::jsonb,
+    preferencias_actualizadas TIMESTAMP WITH TIME ZONE,  -- NULL: nunca respondió
+    UNIQUE (usuario_id, periodo_id)
+);
+
+ALTER TABLE public.plan_estudiante OWNER TO pg_database_owner;
+
+CREATE TABLE IF NOT EXISTS public.plan_materia (
+    id SERIAL PRIMARY KEY,
+    plan_id INTEGER NOT NULL REFERENCES public.plan_estudiante(id) ON DELETE CASCADE,
+    materia_id INTEGER NOT NULL REFERENCES public.materia_planificable(id),
+    posicion INTEGER NOT NULL,
+    agregada TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE (plan_id, materia_id)
+);
+
+ALTER TABLE public.plan_materia OWNER TO pg_database_owner;
+
+CREATE INDEX IF NOT EXISTS idx_materia_plan_periodo ON public.materia_planificable(periodo_id);
+CREATE INDEX IF NOT EXISTS idx_plan_materia_materia ON public.plan_materia(materia_id);
+
+-- Demanda por materia: cuántos estudiantes la planearon. No muestra conteos de
+-- menos de 10 (Ley 1581 de 2012; la misma regla de la analítica de la app).
+CREATE OR REPLACE VIEW public.demanda_planificacion AS
+SELECT p.periodo, m.codigo, m.nombre, COUNT(DISTINCT pe.usuario_id) AS estudiantes
+FROM public.plan_materia pm
+JOIN public.plan_estudiante pe ON pe.id = pm.plan_id
+JOIN public.materia_planificable m ON m.id = pm.materia_id
+JOIN public.periodo_planificacion p ON p.id = pe.periodo_id
+GROUP BY p.periodo, m.codigo, m.nombre
+HAVING COUNT(DISTINCT pe.usuario_id) >= 10;
+
+-- Preferencias de horario: cuántos estudiantes eligieron cada opción de cada
+-- pregunta (`jornada`, `dia_libre`, `motivo`). La misma regla: no muestra
+-- conteos de menos de 10.
+CREATE OR REPLACE VIEW public.preferencias_planificacion AS
+SELECT p.periodo, r.pregunta, r.valor, COUNT(DISTINCT pe.usuario_id) AS estudiantes
+FROM public.plan_estudiante pe
+JOIN public.periodo_planificacion p ON p.id = pe.periodo_id
+CROSS JOIN LATERAL (
+    SELECT 'jornada'::text AS pregunta, j.valor FROM jsonb_array_elements_text(pe.jornadas) AS j(valor)
+    UNION ALL
+    SELECT 'dia_libre'::text, d.valor FROM jsonb_array_elements_text(pe.dias_libres) AS d(valor)
+    UNION ALL
+    SELECT 'motivo'::text, m.valor FROM jsonb_array_elements_text(pe.motivos) AS m(valor)
+) r
+GROUP BY p.periodo, r.pregunta, r.valor
+HAVING COUNT(DISTINCT pe.usuario_id) >= 10;

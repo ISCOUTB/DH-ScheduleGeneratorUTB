@@ -19,13 +19,19 @@ ACADEMIC_TABLES = (
 )
 
 # Tablas funcionales de la aplicación que no deben limpiarse durante ETL académico.
-# `Materia` va aquí ahora: es catálogo, no oferta.
+# `Materia` va aquí ahora: es catálogo, no oferta. Las de la planificación del
+# período siguiente (HU #380 de la app) guardan los planes de los estudiantes.
 PRESERVED_APP_TABLES = (
     "usuario",
     "sesion_usuario",
     "horario_destacado",
     "materia",
     "curso_personalizado",
+    "periodo_planificacion",
+    "materia_planificable",
+    "equivalencia_materia",
+    "plan_estudiante",
+    "plan_materia",
 )
 
 

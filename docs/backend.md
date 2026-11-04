@@ -19,6 +19,7 @@ Para mejorar mantenibilidad y trazabilidad, las decisiones relevantes se documen
 
 Registros vigentes:
 
+- `docs/issues/04-11-2026-planificacion-proximo-periodo.md`
 - `docs/issues/13-10-2026-auth-token-app-movil.md`
 - `docs/issues/14-07-2026-creditos-decimales.md`
 - `docs/issues/15-06-2026-incidente-wipe-oferta-etl-banner-caido.md`
@@ -286,6 +287,29 @@ Consulta los cupos actuales en la tabla `Curso` (`CuposDisponibles`/`CuposTotale
 **Límites:** Máximo 20 favoritos por usuario por término. Si se excede → 429.
 
 **Configuración:** El término actual se define con `CURRENT_TERM` en `backend/.env`. Esta variable es leída por la API y por los scripts de actualización de datos. Actualizar una sola vez cada semestre.
+
+### Endpoints de la planificación del período siguiente
+
+El estudiante arma en la app la lista de materias que piensa ver el próximo período (HU #380 de la app móvil, sin sugerencias). Las materias salen de `materia_planificable`, la lista del período, que trae también las que no se dictan este período; no de `Materia`, que es la oferta actual. Tablas en `docs/modelo_datos.md`.
+
+| Método | Endpoint | Sesión | Descripción |
+|--------|----------|--------|-------------|
+| `GET` | `/api/planning/current` | No | El período que se está planificando (abierto y dentro de su ventana): `{term, label, listVersion, opensAt, closesAt}`; 404 si no hay |
+| `GET` | `/api/planning/{term}/subjects` | No | La lista activa del período, por nombre: `{term, listVersion, subjects: [{code, name, credits, area, levels, programs, nameTruncated, equivalentCodes}]}`; 404 si el período no existe o es un borrador |
+| `GET` | `/api/planning/{term}/plan` | Sí | El plan de quien tiene la sesión: `{term, editable, updatedAt, subjects: [{code, name, credits, active}]}` (vacío si no tiene) |
+| `PUT` | `/api/planning/{term}/plan` | Sí | Reemplaza el plan con `{"codes": [...]}` en ese orden y lo devuelve |
+| `GET` | `/api/planning/{term}/preferences` | Sí | Las preferencias de horario de quien tiene la sesión: `{term, editable, updatedAt, dayParts, preferredFreeDays, reasons}`, cada lista en el orden canónico y vacía si no respondió; 404 como la lista |
+| `PUT` | `/api/planning/{term}/preferences` | Sí | Reemplaza las tres respuestas con `{"dayParts": [...], "preferredFreeDays": [...], "reasons": [...]}` (cada lista opcional; la que no viene, o viene `null`, queda vacía) y devuelve lo mismo que el `GET` |
+
+Opciones de las preferencias (las de la app, en su orden canónico): `dayParts` en `morning`, `afternoon`, `night`, `noPreference`; `preferredFreeDays` en `Lunes`, `Martes`, `Miércoles`, `Jueves`, `Viernes`, `Sábado`; `reasons` en `work`, `internship`, `other`, `preferNotToSay`. El `PUT` da 400 con una opción repetida, 422 con una opción que no existe (la nombra) o con `noPreference`/`preferNotToSay` junto a otra opción de su pregunta, y 409 si el período no está abierto o está fuera de su ventana (revisado otra vez dentro de la transacción del guardado, con la fila del plan bloqueada: si se cerró en el medio, no se guarda nada). Responder las preferencias sin haber guardado materias crea el plan vacío; su `updatedAt` (el del plan) sigue en `null` hasta que se guarden las materias, y guardar el plan no toca las preferencias. El `updatedAt` de las preferencias es cuándo se respondieron.
+
+El `PUT` del plan revisa lo mismo que la app: período abierto (si no, 409), sin repetidos ni códigos vacíos, máximo 30 materias (400), solo materias de la lista (422; una que salió de la lista se conserva si ya estaba en el plan) y hasta 20 créditos, el mismo tope por defecto del generador (422). El período, las materias de la lista y los créditos se revisan dentro de la misma transacción que guarda, con la fila del plan bloqueada: dos guardados a la vez del mismo estudiante se turnan, y un plan rechazado no deja nada a medias. El plan es de quien tiene la sesión (`require_user`, igual que los favoritos), nunca de un id del cuerpo. Repetirlo no cambia el resultado.
+
+**Carga de la lista:** `python scripts/cargar_lista_planificacion.py lista_materias_202710.json` (desde `backend/`), con el JSON que genera `exportar_lista.py` desde la lista revisada. Antes de tocar la base revisa la lista: los créditos de cada materia deben ser un número JSON (no booleano) entre 0 y 99,99, o `null` si no se conocen; si no, no carga nada y el error nombra la materia. En una transacción crea o actualiza el período (un período nuevo queda abierto) y sus materias, deja inactivas las que ya no vienen (no se borran: puede haber planes que las tienen) y reemplaza las equivalencias. Se corre a mano una vez por período, no en el cron. El estado (`borrador`, `abierto`, `cerrado`) y la ventana (`abre`, `cierra`) se cambian con SQL en `periodo_planificacion`.
+
+**Fechas:** toda fecha de `/api/planning/*` sale en ISO 8601 con su desfase horario (ej. `2026-11-03T14:05:00.123456-05:00`); las columnas son `TIMESTAMP WITH TIME ZONE`.
+
+**Demanda:** la vista `demanda_planificacion` da cuántos estudiantes planearon cada materia y `preferencias_planificacion` cuántos eligieron cada opción de las preferencias (`pregunta` en `jornada`, `dia_libre` o `motivo`); ninguna muestra conteos de menos de 10 (Ley 1581 de 2012). No tienen endpoint.
 
 ### Limitaciones conocidas
 

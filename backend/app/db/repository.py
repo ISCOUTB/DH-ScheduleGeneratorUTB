@@ -6,9 +6,11 @@ import psycopg
 import psycopg.rows
 import json
 import os
+from decimal import Decimal
 from dotenv import load_dotenv
 from typing import List, Dict, Any, Optional
 from psycopg.sql import SQL
+from psycopg.types.json import Jsonb
 from ..models import ClassOption, Schedule, Subject
 
 # Define la ruta base del proyecto (la carpeta 'backend')
@@ -824,6 +826,296 @@ def delete_custom_course(id_: int, usuario_id: int) -> bool:
         )
         conn.commit()
         return cursor.rowcount > 0
+    finally:
+        cursor.close()
+        conn.close()
+
+
+# --- Planificación del período siguiente (HU #380 de la app) ---
+
+# Un período se puede editar si está abierto y dentro de su ventana (sin fecha
+# de apertura o de cierre, ese lado no limita).
+_PERIODO_EDITABLE = (
+    "estado = 'abierto' AND (abre IS NULL OR abre <= NOW()) "
+    "AND (cierra IS NULL OR cierra > NOW())"
+)
+
+
+def get_planning_term_current() -> Dict[str, Any] | None:
+    """El período que se está planificando (el más reciente que se pueda editar)."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            f"""
+            SELECT periodo, etiqueta, version_lista, abre, cierra
+            FROM periodo_planificacion
+            WHERE {_PERIODO_EDITABLE}
+            ORDER BY periodo DESC
+            LIMIT 1
+            """
+        )
+        row = cursor.fetchone()
+        return dict(row) if row else None
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_planning_term(periodo: str) -> Dict[str, Any] | None:
+    """Un período de planificación, con `editable`; None si no existe."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            f"""
+            SELECT id, periodo, etiqueta, version_lista, estado, abre, cierra,
+                   ({_PERIODO_EDITABLE}) AS editable
+            FROM periodo_planificacion
+            WHERE periodo = %s
+            """,
+            (periodo,),
+        )
+        row = cursor.fetchone()
+        return dict(row) if row else None
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_planning_subjects(periodo_id: int) -> List[Dict[str, Any]]:
+    """La lista activa del período, por nombre, con los códigos de sus
+    equivalentes que también estén activos."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            """
+            SELECT m.codigo, m.nombre, m.creditos, m.area, m.niveles, m.programas,
+                   m.nombre_cortado,
+                   COALESCE(
+                       array_agg(o.codigo ORDER BY o.codigo) FILTER (WHERE o.codigo IS NOT NULL),
+                       ARRAY[]::varchar[]
+                   ) AS equivalentes
+            FROM materia_planificable m
+            LEFT JOIN equivalencia_materia e
+                ON m.id IN (e.materia_a_id, e.materia_b_id)
+            LEFT JOIN materia_planificable o
+                ON o.activa
+               AND o.id = CASE WHEN e.materia_a_id = m.id THEN e.materia_b_id ELSE e.materia_a_id END
+            WHERE m.periodo_id = %s AND m.activa
+            GROUP BY m.id
+            ORDER BY m.nombre, m.codigo
+            """,
+            (periodo_id,),
+        )
+        return [dict(row) for row in cursor.fetchall()]
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def get_student_plan(usuario_id: int, periodo_id: int) -> Dict[str, Any]:
+    """El plan del estudiante, en su orden: `{updated_at, subjects}`. Sin plan,
+    `updated_at` es None y `subjects` está vacío. Trae también las materias que
+    después salieron de la lista (`activa` en falso)."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            """
+            SELECT pe.updated_at, m.codigo, m.nombre, m.creditos, m.activa
+            FROM plan_estudiante pe
+            LEFT JOIN plan_materia pm ON pm.plan_id = pe.id
+            LEFT JOIN materia_planificable m ON m.id = pm.materia_id
+            WHERE pe.usuario_id = %s AND pe.periodo_id = %s
+            ORDER BY pm.posicion
+            """,
+            (usuario_id, periodo_id),
+        )
+        rows = cursor.fetchall()
+        return {
+            "updated_at": rows[0]["updated_at"] if rows else None,
+            "subjects": [dict(row) for row in rows if row["codigo"] is not None],
+        }
+    finally:
+        cursor.close()
+        conn.close()
+
+
+class PlanningTermNotEditable(Exception):
+    """El período no está abierto o está fuera de su ventana, según lo que se
+    leyó dentro de la transacción del guardado."""
+
+
+def _bloquear_plan(cursor, usuario_id: int, periodo_id: int) -> int:
+    """Crea el plan vacío del estudiante si no existe y bloquea su fila hasta el
+    final de la transacción (dos guardados a la vez del mismo estudiante se
+    turnan). Devuelve su id.
+
+    Un plan nuevo nace sin `updated_at`: esa es la fecha del último guardado de
+    las materias, y quien solo respondió las preferencias no lo ha guardado."""
+    cursor.execute(
+        """
+        INSERT INTO plan_estudiante (usuario_id, periodo_id, updated_at)
+        VALUES (%s, %s, NULL)
+        ON CONFLICT (usuario_id, periodo_id) DO NOTHING
+        """,
+        (usuario_id, periodo_id),
+    )
+    cursor.execute(
+        "SELECT id FROM plan_estudiante WHERE usuario_id = %s AND periodo_id = %s FOR UPDATE",
+        (usuario_id, periodo_id),
+    )
+    return cursor.fetchone()[0]
+
+
+def _exigir_periodo_editable(cursor, periodo_id: int) -> None:
+    """`PlanningTermNotEditable` si el período ya no se puede editar. Su fila
+    queda bloqueada para lectura: no se cierra hasta que termine el guardado."""
+    cursor.execute(
+        f"SELECT ({_PERIODO_EDITABLE}) FROM periodo_planificacion WHERE id = %s FOR SHARE",
+        (periodo_id,),
+    )
+    fila = cursor.fetchone()
+    if not fila or not fila[0]:
+        raise PlanningTermNotEditable()
+
+
+_PREFERENCIAS_VACIAS = {
+    "jornadas": [],
+    "dias_libres": [],
+    "motivos": [],
+    "preferencias_actualizadas": None,
+}
+
+
+def get_plan_preferences(usuario_id: int, periodo_id: int) -> Dict[str, Any]:
+    """Las preferencias del estudiante: `{jornadas, dias_libres, motivos,
+    preferencias_actualizadas}`. Sin plan, listas vacías y fecha None."""
+    conn = get_db_connection()
+    cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+    try:
+        cursor.execute(
+            """
+            SELECT jornadas, dias_libres, motivos, preferencias_actualizadas
+            FROM plan_estudiante
+            WHERE usuario_id = %s AND periodo_id = %s
+            """,
+            (usuario_id, periodo_id),
+        )
+        row = cursor.fetchone()
+        return dict(row) if row else dict(_PREFERENCIAS_VACIAS)
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def save_plan_preferences(
+    usuario_id: int, periodo_id: int, jornadas: List[str], dias_libres: List[str], motivos: List[str]
+) -> Dict[str, Any]:
+    """Reemplaza las tres respuestas del estudiante en una sola transacción:
+    bloquea su plan (lo crea vacío si no tiene), revisa que el período se pueda
+    editar (`PlanningTermNotEditable` si no, sin dejar nada a medias) y guarda.
+    Devuelve lo guardado, como `get_plan_preferences`."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        plan_id = _bloquear_plan(cursor, usuario_id, periodo_id)
+        _exigir_periodo_editable(cursor, periodo_id)
+        cursor.execute(
+            """
+            UPDATE plan_estudiante
+            SET jornadas = %s, dias_libres = %s, motivos = %s, preferencias_actualizadas = NOW()
+            WHERE id = %s
+            RETURNING jornadas, dias_libres, motivos, preferencias_actualizadas
+            """,
+            (Jsonb(jornadas), Jsonb(dias_libres), Jsonb(motivos), plan_id),
+        )
+        guardadas = dict(zip(_PREFERENCIAS_VACIAS, cursor.fetchone()))
+        conn.commit()
+        return guardadas
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        cursor.close()
+        conn.close()
+
+
+class PlanSubjectsNotInList(Exception):
+    """Hay códigos que no están en la lista del período (o que salieron de ella
+    y no estaban ya en el plan)."""
+
+    def __init__(self, codigos: List[str]):
+        super().__init__(", ".join(codigos))
+        self.codigos = codigos
+
+
+class PlanOverCreditLimit(Exception):
+    """El plan suma más créditos que el tope."""
+
+    def __init__(self, total: Decimal):
+        super().__init__(str(total))
+        self.total = total
+
+
+def replace_student_plan(usuario_id: int, periodo_id: int, codigos: List[str], max_creditos: int) -> None:
+    """Valida y reemplaza el plan del estudiante por `codigos`, en ese orden, en
+    una sola transacción:
+
+    1. bloquea la fila de su plan (la crea vacía si no tiene): dos guardados a
+       la vez del mismo estudiante se turnan;
+    2. revisa que el período se pueda editar (`PlanningTermNotEditable`);
+    3. revisa que cada código esté activo en la lista del período o ya esté en
+       el plan (`PlanSubjectsNotInList`, con los que no);
+    4. revisa que los créditos no pasen de `max_creditos` (`PlanOverCreditLimit`;
+       una materia sin créditos cuenta 0).
+
+    Si algo no pasa, no queda nada a medias (ni el plan vacío). Los códigos ya
+    vienen sin repetidos."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        plan_id = _bloquear_plan(cursor, usuario_id, periodo_id)
+        _exigir_periodo_editable(cursor, periodo_id)
+        cursor.execute(
+            """
+            SELECT codigo, id, creditos, activa
+            FROM materia_planificable
+            WHERE periodo_id = %s AND codigo = ANY(%s)
+            """,
+            (periodo_id, codigos),
+        )
+        materias = {codigo: (id_, creditos, activa) for codigo, id_, creditos, activa in cursor.fetchall()}
+        cursor.execute(
+            """
+            SELECT m.codigo FROM plan_materia pm
+            JOIN materia_planificable m ON m.id = pm.materia_id
+            WHERE pm.plan_id = %s
+            """,
+            (plan_id,),
+        )
+        ya_estaban = {fila[0] for fila in cursor.fetchall()}
+
+        fuera = [c for c in codigos if c not in materias or (not materias[c][2] and c not in ya_estaban)]
+        if fuera:
+            raise PlanSubjectsNotInList(fuera)
+        total = sum((materias[c][1] or Decimal(0) for c in codigos), Decimal(0))
+        if total > max_creditos:
+            raise PlanOverCreditLimit(total)
+
+        cursor.execute("UPDATE plan_estudiante SET updated_at = NOW() WHERE id = %s", (plan_id,))
+        cursor.execute("DELETE FROM plan_materia WHERE plan_id = %s", (plan_id,))
+        for posicion, codigo in enumerate(codigos):
+            cursor.execute(
+                "INSERT INTO plan_materia (plan_id, materia_id, posicion) VALUES (%s, %s, %s)",
+                (plan_id, materias[codigo][0], posicion),
+            )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
     finally:
         cursor.close()
         conn.close()

@@ -301,6 +301,27 @@ Estado de implementación:
 - CRUD completo en `routes/favorite_routes.py` + `repository.py` (máx. 20 favoritos por término).
 - Pantalla dedicada con previsualización y estado de cupos en vivo (Fase 2). El estado se consulta con `GET /api/favorites/status` contra la tabla `Curso` y solo aplica al término actual.
 
+---
+
+### Planificación del período siguiente
+
+Lista de materias que el estudiante puede agregar a su plan del próximo período y el plan de cada uno (HU #380 de la app móvil). Rutas en `docs/backend.md`; tablas en `backend/init.sql` y, para una base existente, en `scripts/migrar_esquema.py`.
+
+| Tabla | Qué guarda | Columnas principales |
+|-------|------------|----------------------|
+| `periodo_planificacion` | Cada período que se planifica | `periodo` (ej. `202710`, único), `etiqueta` (`2027-1`), `version_lista`, `estado` (`borrador`, `abierto`, `cerrado`), `abre`, `cierra` |
+| `materia_planificable` | La lista de materias del período; aparte de `Materia`, que es la oferta actual | `periodo_id`, `codigo`, `nombre`, `nombre_banner`, `area`, `creditos` (vacío si no se conocen), `niveles`, `programas`, `nombre_cortado`, `activa`; `UNIQUE (periodo_id, codigo)` |
+| `equivalencia_materia` | Pares de materias equivalentes con evidencia de programa, a un solo salto | `periodo_id`, `materia_a_id` < `materia_b_id`, `evidencia` |
+| `plan_estudiante` | El plan de un estudiante para un período y sus preferencias de horario | `usuario_id` (FK a `usuario.id`, `ON DELETE CASCADE`), `periodo_id`, `updated_at` (último guardado de las materias; NULL si solo respondió las preferencias); `jornadas`, `dias_libres`, `motivos` (`JSONB`, `[]` por defecto), `preferencias_actualizadas` (NULL si nunca respondió); `UNIQUE (usuario_id, periodo_id)` |
+| `plan_materia` | Las materias de cada plan, en orden | `plan_id`, `materia_id`, `posicion`, `agregada`; `UNIQUE (plan_id, materia_id)` |
+
+- Una materia que sale de la lista no se borra: queda `activa = false`, para no romper los planes que ya la tienen.
+- Borrar un usuario borra sus planes.
+- Las fechas de estas tablas (`abre`, `cierra`, `created_at`, `updated_at`, `agregada`, `preferencias_actualizadas`) son `TIMESTAMP WITH TIME ZONE`.
+- Las preferencias son listas de valores cerrados, los de la app: `jornadas` en `morning`, `afternoon`, `night`, `noPreference`; `dias_libres` en `Lunes`, `Martes`, `Miércoles`, `Jueves`, `Viernes`, `Sábado`; `motivos` en `work`, `internship`, `other`, `preferNotToSay`.
+- La vista `demanda_planificacion` (`periodo`, `codigo`, `nombre`, `estudiantes`) no muestra conteos de menos de 10 estudiantes.
+- La vista `preferencias_planificacion` (`periodo`, `pregunta` en `jornada`, `dia_libre` o `motivo`, `valor`, `estudiantes`) cuenta cuántos estudiantes eligieron cada opción y tampoco muestra conteos de menos de 10.
+
 ## Relaciones
 
 | Relación | Tipo | Descripción |
